@@ -19,7 +19,7 @@ from items import on_passive_use
 from items import on_damage_dealt
 from items import on_damage_taken
 
-from weapons import WeaponType
+from .weapons import WeaponType
 
 from foe_passive_builder import player_stat_picker
 
