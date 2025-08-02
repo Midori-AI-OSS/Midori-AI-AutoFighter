@@ -21,18 +21,21 @@ from items import on_damage_taken
 
 from weapons import WeaponType
 
-from buldfoepassives import build_foe_stats
-from buldfoepassives import player_stat_picker
+from foe_passive_builder import build_foe_stats
+from foe_passive_builder import player_stat_picker
 
 from damage_over_time import dot as damageovertimetype
 from healing_over_time import hot as healingovertimetype
 
 from load_photos import resource_path
 from load_photos import set_themed_photo
+from plugins.plugin_loader import PluginLoader
 
 spinner = Halo(text='Loading', spinner='dots', color='green')
 
 starting_max_blessing = 5
+
+_plugin_loader: PluginLoader | None = None
 
 class Player:
     def __init__(self, name: str):
@@ -57,6 +60,7 @@ class Player:
         self.CritRate: float = 0.03
         self.CritDamageMod: float = 2
         self.DodgeOdds: float = 0.03
+        self.BleedChance: float = 0.0
         self.EffectHitRate: float = 1
         self.EffectRES: float = 0.05
         self.DamageTaken: int = 0
@@ -829,5 +833,23 @@ def render_player_obj(pygame, player: Player, player_profile_pic, screen, enrage
             stat_text = stats_font.render(f"{stat_name} {stat_value}", True, (255, 255, 255), (0, 0, 0))
             stat_rect = stat_text.get_rect(topleft=(x_offset, y_offset + i * spacing))
             screen.blit(stat_text, stat_rect)
+
+
+def create_player(player_id: str, name: str | None = None, **kwargs) -> Player:
+    """Return a player built from the plugin registry.
+
+    Falls back to :class:`Player` if no plugin matches ``player_id``.
+    """
+
+    global _plugin_loader
+    if _plugin_loader is None:
+        _plugin_loader = PluginLoader()
+        _plugin_loader.discover("plugins")
+
+    plugin_cls = _plugin_loader.get_plugins("player").get(player_id)
+    if plugin_cls:
+        plugin = plugin_cls()
+        return plugin.build(name=name or plugin.name, **kwargs)
+    return Player(name or player_id)
 
                 

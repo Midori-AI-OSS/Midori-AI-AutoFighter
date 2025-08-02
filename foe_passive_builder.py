@@ -2,12 +2,21 @@
 #themed_ajt = ["atrocious", "baneful", "barbaric", "beastly", "belligerent", "bloodthirsty", "brutal", "callous", "cannibalistic", "cowardly", "cruel", "cunning", "dangerous", "demonic", "depraved", "destructive", "diabolical", "disgusting", "dishonorable", "dreadful", "eerie", "evil", "execrable", "fiendish", "filthy", "foul", "frightening", "ghastly", "ghoulish", "gruesome", "heinous", "hideous", "homicidal", "horrible", "hostile", "inhumane", "insidious", "intimidating", "malevolent", "malicious", "monstrous", "murderous", "nasty", "nefarious", "noxious", "obscene", "odious", "ominous", "pernicious", "perverted", "poisonous", "predatory", "premeditated", "primal", "primitive", "profane", "psychopathic", "rabid", "relentless", "repulsive", "ruthless", "sadistic", "savage", "scary", "sinister", "sociopathic", "spiteful", "squalid", "terrifying", "threatening", "treacherous", "ugly", "unholy", "venomous", "vicious", "villainous", "violent", "wicked", "wrongful", "xenophobic"]
 #themed_names = ["luna", "carly", "becca", "ally", "hilander", "chibi", "mimic", "mezzy", "graygray", "bubbles"]
 
+from __future__ import annotations
+
 import random
+
+from typing import TYPE_CHECKING
 
 from themedstuff import themed_ajt
 from themedstuff import themed_names
 
-def player_stat_picker(player):
+if TYPE_CHECKING:
+    from player import Player
+
+
+def player_stat_picker(player: Player) -> int:
+    """Return a random stat tier based on the player's themed name."""
     if themed_names[0] in player.PlayerName.lower():
         return random.choice([5, 6, 7, 9])
 
@@ -37,10 +46,19 @@ def player_stat_picker(player):
 
     if themed_names[9] in player.PlayerName.lower():
         return random.choice([8, 9])
-    
+
     return 9
 
-def build_foe_stats(player):
+
+def build_foe_stats(player: Player) -> None:
+    """Apply passive bonuses based on player traits."""
+    _apply_high_level_lady(player)
+    _apply_themed_name_modifiers(player)
+    _apply_themed_adj_modifiers(player)
+
+
+
+def _apply_high_level_lady(player: Player) -> None:
     if player.level > 2500:
         if "lady" in player.PlayerName.lower():
 
@@ -69,9 +87,10 @@ def build_foe_stats(player):
             player.Def *= 2
             player.Mitigation = max(player.Mitigation, 1)
             player.Vitality *= 1.5
-
             player.EffectRES += 2
 
+
+def _apply_themed_name_modifiers(player: Player) -> None:
     if themed_names[0] in player.PlayerName.lower():
         dodge_buff = 0.35
         max_hp_debuff = player.MHP / 4
@@ -183,7 +202,8 @@ def build_foe_stats(player):
             item.power += (player.level * 0.0003)
 
 
-    if themed_ajt[0] in player.PlayerName.lower(): # atrocious
+def _apply_themed_adj_modifiers(player: Player) -> None:
+    if themed_ajt[0] in player.PlayerName.lower():  # atrocious
         player.MHP = int(player.MHP * 1.9)
         player.Atk = int(player.Atk * 1.1)
 

@@ -130,6 +130,18 @@ def check_passive_mod(foelist: list[Player], playerlist: list[Player], source: P
     for player in playerlist:
         alllist.append(player)
 
+    if getattr(source, "BleedChance", 0) > 0:
+        if random.random() < source.BleedChance:
+            bleed_dot = damageovertimetype(
+                "Bleed",
+                source.deal_damage(0.05, target.Type),
+                3,
+                Generic,
+                source.PlayerName,
+                1,
+            )
+            target.gain_damage_over_time(bleed_dot, source.effecthittate())
+
     if themed_names[0] in source.PlayerName.lower():
         if source.Regain > 10:
             source.Regain -= 0.01 * source.above_threshold_ticks
