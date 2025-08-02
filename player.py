@@ -21,7 +21,6 @@ from items import on_damage_taken
 
 from weapons import WeaponType
 
-from foe_passive_builder import build_foe_stats
 from foe_passive_builder import player_stat_picker
 
 from damage_over_time import dot as damageovertimetype
@@ -697,8 +696,6 @@ class Player:
 
         self.check_stats()
 
-        build_foe_stats(self)
-
         post_temp_vit = (self.Vitality * (level / (top_level_full)))
         post_temp_mit = (self.Mitigation * (level / (top_level / 2)))
         self.Vitality = max(min(post_temp_vit, 10 ** 4), 0.75)
@@ -850,6 +847,10 @@ def create_player(player_id: str, name: str | None = None, **kwargs) -> Player:
     if plugin_cls:
         plugin = plugin_cls()
         return plugin.build(name=name or plugin.name, **kwargs)
-    return Player(name or player_id)
+    player = Player(name or player_id)
+    player.load()
+    player.set_photo(player_id)
+    player.isplayer = True
+    return player
 
                 

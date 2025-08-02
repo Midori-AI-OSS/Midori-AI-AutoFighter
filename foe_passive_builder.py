@@ -2,6 +2,14 @@
 #themed_ajt = ["atrocious", "baneful", "barbaric", "beastly", "belligerent", "bloodthirsty", "brutal", "callous", "cannibalistic", "cowardly", "cruel", "cunning", "dangerous", "demonic", "depraved", "destructive", "diabolical", "disgusting", "dishonorable", "dreadful", "eerie", "evil", "execrable", "fiendish", "filthy", "foul", "frightening", "ghastly", "ghoulish", "gruesome", "heinous", "hideous", "homicidal", "horrible", "hostile", "inhumane", "insidious", "intimidating", "malevolent", "malicious", "monstrous", "murderous", "nasty", "nefarious", "noxious", "obscene", "odious", "ominous", "pernicious", "perverted", "poisonous", "predatory", "premeditated", "primal", "primitive", "profane", "psychopathic", "rabid", "relentless", "repulsive", "ruthless", "sadistic", "savage", "scary", "sinister", "sociopathic", "spiteful", "squalid", "terrifying", "threatening", "treacherous", "ugly", "unholy", "venomous", "vicious", "villainous", "violent", "wicked", "wrongful", "xenophobic"]
 #themed_names = ["luna", "carly", "becca", "ally", "hilander", "chibi", "mimic", "mezzy", "graygray", "bubbles"]
 
+"""Utilities for assigning foe-only passive bonuses.
+
+These helpers power enemy modifiers exclusively; player-controlled characters
+should **not** call into this module. Foe passives are applied when enemies are
+loaded at runtime. Player passives live in dedicated plugins under
+``plugins/passives/``.
+"""
+
 from __future__ import annotations
 
 import random
@@ -16,7 +24,7 @@ if TYPE_CHECKING:
 
 
 def player_stat_picker(player: Player) -> int:
-    """Return a random stat tier based on the player's themed name."""
+    """Return a random stat tier based on the foe's themed name."""
     if themed_names[0] in player.PlayerName.lower():
         return random.choice([5, 6, 7, 9])
 
@@ -51,7 +59,7 @@ def player_stat_picker(player: Player) -> int:
 
 
 def build_foe_stats(player: Player) -> None:
-    """Apply passive bonuses based on player traits."""
+    """Apply passive bonuses for foe characters based on their traits."""
     _apply_high_level_lady(player)
     _apply_themed_name_modifiers(player)
     _apply_themed_adj_modifiers(player)
@@ -59,6 +67,7 @@ def build_foe_stats(player: Player) -> None:
 
 
 def _apply_high_level_lady(player: Player) -> None:
+    """Boost high-level "Lady" foes with extra stats."""
     if player.level > 2500:
         if "lady" in player.PlayerName.lower():
 
@@ -91,6 +100,7 @@ def _apply_high_level_lady(player: Player) -> None:
 
 
 def _apply_themed_name_modifiers(player: Player) -> None:
+    """Tweak foe stats based on specific character names."""
     if themed_names[0] in player.PlayerName.lower():
         dodge_buff = 0.35
         max_hp_debuff = player.MHP / 4
@@ -154,12 +164,6 @@ def _apply_themed_name_modifiers(player: Player) -> None:
         player.Atk = int(player.Atk * 8)
         player.CritRate = player.CritRate / 1000
 
-    if themed_names[3] in player.PlayerName.lower():
-        player.Atk = int(player.Atk * 1.5)
-        player.Def = int(player.Def * 1.5)
-        player.CritDamageMod = player.CritDamageMod * ((0.005 * player.level) + 1)
-        player.DodgeOdds = player.DodgeOdds / 1000
-
     if themed_names[4] in player.PlayerName.lower():
         player.Atk = int(player.Atk * 1.5)
         player.Def = int(player.Def * 0.5) + 1
@@ -193,9 +197,6 @@ def _apply_themed_name_modifiers(player: Player) -> None:
     if themed_names[7] in player.PlayerName.lower():
         player.MHP = int(player.MHP * 150)
 
-    if themed_names[8] in player.PlayerName.lower():
-        player.Regain = player.Regain * (0.05 * player.level)
-
     if themed_names[9] in player.PlayerName.lower():
         for item in player.Items:
             item.name = "Bubbles\'s Blessing of Damage, Defense, and Utility"
@@ -203,6 +204,7 @@ def _apply_themed_name_modifiers(player: Player) -> None:
 
 
 def _apply_themed_adj_modifiers(player: Player) -> None:
+    """Apply adjective-based modifiers to foes."""
     if themed_ajt[0] in player.PlayerName.lower():  # atrocious
         player.MHP = int(player.MHP * 1.9)
         player.Atk = int(player.Atk * 1.1)

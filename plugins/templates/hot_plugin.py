@@ -8,9 +8,14 @@ class HotPlugin:
     """Example HoT plugin skeleton."""
 
     plugin_type = "hot"
-    id = "TODO_unique_id"  # TODO: unique identifier used by the game
-    name = "TODO name"  # TODO: display name
+    id = "example_hot"
+    name = "Example Healing Over Time"
 
-    def tick(self, target, dt):
-        """TODO: heal ``target`` over ``dt`` seconds."""
-        raise NotImplementedError
+    def tick(self, target, dt: float) -> None:
+        """Heal ``target`` over ``dt`` seconds.
+
+        This sample logic restores a small amount of HP each tick. Replace the
+        calculation with whatever makes sense for your custom HoT.
+        """
+        heal = int(5 * dt)
+        target.HP = min(target.MHP, target.HP + heal)

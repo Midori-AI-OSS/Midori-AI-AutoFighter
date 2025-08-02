@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from plugins.dots.base import DotPlugin
+
 if TYPE_CHECKING:
     from player import Player
 
 
-class Poison:
+class Poison(DotPlugin):
     """Inflicts poison damage each tick.
 
     Attributes

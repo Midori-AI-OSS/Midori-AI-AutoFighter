@@ -8,9 +8,14 @@ class PassivePlugin:
     """Example passive plugin skeleton."""
 
     plugin_type = "passive"
-    id = "TODO_unique_id"  # TODO: unique identifier used by the game
-    name = "TODO name"  # TODO: display name
+    id = "example_passive"  # Unique identifier used by the game
+    name = "Example Passive"  # Display name shown in menus
 
     def apply(self, player):
-        """TODO: modify ``player`` in place."""
-        raise NotImplementedError
+        """Modify ``player`` in place when the passive is applied.
+
+        Adjust stats or add effects directly to ``player`` here.
+        Remove or replace the sample logic below in real implementations.
+        """
+
+        player.Defense += 1  # Example: increase player's defense

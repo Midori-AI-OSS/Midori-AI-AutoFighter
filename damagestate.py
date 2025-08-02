@@ -1,3 +1,9 @@
+"""Player damage and passive interactions.
+
+This module governs player-only stat logic during combat. Enemy passives are
+handled separately in :mod:`foe_passive_builder` when foes load at runtime.
+"""
+
 import math
 import random
 

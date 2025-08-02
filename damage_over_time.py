@@ -1,16 +1,14 @@
 
-import os
-import abc
-import pygame
 import random
+from typing import Any, Dict, Optional
 
-from typing import Optional, Dict, Any
+import pygame
 
-from load_photos import resource_path
-from load_photos import set_themed_dot_photo
-
-from damagetypes import Generic
 from damagetypes import DamageType
+from damagetypes import Generic
+from load_photos import set_themed_dot_photo
+from plugins.dots.base import DotPlugin
+from plugins.plugin_loader import PluginLoader
 
 class dot:
     """
@@ -80,3 +78,19 @@ class dot:
             True if the DOT is active, False otherwise.
         """
         return self.turns > 0
+
+
+def get_dot(
+    dot_id: str,
+    *,
+    plugin_dir: str = "plugins",
+    **kwargs: Any,
+) -> DotPlugin | dot:
+    """Return a DOT plugin instance or fallback ``dot``."""
+
+    loader = PluginLoader()
+    loader.discover(plugin_dir)
+    dot_cls = loader.get_plugins("dot").get(dot_id)
+    if dot_cls is not None:
+        return dot_cls(**kwargs)
+    return dot(**kwargs)

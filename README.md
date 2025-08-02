@@ -45,6 +45,9 @@ Run the test suite before submitting changes:
 uv run pytest
 ```
 
+## Continuous Integration
+Tests run automatically on GitHub Actions for each push and pull request (see `.github/workflows/tests.yml`).
+
 ## Contributing
 1. Fork the repository and create your changes.
 2. Follow the commit format `[TYPE] Title`.

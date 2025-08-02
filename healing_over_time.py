@@ -1,7 +1,9 @@
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 from damagetypes import Generic
 from damagetypes import DamageType
+from plugins.hots.base import HotPlugin
+from plugins.plugin_loader import PluginLoader
 
 class hot:
     """
@@ -55,3 +57,19 @@ class hot:
             True if the HOT is active, False otherwise.
         """
         return self.turns > 0
+
+
+def get_hot(
+    hot_id: str,
+    *,
+    plugin_dir: str = "plugins",
+    **kwargs: Any,
+) -> HotPlugin | hot:
+    """Return a HOT plugin instance or fallback ``hot``."""
+
+    loader = PluginLoader()
+    loader.discover(plugin_dir)
+    hot_cls = loader.get_plugins("hot").get(hot_id)
+    if hot_cls is not None:
+        return hot_cls(**kwargs)
+    return hot(**kwargs)

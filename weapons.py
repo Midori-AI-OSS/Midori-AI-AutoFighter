@@ -1,6 +1,9 @@
-import typing
+from __future__ import annotations
 
-from typing import Tuple
+from typing import Dict, Tuple, Type
+
+from plugins.plugin_loader import PluginLoader
+from plugins.weapons.base import WeaponPlugin
 
 class WeaponType:
     """Represents a weapon type with its attributes and passive effect."""
@@ -22,3 +25,19 @@ class WeaponType:
         self.critical_chance = critical_chance
         self.game_obj = game_str
         self.position: Tuple[int, int] = (0, 0)  # type: ignore
+
+
+DEFAULT_WEAPONS: Dict[str, WeaponType] = {
+    "sword": WeaponType("Sword", 1, 1.0, 0.0, "Sword"),
+}
+
+
+def get_weapon(weapon_id: str) -> WeaponPlugin | WeaponType | None:
+    """Return a weapon plugin instance or fallback ``WeaponType``."""
+
+    loader = PluginLoader()
+    loader.discover("plugins")
+    weapon_cls: Type[WeaponPlugin] | None = loader.get_plugins("weapon").get(weapon_id)
+    if weapon_cls is not None:
+        return weapon_cls()
+    return DEFAULT_WEAPONS.get(weapon_id)

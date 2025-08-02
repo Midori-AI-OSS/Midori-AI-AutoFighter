@@ -4,6 +4,7 @@ from player import Player
 from plugins.players.base import PlayerPlugin
 
 
+
 class Warrior(PlayerPlugin):
     """Default warrior player."""
 
@@ -13,5 +14,8 @@ class Warrior(PlayerPlugin):
 
     def build(self, name: str | None = None, **kwargs) -> Player:
         """Construct and return the player instance."""
-
-        return Player(name or self.name)
+        player = Player(name or self.name)
+        player.load()
+        player.set_photo(self.id)
+        player.isplayer = True
+        return player

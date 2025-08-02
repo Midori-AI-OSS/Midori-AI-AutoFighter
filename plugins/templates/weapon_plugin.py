@@ -3,14 +3,26 @@
 Implement attack logic inside :func:`attack`.
 """
 
+from player import Player
+
 
 class WeaponPlugin:
-    """Example weapon plugin skeleton."""
+    """Example weapon plugin skeleton.
+
+    Replace ``id``, ``name``, and ``attack`` with your weapon's details.
+    """
 
     plugin_type = "weapon"
-    id = "TODO_unique_id"  # TODO: unique identifier used by the game
-    name = "TODO name"  # TODO: display name
+    id = "example_weapon"  # Unique identifier used by the game
+    name = "Example Weapon"  # Display name shown to players
 
-    def attack(self, attacker, target):
-        """TODO: apply damage from ``attacker`` to ``target``."""
-        raise NotImplementedError
+    def attack(self, attacker: Player, target: Player) -> float:
+        """Apply damage from ``attacker`` to ``target``.
+
+        Adjust the damage modifier or type to fit your weapon.
+        """
+
+        damage = attacker.deal_damage(1, target.Type)
+        target.take_damage(1, damage)
+
+        return damage
