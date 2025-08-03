@@ -26,7 +26,6 @@ from plugins.plugin_loader import PluginLoader
 
 
 PLAYER_IDS = [
-    ("warrior", "Warrior"),
     ("luna", "Luna"),
     ("carly", "Carly"),
     ("becca", "Becca"),

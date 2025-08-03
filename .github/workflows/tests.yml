@@ -15,3 +15,6 @@ jobs:
           python-version: "3.11"
       - name: Run tests
         run: uv run pytest
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy

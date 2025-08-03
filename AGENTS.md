@@ -57,3 +57,6 @@ Refer to your mode's cheat sheet for quick reminders and update it as needed.
 - **Unknown Mode** (no file): If you are unsure which mode applies, review all four mode guides in `.codex/modes/` and pick the one that best fits your task. Then, use the team communication command (`contact.sh`) to announce which mode you selected and the nature of your request. This helps us improve our prompting and documentation for future contributors.
 
 Refer to the relevant mode guide in `.codex/modes/` before starting work, and follow the documentation structure and conventions described there. For service-specific details, see the `.codex/instructions/` folder of the service you are working on. Each service may provide additional rules in its own `AGENTS.md`—start here, then check the service directory for any extra requirements.
+
+### Documentation sync
+When adding or modifying player or foe plugins, update both `README.md` and `.codex/implementation/player-foe-reference.md` so the roster and enemy details stay accurate.
