@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from direct.gui.DirectGui import DirectButton
+from direct.gui.DirectGui import DirectCheckButton
 from direct.gui.DirectGui import DirectSlider
 from direct.showbase.ShowBase import ShowBase
-from direct.gui.DirectGui import DirectCheckButton
 
+from autofighter.save import load_player
 from autofighter.scene import Scene
+from autofighter.battle_room import BattleRoom
+from autofighter.player_creator import PlayerCreator
 
 
 class MainMenu(Scene):
@@ -60,14 +63,24 @@ class MainMenu(Scene):
     def activate(self) -> None:
         self.buttons[self.index]["command"]()
 
-    def new_run(self) -> None:  # stub
-        print("New Run")
+    def new_run(self) -> None:
+        loaded = load_player()
+        if not loaded:
+            print("No saved player. Use Edit Player first.")
+            return
+        _, _, _, _, stats = loaded
+        battle = BattleRoom(self.app, return_scene_factory=lambda: MainMenu(self.app), player=stats)
+        self.app.scene_manager.switch_to(battle)
 
     def load_run(self) -> None:  # stub
         print("Load Run")
 
-    def edit_player(self) -> None:  # stub
-        print("Edit Player")
+    def edit_player(self) -> None:
+        creator = PlayerCreator(
+            self.app,
+            return_scene_factory=lambda: MainMenu(self.app),
+        )
+        self.app.scene_manager.switch_to(creator)
 
     def open_options(self) -> None:
         self.app.scene_manager.switch_to(OptionsMenu(self.app))
@@ -80,7 +93,7 @@ class OptionsMenu(Scene):
         self.index = 0
         self.sfx_volume = 0.5
         self.music_volume = 0.5
-        self.pause_on_stats = True
+        self.pause_on_stats = getattr(self.app, "pause_on_stats", True)
 
     def setup(self) -> None:
         sfx = DirectSlider(
@@ -175,6 +188,7 @@ class OptionsMenu(Scene):
 
     def toggle_pause(self, _=None) -> None:
         self.pause_on_stats = bool(self.widgets[2]["indicatorValue"])
+        self.app.pause_on_stats = self.pause_on_stats
 
     def back(self) -> None:
         self.app.scene_manager.switch_to(MainMenu(self.app))

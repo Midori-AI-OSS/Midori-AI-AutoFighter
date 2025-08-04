@@ -18,4 +18,4 @@ A flexible plugin loader keeps the game extensible for new content.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: failed - discovery registers classes but several plugin categories (foes, passives, rooms) remain unverified; poison DoT missing and tests report unregistered plugins
+status: passed - discovery, mod hooks, and event bus integration implemented

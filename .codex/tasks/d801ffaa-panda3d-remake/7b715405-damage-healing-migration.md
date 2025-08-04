@@ -19,4 +19,4 @@ Consistent damage and healing logic keeps combat behavior aligned with the origi
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: passed - Stats dataclass and DoT/HoT implementations cover listed effects with unit tests; legacy test failures are unrelated
+status: ready for review

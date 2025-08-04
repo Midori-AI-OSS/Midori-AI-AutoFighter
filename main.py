@@ -17,6 +17,9 @@ class AutoFighterApp(ShowBase):
         self.plugin_loader.discover("plugins")
         self.plugin_loader.discover("mods")
 
+        self.pause_on_stats = True
+        self.paused = False
+
         props = WindowProperties()
         props.set_title("Midori AI AutoFighter")
         self.win.request_properties(props)
@@ -34,6 +37,22 @@ class AutoFighterApp(ShowBase):
 
     def update(self, task):
         return task.cont
+
+    def pause_game(self) -> None:
+        if not self.paused:
+            try:
+                self.task_mgr.remove("update")
+            except Exception:
+                pass
+            self.paused = True
+
+    def resume_game(self) -> None:
+        if self.paused:
+            try:
+                self.task_mgr.add(self.update, "update")
+            except Exception:
+                pass
+            self.paused = False
 
 
 def main() -> None:

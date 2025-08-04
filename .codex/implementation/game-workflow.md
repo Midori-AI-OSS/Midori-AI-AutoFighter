@@ -3,9 +3,18 @@
 This document describes the full runtime sequence of Midori AI AutoFighter and how player progress is persisted between runs.
 
 ## Startup
-- `PluginLoader` scans the `plugins/` directory and registers available classes.
-- For each fighter plugin found in `plugins/players/`, the loader attempts to restore a save from `lives/<name>.dat`.
-- Save files use Python's `pickle` format to serialize each fighter's `__dict__`.
+- `PluginLoader` scans the `plugins/` directory to register available classes.
+- `MapGenerator` creates 45-room floors seeded per run, guaranteeing at least two shops and two rest rooms. Pressure Level adds extra rooms and boss encounters, and chat rooms may appear after battle nodes without increasing the room count.
+- The main menu offers a Player Creator for choosing body style, hair style, hair color, and accessory while distributing 100 stat points. Spending 100 of each damage type's 4★ upgrade items adds one extra point, and optional item bonuses apply when confirming.
+- Confirmed choices are saved to `player.json` and loaded for new runs.
+- A Stat Screen scene displays grouped stats (core, offense, defense, vitality, advanced) and status lists for passives, DoTs, HoTs, damage types, and relic stacks, refreshing every few frames.
+ - Opening the Stat Screen pauses gameplay if the Options menu enables **Pause on Stat Screen**.
+- Damage-over-time and healing-over-time effects are handled by an `EffectManager` supporting Bleed, Celestial Atrophy, Abyssal Corruption that spreads on death, Blazing Torment with extra ticks, and Impact Echo repeating half the last hit.
+- Selecting *New Run* starts a Battle Room scene that renders placeholder models and runs messenger-driven turns with stat-based accuracy, scaled foes, floating damage numbers, attack effects, status icons, and an overtime warning after 100 turns (500 for floor bosses) that flashes the room and grants an Enraged buff.
+ - Rest Rooms allow one heal or trade per floor, play a brief message animation, and at least two must appear on each floor via `RestRoom.should_spawn`.
+ - Shop Rooms sell upgrade items and cards with gold pricing, star ratings, floor-based inventory scaling, and reroll costs. Purchases add items to inventory, and class-level tracking ensures at least two appear per floor.
+ - Event Rooms present text prompts with selectable options that deterministically modify stats or inventory using seeded randomness. They may occur after battles without consuming the floor's room count.
+ - Chat Rooms let players send a single message to an LLM character. Usage is limited to six chats per floor, and rooms should not spawn once the limit is reached.
 
 ## Wave preparation
 - Before a wave begins, fighters level up and their updated state is written back to `lives/`.

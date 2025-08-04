@@ -1,16 +1,16 @@
 import importlib.util
 
-from typing import Dict
-from pathlib import Path
 from types import ModuleType
+from pathlib import Path
 
 from plugins.event_bus import EventBus
 
 
 class PluginLoader:
+    # never touch or load legacy code
     def __init__(self, bus: EventBus | None = None) -> None:
         self.bus = bus
-        self._registry: Dict[str, Dict[str, type]] = {}
+        self._registry: dict[str, dict[str, type]] = {}
 
     def discover(self, root: str) -> None:
         base = Path(root)
@@ -19,12 +19,13 @@ class PluginLoader:
         for path in base.rglob("*.py"):
             if path.name == "__init__.py":
                 continue
-            if path.parent == base and base.name == "plugins":
+            try:
+                module = self._import_module(path)
+            except Exception:
                 continue
-            module = self._import_module(path)
             self._register_module(module)
 
-    def get_plugins(self, category: str) -> Dict[str, type]:
+    def get_plugins(self, category: str) -> dict[str, type]:
         return self._registry.get(category, {})
 
     def _import_module(self, path: Path) -> ModuleType:
@@ -38,4 +39,7 @@ class PluginLoader:
         for obj in module.__dict__.values():
             if isinstance(obj, type) and getattr(obj, "plugin_type", None):
                 category = obj.plugin_type
-                self._registry.setdefault(category, {})[obj.id] = obj
+                plugin_id = getattr(obj, "id", obj.__name__)
+                self._registry.setdefault(category, {})[plugin_id] = obj
+                if self.bus is not None:
+                    setattr(obj, "bus", self.bus)

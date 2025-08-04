@@ -1,5 +1,5 @@
 [project]
-name = "Midori-AI-AutoFighter"
+name = "autofighter"
 version = "0.1.0"
 description = "Panda3D rewrite scaffold for Midori AI AutoFighter"
 readme = "README.md"

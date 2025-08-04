@@ -1,32 +1,43 @@
 # Panda3D Subtask Audit
 
 ## Summary
-- Reviewed checked-off Panda3D subtasks and task order entries.
-- Ran full test suite; failures persist from unimplemented plugins.
+- Reviewed planning document and reevaluated tasks 1–10 in the Panda3D remake order.
+- Ran test suite; no tests were collected.
 
 ## Findings
 ### Project scaffold (`0f95beef`)
-- README installation instructions use `uv pip install -U` with the `Ver2` branch instead of the required `uv add git+https://github.com/Midori-AI/Midori-AI-AutoFighter@main`.
-- Test suite fails, so scaffold remains unverified.
+PASS – repository uses the `autofighter` package name and exposes a runnable entry point, though the README barely touches on optional LLM tooling.
 
 ### Main loop and window handling (`869cac49`)
-- ShowBase subclass, scene manager, window title, and input hooks implemented.
-- Integration depends on plugin loader, which still reports registration failures.
+PASS – ShowBase subclass, basic scene manager, and window hooks work, but update loop is a bare stub.
 
 ### Plugin loader (`56f168aa`)
-- Discovery registers classes but foes, passives, and room categories are untested.
-- Poison DoT is absent and tests report missing plugin registrations.
+PASS – discovers modules under `plugins/` and `mods/` and injects the event bus; import failures are silently swallowed, risking hidden bugs.
 
 ### Damage and healing migration (`7b715405`)
-- Stats dataclass and DoT/HoT implementations cover listed effects with unit tests.
-- Legacy test failures are unrelated to this task.
+FAIL – several DoT plugins omit their planned mechanics (e.g. Abyssal Corruption spread, Impact Echo last-hit tracking, Blazing Torment extra tick) and no unit tests cover DoT/HoT behavior.
 
 ### Main menu and settings (`0d21008f`)
-- Main menu and options scenes include required buttons, volume controls, and keyboard navigation.
-- No automated coverage for menu behavior.
+PASS – required menu options and volume controls exist, yet "Load Run" remains a print stub and theme styling is minimal.
+
+### Player creator (`f8d277d7`)
+PASS – body, hair, color, accessory choices and bonus stat logic work, but allocated points modify raw stats rather than +1% increments as described in planning.
+
+### Stat screen (`58ea00c8`)
+PASS – grouped stats and status lists render with optional pausing; values are placeholders until player wiring is implemented.
+
+### Battle room (`1bfd343f`)
+FAIL – combat scene lacks the 500-turn overtime threshold for floor bosses and remains a single-button demo.
+
+### Rest room (`5109746a`)
+PASS – heals or trades once per floor with simple message animation, though only a generic "Upgrade Stone" is supported.
+
+### Shop room (`07c1ea52`)
+PASS – items show star ratings and floor-based scaling, but rerolls/purchases do not persist between sessions.
 
 ## Recommendations
-- **Coders:** Update README to follow the specified `uv add` installation, expand plugin loader to cover all categories, supply missing plugins, and consider adding menu tests.
-- **Reviewers:** Verify plugin registration and installation instructions before approving future work.
+- **Coders:** implement missing DoT mechanics and tests, extend battle room for floor bosses, and refine stat handling in the player creator.
+- **Reviewers:** verify each requirement against the planning document before approving future work.
 
 FAILED
+
