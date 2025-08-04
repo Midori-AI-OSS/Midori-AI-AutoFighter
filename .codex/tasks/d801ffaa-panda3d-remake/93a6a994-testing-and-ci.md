@@ -4,8 +4,9 @@
 Establish automated tests and GitHub workflows for the Panda3D remake.
 
 ## Tasks
-- [ ] Add unit tests for new modules under `tests/`.
-- [ ] Configure a GitHub Actions workflow to run `uv run pytest` on pushes and pull requests.
+- [ ] Add unit tests for menus, stat screen, map navigation, gacha logic, and data wiring under `tests/`.
+- [ ] Configure headless Panda3D fixtures to run in CI.
+- [ ] Create a GitHub Actions workflow to run `uv run pytest` and lint on pushes and pull requests.
 - [ ] Document how to run tests locally.
 
 ## Context

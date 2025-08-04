@@ -4,8 +4,11 @@
 Port existing damage-over-time and healing-over-time systems to the new architecture.
 
 ## Tasks
+- [ ] Define a shared `Stats` dataclass for players and foes.
 - [ ] Reimplement DoT and HoT handling using Panda3D-friendly data structures.
-- [ ] Ensure stacking and reset rules match the current game's mechanics.
+- [ ] Support the following DoTs with their effects: Bleed, Celestial Atrophy, Abyssal Corruption, Abyssal Weakness, Gale Erosion, Charged Decay, Frozen Wound, Blazing Torment, Cold Wound (5-stack cap), Twilight Decay, Impact Echo.
+- [ ] Support HoTs: Regeneration, PlayerName's Echo, PlayerName's Heal.
+- [ ] Ensure stacking and reset rules match the current game's mechanics and clear after battles unless made permanent.
 - [ ] Add unit tests for each damage and healing type.
 
 ## Context

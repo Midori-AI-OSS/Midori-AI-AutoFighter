@@ -4,9 +4,11 @@
 Create the combat room with turn-based foe interactions.
 
 ## Tasks
-- [ ] Render player and foe models or placeholders.
-- [ ] Implement turn-based logic using existing damage and passive systems.
-- [ ] Display damage numbers and status effect icons.
+- [ ] Render player and foe models or placeholders using Panda3D node graphs.
+- [ ] Implement turn-based logic using messenger events and the shared `Stats` dataclass for accuracy and damage.
+- [ ] Scale foes according to floor, room, Pressure level, and loop count.
+- [ ] Display damage numbers, status effect icons, and reusable attack effects.
+- [ ] Trigger overtime warnings after 100 turns (500 for floor bosses) with red/blue flashes and an `Enraged` buff.
 
 ## Context
 Battle rooms are the core gameplay loop and must mirror current mechanics.

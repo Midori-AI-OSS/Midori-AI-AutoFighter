@@ -4,9 +4,10 @@
 Document setup instructions and coding standards for the Panda3D remake.
 
 ## Tasks
-- [ ] Write developer setup steps for installing dependencies and running the game.
-- [ ] Outline coding style and directory conventions for new modules.
-- [ ] Provide guidelines for contributing plugins and assets.
+- [ ] Write developer setup steps for installing dependencies with `uv` and running `main.py`.
+- [ ] Outline coding style and directory conventions for the new `game/` package and `assets/` structure.
+- [ ] Warn contributors not to modify `legacy/` and explain plugin documentation expectations.
+- [ ] Provide guidelines for contributing plugins and assets, including the `Give Feedback` menu and issue links.
 
 ## Context
 Clear documentation helps new contributors get started quickly and keeps the project consistent.

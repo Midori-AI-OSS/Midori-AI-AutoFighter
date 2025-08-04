@@ -4,9 +4,9 @@
 Create shop rooms where players can spend gold on upgrade items or cards.
 
 ## Tasks
-- [ ] Design a shop interface listing items with prices and star ratings.
-- [ ] Implement purchasing logic that deducts gold and grants items.
-- [ ] Include refresh or reroll functionality using a small gold fee.
+- [ ] Design a shop interface listing items with prices, star ratings, and limited stock.
+- [ ] Implement purchasing logic that deducts gold, grants items, and supports rerolls for a small fee.
+- [ ] Ensure at least two shop rooms appear per floor and inventory scales with difficulty.
 
 ## Context
 Shops allow players to customize builds between battles.

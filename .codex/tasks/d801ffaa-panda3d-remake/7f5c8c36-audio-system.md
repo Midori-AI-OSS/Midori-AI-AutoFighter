@@ -4,9 +4,9 @@
 Integrate sound effects and music playback into the Panda3D framework.
 
 ## Tasks
-- [ ] Set up an audio manager for playing background music and sound effects.
-- [ ] Add volume controls tied to the settings menu.
-- [ ] Implement cross-fades for boss themes and overtime warnings.
+- [ ] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
+- [ ] Implement cross-fades for boss themes and overtime warnings after long battles.
+- [ ] Support toggling stat-screen pause behaviour for audio if needed.
 
 ## Context
 Audio feedback enhances immersion and communicates combat states.

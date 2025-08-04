@@ -4,8 +4,10 @@
 Set up a pipeline for importing and optimizing art assets for Panda3D.
 
 ## Tasks
-- [ ] Define folder structure for sprites, models, and audio under `assets/`.
-- [ ] Add conversion scripts for resizing or reformatting assets as needed.
+- [ ] Research low-poly or pixelated 3D art styles and evaluate free/CC model sources for compatibility.
+- [ ] Establish a conversion workflow (e.g., Blender to `.bam`/`.egg`) with cached builds.
+- [ ] Maintain `assets/` structure for models, textures, and audio, and create an `assets.toml` manifest mapping keys to paths and hashes.
+- [ ] Build an `AssetManager` that loads and caches models, textures, and sounds on demand.
 - [ ] Document guidelines for artists to contribute compatible assets.
 
 ## Context

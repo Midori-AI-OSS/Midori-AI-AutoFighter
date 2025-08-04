@@ -5,7 +5,9 @@ Create a plugin-loading system compatible with the Panda3D remake.
 
 ## Tasks
 - [ ] Implement a loader that discovers Python modules under `plugins/` and registers them with the game.
-- [ ] Provide hooks for player, foe, passive, and room plugins.
+- [ ] Provide hooks for player, weapon, foe, passive, DoT, HoT, and room plugins.
+- [ ] Expose a mod interface and avoid importing legacy Pygame code.
+- [ ] Wrap Panda3D's `messenger` with an event bus so plugins can subscribe and emit without engine imports.
 - [ ] Document the plugin API and how to add new plugins.
 
 ## Context

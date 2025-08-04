@@ -4,9 +4,10 @@
 Refine the user interface for clarity, responsiveness, and accessibility.
 
 ## Tasks
-- [ ] Implement scalable layouts that work on desktop and mobile resolutions.
-- [ ] Add color-blind friendly options and readable star colors.
-- [ ] Audit input navigation to ensure keyboard-only play is possible.
+- [ ] Implement dark, glassy theme with blurred gradient backgrounds, rounded panels, and accent highlights.
+- [ ] Provide color-blind friendly options and ensure star colors (1 gray, 2 blue, 3 green, 4 purple, 5 red, 6 gold) are readable.
+- [ ] Audit keyboard-only navigation and scalable layouts for desktop and mobile resolutions.
+- [ ] Offer settings to adjust or disable overtime warning colors and speed.
 
 ## Context
 Polished and accessible UI improves usability for a broader audience.

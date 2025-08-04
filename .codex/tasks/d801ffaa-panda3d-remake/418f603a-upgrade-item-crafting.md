@@ -4,8 +4,9 @@
 Add crafting mechanics for combining lower-star upgrade items into higher-star ones.
 
 ## Tasks
-- [ ] Allow conversion of 1★ items into 2★, 2★ into 3★, and 3★ into 4★ at the specified ratios.
+- [ ] Allow conversion of 125×1★ to 1×2★, 125×2★ to 1×3★, and 125×3★ to 1×4★ items.
 - [ ] Support dual-type requirements for upgrading dual-element characters.
+- [ ] Permit trading 10×4★ items for an extra gacha pull.
 - [ ] Provide a UI panel for crafting and confirming conversions.
 
 ## Context

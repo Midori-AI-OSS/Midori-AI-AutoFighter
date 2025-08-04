@@ -4,9 +4,10 @@
 Implement the player creation screen with body types, hair options, and stat allocation.
 
 ## Tasks
-- [ ] Allow players to choose among A/B/C body types and select hair styles.
-- [ ] Provide a 100-point pool for distributing core stats.
-- [ ] Persist the created character for use in runs.
+- [ ] Allow players to choose among three body types and select hair styles, colors, and accessories.
+- [ ] Provide a 100-point pool for distributing core stats, each point granting +1% to the chosen stat.
+- [ ] Permit spending 100 of each damage type's 4★ upgrade items to purchase one additional stat point.
+- [ ] Save the created character for use in runs.
 
 ## Context
 The creator personalizes the player's avatar before entering gameplay.

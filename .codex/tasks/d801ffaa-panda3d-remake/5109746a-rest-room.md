@@ -4,9 +4,9 @@
 Develop rest rooms where players can heal or spend items for upgrades.
 
 ## Tasks
-- [ ] Offer healing or upgrade-item trade options at rest sites.
-- [ ] Animate a brief rest scene to communicate the choice outcome.
-- [ ] Track rest usage per run for balance tuning.
+- [ ] Offer choices to heal or trade upgrade items for benefits.
+- [ ] Animate a brief rest scene to communicate outcomes.
+- [ ] Track rest usage per floor, ensuring at least two rest rooms appear on each floor.
 
 ## Context
 Rest rooms provide recovery opportunities between battles.
