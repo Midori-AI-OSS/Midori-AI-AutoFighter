@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,7 +24,7 @@ def test_failed_pull_grants_item() -> None:
     with patch.object(gs.rng, "random", return_value=0.9):
         result = gs.pull(1)
     assert result.characters == []
-    assert result.upgrade_items == 1
+    assert result.upgrade_items[1] == 1
 
 
 def test_duplicate_vitality_stack() -> None:
@@ -43,6 +44,30 @@ def test_serialization_round_trip() -> None:
         gs.rng, "choice", return_value="ally"
     ):
         gs.pull(1)
+    gs.upgrade_items[1] = 2
+    gs.tickets = 1
     data = gs.serialize()
     loaded = GachaSystem.deserialize(data, rng=random.Random(0))
     assert loaded.owned == gs.owned
+    assert loaded.upgrade_items == gs.upgrade_items
+    assert loaded.tickets == gs.tickets
+
+
+def test_crafting_converts_on_pull() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    gs.upgrade_items[1] = 124
+    with patch.object(gs.rng, "random", return_value=0.9):
+        result = gs.pull(1)
+    assert gs.upgrade_items[1] == 0
+    assert gs.upgrade_items[2] == 1
+    assert result.upgrade_items[2] == 1
+
+
+def test_trade_for_tickets() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    gs.upgrade_items[4] = 10
+    with patch.object(gs.rng, "random", return_value=0.9):
+        result = gs.pull(1)
+    assert gs.tickets == 1
+    assert gs.upgrade_items[4] == 0
+    assert result.tickets == 1
