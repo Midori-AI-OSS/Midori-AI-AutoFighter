@@ -31,7 +31,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights.
 23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
 24. [ ] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
-25. [ ] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
+25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
 26. [ ] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
 27. [ ] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
 28. [ ] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.

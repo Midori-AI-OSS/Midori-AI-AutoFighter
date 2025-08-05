@@ -14,6 +14,8 @@ from direct.showbase.ShowBase import ShowBase
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
+from autofighter.rewards import Reward
+from autofighter.rewards import select_rewards
 
 
 class BattleRoom(Scene):
@@ -29,6 +31,7 @@ class BattleRoom(Scene):
         room: int = 1,
         pressure: int = 0,
         loop: int = 0,
+        boss: bool = False,
         floor_boss: bool = False,
     ) -> None:
         self.app = app
@@ -36,6 +39,10 @@ class BattleRoom(Scene):
         self.player = player or Stats(hp=100, max_hp=100, atk=10, defense=5)
         self.base_foe = Stats(hp=50, max_hp=50, atk=5, defense=3)
         self.foe = self.scale_foe(floor, room, pressure, loop)
+        self.pressure = pressure
+        self.loop = loop
+        self.boss = boss
+        self.floor_boss = floor_boss
         self.turn = 0
         self.overtime_threshold = 500 if floor_boss else 100
         self.overtime = False
@@ -49,6 +56,7 @@ class BattleRoom(Scene):
         self.status_icons: list[NodePath] = []
         self._flash_task: Task | None = None
         self._flash_state = False
+        self.reward: Reward | None = None
 
     def setup(self) -> None:
         self.player_model = self.app.loader.loadModel("models/box")
@@ -133,12 +141,27 @@ class BattleRoom(Scene):
         else:
             text = "Miss!"
         if self.foe.hp <= 0:
-            text = "Foe defeated!"
-        self.status_label["text"] = text
-        if self.foe.hp > 0:
-            self.app.messenger.send("foe-attack")
-        else:
+            self.reward = select_rewards(
+                boss=self.boss,
+                floor_boss=self.floor_boss,
+                loop=self.loop,
+                pressure=self.pressure,
+            )
+            parts = [
+                f"Gold {self.reward.gold}",
+                f"Card {self.reward.card}★",
+                f"Upgrade {self.reward.upgrade}★",
+            ]
+            if self.reward.relic is not None:
+                parts.append(f"Relic {self.reward.relic}★")
+            if self.reward.tickets:
+                parts.append(f"Tickets {self.reward.tickets}")
+            reward_text = ", ".join(parts)
+            self.status_label["text"] = f"Foe defeated! {reward_text}"
             self.attack_button["state"] = DGG.DISABLED
+        else:
+            self.status_label["text"] = text
+            self.app.messenger.send("foe-attack")
 
     def foe_attack(self) -> None:
         assert self.attack_button is not None
