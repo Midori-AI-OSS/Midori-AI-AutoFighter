@@ -6,11 +6,12 @@ import random
 from typing import Any
 from typing import Dict
 from typing import List
+from dataclasses import dataclass
+from dataclasses import field
+
 from .crafting import craft_upgrades
 from .crafting import trade_for_tickets
 from .vitality import vitality_bonus
-from dataclasses import dataclass
-from dataclasses import field
 from plugins.plugin_loader import PluginLoader
 
 
@@ -38,6 +39,8 @@ class GachaSystem:
         self.owned: Dict[str, int] = {}
         self.upgrade_items: Dict[int, int] = {1: 0, 2: 0, 3: 0, 4: 0}
         self.tickets = 0
+        self.pity_5 = 0
+        self.pity_6 = 0
 
         loader = PluginLoader()
         loader.discover(player_dir)
@@ -50,15 +53,37 @@ class GachaSystem:
         before = self.upgrade_items.copy()
         result = GachaResult()
         for _ in range(count):
-            if self.rng.random() < 0.5:
+            rarity = 0
+            if self.pity_6 >= 2000:
+                rarity = 6
+            elif self.pity_5 >= 179:
+                rarity = 5
+            else:
+                p6 = 0.0001 + (self.pity_6 * 0.000005)
+                p5 = 0.001 + (self.pity_5 * 0.00031)
+                roll = self.rng.random()
+                if roll < p6:
+                    rarity = 6
+                elif roll < p6 + p5:
+                    rarity = 5
+
+            if rarity:
                 character = self.rng.choice(self.pool)
                 stacks = self.owned.get(character, 0)
                 self.owned[character] = stacks + 1
                 result.characters.append(character)
                 if stacks:
                     result.vitality[character] = vitality_bonus(stacks)
+                if rarity == 6:
+                    self.pity_6 = 0
+                    self.pity_5 = 0
+                else:
+                    self.pity_5 = 0
+                    self.pity_6 += 1
             else:
                 self.upgrade_items[1] += 1
+                self.pity_5 += 1
+                self.pity_6 += 1
 
         craft_upgrades(self.upgrade_items)
         tickets = trade_for_tickets(self.upgrade_items)
@@ -77,6 +102,8 @@ class GachaSystem:
                 "owned": self.owned,
                 "upgrade_items": self.upgrade_items,
                 "tickets": self.tickets,
+                "pity_5": self.pity_5,
+                "pity_6": self.pity_6,
             }
         )
 
@@ -94,4 +121,6 @@ class GachaSystem:
             int(k): int(v) for k, v in payload.get("upgrade_items", {}).items()
         }
         obj.tickets = int(payload.get("tickets", 0))
+        obj.pity_5 = int(payload.get("pity_5", 0))
+        obj.pity_6 = int(payload.get("pity_6", 0))
         return obj

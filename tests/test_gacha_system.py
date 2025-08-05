@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import random
 
 from pathlib import Path
@@ -29,7 +28,7 @@ def test_failed_pull_grants_item() -> None:
 
 def test_duplicate_vitality_stack() -> None:
     gs = GachaSystem(rng=random.Random(0))
-    with patch.object(gs.rng, "random", return_value=0.1), patch.object(
+    with patch.object(gs.rng, "random", return_value=0.0), patch.object(
         gs.rng, "choice", return_value="ally"
     ):
         gs.pull(1)
@@ -40,7 +39,7 @@ def test_duplicate_vitality_stack() -> None:
 
 def test_serialization_round_trip() -> None:
     gs = GachaSystem(rng=random.Random(0))
-    with patch.object(gs.rng, "random", return_value=0.1), patch.object(
+    with patch.object(gs.rng, "random", return_value=0.0), patch.object(
         gs.rng, "choice", return_value="ally"
     ):
         gs.pull(1)
@@ -51,6 +50,8 @@ def test_serialization_round_trip() -> None:
     assert loaded.owned == gs.owned
     assert loaded.upgrade_items == gs.upgrade_items
     assert loaded.tickets == gs.tickets
+    assert loaded.pity_5 == gs.pity_5
+    assert loaded.pity_6 == gs.pity_6
 
 
 def test_crafting_converts_on_pull() -> None:
@@ -71,3 +72,33 @@ def test_trade_for_tickets() -> None:
     assert gs.tickets == 1
     assert gs.upgrade_items[4] == 0
     assert result.tickets == 1
+
+
+def test_pity_counters_increment() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    with patch.object(gs.rng, "random", return_value=0.99):
+        gs.pull(1)
+    assert gs.pity_5 == 1
+    assert gs.pity_6 == 1
+
+
+def test_pity_resets_on_feature_drop() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    gs.pity_5 = 179
+    with patch.object(gs.rng, "random", return_value=0.99), patch.object(
+        gs.rng, "choice", return_value="ally"
+    ):
+        gs.pull(1)
+    assert gs.pity_5 == 0
+    assert gs.pity_6 == 1
+
+
+def test_pity_resets_on_six_star() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    gs.pity_6 = 2000
+    with patch.object(gs.rng, "random", return_value=0.99), patch.object(
+        gs.rng, "choice", return_value="ally"
+    ):
+        gs.pull(1)
+    assert gs.pity_5 == 0
+    assert gs.pity_6 == 0
