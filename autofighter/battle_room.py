@@ -11,6 +11,7 @@ from direct.gui.DirectGui import DirectButton
 from direct.gui.DirectGui import DirectLabel
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.balance.pressure import stat_multiplier
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
@@ -107,7 +108,7 @@ class BattleRoom(Scene):
     def scale_foe(
         self, floor: int, room: int, pressure: int, loop: int
     ) -> Stats:
-        factor = floor * room * (1 + 0.05 * pressure) * (1.2 ** loop)
+        factor = floor * room * stat_multiplier(pressure) * (1.2 ** loop)
         return Stats(
             hp=int(self.base_foe.hp * factor),
             max_hp=int(self.base_foe.max_hp * factor),

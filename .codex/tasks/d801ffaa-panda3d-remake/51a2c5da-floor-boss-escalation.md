@@ -4,17 +4,17 @@
 Increase floor boss difficulty and rewards on each subsequent loop.
 
 ## Tasks
-- [ ] Boost boss stats and mechanics after every loop.
-- [ ] Scale loot tables to match higher difficulty.
-- [ ] Sync escalation with pressure level progression.
-- [ ] Document this feature in `.codex/implementation`.
-- [ ] Add unit tests covering success and failure cases.
+- [x] Boost boss stats and mechanics after every loop.
+- [x] Scale loot tables to match higher difficulty.
+- [x] Sync escalation with pressure level progression.
+- [x] Document this feature in `.codex/implementation`.
+- [x] Add unit tests covering success and failure cases.
 
 ## Context
 Escalating bosses maintain tension during repeated runs.
 
 ## Testing
-- [ ] Run `uv run pytest`.
+- [x] Run `uv run pytest`.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
-status: in progress
+status: ready for review
