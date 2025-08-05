@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from direct.showbase.ShowBase import ShowBase
 else:  # pragma: no cover - runtime avoids heavy import
     ShowBase = object
+
+logger = logging.getLogger(__name__)
 
 
 class Scene:
@@ -26,20 +30,38 @@ class SceneManager:
 
     def switch_to(self, scene: Scene | None) -> None:
         if self.current:
-            self.current.teardown()
+            try:
+                self.current.teardown()
+            except Exception:
+                logger.exception("Error tearing down scene %s", self.current)
         for overlay in self.overlays:
-            overlay.teardown()
-        self.current = scene
+            try:
+                overlay.teardown()
+            except Exception:
+                logger.exception("Error tearing down overlay %s", overlay)
+        self.current = None
         self.overlays = []
-        if self.current:
-            self.current.setup()
+        if scene:
+            try:
+                scene.setup()
+            except Exception:
+                logger.exception("Error setting up scene %s", scene)
+            else:
+                self.current = scene
 
     def push_overlay(self, overlay: Scene) -> None:
+        try:
+            overlay.setup()
+        except Exception:
+            logger.exception("Error setting up overlay %s", overlay)
+            return
         self.overlays.append(overlay)
-        overlay.setup()
 
     def pop_overlay(self) -> None:
         if not self.overlays:
             return
         overlay = self.overlays.pop()
-        overlay.teardown()
+        try:
+            overlay.teardown()
+        except Exception:
+            logger.exception("Error tearing down overlay %s", overlay)
