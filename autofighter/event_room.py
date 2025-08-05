@@ -2,76 +2,15 @@ from __future__ import annotations
 
 import random
 
-from typing import Callable
-from dataclasses import dataclass
-
+from direct.gui.DirectGui import DirectButton
 from direct.gui.DirectGui import DirectEntry
 from direct.gui.DirectGui import DirectLabel
-from direct.gui.DirectGui import DirectButton
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.events import Event
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
-
-
-@dataclass
-class EventOption:
-    """A selectable outcome for an event."""
-
-    text: str
-    effect: Callable[[Stats, dict[str, int], random.Random], str]
-
-
-@dataclass
-class Event:
-    """Text prompt with deterministic outcomes."""
-
-    prompt: str
-    options: list[EventOption]
-    seed: int = 0
-
-    def resolve(self, choice: int, stats: Stats, items: dict[str, int]) -> str:
-        rng = random.Random(self.seed)
-        return self.options[choice].effect(stats, items, rng)
-
-
-# Sample events -----------------------------------------------------------------
-
-def _fountain_effect(stats: Stats, _items: dict[str, int], rng: random.Random) -> str:
-    heal = rng.randint(5, 10)
-    stats.apply_healing(heal)
-    return f"You feel restored: +{heal} HP"
-
-
-def _chest_effect(stats: Stats, items: dict[str, int], rng: random.Random) -> str:
-    if rng.random() < 0.5:
-        items["Upgrade Stone"] = items.get("Upgrade Stone", 0) + 1
-        return "Inside you find an Upgrade Stone!"
-    damage = rng.randint(1, 5)
-    stats.apply_damage(damage)
-    return f"A trap! You take {damage} damage."
-
-
-SAMPLE_EVENTS = [
-    Event(
-        "A shimmering fountain beckons. Drink?",
-        [
-            EventOption("Drink", _fountain_effect),
-            EventOption("Leave", lambda *_: "You walk away."),
-        ],
-        seed=1,
-    ),
-    Event(
-        "A dusty chest sits alone. Open it?",
-        [
-            EventOption("Open", _chest_effect),
-            EventOption("Ignore", lambda *_: "You move on."),
-        ],
-        seed=2,
-    ),
-]
-
 
 class EventRoom(Scene):
     """Scene that plays one text event with choices."""
@@ -91,7 +30,12 @@ class EventRoom(Scene):
         self.stats = stats
         self.return_scene_factory = return_scene_factory
         self.items = items or {}
-        self.event = event or random.choice(SAMPLE_EVENTS)
+        if event is not None:
+            self.event = event
+        else:
+            events = app.plugin_loader.get_plugins("event")
+            builder = random.choice(list(events.values()))
+            self.event = builder.build()
         self.widgets: list[DirectButton | DirectEntry | DirectLabel] = []
         self.result_label: DirectLabel | None = None
 

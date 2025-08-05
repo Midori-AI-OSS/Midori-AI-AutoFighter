@@ -27,6 +27,7 @@ def test_discovers_plugins_and_injects_bus() -> None:
         "foe",
         "weapon",
         "room",
+        "event",
     ]:
         found = loader.get_plugins(category)
         assert found, f"{category} not loaded"

@@ -23,7 +23,16 @@ class AutoFighterApp(ShowBase):
         self.event_bus = EventBus()
         self.plugin_loader = PluginLoader(
             self.event_bus,
-            required=["player", "foe", "passive", "dot", "hot", "weapon", "room"],
+            required=[
+                "player",
+                "foe",
+                "passive",
+                "dot",
+                "hot",
+                "weapon",
+                "room",
+                "event",
+            ],
         )
         self.plugin_loader.discover("plugins")
         self.plugin_loader.discover("mods")
