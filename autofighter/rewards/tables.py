@@ -34,6 +34,18 @@ class Reward:
     tickets: int = 0
 
 
+@dataclass
+class RewardConfig:
+    normal_gold: int = 5
+    boss_gold: int = 20
+    floor_boss_gold: int = 200
+    ticket_pressure_step: int = 20
+    max_tickets: int = 5
+
+
+config = RewardConfig()
+
+
 RELIC_NORMAL = WeightedPool([(1, 98), (2, 2)])
 UPGRADE_NORMAL = WeightedPool([(1, 80), (2, 20)])
 CARD_NORMAL = WeightedPool([(1, 80), (2, 20)])
@@ -56,22 +68,26 @@ def select_rewards(
     rng: random.Random | None = None,
 ) -> Reward:
     rng = rng or random.Random()
+    loop = max(1, loop)
     if floor_boss:
         relic = RELIC_FLOOR_BOSS.pick(rng)
         upgrade = UPGRADE_FLOOR_BOSS.pick(rng)
         card = CARD_FLOOR_BOSS.pick(rng)
-        gold = int(200 * loop * rng.uniform(2.05, 4.25))
-        tickets = min(5, 1 + pressure // 20 + loop)
+        gold = int(config.floor_boss_gold * loop * rng.uniform(2.05, 4.25))
+        tickets = min(
+            config.max_tickets,
+            1 + pressure // config.ticket_pressure_step + loop,
+        )
     elif boss:
         relic = RELIC_BOSS.pick(rng) if rng.random() < 0.25 else None
         upgrade = UPGRADE_BOSS.pick(rng)
         card = CARD_BOSS.pick(rng)
-        gold = int(20 * loop * rng.uniform(1.53, 2.25))
+        gold = int(config.boss_gold * loop * rng.uniform(1.53, 2.25))
         tickets = 0
     else:
         relic = RELIC_NORMAL.pick(rng) if rng.random() < 0.05 else None
         upgrade = UPGRADE_NORMAL.pick(rng)
         card = CARD_NORMAL.pick(rng)
-        gold = int(5 * loop * rng.uniform(1.01, 1.25))
+        gold = int(config.normal_gold * loop * rng.uniform(1.01, 1.25))
         tickets = 0
     return Reward(gold=gold, upgrade=upgrade, card=card, relic=relic, tickets=tickets)

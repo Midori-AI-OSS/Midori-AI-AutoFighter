@@ -32,6 +32,7 @@ class BossRoom(BattleRoom):
             room=room,
             pressure=pressure,
             loop=loop,
+            boss=not floor_boss,
             floor_boss=floor_boss,
         )
         self.pattern = info.attacks

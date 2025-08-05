@@ -11,13 +11,14 @@ from direct.gui.DirectGui import DirectButton
 from direct.gui.DirectGui import DirectLabel
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.balance.loop import scale_stats
+from autofighter.balance.pressure import apply_pressure
 from autofighter.gui import set_widget_pos
-from autofighter.scene import Scene
-from autofighter.stats import Stats
 from autofighter.rewards import Reward
 from autofighter.rewards import select_rewards
-from autofighter.balance.pressure import apply_pressure
 from autofighter.rooms.chat_room import ChatRoom
+from autofighter.scene import Scene
+from autofighter.stats import Stats
 
 
 class BattleRoom(Scene):
@@ -40,12 +41,13 @@ class BattleRoom(Scene):
         self.return_scene_factory = return_scene_factory
         self.player = player or Stats(hp=100, max_hp=100, atk=10, defense=5)
         self.base_foe = Stats(hp=50, max_hp=50, atk=5, defense=3)
-        self.foe = self.scale_foe(floor, room, pressure, loop)
         self.pressure = pressure
         self.loop = loop
         self.boss = boss
         self.floor_boss = floor_boss
         self.floor = floor
+        self.room = room
+        self.foe = self.scale_foe(floor, room, pressure, loop, floor_boss)
         self.turn = 0
         self.overtime_threshold = 500 if floor_boss else 100
         self.overtime = False
@@ -132,15 +134,9 @@ class BattleRoom(Scene):
         self.app.ignore("foe-attack")
 
     def scale_foe(
-        self, floor: int, room: int, pressure: int, loop: int
+        self, floor: int, room: int, pressure: int, loop: int, floor_boss: bool
     ) -> Stats:
-        factor = floor * room * (1.2 ** loop)
-        base = Stats(
-            hp=int(self.base_foe.hp * factor),
-            max_hp=int(self.base_foe.max_hp * factor),
-            atk=int(self.base_foe.atk * factor),
-            defense=int(self.base_foe.defense * factor),
-        )
+        base = scale_stats(self.base_foe, floor, room, loop, floor_boss=floor_boss)
         return apply_pressure(base, pressure)
 
     def send_player_attack(self) -> None:
