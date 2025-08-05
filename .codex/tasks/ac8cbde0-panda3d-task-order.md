@@ -77,6 +77,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Implement sound-effects and music volume sliders tied to the audio system.
    - [ ] Provide a toggle for pausing the stat screen during gameplay.
    - [ ] Persist settings across sessions.
+   - [x] Document control icons and labels in `.codex/instructions/options-menu.md`.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 10. [x] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
