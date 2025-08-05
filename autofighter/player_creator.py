@@ -29,6 +29,7 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import set_widget_pos
 from autofighter.save import save_player
 from autofighter.scene import Scene
 from autofighter.stats import Stats
@@ -85,62 +86,65 @@ class PlayerCreator(Scene):
             text="Body",
             items=self.body_options,
             initialitem=0,
-            pos=(0, 0, 0.8),
             command=self.set_body,
         )
+        set_widget_pos(body, (0, 0, 0.8))
         hair = DirectOptionMenu(
             text="Hair",
             items=self.hair_options,
             initialitem=0,
-            pos=(0, 0, 0.6),
             command=self.set_hair,
         )
+        set_widget_pos(hair, (0, 0, 0.6))
         color = DirectOptionMenu(
             text="Color",
             items=self.color_options,
             initialitem=0,
-            pos=(0, 0, 0.4),
             command=self.set_color,
         )
+        set_widget_pos(color, (0, 0, 0.4))
         accessory = DirectOptionMenu(
             text="Accessory",
             items=self.accessory_options,
             initialitem=0,
-            pos=(0, 0, 0.2),
             command=self.set_accessory,
         )
+        set_widget_pos(accessory, (0, 0, 0.2))
         hp_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            pos=(0, 0, 0.0),
             scale=0.5,
             command=self.on_slider_change,
             extraArgs=["hp"],
         )
+        set_widget_pos(hp_slider, (0, 0, 0.0))
         atk_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            pos=(0, 0, -0.2),
             scale=0.5,
             command=self.on_slider_change,
             extraArgs=["atk"],
         )
+        set_widget_pos(atk_slider, (0, 0, -0.2))
         def_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            pos=(0, 0, -0.4),
             scale=0.5,
             command=self.on_slider_change,
             extraArgs=["defense"],
         )
+        set_widget_pos(def_slider, (0, 0, -0.4))
         self.sliders = {
             "hp": hp_slider,
             "atk": atk_slider,
             "defense": def_slider,
         }
-        self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}", pos=(0, 0, -0.5))
-        confirm = DirectButton(text="Confirm", pos=(0, 0, -0.7), command=self.confirm, state="disabled")
-        cancel = DirectButton(text="Cancel", pos=(0, 0, -0.9), command=self.cancel)
+        self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}")
+        set_widget_pos(self.remaining_label, (0, 0, -0.5))
+        confirm = DirectButton(text="Confirm", command=self.confirm, state="disabled")
+        set_widget_pos(confirm, (0, 0, -0.7))
+        cancel = DirectButton(text="Cancel", command=self.cancel)
+        set_widget_pos(cancel, (0, 0, -0.9))
         self.confirm_button = confirm
         self.widgets = [
             body,

@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
-from typing import Callable
 
+from typing import Callable
+from dataclasses import dataclass
+
+from direct.gui.DirectGui import DirectEntry
 from direct.gui.DirectGui import DirectLabel
 from direct.gui.DirectGui import DirectButton
-from direct.gui.DirectGui import DirectEntry
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
 
@@ -96,34 +98,34 @@ class EventRoom(Scene):
     def setup(self) -> None:
         prompt = DirectLabel(
             text=self.event.prompt,
-            pos=(0, 0, 0.7),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(prompt, (0, 0, 0.7))
         self.widgets.append(prompt)
         for i, option in enumerate(self.event.options):
             button = DirectButton(
                 text=option.text,
                 command=lambda idx=i: self.choose(idx),
-                pos=(0, 0, 0.3 - i * 0.2),
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
+            set_widget_pos(button, (0, 0, 0.3 - i * 0.2))
             self.widgets.append(button)
         self.result_label = DirectLabel(
             text="",
-            pos=(0, 0, -0.1),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.result_label, (0, 0, -0.1))
         self.widgets.append(self.result_label)
         leave = DirectButton(
             text="Leave",
             command=self.exit,
-            pos=(0, 0, -0.8),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(leave, (0, 0, -0.8))
         self.widgets.append(leave)
         self.app.accept("escape", self.exit)
 
@@ -171,36 +173,36 @@ class ChatRoom(Scene):
     def setup(self) -> None:
         prompt = DirectLabel(
             text=f"Chat with {self.character}",
-            pos=(0, 0, 0.7),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(prompt, (0, 0, 0.7))
         self.entry = DirectEntry(
             initialText="",
             numLines=1,
-            pos=(-0.5, 0, 0.3),
             scale=0.05,
         )
+        set_widget_pos(self.entry, (-0.5, 0, 0.3))
         send = DirectButton(
             text="Send",
             command=self.send,
-            pos=(0.6, 0, 0.3),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(send, (0.6, 0, 0.3))
         self.response_label = DirectLabel(
             text="",
-            pos=(0, 0, -0.1),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.response_label, (0, 0, -0.1))
         leave = DirectButton(
             text="Leave",
             command=self.exit,
-            pos=(0, 0, -0.8),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(leave, (0, 0, -0.8))
         self.widgets = [prompt, self.entry, send, self.response_label, leave]
         if self._chats_left() <= 0:
             if self.entry is not None:

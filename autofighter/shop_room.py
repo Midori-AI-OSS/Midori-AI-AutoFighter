@@ -4,10 +4,11 @@ import random
 
 from dataclasses import dataclass
 
-from direct.gui.DirectGui import DirectButton
 from direct.gui.DirectGui import DirectLabel
+from direct.gui.DirectGui import DirectButton
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 
 
@@ -48,10 +49,10 @@ class ShopRoom(Scene):
     def setup(self) -> None:
         self.info_label = DirectLabel(
             text=self._info_text(),
-            pos=(0, 0, 0.7),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.info_label, (0, 0, 0.7))
         self.widgets.append(self.info_label)
         self._refresh_shop()
         self.app.accept("escape", self.exit)
@@ -86,26 +87,26 @@ class ShopRoom(Scene):
             button = DirectButton(
                 text=f"{item.name} {star_text} ({item.price})",
                 command=lambda: None,
-                pos=(0, 0, 0.2 - i * 0.3),
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
+            set_widget_pos(button, (0, 0, 0.2 - i * 0.3))
             button["command"] = lambda it=item, btn=button: self.buy(it, btn)
             self.widgets.append(button)
         reroll_button = DirectButton(
             text=f"Reroll ({ShopRoom.reroll_cost})",
             command=self.reroll,
-            pos=(-0.3, 0, -0.7),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(reroll_button, (-0.3, 0, -0.7))
         leave_button = DirectButton(
             text="Leave",
             command=self.exit,
-            pos=(0.3, 0, -0.7),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(leave_button, (0.3, 0, -0.7))
         self.widgets.extend([reroll_button, leave_button])
         self._update_info()
 

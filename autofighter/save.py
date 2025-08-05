@@ -8,6 +8,14 @@ from autofighter.stats import Stats
 PLAYER_FILE = Path("player.json")
 
 
+def load_run(path: Path) -> Stats | None:
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text())
+    stats_data = data.get("stats", {})
+    return Stats(**stats_data)
+
+
 def save_player(
     body: str,
     hair: str,

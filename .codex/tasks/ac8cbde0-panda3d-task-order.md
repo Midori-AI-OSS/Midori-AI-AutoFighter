@@ -21,12 +21,12 @@ Coders must check in with the reviewer or task master before marking tasks compl
 12. [x] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
 13. [x] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
 14. [x] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
-15. [ ] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
-16. [ ] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
-17. [ ] Rest room features (`5109746a`) – healing or item trades with per-floor limits.
-18. [ ] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
-19. [ ] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
-20. [ ] Map generator (`3b2858e1`) – 45-room floors and looping logic.
+15. [x] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
+16. [x] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
+17. [x] Rest room features (`5109746a`) – healing or item trades with per-floor limits.
+18. [x] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
+19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
+20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
 21. [ ] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
 22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights.
 23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.

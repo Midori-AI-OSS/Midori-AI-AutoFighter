@@ -37,7 +37,9 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
+from autofighter.save import load_run
 from autofighter.scene import Scene
 
 
@@ -66,7 +68,7 @@ class MainMenu(Scene):
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
-            button["pos"] = (0, 0, top - i * self.BUTTON_SPACING)
+            set_widget_pos(button, (0, 0, top - i * self.BUTTON_SPACING))
             self.buttons.append(button)
         self.highlight()
         self.app.accept("arrow_up", self.prev)
@@ -148,7 +150,7 @@ class LoadRunMenu(Scene):
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
-            button["pos"] = (0, 0, top - i * self.BUTTON_SPACING)
+            set_widget_pos(button, (0, 0, top - i * self.BUTTON_SPACING))
             self.buttons.append(button)
         self.highlight()
         self.app.accept("arrow_up", self.prev)
@@ -182,7 +184,14 @@ class LoadRunMenu(Scene):
         self.buttons[self.index]["command"]()
 
     def start_run(self, path: Path) -> None:
-        print(f"Loading run from {path}")
+        from autofighter.battle_room import BattleRoom  # local import to defer Panda3D dependency
+
+        stats = load_run(path)
+        if not stats:
+            print(f"Run file {path} missing or invalid")
+            return
+        battle = BattleRoom(self.app, return_scene_factory=lambda: MainMenu(self.app), player=stats)
+        self.app.scene_manager.switch_to(battle)
 
     def back(self) -> None:
         self.app.scene_manager.switch_to(MainMenu(self.app))
@@ -243,7 +252,7 @@ class OptionsMenu(Scene):
         ]
         top = self.BUTTON_SPACING * (len(self.widgets) - 1) / 2
         for i, widget in enumerate(self.widgets):
-            widget["pos"] = (0, 0, top - i * self.BUTTON_SPACING)
+            set_widget_pos(widget, (0, 0, top - i * self.BUTTON_SPACING))
         self.highlight()
         self.app.accept("arrow_up", self.prev)
         self.app.accept("arrow_down", self.next)

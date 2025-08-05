@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import sys
+import types
+
 from pathlib import Path
 
 from autofighter.menu import LoadRunMenu
@@ -41,6 +44,35 @@ def test_load_run_menu_lists_runs(tmp_path: Path) -> None:
     LoadRunMenu.RUNS_DIR = tmp_path
     paths = menu.available_runs()
     assert [p.name for p in paths] == ["run1.json", "run2.json"]
+
+
+def test_load_run_menu_start_run(tmp_path: Path) -> None:
+    run_file = tmp_path / "run.json"
+    run_file.write_text('{"stats": {"hp": 3, "max_hp": 5}}')
+
+    class SceneManager:
+        def __init__(self) -> None:
+            self.scene = None
+
+        def switch_to(self, scene) -> None:
+            self.scene = scene
+
+    app = DummyApp()
+    app.scene_manager = SceneManager()
+
+    class DummyBattle:
+        def __init__(self, *_, player, **__):
+            self.player = player
+
+    sys.modules['autofighter.battle_room'] = types.SimpleNamespace(BattleRoom=DummyBattle)
+
+    menu = LoadRunMenu(app)
+    menu.start_run(run_file)
+
+    assert isinstance(app.scene_manager.scene, DummyBattle)
+    assert app.scene_manager.scene.player.hp == 3
+
+    del sys.modules['autofighter.battle_room']
 
 
 def test_options_menu_updates_audio() -> None:

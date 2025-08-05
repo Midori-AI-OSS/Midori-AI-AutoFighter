@@ -35,9 +35,11 @@ class AutoFighterApp(ShowBase):
         self.accept("window-event", self.on_window_event)
         self.accept("escape", self.userExit)
 
-        cube = self.loader.load_model("models/box")
-        cube.reparent_to(self.render)
-        cube.set_pos(0, 10, 0)
+        self.setBackgroundColor(0, 0, 0, 1)
+
+        self._placeholder = self.loader.loadModel("models/box")
+        self._placeholder.reparentTo(self.render)
+        self._placeholder.setPos(0, 10, 0)
 
         self.task_mgr.add(self.update, "update")
 

@@ -7,6 +7,7 @@ from direct.interval.IntervalGlobal import Func
 from direct.interval.IntervalGlobal import Wait
 from direct.interval.IntervalGlobal import Sequence
 
+from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
 
@@ -40,31 +41,31 @@ class RestRoom(Scene):
     def setup(self) -> None:
         self.info_label = DirectLabel(
             text=self._info_text(),
-            pos=(0, 0, 0.7),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.info_label, (0, 0, 0.7))
         self.heal_button = DirectButton(
             text="Heal",
             command=self.heal,
-            pos=(-0.3, 0, -0.7),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.heal_button, (-0.3, 0, -0.7))
         self.trade_button = DirectButton(
             text="Trade",
             command=self.trade,
-            pos=(0.3, 0, -0.7),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.trade_button, (0.3, 0, -0.7))
         leave_button = DirectButton(
             text="Leave",
             command=self.exit,
-            pos=(0, 0, -0.9),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(leave_button, (0, 0, -0.9))
         self.widgets = [
             self.info_label,
             self.heal_button,

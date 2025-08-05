@@ -4,13 +4,14 @@ import random
 
 from direct.task import Task
 from panda3d.core import LColor
-from panda3d.core import NodePath
 from panda3d.core import LVector3f
+from panda3d.core import NodePath
 from direct.gui.DirectGui import DGG
-from direct.gui.DirectGui import DirectLabel
 from direct.gui.DirectGui import DirectButton
+from direct.gui.DirectGui import DirectLabel
 from direct.showbase.ShowBase import ShowBase
 
+from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
 
@@ -61,23 +62,23 @@ class BattleRoom(Scene):
         self.attack_button = DirectButton(
             text="Attack",
             command=self.send_player_attack,
-            pos=(0, 0, -0.7),
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.attack_button, (0, 0, -0.7))
         self.status_label = DirectLabel(
             text="A wild foe appears!",
-            pos=(0, 0, 0.7),
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 1, 1, 1),
         )
+        set_widget_pos(self.status_label, (0, 0, 0.7))
         self.overtime_label = DirectLabel(
             text="Overtime! Foes grow enraged.",
-            pos=(0, 0, 0.5),
             frameColor=(0.5, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
             relief=None,
         )
+        set_widget_pos(self.overtime_label, (0, 0, 0.5))
         self.overtime_label.hide()
         self.widgets = [self.attack_button, self.status_label, self.overtime_label]
         self.app.accept("escape", self.exit)
@@ -121,7 +122,6 @@ class BattleRoom(Scene):
         assert self.attack_button is not None
         assert self.status_label is not None
         self.attack_button["state"] = DGG.DISABLED
-        self.turn += 1
         hit_chance = self.player.atk / (self.player.atk + self.foe.defense)
         if random.random() < hit_chance:
             dmg = self.player.atk
@@ -132,8 +132,6 @@ class BattleRoom(Scene):
             text = f"Hit! Foe HP: {self.foe.hp}/{self.foe.max_hp}"
         else:
             text = "Miss!"
-        if self.turn >= self.overtime_threshold and not self.overtime:
-            self.start_overtime()
         if self.foe.hp <= 0:
             text = "Foe defeated!"
         self.status_label["text"] = text
@@ -145,6 +143,9 @@ class BattleRoom(Scene):
     def foe_attack(self) -> None:
         assert self.attack_button is not None
         assert self.status_label is not None
+        self.turn += 1
+        if self.turn >= self.overtime_threshold and not self.overtime:
+            self.start_overtime()
         hit_chance = self.foe.atk / (self.foe.atk + self.player.defense)
         if random.random() < hit_chance:
             dmg = self.foe.atk
@@ -168,10 +169,10 @@ class BattleRoom(Scene):
             pos = (0.7, 0, 0.2)
         label = DirectLabel(
             text=str(amount),
-            pos=pos,
             frameColor=(0, 0, 0, 0),
             text_fg=(1, 0, 0, 1),
         )
+        set_widget_pos(label, pos)
         self.widgets.append(label)
         self.flash_model(target)
         self.app.taskMgr.doMethodLater(
@@ -230,10 +231,10 @@ class BattleRoom(Scene):
         if self.enraged_icon is None:
             self.enraged_icon = DirectLabel(
                 text="Enraged",
-                pos=(0.7, 0, 0.4),
                 frameColor=(0, 0, 0, 0),
                 text_fg=(1, 0, 0, 1),
             )
+            set_widget_pos(self.enraged_icon, (0.7, 0, 0.4))
             self.widgets.append(self.enraged_icon)
             self.foe.atk = int(self.foe.atk * 1.4)
         if self._flash_task is None:
