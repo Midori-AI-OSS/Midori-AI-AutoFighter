@@ -9,6 +9,8 @@ Implement the Panda3D application loop, scene management, and input hooks.
 - [x] Add a lightweight scene manager for swapping menus, gameplay states, and overlays.
 - [x] Handle window close events and keyboard input for quitting the game.
 - [x] Set the window title to the game's name.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 A robust main loop with scene switching is required before integrating menus, maps, or combat systems.

@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "panda3d>=1.10.15",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]

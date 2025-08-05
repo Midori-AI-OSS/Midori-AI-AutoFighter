@@ -1,9 +1,16 @@
+from __future__ import annotations
+
+import logging
 import importlib.util
 
 from types import ModuleType
+from typing import TYPE_CHECKING
 from pathlib import Path
 
-from plugins.event_bus import EventBus
+if TYPE_CHECKING:
+    from plugins.event_bus import EventBus
+
+log = logging.getLogger(__name__)
 
 
 class PluginLoader:
@@ -22,11 +29,14 @@ class PluginLoader:
             try:
                 module = self._import_module(path)
             except Exception:
+                log.exception("Failed to import plugin %s", path)
                 continue
             self._register_module(module)
 
     def get_plugins(self, category: str) -> dict[str, type]:
-        return self._registry.get(category, {})
+        if category not in self._registry:
+            raise KeyError(f"No plugins registered for category '{category}'")
+        return self._registry[category]
 
     def _import_module(self, path: Path) -> ModuleType:
         spec = importlib.util.spec_from_file_location(path.stem, path)

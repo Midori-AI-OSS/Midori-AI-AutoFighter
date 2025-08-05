@@ -10,6 +10,8 @@ Implement an encrypted save system using SQLCipher with salted passwords.
 - [ ] Explore alternative key sources such as OS keyrings, environment variables, or hardware tokens.
 - [ ] Wrap database access in a `SaveManager` with context-managed sessions.
 - [ ] Document backup, recovery, and key management steps.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Encrypted saves protect player progress and enable cross-device transfers.
@@ -18,3 +20,4 @@ Encrypted saves protect player progress and enable cross-device transfers.
 - [ ] Run `uv run pytest`.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
+status: in progress

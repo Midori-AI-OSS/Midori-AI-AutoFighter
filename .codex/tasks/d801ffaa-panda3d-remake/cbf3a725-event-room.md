@@ -8,6 +8,8 @@ Add interactive event or chat rooms offering choices with rewards or penalties.
 - [x] Implement chat rooms where players can send one message to an LLM character, limited to six chats per floor.
 - [x] Provide at least two sample events affecting player stats or items.
 - [x] Ensure events triggered after battles do not consume the floor's room count.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Event and chat rooms break up combat and give players strategic decisions.
@@ -17,4 +19,4 @@ Event and chat rooms break up combat and give players strategic decisions.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: ready for review
+status: in progress

@@ -7,8 +7,9 @@ subtask. Coders should pick one file, follow the instructions, and update the ta
 ## How to Use
 1. Choose any subtask Markdown file in this folder.
 2. Complete the work described under "## Tasks".
-3. At the end of the file, add the line `status: ready for review`.
+3. At the end of the file, add the line `status: in progress`.
 4. Notify an auditor so they can update the status.
 
 ## Subtasks
 See the individual `*.md` files in this directory for the twenty implementation subtasks.
+status: in progress

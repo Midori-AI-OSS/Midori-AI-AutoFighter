@@ -5,27 +5,47 @@ Define the execution order for Panda3D remake subtasks based on the existing tas
 Review `.codex/planning/8a7d9c1e-panda3d-game-plan.md` before starting or auditing any step.
 
 ## Tasks
-1. [x] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
-2. [x] Main loop and window handling (`869cac49`) – create ShowBase subclass, handle window events, and introduce scene manager skeleton.
-3. [x] Plugin loader (`56f168aa`) – build discovery system for player, foe, passive, DoT, HoT, weapon, and room plugins with event bus wrapper.
-4. [x] Damage and healing migration (`7b715405`) – port DoT/HoT logic and Stats dataclass into new architecture.
-5. [x] Main menu and settings (`0d21008f`) – implement themed menus with options for new/load runs and audio controls.
-6. [x] Player creator (`f8d277d7`) – allow body and hair customization and 100-point stat allocation with item-based extras.
-7. [x] Stat screen (`58ea00c8`) – display grouped stats, status effects, and relics with configurable refresh rate.
-8. [x] Battle room implementation (`1bfd343f`) – create combat scenes, apply stat-based accuracy, and show overtime warnings.
-9. [x] Rest room implementation (`5109746a`) – offer healing or item trades and record limited uses per floor.
-10. [x] Shop room implementation (`07c1ea52`) – sell upgrade items and cards with pricing and reroll costs.
-11. [x] Event room implementation (`cbf3a725`) – provide narrative choices with deterministic outcomes.
-12. [x] Map generation system (`3b2858e1`) – build 45-room floors, Pressure levels, and looping logic.
-13. [ ] Gacha system (`4289a6e2`) – manage pulls, pity, duplicates, and reward presentation.
-14. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items, trade for pulls, and handle dual types.
-15. [ ] SQLCipher save system (`798aafd3`) – store encrypted run data with migrations and key management.
-16. [ ] Asset pipeline (`ad61da93`) – research art style, convert assets, and implement AssetManager with manifest.
-17. [ ] Audio system (`7f5c8c36`) – play music and effects with volume control and boss/overtime cues.
-18. [ ] UI polish and accessibility (`d6a657b0`) – apply dark glassy theme, color-blind options, and keyboard navigation.
-19. [ ] Documentation and contributor guidelines (`ca46e97e`) – update README and contributor docs for new structure.
-20. [ ] Testing and CI integration (`93a6a994`) – add headless tests and GitHub workflows.
-21. [ ] Run `uv run pytest` – do this step last.
+1. [ ] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
+2. [ ] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
+3. [ ] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
+4. [ ] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
+5. [x] Event bus wrapper (`120c282f`) – expose decoupled messaging so plugins can emit and subscribe.
+6. [ ] Stats dataclass (`751e73eb`) – share core attributes between players and foes.
+7. [ ] Damage and healing migration (`7b715405`) – port DoT/HoT logic into new architecture.
+8. [ ] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
+9. [ ] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
+10. [ ] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
+11. [ ] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
+12. [ ] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
+13. [ ] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
+14. [ ] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
+15. [ ] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
+16. [ ] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
+17. [ ] Rest room features (`5109746a`) – healing or item trades with per-floor limits.
+18. [ ] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
+19. [ ] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
+20. [ ] Map generator (`3b2858e1`) – 45-room floors and looping logic.
+21. [ ] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
+22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights.
+23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
+24. [ ] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
+25. [ ] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
+26. [ ] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
+27. [ ] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
+28. [ ] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.
+29. [ ] Gacha presentation (`a0f85dbd`) – play rarity video and show results menu.
+30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
+31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
+32. [ ] SQLCipher schema (`798aafd3`) – store run and player data securely.
+33. [ ] Save key management (`428e9823`) – derive and back up salted-password keys.
+34. [ ] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
+35. [ ] Asset style research (`ad61da93`) – choose art direction and free model sources.
+36. [ ] Conversion workflow (`10bd22da`) – build pipeline to Panda3D formats.
+37. [ ] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
+38. [ ] Audio system (`7f5c8c36`) – play music and effects with volume control.
+39. [ ] UI polish and accessibility (`d6a657b0`) – dark glass theme, color-blind mode, keyboard navigation.
+40. [ ] Documentation and contributor guidelines (`ca46e97e`) – update README and contributor docs for new structure.
+41. [ ] Testing and CI integration (`93a6a994`) – add headless tests, GitHub workflows, and run `uv run pytest` last.
 
 ## Context
 Derived from the Panda3D game plan and existing Panda3D remake task list to coordinate development.

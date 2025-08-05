@@ -10,6 +10,8 @@ Implement the run map with room nodes, links, and seeded randomization.
 - [x] Loop maps endlessly after the final floor with enemy scaling per loop.
 - [x] Render a color-coded vertical map showing room connections, current location, and valid paths.
 - [x] Seed each floor from a run-specific base seed and forbid seed reuse.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 The map guides progression and needs deterministic generation for testing.
@@ -19,4 +21,4 @@ The map guides progression and needs deterministic generation for testing.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: ready for review
+status: in progress

@@ -13,6 +13,8 @@ Set up the initial Panda3D project structure and environment.
 - [x] Define `pyproject.toml` with package name `autofighter` and expose an entry point for `main.py`.
 - [x] Research publishing `autofighter` to PyPI and note considerations for native dependencies.
 - [x] Commit minimal setup once `main.py` runs.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 A clean scaffold establishes the foundation for all future Panda3D development.
@@ -20,4 +22,4 @@ A clean scaffold establishes the foundation for all future Panda3D development.
 ## Testing
 - [x] Run `uv run pytest`.
 
-status: ready for review
+status: failed - `main.py` lacks a placeholder model and README skips optional LLM setup and build notes

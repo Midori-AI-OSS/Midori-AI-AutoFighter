@@ -12,6 +12,8 @@ Develop a detailed stat screen showing core, offensive, defensive, vitality, adv
 - [x] Refresh the screen at a user-defined rate (default every 5 frames, adjustable 1–10).
 - [x] Allow ESC or close to return to the previous scene, respecting the Options pause setting.
 - [x] Expose hooks for plugins to append custom lines to the Status section.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 A comprehensive stat screen helps players track progression and effects.
@@ -21,4 +23,4 @@ A comprehensive stat screen helps players track progression and effects.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: ready for review
+status: in progress

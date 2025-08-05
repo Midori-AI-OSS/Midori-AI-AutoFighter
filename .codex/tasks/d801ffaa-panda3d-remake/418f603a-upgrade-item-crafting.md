@@ -8,6 +8,8 @@ Add crafting mechanics for combining lower-star upgrade items into higher-star o
 - [ ] Support dual-type requirements for upgrading dual-element characters.
 - [ ] Permit trading 10×4★ items for an extra gacha pull.
 - [ ] Provide a UI panel for crafting and confirming conversions.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Crafting lets players make use of excess low-star items to strengthen characters.
@@ -16,3 +18,4 @@ Crafting lets players make use of excess low-star items to strengthen characters
 - [ ] Run `uv run pytest`.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
+status: in progress

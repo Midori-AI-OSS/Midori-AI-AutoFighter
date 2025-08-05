@@ -10,6 +10,8 @@ Port existing damage-over-time and healing-over-time systems to the new architec
 - [x] Support HoTs: Regeneration, PlayerName's Echo, PlayerName's Heal.
 - [x] Ensure stacking and reset rules match the current game's mechanics and clear after battles unless made permanent.
 - [x] Add unit tests for each damage and healing type.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Consistent damage and healing logic keeps combat behavior aligned with the original game.
@@ -19,4 +21,4 @@ Consistent damage and healing logic keeps combat behavior aligned with the origi
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
 
-status: ready for review
+status: in progress

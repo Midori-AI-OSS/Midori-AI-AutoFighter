@@ -11,6 +11,8 @@ Implement the character gacha with escalating odds and upgrade-item rewards.
 - [ ] Grant upgrade items on failed pulls based on damage types, with item costs for upgrading and trading 10×4★ items for an extra pull.
 - [ ] Implement Vitality bonus stacking for duplicates (0.01% first, each increment +5% more than the last).
 - [ ] Serialize rewards, pity counts, and character stacks for persistence.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 The gacha provides new characters and progression outside runs.
@@ -19,3 +21,4 @@ The gacha provides new characters and progression outside runs.
 - [ ] Run `uv run pytest`.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
+status: in progress

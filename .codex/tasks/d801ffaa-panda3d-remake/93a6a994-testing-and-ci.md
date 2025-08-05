@@ -8,6 +8,8 @@ Establish automated tests and GitHub workflows for the Panda3D remake.
 - [ ] Configure headless Panda3D fixtures to run in CI.
 - [ ] Create a GitHub Actions workflow to run `uv run pytest` and lint on pushes and pull requests.
 - [ ] Document how to run tests locally.
+- [ ] Document this feature in `.codex/implementation`.
+- [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Automated testing ensures stability as the new engine evolves.
@@ -16,3 +18,4 @@ Automated testing ensures stability as the new engine evolves.
 - [ ] Run `uv run pytest`.
 
 Once complete, update this task with `status: ready for review` and request an auditor to update this status.
+status: in progress
