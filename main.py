@@ -25,6 +25,7 @@ class AutoFighterApp(ShowBase):
         self.plugin_loader.discover("mods")
 
         self.pause_on_stats = True
+        self.stat_refresh_rate = 5
         self.paused = False
 
         props = WindowProperties()

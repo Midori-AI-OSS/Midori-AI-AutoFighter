@@ -3,11 +3,31 @@ from __future__ import annotations
 from typing import Any
 from typing import Callable
 
-from direct.gui.DirectGui import DirectButton
-from direct.gui.DirectGui import DirectLabel
-from direct.gui.DirectGui import DirectOptionMenu
-from direct.gui.DirectGui import DirectSlider
-from direct.showbase.ShowBase import ShowBase
+try:
+    from direct.gui.DirectGui import DirectButton
+    from direct.gui.DirectGui import DirectLabel
+    from direct.gui.DirectGui import DirectOptionMenu
+    from direct.gui.DirectGui import DirectSlider
+    from direct.showbase.ShowBase import ShowBase
+except Exception:  # pragma: no cover - fallback for headless tests
+    class DirectButton:  # type: ignore[dead-code]
+        pass
+
+    class DirectLabel:  # type: ignore[dead-code]
+        pass
+
+    class DirectOptionMenu:  # type: ignore[dead-code]
+        pass
+
+    class DirectSlider:  # type: ignore[dead-code]
+        def __getitem__(self, _key: str) -> float:
+            return 0.0
+
+        def __setitem__(self, _key: str, _value: float) -> None:
+            pass
+
+    class ShowBase:  # type: ignore[dead-code]
+        pass
 
 from autofighter.save import save_player
 from autofighter.scene import Scene
@@ -22,6 +42,12 @@ DAMAGE_TYPES = [
     "fire",
     "ice",
 ]
+
+BASE_STATS = {
+    "hp": 100,
+    "atk": 10,
+    "defense": 10,
+}
 
 
 class PlayerCreator(Scene):
@@ -163,12 +189,12 @@ class PlayerCreator(Scene):
             self.confirm_button["state"] = "normal" if remaining == 0 else "disabled"
 
     def confirm(self) -> None:
-        base = {k: int(s["value"]) for k, s in self.sliders.items()}
+        points = {k: int(s["value"]) + self.extras.get(k, 0) for k, s in self.sliders.items()}
         stats = Stats(
-            hp=base["hp"] + self.extras.get("hp", 0),
-            max_hp=base["hp"] + self.extras.get("hp", 0),
-            atk=base["atk"] + self.extras.get("atk", 0),
-            defense=base["defense"] + self.extras.get("defense", 0),
+            hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),
+            max_hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),
+            atk=int(BASE_STATS["atk"] * (1 + points["atk"] / 100)),
+            defense=int(BASE_STATS["defense"] * (1 + points["defense"] / 100)),
         )
         save_player(
             self.body_choice,
@@ -176,6 +202,7 @@ class PlayerCreator(Scene):
             self.hair_color_choice,
             self.accessory_choice,
             stats,
+            self.inventory,
         )
         if self.return_scene_factory:
             self.app.scene_manager.switch_to(self.return_scene_factory())

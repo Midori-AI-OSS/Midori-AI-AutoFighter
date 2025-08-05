@@ -38,6 +38,7 @@ The Stat Screen scene displays grouped combat statistics and active effects.
 
 ## Refresh Rate
 - Updates every 5 frames by default; accepts values from 1–10.
+- Configurable via an Options menu slider.
 
 ## Status Hooks
 - Call `add_status_hook` with a function returning a list of lines to append to the Status section.

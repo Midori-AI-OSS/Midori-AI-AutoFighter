@@ -1,5 +1,4 @@
 import sys
-
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -86,7 +85,7 @@ def test_blazing_torment_extra_tick_on_action() -> None:
     effect = BlazingTorment(5, 2)
     mgr.add_dot(effect)
     mgr.tick()
-    effect.on_action(stats)
+    mgr.on_action()
     assert stats.hp == 90
 
 
@@ -137,4 +136,16 @@ def test_player_heal_instant_and_over_time() -> None:
     mgr.tick()
     mgr.tick()
     assert stats.hp == 87
+
+
+def test_stats_lists_track_effects() -> None:
+    stats = Stats(hp=100, max_hp=100)
+    mgr = EffectManager(stats)
+    mgr.add_dot(Bleed(0, 1))
+    mgr.add_hot(Regeneration(5, 1))
+    assert stats.dots == ["Bleed"]
+    assert stats.hots == ["Regeneration"]
+    mgr.tick()
+    assert stats.dots == []
+    assert stats.hots == []
 

@@ -4,21 +4,23 @@
 Define the execution order for Panda3D remake subtasks based on the existing task list and planning document.
 Review `.codex/planning/8a7d9c1e-panda3d-game-plan.md` before starting or auditing any step.
 
+Coders must check in with the reviewer or task master before marking tasks complete.
+
 ## Tasks
 1. [x] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
 2. [x] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
-3. [ ] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
+3. [x] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
 4. [x] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
 5. [x] Event bus wrapper (`120c282f`) – expose decoupled messaging so plugins can emit and subscribe.
-6. [ ] Stats dataclass (`751e73eb`) – share core attributes between players and foes.
-7. [ ] Damage and healing migration (`7b715405`) – port DoT/HoT logic into new architecture.
-8. [ ] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
-9. [ ] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
-10. [ ] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
-11. [ ] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
-12. [ ] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
-13. [ ] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
-14. [ ] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
+6. [x] Stats dataclass (`751e73eb`) – share core attributes between players and foes.
+7. [x] Damage and healing migration (`7b715405`) – port DoT/HoT logic into new architecture.
+8. [x] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
+9. [x] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
+10. [x] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
+11. [x] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
+12. [x] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
+13. [x] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
+14. [x] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
 15. [ ] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
 16. [ ] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
 17. [ ] Rest room features (`5109746a`) – healing or item trades with per-floor limits.

@@ -2,10 +2,31 @@ from __future__ import annotations
 
 from typing import Callable
 
-from panda3d.core import TextNode
-from direct.gui.DirectFrame import DirectFrame
-from direct.gui.OnscreenText import OnscreenText
-from direct.showbase.ShowBase import ShowBase
+try:
+    from panda3d.core import TextNode
+    from direct.gui.DirectFrame import DirectFrame
+    from direct.gui.OnscreenText import OnscreenText
+    from direct.showbase.ShowBase import ShowBase
+except Exception:  # pragma: no cover - fallback for headless tests
+    class TextNode:
+        A_left = 0
+
+    class DirectFrame:  # type: ignore[dead-code]
+        def __init__(self, **_kwargs: object) -> None:
+            pass
+
+        def destroy(self) -> None:
+            pass
+
+    class OnscreenText:  # type: ignore[dead-code]
+        def __init__(self, text: str, **_kwargs: object) -> None:
+            self.text = text
+
+        def destroy(self) -> None:
+            pass
+
+    class ShowBase:  # type: ignore[dead-code]
+        pass
 
 from autofighter.scene import Scene
 from autofighter.stats import Stats
@@ -19,12 +40,13 @@ class StatScreen(Scene):
         app: ShowBase,
         stats: Stats,
         *,
-        refresh_rate: int = 5,
+        refresh_rate: int | None = None,
         return_scene_factory: Callable[[], Scene] | None = None,
     ) -> None:
         self.app = app
         self.stats = stats
-        self.refresh_rate = max(1, min(refresh_rate, 10))
+        rate = refresh_rate if refresh_rate is not None else getattr(app, "stat_refresh_rate", 5)
+        self.refresh_rate = max(1, min(int(rate), 10))
         self.return_scene_factory = return_scene_factory
         self.frame: DirectFrame | None = None
         self.lines: list[OnscreenText] = []

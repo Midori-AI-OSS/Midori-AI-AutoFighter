@@ -56,18 +56,39 @@ class EffectManager:
             if len(current) >= max_stacks:
                 return
         self.dots.append(effect)
+        self.stats.dots.append(effect.name)
 
     def add_hot(self, effect: HealingOverTime) -> None:
         self.hots.append(effect)
+        self.stats.hots.append(effect.name)
 
     def tick(self, others: Iterable[EffectManager] | None = None) -> None:
-        remaining: List[DamageOverTime] = []
+        remaining_dots: List[DamageOverTime] = []
         for dot in self.dots:
             alive = dot.tick(self.stats)
             if self.stats.hp == 0 and others and hasattr(dot, "on_death"):
                 for other in others:
                     dot.on_death(other)
             if alive:
-                remaining.append(dot)
-        self.dots = remaining
-        self.hots = [h for h in self.hots if h.tick(self.stats)]
+                remaining_dots.append(dot)
+            else:
+                if dot.name in self.stats.dots:
+                    self.stats.dots.remove(dot.name)
+        self.dots = remaining_dots
+
+        remaining_hots: List[HealingOverTime] = []
+        for hot in self.hots:
+            if hot.tick(self.stats):
+                remaining_hots.append(hot)
+            else:
+                if hot.name in self.stats.hots:
+                    self.stats.hots.remove(hot.name)
+        self.hots = remaining_hots
+
+    def on_action(self) -> None:
+        for dot in self.dots:
+            if hasattr(dot, "on_action"):
+                dot.on_action(self.stats)
+        for hot in self.hots:
+            if hasattr(hot, "on_action"):
+                hot.on_action(self.stats)
