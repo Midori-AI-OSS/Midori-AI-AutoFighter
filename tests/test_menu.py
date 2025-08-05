@@ -1,29 +1,20 @@
 from __future__ import annotations
-from __future__ import annotations
 
 import sys
 import types
 
 from pathlib import Path
 
-from autofighter.gui import FRAME_COLOR
+import autofighter.audio as audio
+
 from autofighter.menu import MainMenu
+from autofighter.gui import FRAME_COLOR
 from autofighter.menu import LoadRunMenu
 from autofighter.menu import OptionsMenu
 
 
-class DummyAudio:
-    def __init__(self) -> None:
-        self.volume = 0.0
-
-    def setVolume(self, value: float) -> None:  # noqa: N802 - Panda3D style
-        self.volume = value
-
-
 class DummyApp:
     def __init__(self) -> None:
-        self.sfxManagerList = [DummyAudio(), DummyAudio()]
-        self.musicManager = DummyAudio()
         self.scene_manager = object()
         self.pause_on_stats = True
         self.stat_refresh_rate = 5
@@ -97,17 +88,24 @@ def test_load_run_menu_start_run(tmp_path: Path) -> None:
 
 
 def test_options_menu_volume_arrows_update_audio() -> None:
+    class DummyAssets:
+        def load(self, *_: object) -> object:
+            return object()
+
+    audio._global_audio = audio.AudioManager(DummyAssets())
+
     app = DummyApp()
     menu = OptionsMenu(app)
     menu.setup()
     menu.increase()
-    assert app.sfxManagerList[0].volume == 0.55
+    assert audio.get_audio().sfx_volume == 0.55
     menu.decrease()
-    assert app.sfxManagerList[0].volume == 0.5
+    assert audio.get_audio().sfx_volume == 0.5
     menu.next()
     menu.decrease()
-    assert app.musicManager.volume == 0.45
+    assert audio.get_audio().music_volume == 0.45
     menu.teardown()
+    audio._global_audio = None
 
 
 def test_options_menu_updates_refresh_rate() -> None:
@@ -128,4 +126,3 @@ def test_main_menu_buttons_stack_vertically() -> None:
     assert zs == sorted(zs, reverse=True)
     assert len(set(zs)) == len(zs)
     menu.teardown()
-

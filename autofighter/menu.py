@@ -39,14 +39,15 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.scene import Scene
+from autofighter.save import load_run
 from autofighter.gui import TEXT_COLOR
+from autofighter.audio import get_audio
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import SLIDER_SCALE
 from autofighter.gui import WIDGET_SCALE
-from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
-from autofighter.save import load_run
-from autofighter.scene import Scene
+from autofighter.gui import set_widget_pos
 
 
 class MainMenu(Scene):
@@ -213,8 +214,9 @@ class OptionsMenu(Scene):
         self.app = app
         self.widgets: list[DirectButton | DirectCheckButton | DirectSlider] = []
         self.index = 0
-        self.sfx_volume = 0.5
-        self.music_volume = 0.5
+        audio_mgr = get_audio()
+        self.sfx_volume = audio_mgr.sfx_volume
+        self.music_volume = audio_mgr.music_volume
         self.stat_refresh_rate = getattr(self.app, "stat_refresh_rate", 5)
         self.pause_on_stats = getattr(self.app, "pause_on_stats", True)
 
@@ -325,14 +327,11 @@ class OptionsMenu(Scene):
 
     def update_sfx(self) -> None:
         self.sfx_volume = float(self.sfx_slider["value"])
-        for mgr in getattr(self.app, "sfxManagerList", []):
-            mgr.setVolume(self.sfx_volume)
+        get_audio().set_sfx_volume(self.sfx_volume)
 
     def update_music(self) -> None:
         self.music_volume = float(self.music_slider["value"])
-        mgr = getattr(self.app, "musicManager", None)
-        if mgr is not None:
-            mgr.setVolume(self.music_volume)
+        get_audio().set_music_volume(self.music_volume)
 
     def update_refresh(self) -> None:
         self.stat_refresh_rate = int(self.refresh_slider["value"])
