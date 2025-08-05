@@ -1,0 +1,48 @@
+from __future__ import annotations
+
+import random
+from pathlib import Path
+from unittest.mock import patch
+
+from autofighter.gacha.system import GachaSystem
+from autofighter.gacha.vitality import vitality_bonus
+
+
+def count_player_plugins() -> int:
+    path = Path("plugins/players")
+    return len([p for p in path.glob("*.py") if p.name != "__init__.py"])
+
+
+def test_seeded_pool_matches_plugins() -> None:
+    gs = GachaSystem()
+    assert len(gs.pool) == count_player_plugins()
+
+
+def test_failed_pull_grants_item() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    with patch.object(gs.rng, "random", return_value=0.9):
+        result = gs.pull(1)
+    assert result.characters == []
+    assert result.upgrade_items == 1
+
+
+def test_duplicate_vitality_stack() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    with patch.object(gs.rng, "random", return_value=0.1), patch.object(
+        gs.rng, "choice", return_value="ally"
+    ):
+        gs.pull(1)
+        result = gs.pull(1)
+    assert gs.owned["ally"] == 2
+    assert result.vitality["ally"] == vitality_bonus(1)
+
+
+def test_serialization_round_trip() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    with patch.object(gs.rng, "random", return_value=0.1), patch.object(
+        gs.rng, "choice", return_value="ally"
+    ):
+        gs.pull(1)
+    data = gs.serialize()
+    loaded = GachaSystem.deserialize(data, rng=random.Random(0))
+    assert loaded.owned == gs.owned
