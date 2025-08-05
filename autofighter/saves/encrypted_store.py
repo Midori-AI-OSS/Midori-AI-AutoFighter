@@ -7,6 +7,8 @@ from typing import Any
 
 import sqlcipher3
 
+from . import key_management
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS runs(
     id TEXT PRIMARY KEY,
@@ -20,15 +22,23 @@ CREATE TABLE IF NOT EXISTS players(
 
 
 class SaveManager(AbstractContextManager):
-    def __init__(self, path: Path, key: str):
+    def __init__(self, path: Path, password: str, config_path: Path | None = None):
         self.path = path
-        self.key = key
+        self.password = password
+        self.config_path = config_path or path.with_suffix(".key")
+        self.key: str | None = None
         self.conn: sqlcipher3.Connection | None = None
         self._queue: list[tuple[str, tuple[Any, ...]]] = []
 
     def __enter__(self) -> "SaveManager":
+        if self.config_path.exists():
+            salt = key_management.load_salt(self.config_path)
+        else:
+            salt = None
+        self.key, salt = key_management.derive_key(self.password, salt)
+        key_management.save_salt(self.config_path, salt)
         self.conn = sqlcipher3.connect(self.path)
-        self.conn.execute("PRAGMA key = ?", (self.key,))
+        self.conn.execute(f"PRAGMA key = \"x'{self.key}'\"")
         self.conn.executescript(SCHEMA)
         return self
 
@@ -85,3 +95,9 @@ class SaveManager(AbstractContextManager):
             self.conn.close()
             self.conn = None
         return False
+
+    def backup_config(self, backup_path: Path) -> None:
+        key_management.backup_config(self.config_path, backup_path)
+
+    def restore_config(self, backup_path: Path) -> None:
+        key_management.restore_config(backup_path, self.config_path)
