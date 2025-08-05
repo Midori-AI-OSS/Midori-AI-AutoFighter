@@ -7,6 +7,7 @@ Implement standard boss fights that conclude each floor.
 - [ ] Load boss-specific scenes, assets, and music.
 - [ ] Define unique attack patterns and rewards for each boss.
 - [ ] Transition back to the map and grant loot after victory.
+- [ ] Ensure `foe_attack` logic does not reference missing UI elements like `attack_button`.
 - [ ] Document this feature in `.codex/implementation`.
 - [ ] Add unit tests covering success and failure cases.
 

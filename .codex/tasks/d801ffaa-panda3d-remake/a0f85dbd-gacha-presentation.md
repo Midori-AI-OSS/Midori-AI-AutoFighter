@@ -7,6 +7,7 @@ Show a rarity-based video and results menu for gacha pulls.
 - [ ] Play a skippable animation tied to the highest rarity pulled.
 - [ ] Display a results screen listing characters and rewards.
 - [ ] Support single and multi-pull presentations.
+- [ ] Implement `play_animation` to actually play the video clip.
 - [ ] Document this feature in `.codex/implementation`.
 - [ ] Add unit tests covering success and failure cases.
 

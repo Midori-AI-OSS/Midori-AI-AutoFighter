@@ -28,14 +28,14 @@ Coders must check in with the reviewer or task master before marking tasks compl
 19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
 20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
 21. [x] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
-22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights.
+22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights and fix `foe_attack` referencing an undefined `attack_button`.
 23. [x] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
 24. [x] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
 25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
 26. [x] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
 27. [x] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
-28. [ ] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.
-29. [ ] Gacha presentation (`a0f85dbd`) – play rarity video and show results menu.
+28. [ ] Duplicate handling (`6e2558e7`) – enforce stack rules and apply stat bonuses, not just Vitality.
+29. [ ] Gacha presentation (`a0f85dbd`) – implement `play_animation` and render a results menu after pulls.
 30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
 31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
 32. [x] SQLCipher schema (`798aafd3`) – store run and player data securely.
@@ -48,6 +48,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 39. [ ] UI polish and accessibility (`d6a657b0`) – dark glass theme, color-blind mode, keyboard navigation.
 40. [ ] Documentation and contributor guidelines (`ca46e97e`) – update README and contributor docs for new structure.
 41. [ ] Testing and CI integration (`93a6a994`) – add headless tests, GitHub workflows, and run `uv run pytest` last.
+42. [ ] Main menu/New Run polish (`dc3d4f2e`) – audit DirectGUI scaling, fix New Run bugs, add a character picker and map route selection before the first fight, and remove placeholder code.
 
 ## Context
 Derived from the Panda3D game plan and existing Panda3D remake task list to coordinate development.
