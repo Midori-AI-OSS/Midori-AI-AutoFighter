@@ -11,8 +11,8 @@ def test_apply_pressure_scales_stats():
     assert scaled.defense == 7
 
 
-def test_pressure_affects_rooms_branches_bosses():
-    gen = MapGenerator(base_seed=7, pressure_level=45)
+def test_pressure_affects_rooms_branches_bosses(tmp_path):
+    gen = MapGenerator(base_seed=7, pressure_level=45, seed_store_path=tmp_path / "s.json")
     nodes = gen.generate_floor(1)
     assert len(nodes) == 49
     branch_nodes = [n for n in nodes if len(n.links) > 1]

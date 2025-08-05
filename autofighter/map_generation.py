@@ -8,12 +8,14 @@ room, and loop count.
 
 from __future__ import annotations
 
+import json
 import random
 import importlib
 
-from dataclasses import dataclass, field
 from typing import List
 from typing import Type
+from pathlib import Path
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -27,13 +29,42 @@ class MapNode:
     enemy_scale: float = 1.0
 
 
+def _load_used_seeds(path: Path) -> set[int]:
+    if not path.exists():
+        return set()
+    try:
+        with path.open("r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except json.JSONDecodeError:
+        return set()
+    return {int(x) for x in data}
+
+
+def _save_used_seeds(seeds: set[int], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        json.dump(sorted(seeds), fh)
+
+
 class MapGenerator:
     """Builds floor maps with seeded randomness."""
 
-    def __init__(self, base_seed: int, pressure_level: int = 0, loop: int = 0) -> None:
+    def __init__(
+        self,
+        base_seed: int,
+        pressure_level: int = 0,
+        loop: int = 0,
+        seed_store_path: Path | str | None = None,
+    ) -> None:
         self.base_seed = base_seed
         self.pressure_level = pressure_level
         self.loop = loop
+        self.seed_store_path = Path(seed_store_path) if seed_store_path else Path("used_seeds.json")
+        used = _load_used_seeds(self.seed_store_path)
+        if base_seed in used:
+            raise ValueError(f"base seed {base_seed} already used")
+        used.add(base_seed)
+        _save_used_seeds(used, self.seed_store_path)
 
     def _rng(self, floor: int) -> random.Random:
         return random.Random(self.base_seed + floor)
