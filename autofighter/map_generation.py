@@ -8,8 +8,11 @@ pressure level, and loop count.
 from __future__ import annotations
 
 import random
-from typing import List
+import importlib
+
 from dataclasses import dataclass, field
+from typing import List
+from typing import Type
 
 
 @dataclass
@@ -92,3 +95,23 @@ def render_floor(nodes: List[MapNode]) -> str:
         chat = " *" if node.chat_after else ""
         lines.append(f"{node.index:02d}:{sym}{chat}")
     return "\n".join(lines)
+
+
+ROOM_MODULES = {
+    "battle_weak": "autofighter.battle_room.BattleRoom",
+    "battle_normal": "autofighter.battle_room.BattleRoom",
+    "battle_boss": "autofighter.rooms.boss_room.BossRoom",
+    "battle_boss_floor": "autofighter.rooms.boss_room.BossRoom",
+    "shop": "autofighter.shop_room.ShopRoom",
+    "rest": "autofighter.rest_room.RestRoom",
+    "event": "autofighter.event_room.EventRoom",
+}
+
+
+def load_room_class(room_type: str) -> Type[object]:
+    """Import and return the class for a given room type."""
+
+    target = ROOM_MODULES[room_type]
+    module_name, class_name = target.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    return getattr(module, class_name)
