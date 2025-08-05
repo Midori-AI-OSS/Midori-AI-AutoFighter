@@ -29,6 +29,7 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
 from autofighter.save import save_player
 from autofighter.scene import Scene
@@ -63,10 +64,7 @@ class PlayerCreator(Scene):
         self.return_scene_factory = return_scene_factory
         self.extras = extras or {}
         self.inventory = {t: (inventory or {}).get(t, 0) for t in DAMAGE_TYPES}
-        bonus = min(self.inventory[t] // 100 for t in DAMAGE_TYPES) if DAMAGE_TYPES else 0
-        if bonus:
-            for t in DAMAGE_TYPES:
-                self.inventory[t] -= bonus * 100
+        self.bonus = min(self.inventory[t] // 100 for t in DAMAGE_TYPES) if DAMAGE_TYPES else 0
         self.body_options = ["Athletic", "Slim", "Heavy"]
         self.hair_options = ["Short", "Long", "Ponytail"]
         self.color_options = ["Black", "Blonde", "Red"]
@@ -75,7 +73,7 @@ class PlayerCreator(Scene):
         self.hair_choice = self.hair_options[0]
         self.hair_color_choice = self.color_options[0]
         self.accessory_choice = self.accessory_options[0]
-        self.total_points = 100 + bonus
+        self.total_points = 100 + self.bonus
         self.sliders: dict[str, DirectSlider] = {}
         self.widgets: list[Any] = []
         self.remaining_label: DirectLabel | None = None
@@ -87,6 +85,7 @@ class PlayerCreator(Scene):
             items=self.body_options,
             initialitem=0,
             command=self.set_body,
+            scale=WIDGET_SCALE,
         )
         set_widget_pos(body, (0, 0, 0.8))
         hair = DirectOptionMenu(
@@ -94,6 +93,7 @@ class PlayerCreator(Scene):
             items=self.hair_options,
             initialitem=0,
             command=self.set_hair,
+            scale=WIDGET_SCALE,
         )
         set_widget_pos(hair, (0, 0, 0.6))
         color = DirectOptionMenu(
@@ -101,6 +101,7 @@ class PlayerCreator(Scene):
             items=self.color_options,
             initialitem=0,
             command=self.set_color,
+            scale=WIDGET_SCALE,
         )
         set_widget_pos(color, (0, 0, 0.4))
         accessory = DirectOptionMenu(
@@ -108,12 +109,13 @@ class PlayerCreator(Scene):
             items=self.accessory_options,
             initialitem=0,
             command=self.set_accessory,
+            scale=WIDGET_SCALE,
         )
         set_widget_pos(accessory, (0, 0, 0.2))
         hp_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             command=self.on_slider_change,
             extraArgs=["hp"],
         )
@@ -121,7 +123,7 @@ class PlayerCreator(Scene):
         atk_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             command=self.on_slider_change,
             extraArgs=["atk"],
         )
@@ -129,7 +131,7 @@ class PlayerCreator(Scene):
         def_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             command=self.on_slider_change,
             extraArgs=["defense"],
         )
@@ -139,11 +141,11 @@ class PlayerCreator(Scene):
             "atk": atk_slider,
             "defense": def_slider,
         }
-        self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}")
+        self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}", scale=WIDGET_SCALE)
         set_widget_pos(self.remaining_label, (0, 0, -0.5))
-        confirm = DirectButton(text="Confirm", command=self.confirm, state="disabled")
+        confirm = DirectButton(text="Confirm", command=self.confirm, state="normal", scale=WIDGET_SCALE)
         set_widget_pos(confirm, (0, 0, -0.7))
-        cancel = DirectButton(text="Cancel", command=self.cancel)
+        cancel = DirectButton(text="Cancel", command=self.cancel, scale=WIDGET_SCALE)
         set_widget_pos(cancel, (0, 0, -0.9))
         self.confirm_button = confirm
         self.widgets = [
@@ -190,10 +192,15 @@ class PlayerCreator(Scene):
         if self.remaining_label:
             self.remaining_label["text"] = f"Points left: {remaining}"
         if self.confirm_button:
-            self.confirm_button["state"] = "normal" if remaining == 0 else "disabled"
+            self.confirm_button["state"] = "normal"
 
     def confirm(self) -> None:
-        points = {k: int(s["value"]) + self.extras.get(k, 0) for k, s in self.sliders.items()}
+        raw_points = {k: int(s["value"]) for k, s in self.sliders.items()}
+        spent = sum(raw_points.values())
+        bonus_used = min(self.bonus, max(0, spent - 100))
+        for t in DAMAGE_TYPES:
+            self.inventory[t] -= bonus_used * 100
+        points = {k: raw_points[k] + self.extras.get(k, 0) for k in raw_points}
         stats = Stats(
             hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),
             max_hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),

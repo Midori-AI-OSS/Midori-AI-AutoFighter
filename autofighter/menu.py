@@ -37,6 +37,7 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
 from autofighter.save import load_run
@@ -64,7 +65,7 @@ class MainMenu(Scene):
             button = DirectButton(
                 text=text,
                 command=cmd,
-                scale=0.1,
+                scale=WIDGET_SCALE,
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
@@ -146,7 +147,7 @@ class LoadRunMenu(Scene):
             button = DirectButton(
                 text=text,
                 command=cmd,
-                scale=0.1,
+                scale=WIDGET_SCALE,
                 frameColor=(0, 0, 0, 0.5),
                 text_fg=(1, 1, 1, 1),
             )
@@ -212,21 +213,21 @@ class OptionsMenu(Scene):
         self.sfx_slider = DirectSlider(
             range=(0, 1),
             value=self.sfx_volume,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             frameColor=(0, 0, 0, 0.5),
             command=self.update_sfx,
         )
         self.music_slider = DirectSlider(
             range=(0, 1),
             value=self.music_volume,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             frameColor=(0, 0, 0, 0.5),
             command=self.update_music,
         )
         self.refresh_slider = DirectSlider(
             range=(1, 10),
             value=self.stat_refresh_rate,
-            scale=0.5,
+            scale=WIDGET_SCALE * 5,
             frameColor=(0, 0, 0, 0.5),
             command=self.update_refresh,
         )
@@ -236,12 +237,14 @@ class OptionsMenu(Scene):
             text_fg=(1, 1, 1, 1),
             indicatorValue=self.pause_on_stats,
             command=self.toggle_pause,
+            scale=WIDGET_SCALE,
         )
         self._back_button = DirectButton(
             text="Back",
             frameColor=(0, 0, 0, 0.5),
             text_fg=(1, 1, 1, 1),
             command=self.back,
+            scale=WIDGET_SCALE,
         )
         self.widgets = [
             self.sfx_slider,
