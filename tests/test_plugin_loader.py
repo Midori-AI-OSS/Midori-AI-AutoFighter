@@ -34,9 +34,16 @@ def test_discovers_plugins_and_injects_bus() -> None:
             assert getattr(plugin, "bus") is bus
 
 
-def test_missing_category_raises_keyerror() -> None:
+def test_missing_category_raises_runtimeerror() -> None:
+    root = Path(__file__).resolve().parents[1] / "plugins"
+    loader = PluginLoader(required={"missing"})
+    with pytest.raises(RuntimeError):
+        loader.discover(str(root))
+
+
+def test_get_plugins_missing_category_runtimeerror() -> None:
     loader = PluginLoader()
-    with pytest.raises(KeyError):
+    with pytest.raises(RuntimeError):
         loader.get_plugins("missing")
 
 
@@ -45,7 +52,8 @@ def test_logs_import_errors(tmp_path, caplog) -> None:
     bad.write_text("raise RuntimeError('boom')\n")
     loader = PluginLoader()
     with caplog.at_level(logging.ERROR):
-        with pytest.raises(ImportError):
+        with pytest.raises(ImportError) as exc_info:
             loader.discover(str(tmp_path))
     assert "bad.py" in caplog.text
+    assert "RuntimeError: boom" in str(exc_info.value)
 

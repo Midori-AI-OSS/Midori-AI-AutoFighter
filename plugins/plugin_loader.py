@@ -25,21 +25,23 @@ class PluginLoader:
         base = Path(root)
         if not base.exists():
             return
-        failures: list[Path] = []
+        failures: list[tuple[Path, Exception]] = []
         for path in base.rglob("*.py"):
             if path.name == "__init__.py":
                 continue
             try:
                 module = self._import_module(path)
-            except Exception:
+            except Exception as exc:
                 log.exception("Failed to import plugin %s", path)
-                failures.append(path)
+                failures.append((path, exc))
                 continue
             self._register_module(module)
 
         if failures:
-            failed = ", ".join(str(p) for p in failures)
-            raise ImportError(f"Failed to import plugin(s): {failed}")
+            details = ", ".join(
+                f"{path} ({type(err).__name__}: {err})" for path, err in failures
+            )
+            raise ImportError(f"Failed to import plugin(s): {details}")
 
         missing = [c for c in self.required if c not in self._registry]
         if missing:
@@ -50,7 +52,9 @@ class PluginLoader:
 
     def get_plugins(self, category: str) -> dict[str, type]:
         if category not in self._registry:
-            raise KeyError(f"No plugins registered for category '{category}'")
+            raise RuntimeError(
+                f"No plugins registered for category '{category}'. Did you run discover?"
+            )
         return self._registry[category]
 
     def _import_module(self, path: Path) -> ModuleType:
