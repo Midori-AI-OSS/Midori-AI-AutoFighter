@@ -1,9 +1,15 @@
 # Damage and Healing Effects
 
-## Overview
-The combat system tracks damage-over-time (DoT) and healing-over-time (HoT) effects
-via dataclasses in `autofighter/effects.py`. Plugins under `plugins/dots/` and
-`plugins/hots/` implement specific behaviors.
+## Stats and Modifiers
+Combatants use the shared `Stats` dataclass from `autofighter/stats.py`. Integer fields like `hp`, `atk`, and `defense` are adjusted additively, while floats such as `crit_rate`, `crit_damage`, `effect_hit_rate`, `effect_resistance`, `vitality`, and `exp_multiplier` represent percentage modifiers (e.g., `0.05` for +5%).
+
+## Effect Processing
+`autofighter/effects.py` defines base `DamageOverTime` and `HealingOverTime` classes and an `EffectManager` that applies them. The manager:
+- Registers effects via `add_dot` and `add_hot`, enforcing optional stack caps.
+- Calls `tick` each turn to apply damage or healing and remove expired effects. Completed effect names are removed from the target's `Stats` lists.
+- Triggers `on_action` hooks when the target acts, letting effects like *Blazing Torment* respond immediately.
+
+Plugins under `plugins/dots/` and `plugins/hots/` subclass the base effect classes to implement specific behaviors.
 
 ## Supported DoTs
 - Bleed – deals 2% of Max HP each turn.

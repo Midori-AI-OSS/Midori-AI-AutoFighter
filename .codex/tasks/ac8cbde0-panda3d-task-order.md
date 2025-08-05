@@ -53,10 +53,10 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Add unit tests covering success and failure cases.
 6. [x] Stats dataclass (`751e73eb`) – share core attributes between players and foes.
    - [x] Define fields for HP, attack, defense, and other core stats.
-   - [ ] Support additive and percentage modifiers for stat changes.
-   - [ ] Integrate with damage and healing modules.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [x] Support additive and percentage modifiers for stat changes.
+   - [x] Integrate with damage and healing modules.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 7. [x] Damage and healing migration (`7b715405`) – port DoT/HoT logic into new architecture.
    - [x] Define a shared `Stats` dataclass for players and foes.
    - [x] Reimplement DoT and HoT handling using Panda3D-friendly data structures.
@@ -64,8 +64,8 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Support HoTs: Regeneration, PlayerName's Echo, PlayerName's Heal.
    - [x] Ensure stacking and reset rules match the current game's mechanics and clear after battles unless made permanent.
    - [x] Add unit tests for each damage and healing type.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 8. [x] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Create a main menu with buttons for New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Implement Options submenu with sound-effects volume, music volume, and toggle for stat-screen pause behaviour.
