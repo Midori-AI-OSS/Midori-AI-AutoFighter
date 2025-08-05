@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "panda3d>=1.10.15",
     "rich>=13.0.0",
+    "sqlcipher3-binary>=0.5.4",
 ]
 
 [project.optional-dependencies]
