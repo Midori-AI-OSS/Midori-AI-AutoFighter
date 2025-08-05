@@ -4,6 +4,8 @@ import types
 from pathlib import Path
 from importlib import reload
 
+from autofighter.stats import Stats
+
 
 class _FakeCursor:
     def __init__(self, getter):
@@ -73,22 +75,49 @@ def test_save_manager_batches_and_commits(tmp_path):
         assert sm.fetch_player("p") == {"name": "Hero"}
 
 
-def test_key_derivation_and_backup(tmp_path):
+def test_key_manager_backup_and_restore(tmp_path):
+    from autofighter.saves import key_manager
+
+    key1, salt = key_manager.derive_key("pw")
+    key2, _ = key_manager.derive_key("pw", salt)
+    assert key1 == key2
+
+    key_file = tmp_path / "conf.key"
+    key_manager.save_salt(key_file, salt)
+    backup = tmp_path / "conf.bak"
+    key_manager.backup_key_file(key_file, backup)
+
+    key_file.unlink()
+    key_manager.restore_key_file(backup, key_file)
+    restored_salt = key_manager.load_salt(key_file)
+    key3, _ = key_manager.derive_key("pw", restored_salt)
+    assert key1 == key3
+
+
+def test_save_module_roundtrip(tmp_path):
     fake_module = types.SimpleNamespace(connect=lambda path: _FakeConnection(path))
     sys.modules["sqlcipher3"] = fake_module
     from autofighter.saves import encrypted_store
-
     reload(encrypted_store)
+    from autofighter import save
+    reload(save)
+
     db_path = tmp_path / "test.db"
-    backup_path = tmp_path / "salt.bak"
+    stats = Stats(hp=5, max_hp=5)
+    save.save_player(
+        "Athletic",
+        "Short",
+        "Black",
+        "None",
+        stats,
+        {},
+        password="pw",
+        path=db_path,
+    )
 
-    with encrypted_store.SaveManager(db_path, "pw") as sm:
-        first_key = sm.key
-        sm.backup_config(backup_path)
-        assert backup_path.exists()
+    loaded = save.load_player("pw", path=db_path)
+    assert loaded is not None
+    body, hair, hair_color, accessory, stats2, inventory = loaded
+    assert body == "Athletic"
+    assert stats2.hp == 5
 
-    sm.config_path.unlink()
-    sm.restore_config(backup_path)
-
-    with sm as sm2:
-        assert sm2.key == first_key

@@ -5,9 +5,12 @@ from contextlib import AbstractContextManager
 from pathlib import Path
 from typing import Any
 
-import sqlcipher3
+try:
+    import sqlcipher3
+except Exception:  # pragma: no cover - handled in __enter__
+    sqlcipher3 = None  # type: ignore
 
-from . import key_management
+from . import key_manager
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS runs(
@@ -31,12 +34,14 @@ class SaveManager(AbstractContextManager):
         self._queue: list[tuple[str, tuple[Any, ...]]] = []
 
     def __enter__(self) -> "SaveManager":
+        if sqlcipher3 is None:
+            raise ImportError("sqlcipher3 is required for SaveManager")
         if self.config_path.exists():
-            salt = key_management.load_salt(self.config_path)
+            salt = key_manager.load_salt(self.config_path)
         else:
             salt = None
-        self.key, salt = key_management.derive_key(self.password, salt)
-        key_management.save_salt(self.config_path, salt)
+        self.key, salt = key_manager.derive_key(self.password, salt)
+        key_manager.save_salt(self.config_path, salt)
         self.conn = sqlcipher3.connect(self.path)
         self.conn.execute(f"PRAGMA key = \"x'{self.key}'\"")
         self.conn.executescript(SCHEMA)
@@ -97,7 +102,7 @@ class SaveManager(AbstractContextManager):
         return False
 
     def backup_config(self, backup_path: Path) -> None:
-        key_management.backup_config(self.config_path, backup_path)
+        key_manager.backup_key_file(self.config_path, backup_path)
 
     def restore_config(self, backup_path: Path) -> None:
-        key_management.restore_config(backup_path, self.config_path)
+        key_manager.restore_key_file(backup_path, self.config_path)

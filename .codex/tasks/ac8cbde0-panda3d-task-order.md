@@ -40,7 +40,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
 31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
 32. [x] SQLCipher schema (`798aafd3`) – store run and player data securely.
-33. [ ] Save key management (`428e9823`) – derive and back up salted-password keys.
+33. [x] Save key management (`428e9823`) – derive and back up salted-password keys.
 34. [ ] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
 35. [ ] Asset style research (`ad61da93`) – choose art direction and free model sources.
 36. [ ] Conversion workflow (`10bd22da`) – build pipeline to Panda3D formats.

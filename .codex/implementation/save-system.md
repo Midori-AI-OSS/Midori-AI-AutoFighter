@@ -3,7 +3,7 @@
 ## Setup
 - Uses [SQLCipher](https://www.zetetic.net/sqlcipher/) via the `sqlcipher3-binary` package.
 - Install dependencies with `uv add sqlcipher3-binary`.
-- Saves are stored in `autofighter/saves/encrypted_store.py` using a context-managed `SaveManager`.
+- Saves are stored in `autofighter/saves/encrypted_store.py` using a context-managed `SaveManager`; `autofighter/saves/key_manager.py` derives and stores the SQLCipher key.
 
 ## Schema
 - Compact tables:
@@ -15,15 +15,16 @@
 from pathlib import Path
 from autofighter.saves.encrypted_store import SaveManager
 
-with SaveManager(Path('save.db'), 'password') as sm:
+with SaveManager(Path("save.db"), "password") as sm:
     sm.queue_run('current', {'hp': 10})
     sm.queue_player('player', {'name': 'Hero'})
     run = sm.fetch_run('current')
     player = sm.fetch_player('player')
 ```
-- Keys derive from the password and a stored salt; the salt lives next to the database as `save.key`.
+- `key_manager.derive_key(password, salt)` returns the hex key and salt. `save_salt` and `load_salt` persist the salt next to the database as `save.key`.
 - Queued writes flush in a single transaction on context exit or `commit()`.
-- Use `backup_config(path)` and `restore_config(path)` to copy the salt file for safekeeping.
+- Use `key_manager.backup_key_file(src, dest)` and `key_manager.restore_key_file(src, dest)` to copy or restore the salt file.
+- High-level helpers in `autofighter/save.py` wrap `SaveManager` for run and player data.
 
 ## Recovery
 - If a session exits with an exception, pending writes roll back.

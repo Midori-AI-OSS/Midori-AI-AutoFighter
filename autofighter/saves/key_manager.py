@@ -24,9 +24,9 @@ def load_salt(path: Path) -> bytes:
     return base64.b64decode(data.encode())
 
 
-def backup_config(src: Path, dest: Path) -> None:
+def backup_key_file(src: Path, dest: Path) -> None:
     shutil.copy2(src, dest)
 
 
-def restore_config(src: Path, dest: Path) -> None:
+def restore_key_file(src: Path, dest: Path) -> None:
     shutil.copy2(src, dest)
