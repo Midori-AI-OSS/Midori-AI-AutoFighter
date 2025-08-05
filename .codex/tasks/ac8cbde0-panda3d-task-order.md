@@ -34,7 +34,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
 26. [x] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
 27. [x] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
-28. [ ] Duplicate handling (`6e2558e7`) – enforce stack rules and apply stat bonuses, not just Vitality.
+28. [x] Duplicate handling (`6e2558e7`) – enforce stack rules and apply stat bonuses, not just Vitality.
 29. [ ] Gacha presentation (`a0f85dbd`) – implement `play_animation` and render a results menu after pulls.
 30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
 31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.

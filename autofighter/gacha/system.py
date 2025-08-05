@@ -25,6 +25,7 @@ class GachaResult:
     )
     tickets: int = 0
     vitality: Dict[str, float] = field(default_factory=dict)
+    stats: Dict[str, Dict[str, float]] = field(default_factory=dict)
 
 
 class GachaSystem:
@@ -44,7 +45,13 @@ class GachaSystem:
 
         loader = PluginLoader()
         loader.discover(player_dir)
-        self.pool = list(loader.get_plugins("player").keys())
+        self.players = loader.get_plugins("player")
+        self.pool = list(self.players.keys())
+
+    def _stack_bonus(self, base: float, stacks: int) -> float:
+        for _ in range(stacks - 1):
+            base *= 1.05
+        return base
 
     def pull(self, count: int) -> GachaResult:
         if count not in (1, 5, 10):
@@ -69,11 +76,18 @@ class GachaSystem:
 
             if rarity:
                 character = self.rng.choice(self.pool)
+                plugin = self.players[character]
                 stacks = self.owned.get(character, 0)
                 self.owned[character] = stacks + 1
                 result.characters.append(character)
                 if stacks:
                     result.vitality[character] = vitality_bonus(stacks)
+                    bonuses = getattr(plugin, "stat_bonuses", {})
+                    if bonuses:
+                        result.stats[character] = {
+                            k: self._stack_bonus(v, stacks)
+                            for k, v in bonuses.items()
+                        }
                 if rarity == 6:
                     self.pity_6 = 0
                     self.pity_5 = 0

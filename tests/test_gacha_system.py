@@ -1,8 +1,10 @@
 from __future__ import annotations
-import random
 
+import random
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 from autofighter.gacha.system import GachaSystem
 from autofighter.gacha.vitality import vitality_bonus
@@ -102,3 +104,21 @@ def test_pity_resets_on_six_star() -> None:
         gs.pull(1)
     assert gs.pity_5 == 0
     assert gs.pity_6 == 0
+
+
+def test_stat_bonus_applied() -> None:
+    gs = GachaSystem(rng=random.Random(0))
+    plugin = gs.players["ally"]
+    plugin.stat_bonuses = {"atk": 10}
+    try:
+        with patch.object(gs.rng, "random", return_value=0.0), patch.object(
+            gs.rng, "choice", return_value="ally",
+        ):
+            gs.pull(1)
+            r2 = gs.pull(1)
+            r3 = gs.pull(1)
+        assert r2.stats["ally"]["atk"] == pytest.approx(10)
+        assert r3.stats["ally"]["atk"] == pytest.approx(10 * 1.05)
+        assert gs.owned["ally"] == 3
+    finally:
+        delattr(plugin, "stat_bonuses")

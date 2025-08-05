@@ -16,5 +16,8 @@ Adds a basic character pull system seeded from `plugins/players`.
 - Failed pulls grant generic upgrade items.
 - Upgrade items craft automatically: 125 lower-star items form one higher star.
 - Ten 4★ items trade for an extra gacha ticket.
-- Duplicate characters apply Vitality stacking bonuses.
+- Duplicate characters apply Vitality and stat bonuses. Each stat uses the first
+  duplicate's value from the player plugin and increases by 5% per additional
+  stack. Characters can stack duplicates endlessly; each extra pull increases
+  the stack and grants the corresponding bonuses.
 - Ownership data serializes to JSON for persistence.
