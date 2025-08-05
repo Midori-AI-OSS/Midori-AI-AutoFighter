@@ -17,6 +17,7 @@ from autofighter.stats import Stats
 from autofighter.rewards import Reward
 from autofighter.rewards import select_rewards
 from autofighter.balance.pressure import apply_pressure
+from autofighter.rooms.chat_room import ChatRoom
 
 
 class BattleRoom(Scene):
@@ -44,6 +45,7 @@ class BattleRoom(Scene):
         self.loop = loop
         self.boss = boss
         self.floor_boss = floor_boss
+        self.floor = floor
         self.turn = 0
         self.overtime_threshold = 500 if floor_boss else 100
         self.overtime = False
@@ -274,4 +276,13 @@ class BattleRoom(Scene):
         return task.again
 
     def exit(self) -> None:
-        self.app.scene_manager.switch_to(self.return_scene_factory())
+        chats_seen = ChatRoom.chats_per_floor.get(self.floor, 0)
+        if ChatRoom.should_spawn(chats_seen):
+            scene = ChatRoom(
+                self.app,
+                self.return_scene_factory,
+                floor=self.floor,
+            )
+            self.app.scene_manager.switch_to(scene)
+        else:
+            self.app.scene_manager.switch_to(self.return_scene_factory())
