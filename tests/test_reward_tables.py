@@ -31,4 +31,4 @@ def test_floor_boss_ticket_scaling():
     rng = DummyRng([0.0, 0.0, 0.0])
     reward = select_rewards(floor_boss=True, pressure=40, loop=2, rng=rng)
     assert reward.tickets == 5
-    assert reward.relic == 3 or reward.relic == 4
+    assert reward.relic in {4, 5}

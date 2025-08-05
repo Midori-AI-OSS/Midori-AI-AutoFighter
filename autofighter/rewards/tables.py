@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import random
 
-from dataclasses import dataclass
 from typing import Generic
-from typing import Sequence
 from typing import TypeVar
+from typing import Sequence
+from dataclasses import dataclass
 
+from autofighter.balance.loop import floor_boss_reward_multiplier
 T = TypeVar("T")
 
 
@@ -70,13 +71,19 @@ def select_rewards(
     rng = rng or random.Random()
     loop = max(1, loop)
     if floor_boss:
-        relic = RELIC_FLOOR_BOSS.pick(rng)
-        upgrade = UPGRADE_FLOOR_BOSS.pick(rng)
-        card = CARD_FLOOR_BOSS.pick(rng)
-        gold = int(config.floor_boss_gold * loop * rng.uniform(2.05, 4.25))
+        bonus = loop - 1
+        relic = min(5, RELIC_FLOOR_BOSS.pick(rng) + bonus)
+        upgrade = min(5, UPGRADE_FLOOR_BOSS.pick(rng) + bonus)
+        card = min(5, CARD_FLOOR_BOSS.pick(rng) + bonus)
+        gold = int(
+            config.floor_boss_gold
+            * loop
+            * floor_boss_reward_multiplier(loop)
+            * rng.uniform(2.05, 4.25)
+        )
         tickets = min(
             config.max_tickets,
-            1 + pressure // config.ticket_pressure_step + loop,
+            1 + pressure // config.ticket_pressure_step + loop + bonus,
         )
     elif boss:
         relic = RELIC_BOSS.pick(rng) if rng.random() < 0.25 else None

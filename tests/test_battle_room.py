@@ -7,9 +7,6 @@ except ModuleNotFoundError:  # pragma: no cover - skip if Panda3D missing
 
     pytest.skip("Panda3D not available", allow_module_level=True)
 
-from types import SimpleNamespace
-
-from direct.gui.DirectGui import DGG
 
 from autofighter.battle_room import BattleRoom
 from autofighter.stats import Stats
@@ -25,7 +22,6 @@ class DummyTaskMgr:
 
 class DummyApp:
     def __init__(self) -> None:
-        self.messenger = SimpleNamespace(send=lambda *a, **k: None)
         self.taskMgr = DummyTaskMgr()
 
     def accept(self, *_args, **_kwargs):  # pragma: no cover - event wiring stub
@@ -42,8 +38,6 @@ def make_room(**kwargs) -> BattleRoom:
     app = DummyApp()
     room = BattleRoom(app, return_scene_factory=lambda: None, **kwargs)
     room.foe = Stats(hp=10, max_hp=10, atk=0, defense=0)
-    room.attack_button = {"state": DGG.NORMAL}
-    room.defend_button = {"state": DGG.NORMAL}
     room.status_label = {"text": ""}
     room.player_model = object()
     room.foe_model = object()
@@ -55,28 +49,17 @@ def make_room(**kwargs) -> BattleRoom:
 
 def test_turn_counter_tracks_full_round() -> None:
     room = make_room(player=Stats(hp=10, max_hp=10, atk=0, defense=0))
-    room.player_attack()
-    assert room.turn == 0
-    room.foe_attack()
-    assert room.turn == 1
-
-
-def test_defend_reduces_damage_and_counts_turn() -> None:
-    room = make_room(player=Stats(hp=10, max_hp=10, atk=0, defense=0))
-    room.foe.atk = 4
-    room.player_defend()
-    room.foe_attack()
-    assert room.player.hp == 8
+    room.run_round()
     assert room.turn == 1
 
 
 def test_overtime_triggers_at_threshold() -> None:
     room = make_room(player=Stats(hp=10, max_hp=10, atk=0, defense=0))
     room.turn = room.overtime_threshold - 1
-    room.foe_attack()
+    room.run_round()
     assert room.overtime
 
     boss_room = make_room(player=Stats(hp=10, max_hp=10, atk=0, defense=0), floor_boss=True)
     boss_room.turn = boss_room.overtime_threshold - 1
-    boss_room.foe_attack()
+    boss_room.run_round()
     assert boss_room.overtime
