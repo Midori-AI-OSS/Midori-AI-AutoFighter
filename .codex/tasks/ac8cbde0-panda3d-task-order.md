@@ -28,7 +28,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
 20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
 21. [x] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
-22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights and fix `foe_attack` referencing an undefined `attack_button`.
+22. [x] Boss room encounters (`21f544d8`) – implement standard boss fights and fix `foe_attack` referencing an undefined `attack_button`.
 23. [x] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
 24. [x] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
 25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
@@ -36,14 +36,14 @@ Coders must check in with the reviewer or task master before marking tasks compl
 27. [x] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
 28. [ ] Duplicate handling (`6e2558e7`) – enforce stack rules and apply stat bonuses, not just Vitality.
 29. [ ] Gacha presentation (`a0f85dbd`) – implement `play_animation` and render a results menu after pulls.
-30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
+30. [x] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
 31. [x] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
 32. [x] SQLCipher schema (`798aafd3`) – store run and player data securely.
 33. [x] Save key management (`428e9823`) – derive and back up salted-password keys.
 34. [x] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
 35. [x] Asset style research (`ad61da93`) – choose art direction and free model sources.
 36. [x] Conversion workflow (`10bd22da`) – build pipeline to Panda3D formats.
-37. [ ] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
+37. [x] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
 38. [x] Audio system (`7f5c8c36`) – play music and effects with volume control.
 39. [ ] UI polish and accessibility (`d6a657b0`) – dark glass theme, color-blind mode, keyboard navigation.
 40. [ ] Documentation and contributor guidelines (`ca46e97e`) – update README and contributor docs for new structure.

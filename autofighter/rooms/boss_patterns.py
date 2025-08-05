@@ -19,8 +19,8 @@ BOSS_PATTERNS: Dict[str, BossInfo] = {
     "demo": BossInfo(
         attacks=[5, 15, 25],
         reward={"gold": 100, "items": ["Demo Relic"]},
-        model="models/box",
-        music="audio/boss_theme.ogg",
+        model="cube",
+        music="boss_theme",
     )
 }
 

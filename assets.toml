@@ -4,6 +4,8 @@ cube = { path = "assets/models/cube.bam", sha256 = "487bce4ac7bf045a141fdf153bd2
 
 [textures]
 placeholder = { path = "assets/textures/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
+white = { path = "assets/textures/white.png", sha256 = "b095da84d43866f2c64982e503fcdc952361c9b2584c0009bebe79d09b9abb2d" }
 
 [audio]
 placeholder = { path = "assets/audio/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
+boss_theme = { path = "assets/audio/boss_theme.wav", sha256 = "3fa20276d8a4131431490ed129d0b05fafa4e9c82d4339b5cf635512103d6615" }

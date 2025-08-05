@@ -4,14 +4,15 @@ import random
 
 from direct.task import Task
 from panda3d.core import LColor
-from panda3d.core import LVector3f
 from panda3d.core import NodePath
+from panda3d.core import LVector3f
 from direct.gui.DirectGui import DirectLabel
 from direct.showbase.ShowBase import ShowBase
 
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
+from autofighter.assets import AssetManager
 from autofighter.rewards import Reward
 from autofighter.rewards import select_rewards
 from autofighter.balance.loop import scale_stats
@@ -34,6 +35,7 @@ class BattleRoom(Scene):
         loop: int = 0,
         boss: bool = False,
         floor_boss: bool = False,
+        assets: AssetManager | None = None,
     ) -> None:
         self.app = app
         self.return_scene_factory = return_scene_factory
@@ -60,15 +62,30 @@ class BattleRoom(Scene):
         self._flash_state = False
         self.reward: Reward | None = None
         self._round_task: Task | None = None
+        self.assets = assets or AssetManager()
+        self.player_model_name = "cube"
+        self.foe_model_name = "cube"
 
     def setup(self) -> None:
-        self.player_model = self.app.loader.loadModel("models/box")
-        self.player_model.reparentTo(self.app.render)
-        self.player_model.setPos(-1, 10, 0)
+        model = self.assets.load("models", self.player_model_name)
+        if hasattr(model, "copyTo"):
+            self.player_model = model.copyTo(self.app.render)
+            self.player_model.setPos(-1, 10, 0)
+            texture = self.assets.load("textures", "white")
+            try:
+                self.player_model.setTexture(texture, 1)
+            except Exception:
+                pass
 
-        self.foe_model = self.app.loader.loadModel("models/box")
-        self.foe_model.reparentTo(self.app.render)
-        self.foe_model.setPos(1, 10, 0)
+        model = self.assets.load("models", self.foe_model_name)
+        if hasattr(model, "copyTo"):
+            self.foe_model = model.copyTo(self.app.render)
+            self.foe_model.setPos(1, 10, 0)
+            texture = self.assets.load("textures", "white")
+            try:
+                self.foe_model.setTexture(texture, 1)
+            except Exception:
+                pass
 
         self.status_label = DirectLabel(
             text="A wild foe appears!",
@@ -204,8 +221,10 @@ class BattleRoom(Scene):
     ) -> None:
         if source is None or target is None:
             return
-        effect = self.app.loader.loadModel("models/box")
-        effect.reparentTo(self.app.render)
+        model = self.assets.load("models", "cube")
+        if not hasattr(model, "copyTo"):
+            return
+        effect = model.copyTo(self.app.render)
         effect.setScale(0.2)
         effect.setColor(color)
         start = LVector3f(source.getPos())
@@ -237,12 +256,13 @@ class BattleRoom(Scene):
     def add_status_icon(self, target: NodePath | None, color: LColor) -> None:
         if target is None:
             return
-        icon = self.app.loader.loadModel("models/box")
-        icon.reparentTo(target)
-        icon.setScale(0.2)
-        icon.setColor(color)
-        icon.setPos(0, 0, 1)
-        self.status_icons.append(icon)
+        model = self.assets.load("models", "cube")
+        if hasattr(model, "copyTo"):
+            icon = model.copyTo(target)
+            icon.setScale(0.2)
+            icon.setColor(color)
+            icon.setPos(0, 0, 1)
+            self.status_icons.append(icon)
 
     def start_overtime(self) -> None:
         assert self.overtime_label is not None
