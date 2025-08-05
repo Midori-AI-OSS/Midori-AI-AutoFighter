@@ -36,8 +36,8 @@ Coders must check in with the reviewer or task master before marking tasks compl
 27. [ ] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
 28. [ ] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.
 29. [ ] Gacha presentation (`a0f85dbd`) – play rarity video and show results menu.
-30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
-31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
+30. [x] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
+31. [x] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
 32. [ ] SQLCipher schema (`798aafd3`) – store run and player data securely.
 33. [ ] Save key management (`428e9823`) – derive and back up salted-password keys.
 34. [ ] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
