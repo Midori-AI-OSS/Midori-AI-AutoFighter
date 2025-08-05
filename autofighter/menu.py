@@ -32,11 +32,16 @@ except Exception:  # pragma: no cover - fallback for headless tests
 
     class DirectSlider(_Widget):  # type: ignore[dead-code]
         def command(self) -> None:  # pragma: no cover - optional callback
-            pass
+            func = self.options.get("command")
+            if callable(func):
+                func()
 
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import TEXT_COLOR
+from autofighter.gui import FRAME_COLOR
+from autofighter.gui import SLIDER_SCALE
 from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
@@ -66,8 +71,8 @@ class MainMenu(Scene):
                 text=text,
                 command=cmd,
                 scale=WIDGET_SCALE,
-                frameColor=(0, 0, 0, 0.5),
-                text_fg=(1, 1, 1, 1),
+                frameColor=FRAME_COLOR,
+                text_fg=TEXT_COLOR,
             )
             set_widget_pos(button, (0, 0, top - i * self.BUTTON_SPACING))
             self.buttons.append(button)
@@ -86,7 +91,7 @@ class MainMenu(Scene):
 
     def highlight(self) -> None:
         for i, button in enumerate(self.buttons):
-            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else (0, 0, 0, 0.5)
+            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else FRAME_COLOR
             button["frameColor"] = color
 
     def prev(self) -> None:
@@ -133,14 +138,20 @@ class LoadRunMenu(Scene):
         self.buttons: list[DirectButton] = []
         self.index = 0
 
-    def available_runs(self) -> list[Path]:
-        return sorted(self.RUNS_DIR.glob("*.json"))
+    def available_runs(self) -> list[tuple[Path, str]]:
+        runs: list[tuple[Path, str]] = []
+        for path in sorted(self.RUNS_DIR.glob("*.json")):
+            stats = load_run(path)
+            if stats:
+                label = f"{path.stem}: HP {stats.hp}/{stats.max_hp}"
+                runs.append((path, label))
+        return runs
 
     BUTTON_SPACING = 0.25
 
     def setup(self) -> None:
         runs = self.available_runs()
-        labels = [(p.stem, lambda p=p: self.start_run(p)) for p in runs]
+        labels = [(label, lambda p=p: self.start_run(p)) for p, label in runs]
         labels.append(("Back", self.back))
         top = self.BUTTON_SPACING * (len(labels) - 1) / 2
         for i, (text, cmd) in enumerate(labels):
@@ -148,8 +159,8 @@ class LoadRunMenu(Scene):
                 text=text,
                 command=cmd,
                 scale=WIDGET_SCALE,
-                frameColor=(0, 0, 0, 0.5),
-                text_fg=(1, 1, 1, 1),
+                frameColor=FRAME_COLOR,
+                text_fg=TEXT_COLOR,
             )
             set_widget_pos(button, (0, 0, top - i * self.BUTTON_SPACING))
             self.buttons.append(button)
@@ -170,7 +181,7 @@ class LoadRunMenu(Scene):
 
     def highlight(self) -> None:
         for i, button in enumerate(self.buttons):
-            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else (0, 0, 0, 0.5)
+            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else FRAME_COLOR
             button["frameColor"] = color
 
     def prev(self) -> None:
@@ -213,36 +224,36 @@ class OptionsMenu(Scene):
         self.sfx_slider = DirectSlider(
             range=(0, 1),
             value=self.sfx_volume,
-            scale=WIDGET_SCALE * 5,
-            frameColor=(0, 0, 0, 0.5),
+            scale=SLIDER_SCALE,
+            frameColor=FRAME_COLOR,
             command=self.update_sfx,
         )
         self.music_slider = DirectSlider(
             range=(0, 1),
             value=self.music_volume,
-            scale=WIDGET_SCALE * 5,
-            frameColor=(0, 0, 0, 0.5),
+            scale=SLIDER_SCALE,
+            frameColor=FRAME_COLOR,
             command=self.update_music,
         )
         self.refresh_slider = DirectSlider(
             range=(1, 10),
             value=self.stat_refresh_rate,
-            scale=WIDGET_SCALE * 5,
-            frameColor=(0, 0, 0, 0.5),
+            scale=SLIDER_SCALE,
+            frameColor=FRAME_COLOR,
             command=self.update_refresh,
         )
         self._pause_button = DirectCheckButton(
             text="Pause on Stat Screen",
-            frameColor=(0, 0, 0, 0.5),
-            text_fg=(1, 1, 1, 1),
+            frameColor=FRAME_COLOR,
+            text_fg=TEXT_COLOR,
             indicatorValue=self.pause_on_stats,
             command=self.toggle_pause,
             scale=WIDGET_SCALE,
         )
         self._back_button = DirectButton(
             text="Back",
-            frameColor=(0, 0, 0, 0.5),
-            text_fg=(1, 1, 1, 1),
+            frameColor=FRAME_COLOR,
+            text_fg=TEXT_COLOR,
             command=self.back,
             scale=WIDGET_SCALE,
         )
@@ -277,7 +288,7 @@ class OptionsMenu(Scene):
 
     def highlight(self) -> None:
         for i, widget in enumerate(self.widgets):
-            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else (0, 0, 0, 0.5)
+            color = (0.2, 0.2, 0.2, 0.9) if i == self.index else FRAME_COLOR
             widget["frameColor"] = color
 
     def prev(self) -> None:

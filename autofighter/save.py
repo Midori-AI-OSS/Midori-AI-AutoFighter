@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import json
 from pathlib import Path
 
@@ -11,9 +10,12 @@ PLAYER_FILE = Path("player.json")
 def load_run(path: Path) -> Stats | None:
     if not path.exists():
         return None
-    data = json.loads(path.read_text())
-    stats_data = data.get("stats", {})
-    return Stats(**stats_data)
+    try:
+        data = json.loads(path.read_text())
+        stats_data = data.get("stats", {})
+        return Stats(**stats_data)
+    except Exception:
+        return None
 
 
 def save_player(

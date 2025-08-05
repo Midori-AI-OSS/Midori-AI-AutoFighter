@@ -1,12 +1,14 @@
 from __future__ import annotations
+from __future__ import annotations
 
 import sys
 import types
 
 from pathlib import Path
 
-from autofighter.menu import LoadRunMenu
+from autofighter.gui import FRAME_COLOR
 from autofighter.menu import MainMenu
+from autofighter.menu import LoadRunMenu
 from autofighter.menu import OptionsMenu
 
 
@@ -36,14 +38,33 @@ class DummyApp:
     def userExit(self) -> None:  # noqa: N802 - match ShowBase
         pass
 
+
 def test_load_run_menu_lists_runs(tmp_path: Path) -> None:
-    (tmp_path / "run1.json").write_text("{}")
+    (tmp_path / "run1.json").write_text('{"stats": {"hp": 1, "max_hp": 2}}')
     (tmp_path / "run2.json").write_text("{}")
     app = DummyApp()
     menu = LoadRunMenu(app)
     LoadRunMenu.RUNS_DIR = tmp_path
-    paths = menu.available_runs()
-    assert [p.name for p in paths] == ["run1.json", "run2.json"]
+    runs = menu.available_runs()
+    assert [p.name for p, _ in runs] == ["run1.json"]
+    assert "HP" in runs[0][1]
+
+
+def test_load_run_menu_navigation(tmp_path: Path) -> None:
+    for i in range(2):
+        (tmp_path / f"run{i}.json").write_text('{"stats": {"hp": 1, "max_hp": 2}}')
+    app = DummyApp()
+    LoadRunMenu.RUNS_DIR = tmp_path
+    menu = LoadRunMenu(app)
+    menu.setup()
+    highlight = (0.2, 0.2, 0.2, 0.9)
+    menu.next()
+    assert menu.index == 1
+    assert menu.buttons[1]["frameColor"] == highlight
+    assert menu.buttons[0]["frameColor"] == FRAME_COLOR
+    menu.prev()
+    assert menu.buttons[0]["frameColor"] == highlight
+    menu.teardown()
 
 
 def test_load_run_menu_start_run(tmp_path: Path) -> None:
@@ -75,17 +96,17 @@ def test_load_run_menu_start_run(tmp_path: Path) -> None:
     del sys.modules['autofighter.battle_room']
 
 
-def test_options_menu_updates_audio() -> None:
+def test_options_menu_volume_arrows_update_audio() -> None:
     app = DummyApp()
     menu = OptionsMenu(app)
     menu.setup()
-    menu.sfx_slider["value"] = 0.7
-    menu.music_slider["value"] = 0.3
-    menu.update_sfx()
-    menu.update_music()
-    assert app.sfxManagerList[0].volume == 0.7
-    assert app.sfxManagerList[1].volume == 0.7
-    assert app.musicManager.volume == 0.3
+    menu.increase()
+    assert app.sfxManagerList[0].volume == 0.55
+    menu.decrease()
+    assert app.sfxManagerList[0].volume == 0.5
+    menu.next()
+    menu.decrease()
+    assert app.musicManager.volume == 0.45
     menu.teardown()
 
 
@@ -107,3 +128,4 @@ def test_main_menu_buttons_stack_vertically() -> None:
     assert zs == sorted(zs, reverse=True)
     assert len(set(zs)) == len(zs)
     menu.teardown()
+
