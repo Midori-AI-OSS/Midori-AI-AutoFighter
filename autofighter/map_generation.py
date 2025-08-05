@@ -1,15 +1,19 @@
 """Map generation utilities for building floor layouts.
 
 Generates deterministic room sequences with required shop and rest
-stops plus optional chat rooms. Foe scaling respects floor, room,
-pressure level, and loop count.
+stops plus optional chat rooms. Pressure level raises room count,
+adds branches and bonus bosses, and foe scaling respects floor,
+room, and loop count.
 """
 
 from __future__ import annotations
 
 import random
-from typing import List
+import importlib
+
 from dataclasses import dataclass, field
+from typing import List
+from typing import Type
 
 
 @dataclass
@@ -39,15 +43,24 @@ class MapGenerator:
         extra_rooms = self.pressure_level // 10
         total_rooms = 45 + extra_rooms
         extra_bosses = self.pressure_level // 20
+        branch_count = min(self.pressure_level // 15, total_rooms - 2)
 
         # Preselect shop and rest positions (exclude final rooms)
         available = list(range(1, total_rooms - 1))
         shop_positions = set(rng.sample(available, k=2))
         remaining = [i for i in available if i not in shop_positions]
         rest_positions = set(rng.sample(remaining, k=2))
+        remaining = [i for i in remaining if i not in rest_positions]
 
-        # Place extra bosses near the end
-        boss_positions = list(range(total_rooms - extra_bosses - 1, total_rooms - 1))
+        # Place extra bosses across the map
+        boss_positions = set()
+        if extra_bosses:
+            boss_positions = set(rng.sample(remaining, k=extra_bosses))
+
+        # Branch positions skip ahead one room
+        branch_positions = set()
+        if branch_count:
+            branch_positions = set(rng.sample(range(1, total_rooms - 2), k=branch_count))
 
         nodes: List[MapNode] = []
         for idx in range(total_rooms):
@@ -64,13 +77,21 @@ class MapGenerator:
 
             chat_after = room_type.startswith("battle") and rng.random() < 0.3
             scale = (floor * (idx + 1))
-            scale *= 1 + 0.05 * self.pressure_level
             scale *= 1.2 ** self.loop
             scale *= rng.uniform(0.95, 1.05)
-            nodes.append(MapNode(index=idx, room_type=room_type, chat_after=chat_after, enemy_scale=scale))
+            nodes.append(
+                MapNode(
+                    index=idx,
+                    room_type=room_type,
+                    chat_after=chat_after,
+                    enemy_scale=scale,
+                )
+            )
 
             if idx + 1 < total_rooms:
                 nodes[-1].links.append(idx + 1)
+                if idx in branch_positions:
+                    nodes[-1].links.append(idx + 2)
 
         return nodes
 
@@ -92,3 +113,23 @@ def render_floor(nodes: List[MapNode]) -> str:
         chat = " *" if node.chat_after else ""
         lines.append(f"{node.index:02d}:{sym}{chat}")
     return "\n".join(lines)
+
+
+ROOM_MODULES = {
+    "battle_weak": "autofighter.battle_room.BattleRoom",
+    "battle_normal": "autofighter.battle_room.BattleRoom",
+    "battle_boss": "autofighter.rooms.boss_room.BossRoom",
+    "battle_boss_floor": "autofighter.rooms.boss_room.BossRoom",
+    "shop": "autofighter.shop_room.ShopRoom",
+    "rest": "autofighter.rest_room.RestRoom",
+    "event": "autofighter.event_room.EventRoom",
+}
+
+
+def load_room_class(room_type: str) -> Type[object]:
+    """Import and return the class for a given room type."""
+
+    target = ROOM_MODULES[room_type]
+    module_name, class_name = target.rsplit(".", 1)
+    module = importlib.import_module(module_name)
+    return getattr(module, class_name)

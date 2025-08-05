@@ -27,14 +27,15 @@ Coders must check in with the reviewer or task master before marking tasks compl
 18. [x] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
 19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
 20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
-21. [ ] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
-22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights.
+21. [x] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
+22. [x] Boss room encounters (`21f544d8`) – implement standard boss fights.
 23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
 24. [ ] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
-25. [ ] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
-26. [ ] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
+25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
+26. [x] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
 27. [ ] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
 28. [ ] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.
+28. [x] Duplicate handling (`6e2558e7`) – apply stack rules and Vitality bonuses.
 29. [x] Gacha presentation (`a0f85dbd`) – play rarity video and show results menu.
 30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
 31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
