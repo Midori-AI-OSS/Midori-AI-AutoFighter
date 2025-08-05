@@ -268,9 +268,9 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Add unit tests covering success and failure cases.
 37. [x] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
    - [ ] Create an `assets.toml` mapping logical keys to file paths and hashes.
-   - [ ] Build an AssetManager to load and cache models, textures, and sounds.
+   - [x] Build an AssetManager to load and cache models, textures, and sounds.
    - [ ] Expose a simple API for other systems to request assets by key.
-   - [ ] Document this feature in `.codex/implementation`.
+   - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 38. [x] Audio system (`7f5c8c36`) – play music and effects with volume control.
    - [ ] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.

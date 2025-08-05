@@ -29,3 +29,11 @@ uv run python tools/convert_assets.py assets/src/cube.obj
 
 This generates `assets/models/cube.bam` and adds an entry to
 `assets.toml` with the file path and hash.
+
+## Runtime loading
+
+Game code retrieves assets through the `AssetManager`, which
+internally uses Panda3D's global `Loader`. When loading assets
+manually, call `loadModel`, `loadTexture`, or `loadSound` on the
+`Loader` instance—Panda3D's APIs are camelCase and do not provide
+`load_model`, `load_texture`, or `load_sound` variants.

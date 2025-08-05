@@ -35,11 +35,11 @@ class AssetManager:
     def _load_file(self, category: str, file_path: Path) -> Any:
         if _PANDA_LOADER:
             if category == "models":
-                return _PANDA_LOADER.load_model(file_path.as_posix())
+                return _PANDA_LOADER.loadModel(file_path.as_posix())
             if category == "textures":
-                return _PANDA_LOADER.load_texture(file_path.as_posix())
+                return _PANDA_LOADER.loadTexture(file_path.as_posix())
             if category == "audio":
-                return _PANDA_LOADER.load_sound(file_path.as_posix())
+                return _PANDA_LOADER.loadSound(file_path.as_posix())
         return file_path.read_bytes()
 
     def load(self, category: str, name: str) -> Any:
