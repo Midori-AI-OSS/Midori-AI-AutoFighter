@@ -21,15 +21,15 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Define `pyproject.toml` with package name `autofighter` and expose an entry point for `main.py`.
    - [x] Research publishing `autofighter` to PyPI and note considerations for native dependencies.
    - [x] Commit minimal setup once `main.py` runs.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+    - [x] Document this feature in `.codex/implementation`.
+    - [ ] Add unit tests covering success and failure cases.
 2. [x] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
    - [x] Expand `main.py` with a `ShowBase` subclass to manage the app lifecycle.
    - [x] Route events through Panda3D's `messenger` and schedule updates with `taskMgr`.
    - [x] Add a lightweight scene manager for swapping menus, gameplay states, and overlays.
    - [x] Handle window close events and keyboard input for quitting the game.
    - [x] Set the window title to the game's name.
-   - [ ] Document this feature in `.codex/implementation`.
+    - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 3. [x] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
    - [ ] Create a manager class to load and unload scenes.
@@ -70,9 +70,9 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Create a main menu with buttons for New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Implement Options submenu with sound-effects volume, music volume, and toggle for stat-screen pause behaviour.
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
-   - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+    - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
+    - [x] Document this feature in `.codex/implementation`.
+    - [ ] Add unit tests covering success and failure cases.
 9. [x] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
    - [ ] Implement sound-effects and music volume sliders tied to the audio system.
    - [ ] Provide a toggle for pausing the stat screen during gameplay.
@@ -310,11 +310,11 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 
-43. [ ] Feedback menu button (`2a9e7f14`) – open a pre-filled GitHub issue from the in-game menu.
-   - [ ] Add a `Give Feedback` option to the main menu.
-   - [ ] Launch the user's browser with a pre-filled GitHub issue template.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+43. [x] Feedback menu button (`2a9e7f14`) – open a pre-filled GitHub issue from the in-game menu.
+    - [x] Add a `Give Feedback` option to the main menu.
+    - [x] Launch the user's browser with a pre-filled GitHub issue template.
+    - [x] Document this feature in `.codex/implementation`.
+    - [ ] Add unit tests covering success and failure cases.
 
 ## Context
 Derived from the Panda3D game plan and existing Panda3D remake task list to coordinate development.
