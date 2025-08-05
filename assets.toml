@@ -1,0 +1,8 @@
+[models]
+placeholder = { path = "assets/models/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
+
+[textures]
+placeholder = { path = "assets/textures/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
+
+[audio]
+placeholder = { path = "assets/audio/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
