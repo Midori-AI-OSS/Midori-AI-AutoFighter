@@ -1,7 +1,6 @@
 import sys
 import types
 
-from pathlib import Path
 from importlib import reload
 
 from autofighter.stats import Stats
@@ -18,11 +17,18 @@ class _FakeCursor:
 
 class _FakeConnection:
     storage = {"runs": {}, "players": {}}
+    user_version = 0
+    migrations_run = 0
 
     def __init__(self, _path):
         pass
 
     def execute(self, sql, params=()):
+        if sql.startswith("PRAGMA user_version ="):
+            type(self).user_version = int(sql.split("=")[1])
+            return self
+        if sql == "PRAGMA user_version":
+            return _FakeCursor(lambda: type(self).user_version)
         if sql.startswith("PRAGMA"):
             return self
         if sql.startswith("SELECT data FROM runs"):
@@ -38,6 +44,7 @@ class _FakeConnection:
         return self
 
     def executescript(self, _script):
+        type(self).migrations_run += 1
         return None
 
     def cursor(self):
@@ -120,4 +127,27 @@ def test_save_module_roundtrip(tmp_path):
     body, hair, hair_color, accessory, stats2, inventory = loaded
     assert body == "Athletic"
     assert stats2.hp == 5
+
+
+def test_migration_runner_applies_scripts(tmp_path):
+    fake_module = types.SimpleNamespace(connect=lambda path: _FakeConnection(path))
+    sys.modules["sqlcipher3"] = fake_module
+    from autofighter.saves import encrypted_store
+    reload(encrypted_store)
+
+    _FakeConnection.user_version = 0
+    _FakeConnection.migrations_run = 0
+
+    path = tmp_path / "test.db"
+    with encrypted_store.SaveManager(path, "pw"):
+        pass
+
+    assert _FakeConnection.user_version == 1
+    assert _FakeConnection.migrations_run == 1
+
+    with encrypted_store.SaveManager(path, "pw"):
+        pass
+
+    assert _FakeConnection.user_version == 1
+    assert _FakeConnection.migrations_run == 1
 

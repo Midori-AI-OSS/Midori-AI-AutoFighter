@@ -11,17 +11,7 @@ except Exception:  # pragma: no cover - handled in __enter__
     sqlcipher3 = None  # type: ignore
 
 from . import key_manager
-
-SCHEMA = """
-CREATE TABLE IF NOT EXISTS runs(
-    id TEXT PRIMARY KEY,
-    data BLOB NOT NULL
-);
-CREATE TABLE IF NOT EXISTS players(
-    id TEXT PRIMARY KEY,
-    data BLOB NOT NULL
-);
-"""
+from . import run_migrations
 
 
 class SaveManager(AbstractContextManager):
@@ -44,7 +34,7 @@ class SaveManager(AbstractContextManager):
         key_manager.save_salt(self.config_path, salt)
         self.conn = sqlcipher3.connect(self.path)
         self.conn.execute(f"PRAGMA key = \"x'{self.key}'\"")
-        self.conn.executescript(SCHEMA)
+        run_migrations(self.conn)
         return self
 
     def queue_run(self, run_id: str, data: dict[str, Any]) -> None:

@@ -11,9 +11,15 @@ class LoopConfig:
 
     base_multiplier: float = 1.2
     floor_boss_base: int = 100
+    floor_boss_loop_bonus: float = 0.5
 
 
 config = LoopConfig()
+
+
+def floor_boss_reward_multiplier(loop: int) -> float:
+    loop = max(1, loop)
+    return 1 + config.floor_boss_loop_bonus * (loop - 1)
 
 
 def scale_stats(base: Stats, floor: int, room: int, loop: int, *, floor_boss: bool = False) -> Stats:
@@ -21,7 +27,7 @@ def scale_stats(base: Stats, floor: int, room: int, loop: int, *, floor_boss: bo
     loop = max(1, loop)
     factor = floor * room * loop
     if floor_boss:
-        factor *= config.floor_boss_base
+        factor *= config.floor_boss_base * floor_boss_reward_multiplier(loop)
     factor *= config.base_multiplier ** (loop - 1)
     return Stats(
         hp=int(base.hp * factor),
