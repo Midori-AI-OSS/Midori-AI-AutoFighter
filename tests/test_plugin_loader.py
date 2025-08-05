@@ -1,5 +1,6 @@
 import sys
 import logging
+
 from pathlib import Path
 
 import pytest
@@ -44,6 +45,7 @@ def test_logs_import_errors(tmp_path, caplog) -> None:
     bad.write_text("raise RuntimeError('boom')\n")
     loader = PluginLoader()
     with caplog.at_level(logging.ERROR):
-        loader.discover(str(tmp_path))
+        with pytest.raises(ImportError):
+            loader.discover(str(tmp_path))
     assert "bad.py" in caplog.text
 

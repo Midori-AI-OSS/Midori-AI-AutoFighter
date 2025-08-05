@@ -1,2 +1,8 @@
-from legacy.plugins.players.bubbles import Bubbles
+from dataclasses import dataclass
 
+
+@dataclass
+class Bubbles:
+    plugin_type = "player"
+    id = "bubbles"
+    name = "Bubbles"

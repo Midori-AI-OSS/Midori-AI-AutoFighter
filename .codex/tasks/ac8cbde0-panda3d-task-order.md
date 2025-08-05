@@ -5,10 +5,10 @@ Define the execution order for Panda3D remake subtasks based on the existing tas
 Review `.codex/planning/8a7d9c1e-panda3d-game-plan.md` before starting or auditing any step.
 
 ## Tasks
-1. [ ] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
-2. [ ] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
+1. [x] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
+2. [x] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
 3. [ ] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
-4. [ ] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
+4. [x] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
 5. [x] Event bus wrapper (`120c282f`) – expose decoupled messaging so plugins can emit and subscribe.
 6. [ ] Stats dataclass (`751e73eb`) – share core attributes between players and foes.
 7. [ ] Damage and healing migration (`7b715405`) – port DoT/HoT logic into new architecture.

@@ -1,2 +1,8 @@
-from legacy.plugins.players.luna import Luna
+from dataclasses import dataclass
 
+
+@dataclass
+class Luna:
+    plugin_type = "player"
+    id = "luna"
+    name = "Luna"

@@ -1,2 +1,8 @@
-from legacy.plugins.players.carly import Carly
+from dataclasses import dataclass
 
+
+@dataclass
+class Carly:
+    plugin_type = "player"
+    id = "carly"
+    name = "Carly"

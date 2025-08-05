@@ -1,2 +1,8 @@
-from legacy.plugins.players.mimic import Mimic
+from dataclasses import dataclass
 
+
+@dataclass
+class Mimic:
+    plugin_type = "player"
+    id = "mimic"
+    name = "Mimic"

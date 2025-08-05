@@ -1,3 +1,5 @@
+import logging
+
 from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
@@ -11,9 +13,14 @@ class AutoFighterApp(ShowBase):
     def __init__(self) -> None:
         super().__init__()
 
+        logging.basicConfig(level=logging.INFO)
+
         self.scene_manager = SceneManager(self)
         self.event_bus = EventBus()
-        self.plugin_loader = PluginLoader(self.event_bus)
+        self.plugin_loader = PluginLoader(
+            self.event_bus,
+            required=["player", "foe", "passive", "dot", "hot", "weapon", "room"],
+        )
         self.plugin_loader.discover("plugins")
         self.plugin_loader.discover("mods")
 
@@ -27,12 +34,16 @@ class AutoFighterApp(ShowBase):
         self.accept("window-event", self.on_window_event)
         self.accept("escape", self.userExit)
 
+        cube = self.loader.load_model("models/box")
+        cube.reparent_to(self.render)
+        cube.set_pos(0, 10, 0)
+
         self.task_mgr.add(self.update, "update")
 
         self.scene_manager.switch_to(MainMenu(self))
 
     def on_window_event(self, window) -> None:
-        if window and not window.is_open():
+        if window and window.is_closed():
             self.userExit()
 
     def update(self, task):

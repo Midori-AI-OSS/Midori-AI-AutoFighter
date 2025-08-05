@@ -1,2 +1,8 @@
-from legacy.plugins.players.graygray import Graygray
+from dataclasses import dataclass
 
+
+@dataclass
+class Graygray:
+    plugin_type = "player"
+    id = "graygray"
+    name = "Graygray"

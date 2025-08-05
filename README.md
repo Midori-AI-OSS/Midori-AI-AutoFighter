@@ -19,10 +19,29 @@ legacy/
 ## Setup
 
 1. Install [uv](https://github.com/astral-sh/uv).
-2. Run the game:
+2. Install dependencies:
+
+   ```bash
+   uv sync
+   ```
+
+   - NVIDIA GPU extras: `uv sync --extra llm-cuda`
+   - AMD/Intel GPU extras: `uv sync --extra llm-amd`
+   - CPU-only extras: `uv sync --extra llm-cpu`
+
+   Panda3D ships prebuilt wheels. The LLM extras pull in PyTorch and related
+   libraries, so match the extra to your hardware for best performance.
+
+3. Run the game:
 
    ```bash
    uv run main.py
+   ```
+
+4. Install the latest build into another project:
+
+   ```bash
+   uv add git+https://github.com/Midori-AI/Midori-AI-AutoFighter@main
    ```
 
 ## Publishing

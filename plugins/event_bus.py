@@ -3,8 +3,33 @@ import logging
 from typing import Any
 from typing import Callable
 
-from rich.logging import RichHandler
-from direct.showbase.MessengerGlobal import messenger
+try:
+    from rich.logging import RichHandler
+except Exception:  # pragma: no cover - fallback when Rich is missing
+    RichHandler = logging.StreamHandler
+
+try:
+    from direct.showbase.MessengerGlobal import messenger
+except Exception:  # pragma: no cover - Panda3D missing
+    from collections import defaultdict
+
+    class _Messenger:
+        def __init__(self) -> None:
+            self._subs: dict[str, list[tuple[object, Callable[..., Any]]]] = defaultdict(list)
+
+        def accept(self, event: str, obj, func: Callable[..., Any]) -> None:
+            self._subs[event].append((obj, func))
+
+        def ignore(self, event: str, obj) -> None:
+            self._subs[event] = [
+                pair for pair in self._subs.get(event, []) if pair[0] is not obj
+            ]
+
+        def send(self, event: str, args) -> None:
+            for _, func in list(self._subs.get(event, [])):
+                func(*args)
+
+    messenger = _Messenger()
 
 
 log = logging.getLogger(__name__)

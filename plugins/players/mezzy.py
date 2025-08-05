@@ -1,2 +1,8 @@
-from legacy.plugins.players.mezzy import Mezzy
+from dataclasses import dataclass
 
+
+@dataclass
+class Mezzy:
+    plugin_type = "player"
+    id = "mezzy"
+    name = "Mezzy"

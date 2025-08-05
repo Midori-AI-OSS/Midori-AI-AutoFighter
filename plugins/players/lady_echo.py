@@ -1,2 +1,8 @@
-from legacy.plugins.players.lady_echo import LadyEcho
+from dataclasses import dataclass
 
+
+@dataclass
+class LadyEcho:
+    plugin_type = "player"
+    id = "lady_echo"
+    name = "LadyEcho"

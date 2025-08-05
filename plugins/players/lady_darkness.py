@@ -1,2 +1,8 @@
-from legacy.plugins.players.lady_darkness import LadyDarkness
+from dataclasses import dataclass
 
+
+@dataclass
+class LadyDarkness:
+    plugin_type = "player"
+    id = "lady_darkness"
+    name = "LadyDarkness"
