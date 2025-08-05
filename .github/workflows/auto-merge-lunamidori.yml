@@ -7,11 +7,11 @@ on:
 
 jobs:
   auto_merge:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'lunamidori5'
     steps:
       - name: Install GitHub CLI if missing
-        run: command -v gh || yay -Syu --noconfirm github-cli
+        run: command -v gh >/dev/null || (sudo apt-get update && sudo apt-get install -y gh)
       - name: Checkout
         uses: actions/checkout@v4
       - name: Enable Pull Request Automerge
