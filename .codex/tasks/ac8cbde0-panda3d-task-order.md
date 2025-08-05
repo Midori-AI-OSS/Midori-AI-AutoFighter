@@ -27,7 +27,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
 18. [x] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
 19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
 20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
-21. [ ] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
+21. [x] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
 22. [x] Boss room encounters (`21f544d8`) – implement standard boss fights.
 23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
 24. [ ] Chat room interactions (`4185988d`) – one-message LLM chats after battles.

@@ -14,6 +14,7 @@ from direct.showbase.ShowBase import ShowBase
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
+from autofighter.balance.pressure import apply_pressure
 
 
 class BattleRoom(Scene):
@@ -107,13 +108,14 @@ class BattleRoom(Scene):
     def scale_foe(
         self, floor: int, room: int, pressure: int, loop: int
     ) -> Stats:
-        factor = floor * room * (1 + 0.05 * pressure) * (1.2 ** loop)
-        return Stats(
+        factor = floor * room * (1.2 ** loop)
+        base = Stats(
             hp=int(self.base_foe.hp * factor),
             max_hp=int(self.base_foe.max_hp * factor),
             atk=int(self.base_foe.atk * factor),
             defense=int(self.base_foe.defense * factor),
         )
+        return apply_pressure(base, pressure)
 
     def send_player_attack(self) -> None:
         self.app.messenger.send("player-attack")
