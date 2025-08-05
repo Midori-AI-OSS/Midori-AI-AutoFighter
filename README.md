@@ -68,7 +68,7 @@ uv run pytest
 
 ## Plugins
 
-Custom modules live in `plugins/` or `mods/`. See `.codex/instructions/plugin-system.md` for details on creating new plugins.
+The game auto-discovers classes under `plugins/` and `mods/` by `plugin_type` and wires them to a shared event bus. See `.codex/implementation/plugin-system.md` for loader details and examples.
 
 ## Player Creator
 
