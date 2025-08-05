@@ -63,3 +63,21 @@ def test_overtime_triggers_at_threshold() -> None:
     boss_room.turn = boss_room.overtime_threshold - 1
     boss_room.run_round()
     assert boss_room.overtime
+
+
+def test_start_overtime_plays_warning_sfx(monkeypatch) -> None:
+    room = make_room(player=Stats(hp=10, max_hp=10, atk=0, defense=0))
+    room.overtime_label = type("L", (), {"show": lambda self: None})()
+    room.enraged_icon = {}
+
+    calls: list[str] = []
+
+    class DummyAudio:
+        def play_sfx(self, name: str) -> None:  # pragma: no cover - simple capture
+            calls.append(name)
+
+    monkeypatch.setattr("autofighter.battle_room.get_audio", lambda: DummyAudio())
+
+    room.start_overtime()
+
+    assert calls == ["overtime_warning"]

@@ -13,6 +13,7 @@ from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
 from autofighter.assets import AssetManager
+from autofighter.audio import get_audio
 from autofighter.rewards import Reward
 from autofighter.rewards import select_rewards
 from autofighter.balance.loop import scale_stats
@@ -268,6 +269,7 @@ class BattleRoom(Scene):
         assert self.overtime_label is not None
         self.overtime = True
         self.overtime_label.show()
+        get_audio().play_sfx("overtime_warning")
         if self.enraged_icon is None:
             self.enraged_icon = DirectLabel(
                 text="Enraged",

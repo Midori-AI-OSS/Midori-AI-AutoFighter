@@ -45,3 +45,18 @@ def test_volume_updates_adjust_playback() -> None:
     assert audio.music is None
     audio.stop_sfx()
     assert not audio.sfx
+
+
+def test_crossfade_music_stops_previous_track() -> None:
+    assets = DummyAssets()
+    audio = AudioManager(assets)
+
+    first = audio.play_music("first")
+    assert first.played is True
+
+    second = audio.crossfade_music("second", duration=0.1)
+    assert second.played is True
+    assert first.stopped is True
+    assert first.volume == 0
+    assert second.volume == audio.music_volume
+    assert audio.music is second
