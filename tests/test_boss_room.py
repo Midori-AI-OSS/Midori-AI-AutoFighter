@@ -29,8 +29,12 @@ class DummyApp:
 def test_boss_room_attack_pattern() -> None:
     info = boss_patterns.get_boss_info("demo")
     stats = Stats(hp=100, max_hp=100)
-    room = BossRoom(DummyApp(), return_scene_factory=lambda: None, player=stats, boss_name="demo")
-    room.attack_button = {"state": None}
+    room = BossRoom(
+        DummyApp(),
+        return_scene_factory=lambda: None,
+        player=stats,
+        boss_name="demo",
+    )
     room.status_label = {"text": ""}
     room.player_model = object()
     room.foe_model = object()
@@ -41,6 +45,22 @@ def test_boss_room_attack_pattern() -> None:
     assert stats.hp == 100 - info.attacks[0]
     room.foe_attack()
     assert stats.hp == 100 - info.attacks[0] - info.attacks[1]
+
+
+def test_foe_attack_without_attack_button() -> None:
+    info = boss_patterns.get_boss_info("demo")
+    stats = Stats(hp=100, max_hp=100)
+    room = BossRoom(DummyApp(), return_scene_factory=lambda: None, player=stats, boss_name="demo")
+    assert not hasattr(room, "attack_button")
+    room.status_label = {"text": ""}
+    room.player_model = object()
+    room.foe_model = object()
+    room.show_damage = lambda *a, **k: None
+    room.show_attack_effect = lambda *a, **k: None
+    room.add_status_icon = lambda *a, **k: None
+    room.foe_attack()
+    assert stats.hp == 100 - info.attacks[0]
+    assert room.status_label["text"] == f"Boss hits! Player HP: {stats.hp}/{stats.max_hp}"
 
 
 def test_map_generation_loads_boss_room() -> None:

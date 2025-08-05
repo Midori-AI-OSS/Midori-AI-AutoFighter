@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from direct.gui.DirectGui import DGG
 from panda3d.core import LColor
 
 from autofighter.battle_room import BattleRoom
@@ -53,7 +52,6 @@ class BossRoom(BattleRoom):
             self.music = None
 
     def foe_attack(self) -> None:
-        assert self.attack_button is not None
         assert self.status_label is not None
         dmg = self.pattern[self._pattern_index]
         self._pattern_index = (self._pattern_index + 1) % len(self.pattern)
@@ -64,9 +62,9 @@ class BossRoom(BattleRoom):
         self.show_damage(self.player_model, dmg)
         self.show_attack_effect(self.foe_model, self.player_model, (1, 0, 0, 1))
         self.add_status_icon(self.player_model, LColor(0, 1, 0, 1))
-        self.status_label["text"] = f"Boss hits! Player HP: {self.player.hp}/{self.player.max_hp}"
         if self.player.hp <= 0:
-            self.attack_button["state"] = DGG.DISABLED
             self.status_label["text"] = "You were defeated!"
         else:
-            self.attack_button["state"] = DGG.NORMAL
+            self.status_label["text"] = (
+                f"Boss hits! Player HP: {self.player.hp}/{self.player.max_hp}"
+            )
