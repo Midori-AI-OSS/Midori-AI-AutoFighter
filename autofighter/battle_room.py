@@ -55,11 +55,13 @@ class BattleRoom(Scene):
         self.player_model: NodePath | None = None
         self.foe_model: NodePath | None = None
         self.attack_button: DirectButton | None = None
+        self.defend_button: DirectButton | None = None
         self.status_label: DirectLabel | None = None
         self.status_icons: list[NodePath] = []
         self._flash_task: Task | None = None
         self._flash_state = False
         self.reward: Reward | None = None
+        self.defending = False
 
     def setup(self) -> None:
         self.player_model = self.app.loader.loadModel("models/box")
@@ -77,6 +79,13 @@ class BattleRoom(Scene):
             text_fg=(1, 1, 1, 1),
         )
         set_widget_pos(self.attack_button, (0, 0, -0.7))
+        self.defend_button = DirectButton(
+            text="Defend",
+            command=self.send_player_defend,
+            frameColor=(0, 0, 0, 0.5),
+            text_fg=(1, 1, 1, 1),
+        )
+        set_widget_pos(self.defend_button, (0.4, 0, -0.7))
         self.status_label = DirectLabel(
             text="A wild foe appears!",
             frameColor=(0, 0, 0, 0),
@@ -91,9 +100,15 @@ class BattleRoom(Scene):
         )
         set_widget_pos(self.overtime_label, (0, 0, 0.5))
         self.overtime_label.hide()
-        self.widgets = [self.attack_button, self.status_label, self.overtime_label]
+        self.widgets = [
+            self.attack_button,
+            self.defend_button,
+            self.status_label,
+            self.overtime_label,
+        ]
         self.app.accept("escape", self.exit)
         self.app.accept("player-attack", self.player_attack)
+        self.app.accept("player-defend", self.player_defend)
         self.app.accept("foe-attack", self.foe_attack)
 
     def teardown(self) -> None:
@@ -113,6 +128,7 @@ class BattleRoom(Scene):
             self.app.setBackgroundColor(LColor(0, 0, 0, 1))
         self.app.ignore("escape")
         self.app.ignore("player-attack")
+        self.app.ignore("player-defend")
         self.app.ignore("foe-attack")
 
     def scale_foe(
@@ -130,9 +146,14 @@ class BattleRoom(Scene):
     def send_player_attack(self) -> None:
         self.app.messenger.send("player-attack")
 
+    def send_player_defend(self) -> None:
+        self.app.messenger.send("player-defend")
+
     def player_attack(self) -> None:
         assert self.attack_button is not None
         assert self.status_label is not None
+        if self.defend_button is not None:
+            self.defend_button["state"] = DGG.DISABLED
         self.attack_button["state"] = DGG.DISABLED
         hit_chance = self.player.atk / (self.player.atk + self.foe.defense)
         if random.random() < hit_chance:
@@ -163,19 +184,30 @@ class BattleRoom(Scene):
             reward_text = ", ".join(parts)
             self.status_label["text"] = f"Foe defeated! {reward_text}"
             self.attack_button["state"] = DGG.DISABLED
+            if self.defend_button is not None:
+                self.defend_button["state"] = DGG.DISABLED
         else:
             self.status_label["text"] = text
             self.app.messenger.send("foe-attack")
 
+    def player_defend(self) -> None:
+        assert self.attack_button is not None
+        assert self.status_label is not None
+        if self.defend_button is not None:
+            self.defend_button["state"] = DGG.DISABLED
+        self.attack_button["state"] = DGG.DISABLED
+        self.defending = True
+        self.status_label["text"] = "You brace for impact."
+        self.app.messenger.send("foe-attack")
+
     def foe_attack(self) -> None:
         assert self.attack_button is not None
         assert self.status_label is not None
-        self.turn += 1
-        if self.turn >= self.overtime_threshold and not self.overtime:
-            self.start_overtime()
         hit_chance = self.foe.atk / (self.foe.atk + self.player.defense)
         if random.random() < hit_chance:
             dmg = self.foe.atk
+            if self.defending:
+                dmg = int(dmg * 0.5)
             self.player.apply_damage(dmg)
             self.show_damage(self.player_model, dmg)
             self.show_attack_effect(self.foe_model, self.player_model, (1, 0, 0, 1))
@@ -186,9 +218,20 @@ class BattleRoom(Scene):
         self.status_label["text"] = text
         if self.player.hp <= 0:
             self.attack_button["state"] = DGG.DISABLED
+            if self.defend_button is not None:
+                self.defend_button["state"] = DGG.DISABLED
             self.status_label["text"] = "You were defeated!"
         else:
             self.attack_button["state"] = DGG.NORMAL
+            if self.defend_button is not None:
+                self.defend_button["state"] = DGG.NORMAL
+        self.end_round()
+
+    def end_round(self) -> None:
+        self.turn += 1
+        self.defending = False
+        if self.turn >= self.overtime_threshold and not self.overtime:
+            self.start_overtime()
 
     def show_damage(self, target: NodePath | None, amount: int) -> None:
         pos = (-0.7, 0, 0.2)
