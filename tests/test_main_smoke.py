@@ -1,3 +1,17 @@
+import sys
+import importlib
+
+from pathlib import Path
+
+try:
+    importlib.import_module("panda3d.core")
+except ModuleNotFoundError:  # pragma: no cover - Panda3D missing
+    import pytest
+
+    pytest.skip("Panda3D not available", allow_module_level=True)
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from panda3d.core import loadPrcFileData
 
 from main import AutoFighterApp
