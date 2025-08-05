@@ -4,9 +4,12 @@ from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
 from autofighter.menu import MainMenu
-from plugins.event_bus import EventBus
 from autofighter.scene import SceneManager
+from plugins.event_bus import EventBus
 from plugins.plugin_loader import PluginLoader
+
+
+logger = logging.getLogger(__name__)
 
 
 class AutoFighterApp(ShowBase):
@@ -14,6 +17,7 @@ class AutoFighterApp(ShowBase):
         super().__init__()
 
         logging.basicConfig(level=logging.INFO)
+        logger.info("Panda3D initialized successfully")
 
         self.scene_manager = SceneManager(self)
         self.event_bus = EventBus()
@@ -40,6 +44,7 @@ class AutoFighterApp(ShowBase):
         self._placeholder = self.loader.loadModel("models/box")
         self._placeholder.reparentTo(self.render)
         self._placeholder.setPos(0, 10, 0)
+        logger.info("Placeholder model attached")
 
         self.task_mgr.add(self.update, "update")
 

@@ -25,12 +25,21 @@ legacy/
    uv sync
    ```
 
-   - NVIDIA GPU extras: `uv sync --extra llm-cuda`
-   - AMD/Intel GPU extras: `uv sync --extra llm-amd`
-   - CPU-only extras: `uv sync --extra llm-cpu`
+   Panda3D ships prebuilt wheels.
 
-   Panda3D ships prebuilt wheels. The LLM extras pull in PyTorch and related
-   libraries, so match the extra to your hardware for best performance.
+### Optional LLM Dependencies
+
+Install extras to experiment with local language models. Each extra bundles
+LangChain, Transformers, and a matching PyTorch build.
+
+```bash
+uv sync --extra llm-cuda  # NVIDIA GPUs (CUDA drivers required)
+uv sync --extra llm-amd   # AMD/Intel GPUs (ROCm or oneAPI)
+uv sync --extra llm-cpu   # CPU-only
+```
+
+Selecting the correct extra ensures hardware acceleration when available. These
+packages are optional; the core game runs without them.
 
 3. Run the game:
 
