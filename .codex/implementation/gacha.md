@@ -21,3 +21,9 @@ A single random roll decides the outcome each pull. 6★ is checked first, then 
 
 Failed pulls increment both counters.
 
+## Presentation flow
+- `GachaPresentation.present()` determines the highest rarity in the pull batch.
+- `play_animation()` starts a Panda3D interval keyed to that rarity; `skip_animation()` finishes it early.
+- After the clip—or immediately when skipped—`show_results()` builds a DirectGUI frame listing each result.
+  - Single pulls show one entry; multiple pulls stack labels vertically.
+
