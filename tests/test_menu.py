@@ -5,13 +5,20 @@ import types
 
 from pathlib import Path
 
+from unittest.mock import patch
+
 import autofighter.audio as audio
 
-from autofighter.menu import MainMenu
 from autofighter.gui import FRAME_COLOR
+from autofighter.menu import MainMenu
+from autofighter.menu import ISSUE_URL
 from autofighter.menu import LoadRunMenu
 from autofighter.menu import OptionsMenu
 
+EXPECTED_URL = (
+    "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
+    "new?template=feedback.md&title=Feedback"
+)
 
 class DummyApp:
     def __init__(self) -> None:
@@ -126,3 +133,12 @@ def test_main_menu_buttons_stack_vertically() -> None:
     assert zs == sorted(zs, reverse=True)
     assert len(set(zs)) == len(zs)
     menu.teardown()
+
+
+def test_main_menu_feedback_opens_issue() -> None:
+    assert ISSUE_URL == EXPECTED_URL
+    app = DummyApp()
+    menu = MainMenu(app)
+    with patch("webbrowser.open") as mock_open:
+        menu.give_feedback()
+    mock_open.assert_called_once_with(ISSUE_URL)

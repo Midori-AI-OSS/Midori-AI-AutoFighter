@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import webbrowser
+
 from pathlib import Path
 
 try:
@@ -39,15 +41,21 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
-from autofighter.scene import Scene
-from autofighter.save import load_run
 from autofighter.gui import TEXT_COLOR
-from autofighter.audio import get_audio
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import SLIDER_SCALE
 from autofighter.gui import WIDGET_SCALE
-from autofighter.save import load_player
 from autofighter.gui import set_widget_pos
+from autofighter.save import load_run
+from autofighter.save import load_player
+from autofighter.audio import get_audio
+from autofighter.scene import Scene
+
+
+ISSUE_URL = (
+    "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
+    "new?template=feedback.md&title=Feedback"
+)
 
 
 class MainMenu(Scene):
@@ -64,6 +72,7 @@ class MainMenu(Scene):
             ("Load Run", self.load_run),
             ("Edit Player", self.edit_player),
             ("Options", self.open_options),
+            ("Give Feedback", self.give_feedback),
             ("Quit", self.app.userExit),
         ]
         top = self.BUTTON_SPACING * (len(labels) - 1) / 2
@@ -118,6 +127,12 @@ class MainMenu(Scene):
 
     def load_run(self) -> None:
         self.app.scene_manager.switch_to(LoadRunMenu(self.app))
+
+    def give_feedback(self) -> None:
+        try:
+            webbrowser.open(ISSUE_URL)
+        except Exception:
+            print(f"Open this page to give feedback: {ISSUE_URL}")
 
     def edit_player(self) -> None:
         from autofighter.player_creator import PlayerCreator  # local import to defer Panda3D dependency

@@ -6,7 +6,7 @@ This document describes the full runtime sequence of Midori AI AutoFighter and h
 - `PluginLoader` scans the `plugins/` directory to register available classes.
 - `SceneManager` swaps scenes and manages an overlay stack for menus or pause screens.
 - `MapGenerator` creates 45-room floors seeded per run, guaranteeing at least two shops and two rest rooms. Pressure Level adds extra rooms and boss encounters, and chat rooms may appear after battle nodes without increasing the room count.
-- The main menu stacks *New Run*, *Load Run*, *Edit Player*, *Options*, and *Quit* vertically and highlights the current choice for keyboard navigation.
+- The main menu stacks *New Run*, *Load Run*, *Edit Player*, *Options*, *Give Feedback*, and *Quit* vertically and highlights the current choice for keyboard navigation. The **Give Feedback** button opens a pre-filled GitHub issue in the user's browser.
 - A Player Creator offers body style, hair style, hair color, and accessory options while distributing 100 stat points as +1% increments. Spending 100 of each damage type's 4★ upgrade items adds one extra point, and remaining inventory is saved when confirming.
 - Confirmed choices are saved to `player.json` and loaded for new runs. A Load Run menu lists available save files, and an Options screen adjusts sound volumes, Stat Screen refresh rate, and toggles Stat Screen pausing.
 - A Stat Screen scene displays grouped stats (core, offense, defense, vitality, advanced) and status lists for passives, DoTs, HoTs, damage types, and relic stacks, refreshing every few frames.
