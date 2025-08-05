@@ -10,6 +10,7 @@ class Stats:
     max_hp: int
     atk: int = 0
     defense: int = 0
+    gold: int = 0
 
     # Core
     exp: int = 0

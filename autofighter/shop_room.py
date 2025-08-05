@@ -9,6 +9,8 @@ from direct.gui.DirectGui import DirectButton
 from direct.showbase.ShowBase import ShowBase
 
 from autofighter.gui import set_widget_pos
+from autofighter.save import load_player
+from autofighter.save import save_player
 from autofighter.scene import Scene
 
 
@@ -140,4 +142,9 @@ class ShopRoom(Scene):
         return f"Gold: {self.gold}"
 
     def exit(self) -> None:
+        loaded = load_player()
+        if loaded is not None:
+            body, hair, hair_color, accessory, stats, _ = loaded
+            stats.gold = self.gold
+            save_player(body, hair, hair_color, accessory, stats, self.inventory)
         self.app.scene_manager.switch_to(self.return_scene_factory())
