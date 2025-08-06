@@ -73,13 +73,15 @@ except Exception:  # pragma: no cover - fallback for headless tests
 
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import TEXT_COLOR
+from autofighter.gui import _window_size
+from autofighter.gui import get_normalized_scale_pos
 from autofighter.gui import get_slider_scale
 from autofighter.gui import get_widget_scale
 from autofighter.gui import set_widget_pos
-from autofighter.save import load_run
-from autofighter.assets import get_texture
 from autofighter.save import load_player
+from autofighter.save import load_run
 from autofighter.save import save_settings
+from autofighter.assets import get_texture
 from autofighter.audio import get_audio
 from autofighter.scene import Scene
 
@@ -113,9 +115,6 @@ class MainMenu(Scene):
         self.buttons: list[DirectButton] = []
         self.index = 0
         self.bg = None
-
-    BUTTON_SPACING_X = 0.6
-    BUTTON_SPACING_Y = 0.4
 
     def setup(self) -> None:
         if hasattr(self.app, "disableMouse"):
@@ -157,22 +156,32 @@ class MainMenu(Scene):
             ("Quit", "icon_power", self.app.userExit),
         ]
         cols = 2
+        rows = math.ceil(len(buttons) / cols)
+        width, height = _window_size()
+        spacing_x = width / (cols + 1)
+        spacing_y = height / (rows + 1)
+        _, (first_x, _, _) = get_normalized_scale_pos(spacing_x, 0)
+        _, (_, _, first_y) = get_normalized_scale_pos(0, spacing_y)
+        button_spacing_x = first_x - (-1)
+        button_spacing_y = 1 - first_y
+        button_scale, _ = get_normalized_scale_pos(0, 0, scale_multiplier=1.5)
+        image_scale, _ = get_normalized_scale_pos(0, 0)
         for i, (label, icon_name, cmd) in enumerate(buttons):
             img = get_texture(icon_name)
             button = DirectButton(
                 text=label,
                 command=cmd,
-                scale=get_widget_scale() * 1.5,
+                scale=button_scale,
                 frameColor=FRAME_COLOR,
                 text_fg=TEXT_COLOR,
                 image=img,
-                image_scale=get_widget_scale(),
+                image_scale=image_scale,
                 text_pos=(0, -0.12),
             )
             col = i % cols
             row = i // cols
-            x = (col - (cols - 1) / 2) * self.BUTTON_SPACING_X
-            y = ((len(buttons) // cols - 1) / 2 - row) * self.BUTTON_SPACING_Y
+            x = (col - (cols - 1) / 2) * button_spacing_x
+            y = ((rows - 1) / 2 - row) * button_spacing_y
             set_widget_pos(button, (x, 0, y))
             add_tooltip(button, label)
             self.buttons.append(button)
