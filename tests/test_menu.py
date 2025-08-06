@@ -7,6 +7,7 @@ from pathlib import Path
 
 from unittest.mock import patch
 
+import autofighter.save as save
 import autofighter.audio as audio
 
 from autofighter.gui import FRAME_COLOR
@@ -94,7 +95,8 @@ def test_load_run_menu_start_run(tmp_path: Path) -> None:
     del sys.modules['autofighter.battle_room']
 
 
-def test_options_menu_volume_arrows_update_audio() -> None:
+def test_options_menu_volume_arrows_update_audio(tmp_path: Path) -> None:
+    save.SETTINGS_PATH = tmp_path / "settings.json"
     class DummyAssets:
         def load(self, *_: object) -> object:
             return object()
@@ -115,7 +117,8 @@ def test_options_menu_volume_arrows_update_audio() -> None:
     audio._global_audio = None
 
 
-def test_options_menu_updates_refresh_rate() -> None:
+def test_options_menu_updates_refresh_rate(tmp_path: Path) -> None:
+    save.SETTINGS_PATH = tmp_path / "settings.json"
     app = DummyApp()
     menu = OptionsMenu(app)
     menu.setup()

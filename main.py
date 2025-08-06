@@ -4,6 +4,8 @@ from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
 from autofighter.menu import MainMenu
+from autofighter.save import load_settings
+from autofighter.audio import get_audio
 from autofighter.scene import SceneManager
 from plugins.event_bus import EventBus
 from plugins.plugin_loader import PluginLoader
@@ -37,8 +39,12 @@ class AutoFighterApp(ShowBase):
         self.plugin_loader.discover("plugins")
         self.plugin_loader.discover("mods")
 
-        self.pause_on_stats = True
-        self.stat_refresh_rate = 5
+        settings = load_settings()
+        audio = get_audio()
+        audio.set_sfx_volume(settings["sfx_volume"])
+        audio.set_music_volume(settings["music_volume"])
+        self.pause_on_stats = settings["pause_on_stats"]
+        self.stat_refresh_rate = settings["stat_refresh_rate"]
         self.paused = False
 
         props = WindowProperties()

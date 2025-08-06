@@ -8,6 +8,29 @@ from autofighter.saves import SaveManager
 from autofighter.stats import Stats
 
 DB_PATH = Path("save.db")
+SETTINGS_PATH = Path("settings.json")
+DEFAULT_SETTINGS: dict[str, Any] = {
+    "sfx_volume": 0.5,
+    "music_volume": 0.5,
+    "stat_refresh_rate": 5,
+    "pause_on_stats": True,
+}
+
+
+def load_settings(path: Path | None = None) -> dict[str, Any]:
+    path = path or SETTINGS_PATH
+    if path.exists():
+        try:
+            data = json.loads(path.read_text())
+            return {**DEFAULT_SETTINGS, **data}
+        except Exception:
+            return DEFAULT_SETTINGS.copy()
+    return DEFAULT_SETTINGS.copy()
+
+
+def save_settings(settings: dict[str, Any], path: Path | None = None) -> None:
+    path = path or SETTINGS_PATH
+    path.write_text(json.dumps(settings))
 
 
 def load_run(source: Path | str, password: str = "", path: Path = DB_PATH) -> Stats | None:
