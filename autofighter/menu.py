@@ -76,8 +76,9 @@ from autofighter.gui import SLIDER_SCALE
 from autofighter.gui import TEXT_COLOR
 from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
-from autofighter.save import load_player
 from autofighter.save import load_run
+from autofighter.save import load_player
+from autofighter.save import save_settings
 from autofighter.audio import get_audio
 from autofighter.scene import Scene
 from autofighter.assets import AssetManager
@@ -521,18 +522,22 @@ class OptionsMenu(Scene):
     def update_sfx(self) -> None:
         self.sfx_volume = float(self.sfx_slider["value"])
         get_audio().set_sfx_volume(self.sfx_volume)
+        save_settings(self._settings_payload())
 
     def update_music(self) -> None:
         self.music_volume = float(self.music_slider["value"])
         get_audio().set_music_volume(self.music_volume)
+        save_settings(self._settings_payload())
 
     def update_refresh(self) -> None:
         self.stat_refresh_rate = int(self.refresh_slider["value"])
         self.app.stat_refresh_rate = self.stat_refresh_rate
+        save_settings(self._settings_payload())
 
     def toggle_pause(self, _=None) -> None:
         self.pause_on_stats = bool(self.pause_button["indicatorValue"])
         self.app.pause_on_stats = self.pause_on_stats
+        save_settings(self._settings_payload())
 
     def back(self) -> None:
         self.app.scene_manager.switch_to(MainMenu(self.app))
@@ -544,3 +549,11 @@ class OptionsMenu(Scene):
     @property
     def back_button(self) -> DirectButton:
         return self._back_button
+
+    def _settings_payload(self) -> dict[str, object]:
+        return {
+            "sfx_volume": self.sfx_volume,
+            "music_volume": self.music_volume,
+            "stat_refresh_rate": self.stat_refresh_rate,
+            "pause_on_stats": self.pause_on_stats,
+        }

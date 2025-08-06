@@ -26,6 +26,12 @@ with SaveManager(Path("save.db"), "password") as sm:
 - Use `key_manager.backup_key_file(src, dest)` and `key_manager.restore_key_file(src, dest)` to copy or restore the salt file.
 - High-level helpers in `autofighter/save.py` wrap `SaveManager` for run and player data.
 
+## Settings File
+
+- `autofighter/save.py` also reads and writes a plain `settings.json`.
+- `load_settings()` returns audio volumes, stat refresh rate, and pause toggle with defaults.
+- `save_settings(settings)` persists those values so Options menu changes survive restarts.
+
 ## Recovery
 - If a session exits with an exception, pending writes roll back.
 - Lost passwords or salts require restoring from backups; without both the database cannot be decrypted.
