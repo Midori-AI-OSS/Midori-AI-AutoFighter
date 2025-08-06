@@ -38,13 +38,14 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.scene import Scene
+from autofighter.stats import Stats
 from autofighter.gui import TEXT_COLOR
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import WIDGET_SCALE
-from autofighter.gui import set_widget_pos
 from autofighter.save import save_player
-from autofighter.scene import Scene
-from autofighter.stats import Stats
+from autofighter.gui import bind_responsive
+from autofighter.gui import clear_responsive
 
 DAMAGE_TYPES = [
     "generic",
@@ -92,11 +93,8 @@ class PlayerCreator(Scene):
         self.helper_label: DirectLabel | None = None
 
     def setup(self) -> None:
-        label_x = -0.8
-        control_x = 0.2
-
         body_label = DirectLabel(text="Body Type", scale=WIDGET_SCALE)
-        set_widget_pos(body_label, (label_x, 0, 0.8))
+        bind_responsive(self.app, body_label, -0.8, 0.8)
         body = DirectOptionMenu(
             text="Body",
             items=self.body_options,
@@ -104,9 +102,9 @@ class PlayerCreator(Scene):
             command=self.set_body,
             scale=WIDGET_SCALE,
         )
-        set_widget_pos(body, (control_x, 0, 0.8))
+        bind_responsive(self.app, body, 0.2, 0.8)
         hair_label = DirectLabel(text="Hair Style", scale=WIDGET_SCALE)
-        set_widget_pos(hair_label, (label_x, 0, 0.6))
+        bind_responsive(self.app, hair_label, -0.8, 0.6)
         hair = DirectOptionMenu(
             text="Hair",
             items=self.hair_options,
@@ -114,9 +112,9 @@ class PlayerCreator(Scene):
             command=self.set_hair,
             scale=WIDGET_SCALE,
         )
-        set_widget_pos(hair, (control_x, 0, 0.6))
+        bind_responsive(self.app, hair, 0.2, 0.6)
         color_label = DirectLabel(text="Hair Color", scale=WIDGET_SCALE)
-        set_widget_pos(color_label, (label_x, 0, 0.4))
+        bind_responsive(self.app, color_label, -0.8, 0.4)
         color = DirectOptionMenu(
             text="Color",
             items=self.color_options,
@@ -124,9 +122,9 @@ class PlayerCreator(Scene):
             command=self.set_color,
             scale=WIDGET_SCALE,
         )
-        set_widget_pos(color, (control_x, 0, 0.4))
+        bind_responsive(self.app, color, 0.2, 0.4)
         accessory_label = DirectLabel(text="Accessory", scale=WIDGET_SCALE)
-        set_widget_pos(accessory_label, (label_x, 0, 0.2))
+        bind_responsive(self.app, accessory_label, -0.8, 0.2)
         accessory = DirectOptionMenu(
             text="Accessory",
             items=self.accessory_options,
@@ -134,9 +132,9 @@ class PlayerCreator(Scene):
             command=self.set_accessory,
             scale=WIDGET_SCALE,
         )
-        set_widget_pos(accessory, (control_x, 0, 0.2))
+        bind_responsive(self.app, accessory, 0.2, 0.2)
         hp_label = DirectLabel(text="HP", scale=WIDGET_SCALE)
-        set_widget_pos(hp_label, (label_x, 0, 0.0))
+        bind_responsive(self.app, hp_label, -0.8, 0.0)
         hp_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -144,9 +142,9 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["hp"],
         )
-        set_widget_pos(hp_slider, (control_x, 0, 0.0))
+        bind_responsive(self.app, hp_slider, 0.2, 0.0, WIDGET_SCALE * 5)
         atk_label = DirectLabel(text="Attack", scale=WIDGET_SCALE)
-        set_widget_pos(atk_label, (label_x, 0, -0.2))
+        bind_responsive(self.app, atk_label, -0.8, -0.2)
         atk_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -154,9 +152,9 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["atk"],
         )
-        set_widget_pos(atk_slider, (control_x, 0, -0.2))
+        bind_responsive(self.app, atk_slider, 0.2, -0.2, WIDGET_SCALE * 5)
         def_label = DirectLabel(text="Defense", scale=WIDGET_SCALE)
-        set_widget_pos(def_label, (label_x, 0, -0.4))
+        bind_responsive(self.app, def_label, -0.8, -0.4)
         def_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -164,25 +162,25 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["defense"],
         )
-        set_widget_pos(def_slider, (control_x, 0, -0.4))
+        bind_responsive(self.app, def_slider, 0.2, -0.4, WIDGET_SCALE * 5)
         self.sliders = {
             "hp": hp_slider,
             "atk": atk_slider,
             "defense": def_slider,
         }
         self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}", scale=WIDGET_SCALE)
-        set_widget_pos(self.remaining_label, (0, 0, -0.55))
+        bind_responsive(self.app, self.remaining_label, 0, -0.55)
         self.helper_label = DirectLabel(
             text="",
             frameColor=FRAME_COLOR,
             text_fg=TEXT_COLOR,
             scale=WIDGET_SCALE,
         )
-        set_widget_pos(self.helper_label, (0, 0, -0.7))
+        bind_responsive(self.app, self.helper_label, 0, -0.7)
         confirm = DirectButton(text="Confirm", command=self.confirm, state="normal", scale=WIDGET_SCALE)
-        set_widget_pos(confirm, (0, 0, -0.85))
+        bind_responsive(self.app, confirm, 0, -0.85)
         cancel = DirectButton(text="Cancel", command=self.cancel, scale=WIDGET_SCALE)
-        set_widget_pos(cancel, (0, 0, -0.95))
+        bind_responsive(self.app, cancel, 0, -0.95)
         self.confirm_button = confirm
         for widget, msg in [
             (body, "Choose your character's body type"),
@@ -218,6 +216,7 @@ class PlayerCreator(Scene):
         ]
 
     def teardown(self) -> None:
+        clear_responsive()
         for widget in self.widgets:
             widget.destroy()
         self.widgets.clear()

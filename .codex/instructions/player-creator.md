@@ -13,3 +13,8 @@ Distribute 100 points across HP, Attack, and Defense using sliders. Spending 100
 
 ## Saving
 Confirming writes the chosen appearance and stats to `player.json`, which is loaded when starting a new run.
+
+## Layout
+Widget positions are expressed as fractional offsets of the window size via
+`bind_responsive` in `autofighter.gui`. When adding new controls, use this helper
+to keep labels and sliders aligned as the window resizes.
