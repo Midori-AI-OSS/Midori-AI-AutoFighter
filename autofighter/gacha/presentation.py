@@ -57,8 +57,8 @@ except Exception:  # pragma: no cover - allow headless tests
 
 from autofighter.gui import TEXT_COLOR
 from autofighter.gui import FRAME_COLOR
-from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
+from autofighter.gui import get_widget_scale
 
 
 @dataclass
@@ -154,7 +154,7 @@ class GachaPresentation:
             text=title,
             text_fg=TEXT_COLOR,
             parent=self._frame,
-            scale=WIDGET_SCALE,
+            scale=get_widget_scale(),
         )
         set_widget_pos(title_label, (0, 0, 0.25))
         for i, result in enumerate(results):
@@ -163,7 +163,7 @@ class GachaPresentation:
                 text=f"{prefix}{result.name} ({result.rarity}\u2605)",
                 text_fg=TEXT_COLOR,
                 parent=self._frame,
-                scale=WIDGET_SCALE,
+                scale=get_widget_scale(),
             )
             set_widget_pos(label, (0, 0, 0.15 * (len(results) - i - 1)))
             self.result_labels.append(label)

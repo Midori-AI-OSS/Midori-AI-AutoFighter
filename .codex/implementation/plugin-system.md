@@ -26,3 +26,15 @@ The following categories are bundled:
 2. Define classes with a unique `plugin_type` string and optional `id`.
 3. Call `PluginLoader.discover` on the new directory and access the category via `get_plugins`.
 4. Update `required` when constructing `PluginLoader` if the game should fail when the category is missing.
+
+## Responsive Widgets
+Plugins that render DirectGUI elements should scale and position them according to the current window.  Helpers in `autofighter.gui` provide normalized coordinates and scale values derived from `base.win.get_size()` and display DPI:
+
+```python
+from autofighter.gui import get_normalized_scale_pos
+
+scale, pos = get_normalized_scale_pos(640, 360)
+DirectButton(text="OK", scale=scale, pos=pos)
+```
+
+This keeps UI consistent across resolutions and helps plugins remain responsive.

@@ -25,10 +25,10 @@ except Exception:  # pragma: no cover - headless fallback
     class ShowBase:  # type: ignore[dead-code]
         pass
 
-from autofighter.gui import FRAME_COLOR
 from autofighter.gui import TEXT_COLOR
-from autofighter.gui import WIDGET_SCALE
+from autofighter.gui import FRAME_COLOR
 from autofighter.gui import set_widget_pos
+from autofighter.gui import get_widget_scale
 from autofighter.scene import Scene
 from .crafting import craft_upgrades
 
@@ -51,14 +51,14 @@ class CraftingMenu(Scene):
             frameColor=FRAME_COLOR,
             text_fg=TEXT_COLOR,
             command=self.craft,
-            scale=WIDGET_SCALE,
+            scale=get_widget_scale(),
         )
         self._back_button = DirectButton(
             text="Back",
             frameColor=FRAME_COLOR,
             text_fg=TEXT_COLOR,
             command=self.back,
-            scale=WIDGET_SCALE,
+            scale=get_widget_scale(),
         )
         self.buttons = [self._craft_button, self._back_button]
         top = self.BUTTON_SPACING * (len(self.buttons) - 1) / 2
