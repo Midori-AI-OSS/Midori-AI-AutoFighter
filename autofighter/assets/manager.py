@@ -8,10 +8,12 @@ from pathlib import Path
 
 try:
     from panda3d.core import Loader
+    from panda3d.core import TexturePool
 
     _PANDA_LOADER = Loader.get_global_ptr()
 except Exception:  # pragma: no cover - Panda3D may be missing in tests
     _PANDA_LOADER = None
+    TexturePool = None
 
 
 class AssetManager:
@@ -36,8 +38,8 @@ class AssetManager:
         if _PANDA_LOADER:
             if category == "models":
                 return _PANDA_LOADER.loadModel(file_path.as_posix())
-            if category == "textures":
-                return _PANDA_LOADER.loadTexture(file_path.as_posix())
+            if category == "textures" and TexturePool:
+                return TexturePool.loadTexture(file_path.as_posix())
             if category == "audio":
                 return _PANDA_LOADER.loadSound(file_path.as_posix())
         return file_path.read_bytes()
