@@ -211,13 +211,13 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Update save data and roster displays after stacking.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-29. [ ] Gacha presentation (`a0f85dbd`) – implement `play_animation` and render a results menu after pulls.
-   - [ ] Play a skippable animation tied to the highest rarity pulled.
-   - [ ] Display a results screen listing characters and rewards.
-   - [ ] Support single and multi-pull presentations.
-   - [ ] Implement `play_animation` to actually play the video clip.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+29. [x] Gacha presentation (`a0f85dbd`) – implement `play_animation` and render a results menu after pulls.
+   - [x] Play a skippable animation tied to the highest rarity pulled.
+   - [x] Display a results screen listing characters and rewards.
+   - [x] Support single and multi-pull presentations.
+   - [x] Implement `play_animation` to actually play the video clip.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 30. [x] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
    - [ ] Allow conversion of 125×1★ to 1×2★, 125×2★ to 1×3★, and 125×3★ to 1×4★ items.
    - [ ] Support dual-type requirements for upgrading dual-element characters.

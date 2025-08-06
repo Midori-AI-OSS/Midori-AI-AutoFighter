@@ -138,7 +138,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 ## 6. Gacha Character Recruitment
 1. Between runs, players spend collected upgrade items on gacha pulls for recruitable characters and chatable allies.
    - Seed the pool with existing player plugins such as Ally, Becca, Bubbles, Carly, Chibi, Graygray, Hilander, Kboshi, Lady Darkness, Lady Echo, Lady Fire and Ice, Lady Light, Luna, Mezzy, and Mimic.
-2. Pull options: spend for 1, 5, or 10 pulls.
+2. Pull options: spend for exactly 1, 5, or 10 pulls; players cannot choose other batch sizes.
    - Play a pre-made video keyed to the highest rarity obtained (1★–6★); videos are skippable or fast-forwardable.
    - Base odds heavily favor ≥2★ rewards (~99%), with 5★ and 6★ odds rising as pity grows.
    - After the video, display a menu listing all items/characters from the pull batch.

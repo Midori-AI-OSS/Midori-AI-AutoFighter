@@ -22,8 +22,13 @@ A single random roll decides the outcome each pull. 6★ is checked first, then 
 Failed pulls increment both counters.
 
 ## Presentation flow
-- `GachaPresentation.present()` determines the highest rarity in the pull batch.
-- `play_animation()` starts a Panda3D interval keyed to that rarity; `skip_animation()` finishes it early.
-- After the clip—or immediately when skipped—`show_results()` builds a DirectGUI frame listing each result.
-  - Single pulls show one entry; multiple pulls stack labels vertically.
+- Gacha pulls occur only in batches of **1**, **5**, or **10**; players select among these sizes and cannot set arbitrary counts.
+- `GachaPresentation.present()` stores the pull results and selects the highest rarity.
+- `play_animation()` launches a rarity-specific video clip and waits for its duration.
+  - Players may call `fast_forward_animation()` to finish the clip early while keeping the rarity value.
+  - `skip_animation()` also finishes the interval but clears `animation_played`.
+- When the interval ends—either naturally or when skipped—`show_results()` renders the menu.
+  - The menu title switches between **Pull Result** for single pulls and **Pull Results** for five- or ten-pull batches.
+  - Five-pull and ten-pull batches enumerate entries (`1.`, `2.`, …); single pulls show one centered line.
+  - `last_results` preserves the most recent batch for later access.
 

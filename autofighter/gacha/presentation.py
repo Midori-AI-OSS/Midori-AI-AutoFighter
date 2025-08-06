@@ -31,14 +31,16 @@ except Exception:  # pragma: no cover - allow headless tests
         pass
 
     class Sequence:  # type: ignore[dead-code]
-        def __init__(self, *_: object) -> None:
-            pass
+        def __init__(self, *steps: object) -> None:
+            self.steps = steps
 
         def start(self) -> None:
             pass
 
         def finish(self) -> None:
-            pass
+            for step in self.steps:
+                if isinstance(step, Func):
+                    step()
 
     class Wait:  # type: ignore[dead-code]
         def __init__(self, *_: object) -> None:
@@ -79,6 +81,15 @@ class GachaPresentation:
         6: 2.0,
     }
 
+    _ANIMATION_CLIP = {
+        1: "assets/video/gacha_1.mp4",
+        2: "assets/video/gacha_2.mp4",
+        3: "assets/video/gacha_3.mp4",
+        4: "assets/video/gacha_4.mp4",
+        5: "assets/video/gacha_5.mp4",
+        6: "assets/video/gacha_6.mp4",
+    }
+
     def __init__(self, app) -> None:
         self.app = app
         self.animation_played: int | None = None
@@ -87,13 +98,24 @@ class GachaPresentation:
         self._interval: Sequence | None = None
         self._frame: DirectFrame | None = None
         self.result_labels: list[DirectLabel] = []
+        self.current_clip: str | None = None
 
-    def play_animation(self, rarity: int) -> None:
+    def play_animation(self, rarity: int, results: list[GachaResult] | None = None) -> None:
         if self._interval:
             self._interval.finish()
         duration = self._ANIMATION_TIME.get(rarity, 0.5)
+        clip = self._ANIMATION_CLIP.get(rarity, self._ANIMATION_CLIP[1])
         self.animation_played = rarity
-        self._interval = Sequence(Wait(duration))
+        self.current_clip = clip
+
+        def _mark_played() -> None:
+            self.current_clip = clip
+
+        steps: tuple[object, ...] = (Func(_mark_played), Wait(duration))
+        if results is not None:
+            steps += (Func(self.show_results, results),)
+
+        self._interval = Sequence(*steps)
         try:  # pragma: no cover - Panda3D only
             self._interval.start()
         except Exception:
@@ -108,6 +130,14 @@ class GachaPresentation:
             self._interval = None
         self.animation_played = None
 
+    def fast_forward_animation(self) -> None:
+        if self._interval:
+            try:  # pragma: no cover - Panda3D only
+                self._interval.finish()
+            except Exception:
+                pass
+            self._interval = None
+
     def clear_results(self) -> None:
         if self._frame:
             self._frame.destroy()
@@ -119,14 +149,23 @@ class GachaPresentation:
         self.last_results = results
         self.display_mode = "multi" if len(results) > 1 else "single"
         self._frame = DirectFrame(frameColor=FRAME_COLOR)
+        title = "Pull Results" if self.display_mode == "multi" else "Pull Result"
+        title_label = DirectLabel(
+            text=title,
+            text_fg=TEXT_COLOR,
+            parent=self._frame,
+            scale=WIDGET_SCALE,
+        )
+        set_widget_pos(title_label, (0, 0, 0.25))
         for i, result in enumerate(results):
+            prefix = f"{i + 1}. " if self.display_mode == "multi" else ""
             label = DirectLabel(
-                text=f"{result.name} ({result.rarity}\u2605)",
+                text=f"{prefix}{result.name} ({result.rarity}\u2605)",
                 text_fg=TEXT_COLOR,
                 parent=self._frame,
                 scale=WIDGET_SCALE,
             )
-            set_widget_pos(label, (0, 0, 0.15 * (len(results) - 1 - i)))
+            set_widget_pos(label, (0, 0, 0.15 * (len(results) - i - 1)))
             self.result_labels.append(label)
         return results
 
@@ -136,13 +175,15 @@ class GachaPresentation:
             self.clear_results()
             return []
 
+        self.display_mode = "multi" if len(results) > 1 else "single"
+
         if skip:
             self.skip_animation()
-        else:
-            highest = max(r.rarity for r in results)
-            self.play_animation(highest)
+            return self.show_results(results)
 
-        return self.show_results(results)
+        highest = max(r.rarity for r in results)
+        self.play_animation(highest, results)
+        return results
 
     @property
     def active_interval(self) -> Sequence | None:
