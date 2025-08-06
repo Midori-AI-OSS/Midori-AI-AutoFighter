@@ -12,6 +12,7 @@ from direct.showbase.ShowBase import ShowBase
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
+from autofighter.assets import ASSETS
 from autofighter.assets import AssetManager
 from autofighter.audio import get_audio
 from autofighter.rewards import Reward
@@ -63,26 +64,26 @@ class BattleRoom(Scene):
         self._flash_state = False
         self.reward: Reward | None = None
         self._round_task: Task | None = None
-        self.assets = assets or AssetManager()
+        self.assets = assets or ASSETS
         self.player_model_name = "cube"
         self.foe_model_name = "cube"
 
     def setup(self) -> None:
-        model = self.assets.load("models", self.player_model_name)
+        model = self.assets.get_model(self.player_model_name)
         if hasattr(model, "copyTo"):
             self.player_model = model.copyTo(self.app.render)
             self.player_model.setPos(-1, 10, 0)
-            texture = self.assets.load("textures", "white")
+            texture = self.assets.get_texture("white")
             try:
                 self.player_model.setTexture(texture, 1)
             except Exception:
                 pass
 
-        model = self.assets.load("models", self.foe_model_name)
+        model = self.assets.get_model(self.foe_model_name)
         if hasattr(model, "copyTo"):
             self.foe_model = model.copyTo(self.app.render)
             self.foe_model.setPos(1, 10, 0)
-            texture = self.assets.load("textures", "white")
+            texture = self.assets.get_texture("white")
             try:
                 self.foe_model.setTexture(texture, 1)
             except Exception:
@@ -222,7 +223,7 @@ class BattleRoom(Scene):
     ) -> None:
         if source is None or target is None:
             return
-        model = self.assets.load("models", "cube")
+        model = self.assets.get_model("cube")
         if not hasattr(model, "copyTo"):
             return
         effect = model.copyTo(self.app.render)
@@ -257,7 +258,7 @@ class BattleRoom(Scene):
     def add_status_icon(self, target: NodePath | None, color: LColor) -> None:
         if target is None:
             return
-        model = self.assets.load("models", "cube")
+        model = self.assets.get_model("cube")
         if hasattr(model, "copyTo"):
             icon = model.copyTo(target)
             icon.setScale(0.2)

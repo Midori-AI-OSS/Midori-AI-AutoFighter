@@ -78,18 +78,15 @@ from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
 from autofighter.save import load_run
+from autofighter.assets import get_texture
 from autofighter.audio import get_audio
 from autofighter.scene import Scene
-from autofighter.assets import AssetManager
 
 
 ISSUE_URL = (
     "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
     "new?template=feedback.md&title=Feedback"
 )
-
-
-ASSETS = AssetManager()
 
 
 def add_tooltip(widget: DirectFrame | DirectButton | DirectSlider | DirectCheckButton, text: str) -> None:
@@ -127,7 +124,7 @@ class MainMenu(Scene):
                 pass
         if hasattr(self.app, "render2d") and hasattr(self.app, "taskMgr"):
             try:
-                tex = ASSETS.load("textures", "icon_refresh_cw")  # dummy texture for bg
+                tex = get_texture("icon_refresh_cw")  # dummy texture for bg
                 cm = CardMaker("bg")
                 cm.setFrame(-1, 1, -1, 1)
                 self.bg = self.app.render2d.attachNewNode(cm.generate())
@@ -160,7 +157,7 @@ class MainMenu(Scene):
         ]
         cols = 2
         for i, (label, icon_name, cmd) in enumerate(buttons):
-            img = ASSETS.load("textures", icon_name)
+            img = get_texture(icon_name)
             button = DirectButton(
                 text=label,
                 command=cmd,
@@ -364,7 +361,7 @@ class OptionsMenu(Scene):
         )
         DirectFrame(
             parent=self.sfx_slider,
-            image=ASSETS.load("textures", "icon_volume_2"),
+            image=get_texture("icon_volume_2"),
             frameColor=(0, 0, 0, 0),
             scale=WIDGET_SCALE,
             pos=(-0.7, 0, 0),
@@ -388,7 +385,7 @@ class OptionsMenu(Scene):
         )
         DirectFrame(
             parent=self.music_slider,
-            image=ASSETS.load("textures", "icon_music"),
+            image=get_texture("icon_music"),
             frameColor=(0, 0, 0, 0),
             scale=WIDGET_SCALE,
             pos=(-0.7, 0, 0),
@@ -412,7 +409,7 @@ class OptionsMenu(Scene):
         )
         DirectFrame(
             parent=self.refresh_slider,
-            image=ASSETS.load("textures", "icon_refresh_cw"),
+            image=get_texture("icon_refresh_cw"),
             frameColor=(0, 0, 0, 0),
             scale=WIDGET_SCALE,
             pos=(-0.7, 0, 0),
@@ -437,7 +434,7 @@ class OptionsMenu(Scene):
         )
         DirectFrame(
             parent=self._pause_button,
-            image=ASSETS.load("textures", "icon_pause"),
+            image=get_texture("icon_pause"),
             frameColor=(0, 0, 0, 0),
             scale=WIDGET_SCALE,
             pos=(-1.2, 0, 0),

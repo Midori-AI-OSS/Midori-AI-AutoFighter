@@ -61,3 +61,18 @@ class AssetManager:
         asset = self._load_file(category, file_path)
         self.cache[category][name] = asset
         return asset
+
+    def get_model(self, name: str) -> Any:
+        """Return a model asset by ``name``."""
+
+        return self.load("models", name)
+
+    def get_texture(self, name: str) -> Any:
+        """Return a texture asset by ``name``."""
+
+        return self.load("textures", name)
+
+    def get_audio(self, name: str) -> Any:
+        """Return an audio asset by ``name``."""
+
+        return self.load("audio", name)

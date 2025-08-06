@@ -3,8 +3,8 @@ from __future__ import annotations
 from panda3d.core import LColor
 from direct.gui.DirectGui import DGG
 
-from autofighter.audio import get_audio
 from autofighter.assets import AssetManager
+from autofighter.audio import get_audio
 from autofighter.battle_room import BattleRoom
 from autofighter.rooms.boss_patterns import get_boss_info
 

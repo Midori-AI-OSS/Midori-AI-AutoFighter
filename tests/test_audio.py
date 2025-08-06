@@ -24,7 +24,7 @@ class DummySound:
 
 
 class DummyAssets:
-    def load(self, _category: str, _name: str) -> DummySound:
+    def get_audio(self, _name: str) -> DummySound:
         return DummySound()
 
 

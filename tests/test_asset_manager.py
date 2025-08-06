@@ -7,6 +7,9 @@ import pytest
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
+from autofighter.assets import get_audio
+from autofighter.assets import get_model
+from autofighter.assets import get_texture
 from autofighter.assets import AssetManager
 
 
@@ -33,3 +36,16 @@ def test_hash_verification_failure() -> None:
     manager.manifest["models"]["cube"]["sha256"] = "bad"
     with pytest.raises(ValueError):
         manager.load("models", "cube")
+
+
+def test_asset_getters() -> None:
+    manager = AssetManager(Path("assets.toml"))
+    assert manager.get_model("cube") is manager.get_model("cube")
+    assert manager.get_texture("white") is manager.get_texture("white")
+    assert manager.get_audio("boss_theme") is manager.get_audio("boss_theme")
+
+
+def test_module_level_helpers() -> None:
+    assert get_model("cube") is get_model("cube")
+    assert get_texture("white") is get_texture("white")
+    assert get_audio("boss_theme") is get_audio("boss_theme")

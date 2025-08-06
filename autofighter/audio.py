@@ -60,7 +60,8 @@ except Exception:  # pragma: no cover - Panda3D not available during tests
             for interval in self.intervals:
                 interval.start()
 
-from autofighter.assets.manager import AssetManager
+from autofighter.assets import ASSETS
+from autofighter.assets import AssetManager
 
 class AudioManager:
     """Load and play music and sound effects with volume control."""
@@ -84,7 +85,7 @@ class AudioManager:
             sound.setVolume(volume)
 
     def play_music(self, name: str, loop: bool = True) -> AudioSound:
-        sound: AudioSound = self.assets.load("audio", name)
+        sound: AudioSound = self.assets.get_audio(name)
         sound.setLoop(loop)
         sound.setVolume(self.music_volume)
         sound.play()
@@ -100,7 +101,7 @@ class AudioManager:
     def crossfade_music(
         self, name: str, duration: float = 1.0, loop: bool = True
     ) -> AudioSound:
-        new_sound: AudioSound = self.assets.load("audio", name)
+        new_sound: AudioSound = self.assets.get_audio(name)
         new_sound.setLoop(loop)
         new_sound.setVolume(0)
         new_sound.play()
@@ -119,7 +120,7 @@ class AudioManager:
         return new_sound
 
     def play_sfx(self, name: str) -> AudioSound:
-        sound: AudioSound = self.assets.load("audio", name)
+        sound: AudioSound = self.assets.get_audio(name)
         sound.setLoop(False)
         sound.setVolume(self.sfx_volume)
         sound.play()
@@ -140,5 +141,5 @@ def get_audio() -> AudioManager:
 
     global _global_audio
     if _global_audio is None:
-        _global_audio = AudioManager(AssetManager())
+        _global_audio = AudioManager(ASSETS)
     return _global_audio
