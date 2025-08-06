@@ -84,7 +84,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Allow players to choose among three body types.
    - [x] Provide hair styles, colors, and accessory options.
    - [x] Save the chosen appearance for use in runs.
-   - [ ] Document this feature in `.codex/implementation`.
+   - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 11. [x] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
    - [ ] Provide UI for distributing points among core stats.
