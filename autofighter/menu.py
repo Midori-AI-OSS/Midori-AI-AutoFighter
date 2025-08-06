@@ -71,9 +71,10 @@ except Exception:  # pragma: no cover - fallback for headless tests
         def getDefault() -> object:
             return object()
 
+from autofighter.gui import scale_ui
+from autofighter.gui import TEXT_COLOR
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import SLIDER_SCALE
-from autofighter.gui import TEXT_COLOR
 from autofighter.gui import WIDGET_SCALE
 from autofighter.gui import set_widget_pos
 from autofighter.save import load_player
@@ -116,9 +117,6 @@ class MainMenu(Scene):
         self.index = 0
         self.bg = None
 
-    BUTTON_SPACING_X = 0.6
-    BUTTON_SPACING_Y = 0.4
-
     def setup(self) -> None:
         if hasattr(self.app, "disableMouse"):
             try:
@@ -158,7 +156,11 @@ class MainMenu(Scene):
             ("Give Feedback", "icon_message_square", self.give_feedback),
             ("Quit", "icon_power", self.app.userExit),
         ]
+        spacing_x = scale_ui(self.app, 0.6)
+        spacing_y = scale_ui(self.app, 0.4)
+        img_scale = scale_ui(self.app, WIDGET_SCALE)
         cols = 2
+        rows = math.ceil(len(buttons) / cols)
         for i, (label, icon_name, cmd) in enumerate(buttons):
             img = ASSETS.load("textures", icon_name)
             button = DirectButton(
@@ -168,13 +170,13 @@ class MainMenu(Scene):
                 frameColor=FRAME_COLOR,
                 text_fg=TEXT_COLOR,
                 image=img,
-                image_scale=WIDGET_SCALE,
+                image_scale=img_scale,
                 text_pos=(0, -0.12),
             )
             col = i % cols
             row = i // cols
-            x = (col - (cols - 1) / 2) * self.BUTTON_SPACING_X
-            y = ((len(buttons) // cols - 1) / 2 - row) * self.BUTTON_SPACING_Y
+            x = (col - (cols - 1) / 2) * spacing_x
+            y = ((rows - 1) / 2 - row) * spacing_y
             set_widget_pos(button, (x, 0, y))
             add_tooltip(button, label)
             self.buttons.append(button)
