@@ -9,6 +9,7 @@ try:
     from direct.gui.DirectGui import DirectOptionMenu
     from direct.gui.DirectGui import DirectSlider
     from direct.gui import DirectGuiGlobals as DGG
+    from direct.showbase.DirectObject import DirectObject
     from direct.showbase.ShowBase import ShowBase
 except Exception:  # pragma: no cover - fallback for headless tests
     class DirectButton:  # type: ignore[dead-code]
@@ -35,16 +36,24 @@ except Exception:  # pragma: no cover - fallback for headless tests
 
     DGG = _DGG()
 
+    class DirectObject:  # type: ignore[dead-code]
+        def accept(self, *_args, **_kwargs) -> None:
+            pass
+
+        def ignoreAll(self) -> None:  # pragma: no cover - used in teardown
+            pass
+
     class ShowBase:  # type: ignore[dead-code]
         pass
 
-from autofighter.gui import TEXT_COLOR
-from autofighter.gui import FRAME_COLOR
-from autofighter.gui import set_widget_pos
-from autofighter.gui import get_widget_scale
-from autofighter.save import save_player
 from autofighter.scene import Scene
 from autofighter.stats import Stats
+from autofighter.gui import TEXT_COLOR
+from autofighter.gui import FRAME_COLOR
+from autofighter.save import save_player
+from autofighter.gui import set_widget_pos
+from autofighter.gui import get_widget_scale
+from autofighter.gui import get_normalized_scale_pos
 
 DAMAGE_TYPES = [
     "generic",
@@ -90,13 +99,11 @@ class PlayerCreator(Scene):
         self.remaining_label: DirectLabel | None = None
         self.confirm_button: DirectButton | None = None
         self.helper_label: DirectLabel | None = None
+        self._responsive: list[tuple[Any, float, float, float]] = []
+        self._event_listener: DirectObject | None = None
 
     def setup(self) -> None:
-        label_x = -0.8
-        control_x = 0.2
-
         body_label = DirectLabel(text="Body Type", scale=get_widget_scale())
-        set_widget_pos(body_label, (label_x, 0, 0.8))
         body = DirectOptionMenu(
             text="Body",
             items=self.body_options,
@@ -104,9 +111,7 @@ class PlayerCreator(Scene):
             command=self.set_body,
             scale=get_widget_scale(),
         )
-        set_widget_pos(body, (control_x, 0, 0.8))
         hair_label = DirectLabel(text="Hair Style", scale=get_widget_scale())
-        set_widget_pos(hair_label, (label_x, 0, 0.6))
         hair = DirectOptionMenu(
             text="Hair",
             items=self.hair_options,
@@ -114,9 +119,7 @@ class PlayerCreator(Scene):
             command=self.set_hair,
             scale=get_widget_scale(),
         )
-        set_widget_pos(hair, (control_x, 0, 0.6))
         color_label = DirectLabel(text="Hair Color", scale=get_widget_scale())
-        set_widget_pos(color_label, (label_x, 0, 0.4))
         color = DirectOptionMenu(
             text="Color",
             items=self.color_options,
@@ -124,9 +127,7 @@ class PlayerCreator(Scene):
             command=self.set_color,
             scale=get_widget_scale(),
         )
-        set_widget_pos(color, (control_x, 0, 0.4))
         accessory_label = DirectLabel(text="Accessory", scale=get_widget_scale())
-        set_widget_pos(accessory_label, (label_x, 0, 0.2))
         accessory = DirectOptionMenu(
             text="Accessory",
             items=self.accessory_options,
@@ -134,9 +135,7 @@ class PlayerCreator(Scene):
             command=self.set_accessory,
             scale=get_widget_scale(),
         )
-        set_widget_pos(accessory, (control_x, 0, 0.2))
         hp_label = DirectLabel(text="HP", scale=get_widget_scale())
-        set_widget_pos(hp_label, (label_x, 0, 0.0))
         hp_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -144,9 +143,7 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["hp"],
         )
-        set_widget_pos(hp_slider, (control_x, 0, 0.0))
         atk_label = DirectLabel(text="Attack", scale=get_widget_scale())
-        set_widget_pos(atk_label, (label_x, 0, -0.2))
         atk_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -154,9 +151,7 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["atk"],
         )
-        set_widget_pos(atk_slider, (control_x, 0, -0.2))
         def_label = DirectLabel(text="Defense", scale=get_widget_scale())
-        set_widget_pos(def_label, (label_x, 0, -0.4))
         def_slider = DirectSlider(
             range=(0, self.total_points),
             value=0,
@@ -164,25 +159,20 @@ class PlayerCreator(Scene):
             command=self.on_slider_change,
             extraArgs=["defense"],
         )
-        set_widget_pos(def_slider, (control_x, 0, -0.4))
         self.sliders = {
             "hp": hp_slider,
             "atk": atk_slider,
             "defense": def_slider,
         }
         self.remaining_label = DirectLabel(text=f"Points left: {self.total_points}", scale=get_widget_scale())
-        set_widget_pos(self.remaining_label, (0, 0, -0.55))
         self.helper_label = DirectLabel(
             text="",
             frameColor=FRAME_COLOR,
             text_fg=TEXT_COLOR,
             scale=get_widget_scale(),
         )
-        set_widget_pos(self.helper_label, (0, 0, -0.7))
         confirm = DirectButton(text="Confirm", command=self.confirm, state="normal", scale=get_widget_scale())
-        set_widget_pos(confirm, (0, 0, -0.85))
         cancel = DirectButton(text="Cancel", command=self.cancel, scale=get_widget_scale())
-        set_widget_pos(cancel, (0, 0, -0.95))
         self.confirm_button = confirm
         for widget, msg in [
             (body, "Choose your character's body type"),
@@ -217,10 +207,38 @@ class PlayerCreator(Scene):
             cancel,
         ]
 
+        self._responsive = [
+            (body_label, 0.1, 0.1, 1.0),
+            (body, 0.6, 0.1, 1.0),
+            (hair_label, 0.1, 0.2, 1.0),
+            (hair, 0.6, 0.2, 1.0),
+            (color_label, 0.1, 0.3, 1.0),
+            (color, 0.6, 0.3, 1.0),
+            (accessory_label, 0.1, 0.4, 1.0),
+            (accessory, 0.6, 0.4, 1.0),
+            (hp_label, 0.1, 0.5, 1.0),
+            (hp_slider, 0.6, 0.5, 5.0),
+            (atk_label, 0.1, 0.6, 1.0),
+            (atk_slider, 0.6, 0.6, 5.0),
+            (def_label, 0.1, 0.7, 1.0),
+            (def_slider, 0.6, 0.7, 5.0),
+            (self.remaining_label, 0.5, 0.775, 1.0),
+            (self.helper_label, 0.5, 0.85, 1.0),
+            (confirm, 0.5, 0.925, 1.0),
+            (cancel, 0.5, 0.975, 1.0),
+        ]
+
+        self._event_listener = DirectObject()
+        self._event_listener.accept("window-event", self._on_window_event)
+        self._apply_responsive()
+
     def teardown(self) -> None:
         for widget in self.widgets:
             widget.destroy()
         self.widgets.clear()
+        if self._event_listener:
+            self._event_listener.ignoreAll()
+            self._event_listener = None
 
     def set_body(self, choice: str) -> None:
         self.body_choice = choice
@@ -264,6 +282,19 @@ class PlayerCreator(Scene):
             self.remaining_label["text"] = f"Points left: {remaining}"
         if self.confirm_button:
             self.confirm_button["state"] = "normal"
+
+    def _apply_responsive(self) -> None:
+        width, height = getattr(self.app.win, "get_size", lambda: (800, 600))()
+        for widget, x_pct, y_pct, scale_mult in self._responsive:
+            scale, pos = get_normalized_scale_pos(width * x_pct, height * y_pct, scale_mult)
+            try:
+                widget.setScale(scale)
+            except Exception:
+                widget["scale"] = scale
+            set_widget_pos(widget, pos)
+
+    def _on_window_event(self, _window) -> None:
+        self._apply_responsive()
 
     def confirm(self) -> None:
         raw_points = {k: int(s["value"]) for k, s in self.sliders.items()}

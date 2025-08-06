@@ -13,3 +13,6 @@ Distribute 100 points across HP, Attack, and Defense using sliders. Spending 100
 
 ## Saving
 Confirming writes the chosen appearance and stats to `player.json`, which is loaded when starting a new run.
+
+## Layout
+Widget positions and scales are computed from the current window size via `gui.get_normalized_scale_pos`.  Add new widgets to the `_responsive` list in `PlayerCreator` to keep them updating on resize.
