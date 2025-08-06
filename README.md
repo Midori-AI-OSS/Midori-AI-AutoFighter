@@ -10,6 +10,12 @@ assets/
   audio/
   models/
   textures/
+game/
+  actors/
+  ui/
+  rooms/
+  gacha/
+  saves/
 plugins/
 mods/
 llms/

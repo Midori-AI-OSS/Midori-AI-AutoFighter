@@ -18,6 +18,12 @@ The following categories are bundled:
 - **Weapons** – attack implementations such as `SampleWeapon`【F:plugins/weapons/sample_weapon.py†L4-L8】
 - **Rooms** – scene definitions such as `SampleRoom`【F:plugins/rooms/sample_room.py†L1-L3】
 
+## Plugin Class Requirements
+- `plugin_type` – category string used by the loader when registering the class【F:plugins/plugin_loader.py†L67-L72】
+- `id` *(optional)* – unique identifier; defaults to the class name【F:plugins/plugin_loader.py†L70-L72】
+- Category-specific methods (`attack`, `apply`, `tick`, etc.) invoked by game systems
+- During discovery the loader injects the event bus as `bus` on each class【F:plugins/plugin_loader.py†L67-L74】
+
 ## Event Bus Integration
 `PluginLoader` assigns an `EventBus` instance to each plugin, letting them emit and subscribe to events without importing Panda3D's messenger directly【F:plugins/event_bus.py†L40-L54】【F:plugins/plugin_loader.py†L67-L74】
 
@@ -26,6 +32,12 @@ The following categories are bundled:
 2. Define classes with a unique `plugin_type` string and optional `id`.
 3. Call `PluginLoader.discover` on the new directory and access the category via `get_plugins`.
 4. Update `required` when constructing `PluginLoader` if the game should fail when the category is missing.
+
+## Adding a Plugin
+1. Copy a template from `plugins/templates/` into the desired category folder.
+2. Implement the class with `plugin_type` and optional `id`.
+3. Write category-specific behaviour.
+4. Run `discover`; import failures are logged and reported without stopping other plugins【F:plugins/plugin_loader.py†L28-L44】.
 
 ## Responsive Widgets
 Plugins that render DirectGUI elements should scale and position them according to the current window.  Helpers in `autofighter.gui` provide normalized coordinates and scale values derived from `base.win.get_size()` and display DPI:

@@ -55,3 +55,10 @@ When a bus is supplied, the loader assigns it to a `bus` attribute on each
 registered plugin class.
 
 Templates in `plugins/templates/` provide starting points for new plugins.
+
+## Adding a New Plugin
+1. Copy a template into the target category folder, e.g. `plugins/weapons/`.
+2. Set `plugin_type` to match the category and provide a unique `id` string.
+3. Implement any category-specific methods such as `attack`, `apply`, or `tick`.
+4. Use `self.bus` to emit or subscribe to events after the loader injects the event bus.
+5. Run `uv run pytest` to confirm the module imports cleanly—broken plugins are logged and skipped during discovery.

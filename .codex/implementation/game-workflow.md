@@ -2,9 +2,19 @@
 
 This document describes the full runtime sequence of Midori AI AutoFighter and how player progress is persisted between runs.
 
+## Package layout
+Source code lives under the `game` package:
+
+- `actors` – player and foe logic
+- `ui` – menu screens and widgets
+- `rooms` – battle, rest, shop, and other scenes
+- `gacha` – pull logic and results presentation
+- `saves` – load and save utilities
+
 ## Startup
 - `PluginLoader` scans the `plugins/` directory to register available classes.
 - `SceneManager` swaps scenes, manages an overlay stack for menus or pause screens, and logs setup/teardown errors so faulty scenes or overlays are skipped instead of crashing.
+- The app listens for `window-event` to exit when the window closes and for the `escape` key to quit. `pause_game` and `resume_game` toggle the update task so gameplay can be paused and resumed cleanly.
 - `MapGenerator` creates 45-room floors seeded per run, guaranteeing at least two shops and two rest rooms. Pressure Level adds extra rooms and boss encounters, and chat rooms may appear after battle nodes without increasing the room count.
 - A drifting color cloud fills the background while the camera stays fixed. The main menu presents an Arknights-style 2×3 grid of large Lucide icons with text labels for *New Run*, *Load Run*, *Edit Player*, *Options*, *Give Feedback*, and *Quit*. Icons show tooltips on hover, the focused option is highlighted for keyboard navigation, and the **Give Feedback** button launches a pre-filled GitHub issue in the user's browser. See [main-menu instructions](../instructions/main-menu.md) for layout details.
 - A Player Creator offers body style, hair style, hair color, and accessory options while distributing 100 stat points as +1% increments. Each selector and stat slider now includes a label with helper text shown on hover or keyboard focus. Spending 100 of each damage type's 4★ upgrade items adds one extra point, and remaining inventory is saved when confirming.

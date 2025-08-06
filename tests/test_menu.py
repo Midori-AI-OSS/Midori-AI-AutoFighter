@@ -5,16 +5,18 @@ import types
 
 from pathlib import Path
 
+from unittest.mock import Mock
 from unittest.mock import patch
 
 import autofighter.save as save
 import autofighter.audio as audio
 
-from autofighter.gui import FRAME_COLOR
+from autofighter.stats import Stats
 from autofighter.menu import MainMenu
 from autofighter.menu import ISSUE_URL
 from autofighter.menu import LoadRunMenu
 from autofighter.menu import OptionsMenu
+from autofighter.gui import FRAME_COLOR
 
 EXPECTED_URL = (
     "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
@@ -147,3 +149,104 @@ def test_main_menu_feedback_opens_issue() -> None:
     with patch("webbrowser.open") as mock_open:
         menu.give_feedback()
     mock_open.assert_called_once_with(ISSUE_URL)
+
+
+def test_main_menu_feedback_prints_url_when_browser_unavailable(capsys) -> None:
+    app = DummyApp()
+    menu = MainMenu(app)
+    with patch("webbrowser.open", side_effect=Exception):
+        menu.give_feedback()
+    captured = capsys.readouterr()
+    assert ISSUE_URL in captured.out
+
+
+def test_main_menu_new_run_starts_battle() -> None:
+    class SceneManager:
+        def __init__(self) -> None:
+            self.scene = None
+
+        def switch_to(self, scene) -> None:
+            self.scene = scene
+
+    app = DummyApp()
+    app.scene_manager = SceneManager()
+
+    dummy_player = ("body", "hair", "color", "acc", Stats(hp=5, max_hp=5), {})
+
+    class DummyBattle:
+        def __init__(self, *_: object, player: Stats, **__: object) -> None:
+            self.player = player
+
+    sys.modules['autofighter.battle_room'] = types.SimpleNamespace(BattleRoom=DummyBattle)
+    with patch("autofighter.menu.load_player", return_value=dummy_player):
+        menu = MainMenu(app)
+        menu.new_run()
+
+    assert isinstance(app.scene_manager.scene, DummyBattle)
+    assert app.scene_manager.scene.player.hp == 5
+    del sys.modules['autofighter.battle_room']
+
+
+def test_main_menu_new_run_without_player_prints_warning(capsys) -> None:
+    class SceneManager:
+        def __init__(self) -> None:
+            self.called = False
+
+        def switch_to(self, *_: object) -> None:
+            self.called = True
+
+    app = DummyApp()
+    app.scene_manager = SceneManager()
+
+    sys.modules['autofighter.battle_room'] = types.SimpleNamespace(BattleRoom=object)
+    with patch("autofighter.menu.load_player", return_value=None):
+        menu = MainMenu(app)
+        menu.new_run()
+    del sys.modules['autofighter.battle_room']
+
+    captured = capsys.readouterr()
+    assert "Use Edit Player first" in captured.out
+    assert not app.scene_manager.called
+
+
+def test_main_menu_load_run_switches_scene() -> None:
+    class SceneManager:
+        def __init__(self) -> None:
+            self.scene = None
+
+        def switch_to(self, scene) -> None:
+            self.scene = scene
+
+    app = DummyApp()
+    app.scene_manager = SceneManager()
+    menu = MainMenu(app)
+    menu.load_run()
+    assert isinstance(app.scene_manager.scene, LoadRunMenu)
+
+
+def test_main_menu_open_options_switches_scene() -> None:
+    class SceneManager:
+        def __init__(self) -> None:
+            self.scene = None
+
+        def switch_to(self, scene) -> None:
+            self.scene = scene
+
+    app = DummyApp()
+    app.scene_manager = SceneManager()
+    menu = MainMenu(app)
+    menu.open_options()
+    assert isinstance(app.scene_manager.scene, OptionsMenu)
+
+
+def test_main_menu_quit_calls_user_exit() -> None:
+    called = Mock()
+
+    app = DummyApp()
+    app.userExit = called
+    menu = MainMenu(app)
+    menu.setup()
+    menu.index = len(menu.buttons) - 1
+    menu.activate()
+    called.assert_called_once()
+    menu.teardown()

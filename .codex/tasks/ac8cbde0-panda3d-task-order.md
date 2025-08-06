@@ -10,40 +10,40 @@ Coders must check in with the reviewer or task master before marking tasks compl
 **Grade:** 9/10 – tasks mirror the planning document with minor gaps for build scripts and a feedback menu button now addressed.
 
 ## Tasks
-1. [x] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
+1. [ ] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
    - [x] Move existing Pygame code into `legacy/` and keep it read-only.
    - [x] Run `uv init` to create a fresh environment.
    - [x] Install Panda3D and optional LLM tooling via `uv add panda3d` and `uv add --optional llm`.
    - [x] Add `main.py` that launches `ShowBase` and renders a placeholder cube to verify the engine.
    - [x] Scaffold directories: `assets/models/`, `assets/textures/`, `assets/audio/`, `plugins/`, `mods/`, and `llms/`.
-   - [ ] Organize source under a `game/` package with `actors/`, `ui/`, `rooms/`, `gacha/`, and `saves/` submodules.
+   - [x] Organize source under a `game/` package with `actors/`, `ui/`, `rooms/`, `gacha/`, and `saves/` submodules.
    - [x] Document the new directory structure in `README.md` and warn contributors not to modify `legacy/`.
    - [x] Define `pyproject.toml` with package name `autofighter` and expose an entry point for `main.py`.
    - [x] Research publishing `autofighter` to PyPI and note considerations for native dependencies.
    - [x] Commit minimal setup once `main.py` runs.
     - [x] Document this feature in `.codex/implementation`.
-    - [ ] Add unit tests covering success and failure cases.
-2. [x] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
+     - [x] Add unit tests covering success and failure cases.
+2. [ ] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
    - [x] Expand `main.py` with a `ShowBase` subclass to manage the app lifecycle.
    - [x] Route events through Panda3D's `messenger` and schedule updates with `taskMgr`.
    - [x] Add a lightweight scene manager for swapping menus, gameplay states, and overlays.
    - [x] Handle window close events and keyboard input for quitting the game.
    - [x] Set the window title to the game's name.
     - [x] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-3. [x] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
-   - [ ] Create a manager class to load and unload scenes.
-   - [ ] Support pushing overlays and popping back to previous scenes.
-   - [ ] Provide hooks for transition effects and cleanup.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-4. [x] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
+   - [x] Add unit tests covering success and failure cases.
+3. [ ] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
+   - [x] Create a manager class to load and unload scenes.
+   - [x] Support pushing overlays and popping back to previous scenes.
+   - [x] Provide hooks for transition effects and cleanup.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
+4. [ ] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
    - [x] Implement a loader that discovers Python modules under `plugins/` and registers them with the game.
    - [x] Provide hooks for player, weapon, foe, passive, DoT, HoT, and room plugins.
    - [x] Expose a mod interface and avoid importing legacy Pygame code.
    - [x] Wrap Panda3D's `messenger` with an event bus so plugins can subscribe and emit without engine imports.
-   - [ ] Document the plugin API and how to add new plugins.
-   - [ ] Document this feature in `.codex/implementation`.
+   - [x] Document the plugin API and how to add new plugins.
+   - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
 5. [x] Event bus wrapper (`120c282f`) – expose decoupled messaging so plugins can emit and subscribe.
    - [x] Wrap Panda3D's `messenger` with subscribe and emit helpers.
@@ -66,39 +66,39 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Add unit tests for each damage and healing type.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-8. [x] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
+8. [ ] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Create a main menu with buttons for New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Implement Options submenu with sound-effects volume, music volume, and toggle for stat-screen pause behaviour.
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
     - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
     - [x] Document this feature in `.codex/implementation`.
-    - [ ] Add unit tests covering success and failure cases.
-9. [x] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
+    - [x] Add unit tests covering success and failure cases.
+9. [ ] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
    - [ ] Implement sound-effects and music volume sliders tied to the audio system.
    - [ ] Provide a toggle for pausing the stat screen during gameplay.
    - [ ] Persist settings across sessions.
    - [x] Document control icons and labels in `.codex/instructions/options-menu.md`.
    - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-10. [x] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
+10. [ ] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
    - [x] Allow players to choose among three body types.
    - [x] Provide hair styles, colors, and accessory options.
    - [x] Save the chosen appearance for use in runs.
    - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-11. [x] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
+11. [ ] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
    - [ ] Provide UI for distributing points among core stats.
    - [ ] Clamp allocations to remaining points and enforce the +1% rule.
    - [ ] Display remaining points and prevent confirmation until all are spent or saved.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-12. [x] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
+12. [ ] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
    - [ ] Track 4★ upgrade item spending and apply bonus stat points.
    - [ ] Warn when items are insufficient or bonuses exceed limits.
    - [ ] Persist purchased bonuses to saves and the stat screen.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-13. [x] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
+13. [ ] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
    - [x] Display core stats: HP, Max HP, EXP, Level, EXP buff multiplier, Actions per Turn.
    - [x] Show offense stats: Attack, Crit Rate, Crit Damage, Effect Hit Rate, base damage type.
    - [x] Show defense stats: Defense, Mitigation, Regain, Dodge Odds, Effect Resistance.
@@ -109,13 +109,13 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Expose hooks for plugins to append custom lines to the Status section.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-14. [x] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
+14. [ ] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
    - [x] Default refresh rate to every 5 frames.
    - [x] Let players choose a rate from 1 to 10 frames.
    - [x] Respect the pause setting from the Options menu.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-15. [x] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
+15. [ ] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
    - [x] Render player and foe models or placeholders using Panda3D node graphs.
    - [x] Implement turn-based logic using messenger events and the shared `Stats` dataclass for accuracy and damage.
    - [x] Scale foes according to floor, room, Pressure level, and loop count.
@@ -123,32 +123,32 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Trigger overtime warnings after 100 turns (500 for floor bosses) with red/blue flashes and an `Enraged` buff.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-16. [x] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
+16. [ ] Overtime warnings (`4e282a5d`) – flash room after 100 turns or 500 on floor bosses.
    - [ ] Count turns during battles and detect overtime thresholds.
    - [ ] Trigger visual or audio cues when overtime begins.
    - [ ] Reset the warning after combat ends.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-17. [x] Rest room features (`5109746a`) – healing or item trades with per-floor limits.
+17. [ ] Rest room features (`5109746a`) – healing or item trades with per-floor limits.
    - [x] Offer choices to heal or trade upgrade items for benefits.
    - [x] Animate a brief rest scene to communicate outcomes.
    - [x] Track rest usage per floor, ensuring at least two rest rooms appear on each floor.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-18. [x] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
+18. [ ] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
    - [x] Design a shop interface listing items with prices, star ratings, and limited stock.
    - [x] Implement purchasing logic that deducts gold, grants items, and supports rerolls for a small fee.
    - [x] Ensure at least two shop rooms appear per floor and inventory scales with difficulty.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-19. [x] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
+19. [ ] Event room narrative (`cbf3a725`) – deterministic choice outcomes.
    - [x] Define an event framework with text prompts, selectable options, and seeded randomness.
    - [x] Implement chat rooms where players can send one message to an LLM character, limited to six chats per floor.
    - [x] Provide at least two sample events affecting player stats or items.
    - [x] Ensure events triggered after battles do not consume the floor's room count.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-20. [x] Map generator (`3b2858e1`) – 45-room floors and looping logic.
+20. [ ] Map generator (`3b2858e1`) – 45-room floors and looping logic.
    - [x] Generate 45-room floors containing rest, chat, battle-weak, battle-normal, battle-boss, battle-boss-floor, and shop nodes.
    - [x] Ensure each floor has at least two shops and two rest stops; chats occur after fights without consuming room count.
    - [x] Support Pressure Level selection that scales foes and adds rooms or bosses at specified intervals.
@@ -157,38 +157,38 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Seed each floor from a run-specific base seed and forbid seed reuse.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-21. [x] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
+21. [ ] Pressure level scaling (`6600e0fd`) – adjust foe stats, room counts, and extra bosses.
    - [ ] Scale foe stats proportionally to pressure.
    - [ ] Modify floor layouts to add rooms or branches as pressure increases.
    - [ ] Spawn extra bosses at high pressure thresholds.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-22. [x] Boss room encounters (`21f544d8`) – implement standard boss fights and fix `foe_attack` referencing an undefined `attack_button`.
+22. [ ] Boss room encounters (`21f544d8`) – implement standard boss fights and fix `foe_attack` referencing an undefined `attack_button`.
    - [ ] Load boss-specific scenes, assets, and music.
    - [ ] Define unique attack patterns and rewards for each boss.
    - [ ] Transition back to the map and grant loot after victory.
    - [ ] Ensure `foe_attack` logic does not reference missing UI elements like `attack_button`.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-23. [x] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
+23. [ ] Floor boss escalation (`51a2c5da`) – handle difficulty spikes and rewards each loop.
    - [ ] Boost boss stats and mechanics after every loop.
    - [ ] Scale loot tables to match higher difficulty.
    - [ ] Sync escalation with pressure level progression.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-24. [x] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
+24. [ ] Chat room interactions (`4185988d`) – one-message LLM chats after battles.
    - [ ] Load a chat scene that appears after combat.
    - [ ] Send the player's message to the configured LLM and display its response.
    - [ ] Provide a skip option to return to the map quickly.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-25. [x] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
+25. [ ] Reward tables (`60af2878`) – define drops for normal, boss, and floor boss fights.
    - [ ] Create weighted reward pools for each fight type.
    - [ ] Include upgrade items, cards, and rare drops with probabilities.
    - [ ] Integrate reward tables into battle resolution.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-26. [x] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
+26. [ ] Gacha pulls (`4289a6e2`) – spend upgrade items on character rolls.
    - [ ] Seed the pull pool with existing player plugins and allow 1, 5, or 10 pulls.
    - [ ] Play a skippable video keyed to the highest rarity obtained and show a results menu afterward.
    - [ ] Apply pity logic starting at 0.001%, rising to ~5% at pull 159, and guaranteeing the featured character at 180 pulls.
@@ -198,7 +198,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Serialize rewards, pity counts, and character stacks for persistence.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-27. [x] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
+27. [ ] Gacha pity system (`f3df3de8`) – raise odds until a featured character drops.
    - [ ] Track consecutive pulls without the featured character.
    - [ ] Raise drop rates according to the pity curve and guarantee at 180 pulls.
    - [ ] Reset pity after obtaining the featured character.
@@ -218,20 +218,20 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Implement `play_animation` to actually play the video clip.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-30. [x] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
+30. [ ] Upgrade item crafting (`418f603a`) – combine lower-star items into higher ranks.
    - [ ] Allow conversion of 125×1★ to 1×2★, 125×2★ to 1×3★, and 125×3★ to 1×4★ items.
    - [ ] Support dual-type requirements for upgrading dual-element characters.
    - [ ] Permit trading 10×4★ items for an extra gacha pull.
    - [ ] Provide a UI panel for crafting and confirming conversions.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-31. [x] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
+31. [ ] Item trade for pulls (`38fe381f`) – exchange 4★ items for gacha tickets.
    - [ ] Provide a trade interface within the gacha menu.
    - [ ] Deduct items and grant a ticket when the trade is confirmed.
    - [ ] Prevent trades when the player lacks sufficient items.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-32. [x] SQLCipher schema (`798aafd3`) – store run and player data securely.
+32. [ ] SQLCipher schema (`798aafd3`) – store run and player data securely.
    - [ ] Integrate SQLCipher to store run and player data with batched writes and compact schemas.
    - [ ] Derive encryption keys from a user-supplied salted password and store them in encrypted config with optional cloud backup.
    - [ ] Provide migration tooling for legacy saves using versioned scripts.
@@ -240,19 +240,19 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Document backup, recovery, and key management steps.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-33. [x] Save key management (`428e9823`) – derive and back up salted-password keys.
+33. [ ] Save key management (`428e9823`) – derive and back up salted-password keys.
    - [ ] Generate keys from a salted user password.
    - [ ] Store a backup copy in a secure location.
    - [ ] Rotate keys and re-encrypt saves when the password changes.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-34. [x] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
+34. [ ] Migration tooling (`72fc9ac3`) – versioned scripts for forward-compatible saves.
    - [ ] Track schema versions and available migrations.
    - [ ] Apply migrations automatically when loading older saves.
    - [ ] Document how to add new migration steps.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-35. [x] Asset style research (`ad61da93`) – choose art direction and free model sources.
+35. [ ] Asset style research (`ad61da93`) – choose art direction and free model sources.
    - [ ] Research low-poly or pixelated 3D art styles and evaluate free/CC model sources for compatibility.
    - [ ] Establish a conversion workflow (e.g., Blender to `.bam`/`.egg`) with cached builds.
    - [ ] Maintain `assets/` structure for models, textures, and audio, and create an `assets.toml` manifest mapping keys to paths and hashes.
@@ -260,19 +260,19 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Document guidelines for artists to contribute compatible assets.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-36. [x] Conversion workflow (`10bd22da`) – build pipeline to Panda3D formats.
+36. [ ] Conversion workflow (`10bd22da`) – build pipeline to Panda3D formats.
    - [ ] Define steps to export models and textures to `.bam` or `.egg`.
    - [ ] Cache converted assets to avoid redundant work.
    - [ ] Integrate the conversion into the build pipeline.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-37. [x] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
+37. [ ] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
    - [ ] Create an `assets.toml` mapping logical keys to file paths and hashes.
    - [x] Build an AssetManager to load and cache models, textures, and sounds.
    - [ ] Expose a simple API for other systems to request assets by key.
    - [x] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-38. [x] Audio system (`7f5c8c36`) – play music and effects with volume control.
+38. [ ] Audio system (`7f5c8c36`) – play music and effects with volume control.
    - [ ] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
    - [ ] Implement cross-fades for boss themes and overtime warnings after long battles.
    - [ ] Support toggling stat-screen pause behaviour for audio if needed.
@@ -311,11 +311,10 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 
-43. [x] Feedback menu button (`2a9e7f14`) – open a pre-filled GitHub issue from the in-game menu.
+43. [ ] Feedback menu button (`2a9e7f14`) – open a pre-filled GitHub issue from the in-game menu.
     - [x] Add a `Give Feedback` option to the main menu.
     - [x] Launch the user's browser with a pre-filled GitHub issue template.
     - [x] Document this feature in `.codex/implementation`.
-    - [ ] Add unit tests covering success and failure cases.
-
+    - [x] Add unit tests covering success and failure cases.
 ## Context
 Derived from the Panda3D game plan and existing Panda3D remake task list to coordinate development.
