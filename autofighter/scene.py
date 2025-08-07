@@ -40,26 +40,30 @@ class SceneManager:
         """Switch to ``scene`` and return ``True`` on success."""
 
         if scene is None:
+            for overlay in reversed(self.overlays):
+                try:
+                    overlay.transition_out()
+                except Exception:
+                    logger.exception("Error transitioning out overlay %s", overlay)
+                    return False
+                try:
+                    overlay.teardown()
+                except Exception:
+                    logger.exception("Error tearing down overlay %s", overlay)
+                    return False
+            self.overlays = []
             if self.current:
                 try:
                     self.current.transition_out()
                 except Exception:
                     logger.exception("Error transitioning out scene %s", self.current)
+                    return False
                 try:
                     self.current.teardown()
                 except Exception:
                     logger.exception("Error tearing down scene %s", self.current)
-            for overlay in self.overlays:
-                try:
-                    overlay.transition_out()
-                except Exception:
-                    logger.exception("Error transitioning out overlay %s", overlay)
-                try:
-                    overlay.teardown()
-                except Exception:
-                    logger.exception("Error tearing down overlay %s", overlay)
-            self.current = None
-            self.overlays = []
+                    return False
+                self.current = None
             return True
 
         try:
@@ -71,60 +75,59 @@ class SceneManager:
             scene.transition_in()
         except Exception:
             logger.exception("Error transitioning in scene %s", scene)
-            try:
-                scene.teardown()
-            except Exception:
-                logger.exception("Error tearing down scene %s", scene)
+            self._rollback(scene)
             return False
 
-        if self.current:
-            try:
-                self.current.transition_out()
-            except Exception:
-                logger.exception("Error transitioning out scene %s", self.current)
-            try:
-                self.current.teardown()
-            except Exception:
-                logger.exception("Error tearing down scene %s", self.current)
-        for overlay in self.overlays:
+        for overlay in reversed(self.overlays):
             try:
                 overlay.transition_out()
-            except Exception:
-                logger.exception("Error transitioning out overlay %s", overlay)
-            try:
                 overlay.teardown()
             except Exception:
                 logger.exception("Error tearing down overlay %s", overlay)
+                self._rollback(scene)
+                return False
+        if self.current:
+            try:
+                self.current.transition_out()
+                self.current.teardown()
+            except Exception:
+                logger.exception("Error tearing down scene %s", self.current)
+                self._rollback(scene)
+                return False
         self.current = scene
         self.overlays = []
         return True
 
-    def push_overlay(self, overlay: Scene) -> None:
+    def push_overlay(self, overlay: Scene) -> bool:
         try:
             overlay.setup()
-        except Exception:
-            logger.exception("Error setting up overlay %s", overlay)
-            return
-        try:
             overlay.transition_in()
         except Exception:
-            logger.exception("Error transitioning in overlay %s", overlay)
-            try:
-                overlay.teardown()
-            except Exception:
-                logger.exception("Error tearing down overlay %s", overlay)
-            return
+            logger.exception("Error preparing overlay %s", overlay)
+            self._rollback(overlay)
+            return False
         self.overlays.append(overlay)
+        return True
 
-    def pop_overlay(self) -> None:
+    def pop_overlay(self) -> bool:
         if not self.overlays:
-            return
-        overlay = self.overlays.pop()
+            return True
+        overlay = self.overlays[-1]
         try:
             overlay.transition_out()
-        except Exception:
-            logger.exception("Error transitioning out overlay %s", overlay)
-        try:
             overlay.teardown()
         except Exception:
-            logger.exception("Error tearing down overlay %s", overlay)
+            logger.exception("Error removing overlay %s", overlay)
+            return False
+        self.overlays.pop()
+        return True
+
+    def _rollback(self, scene: Scene) -> None:
+        try:
+            scene.transition_out()
+        except Exception:
+            logger.exception("Error transitioning out scene %s during rollback", scene)
+        try:
+            scene.teardown()
+        except Exception:
+            logger.exception("Error tearing down scene %s during rollback", scene)

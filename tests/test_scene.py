@@ -83,9 +83,10 @@ def test_switch_to_logs_teardown_failure_and_continues(caplog: Any) -> None:
     mgr.switch_to(TeardownErrorScene())
     good = DummyScene()
     with caplog.at_level(logging.ERROR):
-        mgr.switch_to(good)
+        assert mgr.switch_to(good) is False
     assert good.setup_called
-    assert mgr.current is good
+    assert good.teardown_called
+    assert isinstance(mgr.current, TeardownErrorScene)
     assert any("Error tearing down scene" in r.message for r in caplog.records)
 
 
@@ -93,16 +94,16 @@ def test_overlay_setup_and_teardown_errors_logged(caplog: Any) -> None:
     base = object()
     mgr = SceneManager(base)
     with caplog.at_level(logging.ERROR):
-        mgr.push_overlay(SetupErrorScene())
+        assert mgr.push_overlay(SetupErrorScene()) is False
     assert mgr.overlays == []
-    assert any("Error setting up overlay" in r.message for r in caplog.records)
+    assert any("Error preparing overlay" in r.message for r in caplog.records)
     caplog.clear()
     class BadOverlay(DummyScene):
         def teardown(self) -> None:  # type: ignore[override]
             raise RuntimeError("teardown boom")
     overlay = BadOverlay()
-    mgr.push_overlay(overlay)
+    assert mgr.push_overlay(overlay) is True
     with caplog.at_level(logging.ERROR):
-        mgr.pop_overlay()
-    assert mgr.overlays == []
-    assert any("Error tearing down overlay" in r.message for r in caplog.records)
+        assert mgr.pop_overlay() is False
+    assert mgr.overlays == [overlay]
+    assert any("Error removing overlay" in r.message for r in caplog.records)

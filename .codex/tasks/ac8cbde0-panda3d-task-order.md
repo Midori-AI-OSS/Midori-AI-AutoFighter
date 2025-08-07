@@ -50,7 +50,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Set the window title to the game's name.
     - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-* [ ] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
+* [x] Scene manager (`dfe9d29f`) – swap menus, gameplay scenes, and overlays.
    - [x] Create a manager class to load and unload scenes.
    - [x] Support pushing overlays and popping back to previous scenes.
    - [x] Provide hooks for transition effects and cleanup.

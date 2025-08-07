@@ -1,0 +1,35 @@
+# Map and Room Types
+
+1. Room categories: rest, chat, battle-weak, battle-normal, battle-boss, **battle-boss-floor**, shop.
+   - Each floor has at least two shops and two rest stops.
+   - Chats occur after fights without consuming room count.
+   - Chat rooms let players RP with an LLM copy of a character that offers one-message tips or comments about the run.
+   - Players may send only one message per chat room, capped at six chats per floor.
+2. Map generator: 45-room floors for ~100 floors; endless looping after final floor.
+   - Optional **Pressure Level** boosts foe stats by +5%–10% per tier and is selectable up to the highest level cleared.
+   - Display Pressure Level next to foe names in combat, e.g., `Luna (5)`.
+   - Every 5 Pressure levels add an extra foe per battle room up to 10; once capped, loot drops decrease.
+   - Every 10 Pressure levels add one more room per floor before the boss.
+   - Every 20 Pressure levels insert additional back-to-back boss rooms.
+   - Enemy stats scale as base stats × floor level × room level × loop count.
+   - Each loop multiplies enemy stats by 1.2× ±5% and, after the second loop, grants +1 Pressure level for future runs.
+   - Battle rooms scale foes by 1.05× ±5% per fight.
+3. Final room each floor is **battle-boss-floor** with a single foe at 100× floor level × room level × loop count.
+4. Display: color-coded nodes, readable icons, highlight current location, show valid paths.
+5. Transitions load correct room scenes using shared templates with floor-specific themes.
+6. Starting around room 20, gradually shift floor visuals toward the upcoming boss room (e.g., Luna’s floor gains more night and star motifs) so players can sense the next encounter.
+7. Combat accuracy driven solely by stats; reusable, recolorable effects for attack types and team buffs.
+8. Fights that exceed 100 turns (500 for floor bosses) trigger a slow red/blue flash on the room to warn of drawn-out battles.
+   - Each turn after the flash begins grants foes a +40% Attack `Enraged` buff.
+9. Rewards:
+   - Normal fights: 5% chance to drop a relic (98% of which are 1★), grant gold = 5 × (loop number × random float 1.01–1.25), drop 1–2★ upgrade items scaled by floor/room/Pressure, and award a 1–2★ card.
+   - Bosses: 25% chance to drop a relic with 1–5★ ranks, grant extra gold = 20 × (loop number × random float 1.53–2.25), drop 1–3★ upgrade items scaled by difficulty, and award a 1–5★ card.
+   - Floor bosses: guaranteed relic drops (3★ at 98% odds), largest gold bonus = 200 × (loop number × random float 2.05–4.25), drop 3–4★ upgrade items scaled by difficulty, award 3–5★ cards, and grant pull tickets that scale with Pressure/loop up to 5 per floor boss.
+   - Relics come in 1–5★ ranks using the shared star-color scheme; stacks have no cap and drop tables favor relics the player lacks.
+   - Cards are unique collectibles with one copy each; design ~100 cards per combat theme (DoT, melee, etc.), with 1★ effects providing minor perks (e.g., heal 1% when dealing DoT) and 5★ effects offering major boons (e.g., temporary ally joins the party).
+10. Code structure:
+    - Create a `MapNode` dataclass storing room type, links, and reward data.
+    - Implement `Room` subclasses (`RestRoom`, `BattleRoom`, `ChatRoom`, etc.) with shared interfaces for entry, reward, and exit hooks.
+    - Build a `chat/` module that routes one-shot messages to local or remote LLMs stored under `llms/`.
+    - Seed each floor from a run-specific base seed, mutate it several times, and forbid seed reuse so players cannot reproduce identical maps.
+    - Expand event plugins with branching outcomes and tests to cover failure paths.
