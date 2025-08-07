@@ -8,6 +8,12 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Standardize on Lucide icons and provide clear labels for every menu item.
 - Audit Player and Settings menus for missing labels and verify UI scaling, font sizes, and DPI handling.
  - Menus are currently rendering at an oversized scale; introduce a global DirectGUI scaling system and regression checks so layouts stay consistent across resolutions.
+- Create an initial set of cards and relics (10×1★, 5×2★, 2×3★, 2×4★, and 2×5★) using the plugin system like players and effects.
+- Fix the shop so purchases persist and reroll logic functions correctly.
+- Confirm the battle room includes a functional 3D space.
+- Ensure all three body types have working models.
+- Apply color themes to player objects.
+- Maintain `myunderstanding.md` with an up-to-date gameplay overview.
 
 ## Immediate Playable Flow
 1. Finalize the main menu so New Run can trigger the gameplay loop.

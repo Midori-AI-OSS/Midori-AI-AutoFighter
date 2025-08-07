@@ -2,21 +2,20 @@ from __future__ import annotations
 
 import sys
 import types
-
 from pathlib import Path
-
 from unittest.mock import Mock
 from unittest.mock import patch
 
 import autofighter.save as save
 import autofighter.audio as audio
 
+from game.ui.menu import ISSUE_URL
+from game.ui.menu import LoadRunMenu
+from game.ui.menu import MainMenu
 from game.ui.options import OptionsMenu
 from autofighter.gui import FRAME_COLOR
-from autofighter.menu import ISSUE_URL
-from autofighter.menu import LoadRunMenu
-from autofighter.menu import MainMenu
 from autofighter.stats import Stats
+from game.ui.party_picker import PartyPicker
 
 EXPECTED_URL = (
     "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
@@ -238,16 +237,15 @@ def test_main_menu_feedback_opens_issue() -> None:
     mock_open.assert_called_once_with(ISSUE_URL)
 
 
-def test_main_menu_feedback_prints_url_when_browser_unavailable(capsys) -> None:
+def test_main_menu_feedback_shows_label_when_browser_unavailable() -> None:
     app = DummyApp()
     menu = MainMenu(app)
     with patch("webbrowser.open", side_effect=Exception):
         menu.give_feedback()
-    captured = capsys.readouterr()
-    assert ISSUE_URL in captured.out
+    assert menu.feedback_label is not None
+    assert ISSUE_URL in menu.feedback_label["text"]
 
-
-def test_main_menu_new_run_starts_battle() -> None:
+def test_main_menu_new_run_opens_party_picker() -> None:
     class SceneManager:
         def __init__(self) -> None:
             self.scene = None
@@ -260,18 +258,11 @@ def test_main_menu_new_run_starts_battle() -> None:
 
     dummy_player = ("body", "hair", "color", "acc", Stats(hp=5, max_hp=5), {})
 
-    class DummyBattle:
-        def __init__(self, *_: object, player: Stats, **__: object) -> None:
-            self.player = player
-
-    sys.modules['autofighter.battle_room'] = types.SimpleNamespace(BattleRoom=DummyBattle)
-    with patch("autofighter.menu.load_player", return_value=dummy_player):
+    with patch("game.ui.menu.load_player", return_value=dummy_player):
         menu = MainMenu(app)
         menu.new_run()
 
-    assert isinstance(app.scene_manager.scene, DummyBattle)
-    assert app.scene_manager.scene.player.hp == 5
-    del sys.modules['autofighter.battle_room']
+    assert isinstance(app.scene_manager.scene, PartyPicker)
 
 
 def test_main_menu_new_run_without_player_prints_warning(capsys) -> None:
@@ -285,11 +276,9 @@ def test_main_menu_new_run_without_player_prints_warning(capsys) -> None:
     app = DummyApp()
     app.scene_manager = SceneManager()
 
-    sys.modules['autofighter.battle_room'] = types.SimpleNamespace(BattleRoom=object)
-    with patch("autofighter.menu.load_player", return_value=None):
+    with patch("game.ui.menu.load_player", return_value=None):
         menu = MainMenu(app)
         menu.new_run()
-    del sys.modules['autofighter.battle_room']
 
     captured = capsys.readouterr()
     assert "Use Edit Player first" in captured.out

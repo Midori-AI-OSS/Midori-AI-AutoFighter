@@ -23,6 +23,9 @@ class DummyTaskMgr:
 class DummyApp:
     def __init__(self) -> None:
         self.taskMgr = DummyTaskMgr()
+        self.scene_manager = type(
+            "SM", (), {"switch_to": lambda self, scene: setattr(self, "scene", scene)}
+        )()
 
     def accept(self, *_args, **_kwargs):  # pragma: no cover - event wiring stub
         pass
@@ -81,3 +84,17 @@ def test_start_overtime_plays_warning_sfx(monkeypatch) -> None:
     room.start_overtime()
 
     assert calls == ["overtime_warning"]
+
+
+def test_room_exit_switches_scene() -> None:
+    app = DummyApp()
+    room = BattleRoom(app, return_scene_factory=lambda: "MAP", player=Stats(hp=10, max_hp=10, atk=10, defense=0))
+    room.foe = Stats(hp=1, max_hp=1, atk=0, defense=0)
+    room.status_label = {"text": ""}
+    room.player_model = object()
+    room.foe_model = object()
+    room.show_damage = lambda *a, **k: None
+    room.show_attack_effect = lambda *a, **k: None
+    room.add_status_icon = lambda *a, **k: None
+    room.run_round()
+    assert getattr(app.scene_manager, "scene", None) == "MAP"

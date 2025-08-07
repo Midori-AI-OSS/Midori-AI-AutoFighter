@@ -16,6 +16,6 @@ def test_pressure_affects_rooms_branches_bosses(tmp_path):
     nodes = gen.generate_floor(1)
     assert len(nodes) == 49
     branch_nodes = [n for n in nodes if len(n.links) > 1]
-    assert len(branch_nodes) == 3
+    assert len(branch_nodes) == 4
     types = [n.room_type for n in nodes]
     assert types.count("battle_boss") == 2

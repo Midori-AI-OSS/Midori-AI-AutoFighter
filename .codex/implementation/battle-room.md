@@ -5,6 +5,8 @@
 
 `BossRoom` extends this scene to load boss-specific models, music, and scripted attack patterns. Boss configurations live in `autofighter.rooms.boss_patterns` and expose reward data after victory.
 
+When the player or foe is defeated, the room exits back to the previous scene so the run map continues automatically.
+
 # Loop scaling
 
 Foe stats scale via `balance.loop.scale_stats`, which multiplies base values by floor, room, and loop counts. Floor bosses apply an extra `100×` base factor. Tuning knobs live in `balance.loop.config` for adjusting loop multipliers without touching combat logic.

@@ -277,7 +277,7 @@ class OptionsMenu(Scene):
         save_settings(self._settings_payload())
 
     def back(self) -> None:
-        from autofighter.menu import MainMenu  # local import to avoid circular dependency
+        from .menu import MainMenu  # local import to avoid circular dependency
 
         self.app.scene_manager.switch_to(MainMenu(self.app))
 

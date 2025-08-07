@@ -1,22 +1,25 @@
 # Player and Foe Reference
 
 ## Player Roster
-- **Ally** – applies `ally_passive` on load to grant ally-specific bonuses.
-- **Becca** – baseline fighter with no unique starting passive.
-- **Bubbles** – starts with a default item and applies `bubbles_passive`.
-- **Carly** – applies `carly_passive`.
-- **Chibi** – baseline fighter with no unique passive.
-- **Graygray** – applies `graygray_passive`.
-- **Hilander** – baseline fighter with no unique passive.
-- **Kboshi** – baseline fighter with no unique passive.
-- **Lady Darkness** – baseline fighter themed around darkness.
-- **Lady Echo** – baseline fighter themed around echoes.
-- **Lady Fire and Ice** – baseline fighter themed around fire and ice.
-- **Lady Light** – baseline fighter themed around light.
-- **Lady of Fire** – baseline fighter themed around fire.
-- **Luna** – applies `luna_passive`.
-- **Mezzy** – baseline fighter with no unique passive.
-- **Mimic** – baseline fighter with no unique passive.
+All legacy characters from the Pygame version have been ported as plugins.
+Each entry notes the character's `CharacterType`.
+
+- **Ally** (B) – applies `ally_passive` on load to grant ally-specific bonuses.
+- **Becca** (B) – builds high attack but takes more damage from lower defense.
+- **Bubbles** (A) – starts with a default item and applies `bubbles_passive`.
+- **Carly** (B) – applies `carly_passive`.
+- **Chibi** (A) – gains four times the normal benefit from Vitality.
+- **Graygray** (B) – applies `graygray_passive`.
+- **Hilander** (A) – builds increased crit rate and crit damage.
+- **Kboshi** (A) – randomly changes damage type.
+- **Lady Darkness** (B) – baseline fighter themed around darkness.
+- **Lady Echo** (B) – baseline fighter themed around echoes.
+- **Lady Fire and Ice** (B) – baseline fighter themed around fire and ice.
+- **Lady Light** (B) – baseline fighter themed around light.
+- **Lady of Fire** (B) – baseline fighter themed around fire.
+- **Luna** (B) – applies `luna_passive`.
+- **Mezzy** (B) – only raises Max HP and takes less damage.
+- **Mimic** (C) – copies the player then lowers its stats by 25% on spawn.
 
 ## Foe Generation
 Foes are procedurally named by pairing an adjective from `themed_ajt`

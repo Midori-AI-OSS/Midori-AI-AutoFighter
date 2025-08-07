@@ -82,6 +82,31 @@ def test_save_manager_batches_and_commits(tmp_path):
         assert sm.fetch_player("p") == {"name": "Hero"}
 
 
+def test_save_manager_skips_key_file_without_password(tmp_path):
+    fake_module = types.SimpleNamespace(connect=lambda path: _FakeConnection(path))
+    sys.modules["sqlcipher3"] = fake_module
+    from autofighter.saves import encrypted_store
+
+    reload(encrypted_store)
+    path = tmp_path / "plain.db"
+
+    with encrypted_store.SaveManager(path, ""):
+        pass
+
+    assert not path.with_suffix(".key").exists()
+
+
+def test_save_helpers_avoid_key_file_without_password(tmp_path):
+    fake_module = types.SimpleNamespace(connect=lambda path: _FakeConnection(path))
+    sys.modules["sqlcipher3"] = fake_module
+    from autofighter import save
+    reload(save)
+    save.DB_PATH = tmp_path / "helper.db"
+    stats = Stats(hp=1, max_hp=1)
+    save.save_player("A", "B", "C", "None", stats, {})
+    assert not (tmp_path / "helper.key").exists()
+
+
 def test_key_manager_backup_and_restore(tmp_path):
     from autofighter.saves import key_manager
 
@@ -127,6 +152,20 @@ def test_save_module_roundtrip(tmp_path):
     body, hair, hair_color, accessory, stats2, inventory = loaded
     assert body == "Athletic"
     assert stats2.hp == 5
+
+
+def test_roster_roundtrip(tmp_path):
+    fake_module = types.SimpleNamespace(connect=lambda path: _FakeConnection(path))
+    sys.modules["sqlcipher3"] = fake_module
+    from autofighter import save
+    reload(save)
+    save.DB_PATH = tmp_path / "roster.db"
+    _FakeConnection.storage = {"runs": {}, "players": {}}
+    save.save_roster(["ally", "becca"])
+    assert save.load_roster() == ["ally", "becca"]
+    stats = Stats(hp=1, max_hp=1)
+    save.save_player("A", "B", "C", "None", stats, {})
+    assert save.load_roster() == ["ally", "becca"]
 
 
 def test_migration_runner_applies_scripts(tmp_path):

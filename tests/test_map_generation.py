@@ -26,6 +26,15 @@ def test_pressure_level_adds_rooms_and_boss(tmp_path):
     assert types.count("battle_boss") >= 1
 
 
+def test_three_starting_paths(tmp_path):
+    gen = MapGenerator(base_seed=7, seed_store_path=tmp_path / "s.json")
+    nodes = gen.generate_floor(1)
+    assert nodes[0].links == [1, 2, 3]
+    assert nodes[1].links == [4]
+    assert nodes[2].links == [4]
+    assert nodes[3].links == [4]
+
+
 def test_duplicate_seed_detected(tmp_path):
     store = tmp_path / "seeds.json"
     MapGenerator(base_seed=99, seed_store_path=store)

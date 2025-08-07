@@ -46,14 +46,14 @@ except Exception:  # pragma: no cover - fallback for headless tests
     class ShowBase:  # type: ignore[dead-code]
         pass
 
+from autofighter.gui import FRAME_COLOR
+from autofighter.gui import TEXT_COLOR
+from autofighter.gui import get_normalized_scale_pos
+from autofighter.gui import get_widget_scale
+from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
 from autofighter.stats import Stats
-from autofighter.gui import TEXT_COLOR
-from autofighter.gui import FRAME_COLOR
-from autofighter.save import save_player
-from autofighter.gui import set_widget_pos
-from autofighter.gui import get_widget_scale
-from autofighter.gui import get_normalized_scale_pos
+from game.actors import CharacterType
 
 DAMAGE_TYPES = [
     "generic",
@@ -85,11 +85,12 @@ class PlayerCreator(Scene):
         self.extras = extras or {}
         self.inventory = {t: (inventory or {}).get(t, 0) for t in DAMAGE_TYPES}
         self.bonus = min(self.inventory[t] // 100 for t in DAMAGE_TYPES) if DAMAGE_TYPES else 0
-        self.body_options = ["Athletic", "Slim", "Heavy"]
+        self.body_options = ["Type A", "Type B", "Type C"]
         self.hair_options = ["Short", "Long", "Ponytail"]
         self.color_options = ["Black", "Blonde", "Red"]
         self.accessory_options = ["None", "Hat", "Glasses"]
         self.body_choice = self.body_options[0]
+        self.type_choice = CharacterType.A
         self.hair_choice = self.hair_options[0]
         self.hair_color_choice = self.color_options[0]
         self.accessory_choice = self.accessory_options[0]
@@ -242,6 +243,12 @@ class PlayerCreator(Scene):
 
     def set_body(self, choice: str) -> None:
         self.body_choice = choice
+        mapping = {
+            "Type A": CharacterType.A,
+            "Type B": CharacterType.B,
+            "Type C": CharacterType.C,
+        }
+        self.type_choice = mapping[choice]
 
     def set_hair(self, choice: str) -> None:
         self.hair_choice = choice
@@ -314,8 +321,11 @@ class PlayerCreator(Scene):
             max_hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),
             atk=int(BASE_STATS["atk"] * (1 + points["atk"] / 100)),
             defense=int(BASE_STATS["defense"] * (1 + points["defense"] / 100)),
+            char_type=self.type_choice,
         )
-        save_player(
+        from autofighter import save
+
+        save.save_player(
             self.body_choice,
             self.hair_choice,
             self.hair_color_choice,

@@ -3,7 +3,7 @@ import logging
 from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
-from autofighter.menu import MainMenu
+from game.ui.menu import MainMenu
 from autofighter.save import load_settings
 from autofighter.audio import get_audio
 from autofighter.scene import SceneManager
@@ -76,17 +76,21 @@ class AutoFighterApp(ShowBase):
         if not self.paused:
             try:
                 self.task_mgr.remove("update")
-            except Exception:
-                pass
-            self.paused = True
+            except Exception as exc:
+                logger.exception("Failed to pause game")
+                raise
+            else:
+                self.paused = True
 
     def resume_game(self) -> None:
         if self.paused:
             try:
                 self.task_mgr.add(self.update, "update")
-            except Exception:
-                pass
-            self.paused = False
+            except Exception as exc:
+                logger.exception("Failed to resume game")
+                raise
+            else:
+                self.paused = False
 
 
 def main() -> None:

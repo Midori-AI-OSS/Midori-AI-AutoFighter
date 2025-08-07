@@ -78,6 +78,9 @@ def save_player(
         "inventory": inventory,
     }
     with SaveManager(path, password) as sm:
+        existing = sm.fetch_player(player_id) or {}
+        if "roster" in existing:
+            data["roster"] = existing["roster"]
         sm.queue_player(player_id, data)
         sm.commit()
 
@@ -101,3 +104,29 @@ def load_player(
         stats,
         data.get("inventory", {}),
     )
+
+
+def save_roster(
+    roster: list[str],
+    password: str = "",
+    path: Path = DB_PATH,
+    player_id: str = "player",
+) -> None:
+    with SaveManager(path, password) as sm:
+        data = sm.fetch_player(player_id) or {}
+        data["roster"] = roster
+        sm.queue_player(player_id, data)
+        sm.commit()
+
+
+def load_roster(
+    password: str = "",
+    path: Path = DB_PATH,
+    player_id: str = "player",
+) -> list[str]:
+    with SaveManager(path, password) as sm:
+        data = sm.fetch_player(player_id)
+    if not data:
+        return []
+    roster = data.get("roster", [])
+    return [str(c) for c in roster]

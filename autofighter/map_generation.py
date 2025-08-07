@@ -124,6 +124,12 @@ class MapGenerator:
                 if idx in branch_positions:
                     nodes[-1].links.append(idx + 2)
 
+        if len(nodes) >= 5:
+            nodes[0].links = [1, 2, 3]
+            nodes[1].links = [4]
+            nodes[2].links = [4]
+            nodes[3].links = [4]
+
         return nodes
 
 
@@ -142,7 +148,11 @@ def render_floor(nodes: List[MapNode]) -> str:
     for node in nodes:
         sym = symbols.get(node.room_type, "??")
         chat = " *" if node.chat_after else ""
-        lines.append(f"{node.index:02d}:{sym}{chat}")
+        if node.links:
+            links = ",".join(f"{i:02d}" for i in node.links)
+            lines.append(f"{node.index:02d}:{sym} -> {links}{chat}")
+        else:
+            lines.append(f"{node.index:02d}:{sym}{chat}")
     return "\n".join(lines)
 
 

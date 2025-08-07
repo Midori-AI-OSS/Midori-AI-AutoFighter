@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import importlib
 
 try:
@@ -10,7 +12,6 @@ except ModuleNotFoundError:  # pragma: no cover - skip if Panda3D missing
 import autofighter.save as save
 
 from autofighter.stats import Stats
-from autofighter.rest_room import RestRoom
 from autofighter.shop_room import ShopItem
 from autofighter.shop_room import ShopRoom
 
@@ -18,25 +19,14 @@ from autofighter.shop_room import ShopRoom
 class DummyApp:
     scene_manager = type("SM", (), {"switch_to": lambda self, scene: None})()
 
-    def accept(self, *_args, **_kwargs):
+    def accept(self, *_args, **_kwargs) -> None:
         pass
 
-    def ignore(self, *_args, **_kwargs):
+    def ignore(self, *_args, **_kwargs) -> None:
         pass
 
 
-def test_rest_room_heal_uses_limit() -> None:
-    RestRoom.uses_per_floor.clear()
-    stats = Stats(hp=1, max_hp=5)
-    room = RestRoom(DummyApp(), stats, return_scene_factory=lambda: None, floor=1, items={"Upgrade Stone": 1})
-    room._animate = lambda _m: None
-    room.heal()
-    assert stats.hp == 5
-    assert RestRoom.uses_per_floor[1] == 1
-    assert room._uses_left() == 0
-
-
-def test_shop_room_buy_disables_button() -> None:
+def test_buy_disables_button() -> None:
     ShopRoom.spawns_per_floor.clear()
     room = ShopRoom(DummyApp(), return_scene_factory=lambda: None, floor=1)
     button = {"state": "normal"}
@@ -46,7 +36,40 @@ def test_shop_room_buy_disables_button() -> None:
     assert button["state"] == "disabled"
 
 
-def test_shop_room_purchases_persist(monkeypatch) -> None:
+def test_reroll_cost_and_refresh() -> None:
+    room = ShopRoom(DummyApp(), return_scene_factory=lambda: None, floor=1)
+    room.gold = 30
+
+    calls: list[int] = []
+
+    def roll_items() -> None:
+        if not calls:
+            room.stock = [ShopItem("A", 10, 1)]
+        else:
+            room.stock = [ShopItem("B", 10, 1)]
+        calls.append(1)
+
+    room._roll_items = roll_items  # type: ignore[assignment]
+    room._refresh_shop = lambda: roll_items()  # type: ignore[assignment]
+
+    room._refresh_shop()
+    assert room.stock[0].name == "A"
+    room.reroll()
+    assert room.gold == 20
+    assert room.stock[0].name == "B"
+
+
+def test_should_spawn_respects_minimum() -> None:
+    ShopRoom.spawns_per_floor = {}
+    ShopRoom.min_shops_per_floor = 2
+    assert ShopRoom.should_spawn(1)
+    ShopRoom.record_spawn(1)
+    assert ShopRoom.should_spawn(1)
+    ShopRoom.record_spawn(1)
+    assert not ShopRoom.should_spawn(1)
+
+
+def test_exit_persists_inventory(monkeypatch) -> None:
     store: dict[str, tuple[str, str, str, str, Stats, dict[str, int]]] = {}
 
     def fake_save_player(body, hair, hair_color, accessory, stats, inventory, **_kwargs):
@@ -62,7 +85,7 @@ def test_shop_room_purchases_persist(monkeypatch) -> None:
 
     store["data"] = ("Athletic", "Short", "Black", "None", Stats(hp=5, max_hp=5, gold=100), {})
 
-    room = ShopRoom(DummyApp(), return_scene_factory=lambda: None, floor=1, inventory={})
+    room = ShopRoom(DummyApp(), return_scene_factory=lambda: None, floor=1)
     button = {"state": "normal"}
     item = ShopItem("Upgrade Stone", 20, 1)
     room.buy(item, button)

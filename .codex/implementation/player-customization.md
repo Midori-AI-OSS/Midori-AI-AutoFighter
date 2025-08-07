@@ -1,6 +1,7 @@
 # Player Customization
 
 The `PlayerCreator` menu lets players choose a body type, hair style and color, and an accessory before allocating stat points.
+Body types correspond to the `CharacterType` enum: Type A (Masculine), Type B (Feminine), and Type C (Androgynous).
 
 - Players start with 100 base points and may gain bonus points from owning 100 of each damage type's 4★ upgrade items.
 - Sliders for HP, Attack, and Defense clamp so the sum never exceeds the available pool.

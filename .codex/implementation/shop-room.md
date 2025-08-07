@@ -1,3 +1,8 @@
 # Shop Room
 
-Offers upgrade items and cards for gold with a reroll option. Purchases deduct gold, disable the item's button, and add it to the player's inventory. Leaving the room now persists the player's remaining gold and inventory using `save_player`, ensuring purchases survive reloads.
+Offers upgrade items and cards for gold with a reroll option.
+
+- **Stock** – three random items roll from a small pool and display name, star rating, and price. Buttons disable after buying.
+- **Reroll** – spending 10 gold refreshes the entire stock.
+- **Persistence** – exiting saves remaining gold and acquired items through `save_player`.
+- **Spawn rules** – `ShopRoom.should_spawn` ensures at least two shops appear per floor by tracking spawns in `spawns_per_floor`.

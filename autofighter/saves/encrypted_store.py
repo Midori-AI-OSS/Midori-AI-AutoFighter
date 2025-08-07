@@ -18,7 +18,7 @@ class SaveManager(AbstractContextManager):
     def __init__(self, path: Path, password: str, config_path: Path | None = None):
         self.path = path
         self.password = password
-        self.config_path = config_path or path.with_suffix(".key")
+        self.config_path = (config_path or path.with_suffix(".key")) if password else None
         self.key: str | None = None
         self.conn: sqlcipher3.Connection | None = None
         self._queue: list[tuple[str, tuple[Any, ...]]] = []
@@ -26,14 +26,19 @@ class SaveManager(AbstractContextManager):
     def __enter__(self) -> "SaveManager":
         if sqlcipher3 is None:
             raise ImportError("sqlcipher3 is required for SaveManager")
-        if self.config_path.exists():
-            salt = key_manager.load_salt(self.config_path)
+        if self.password:
+            if self.config_path and self.config_path.exists():
+                salt = key_manager.load_salt(self.config_path)
+            else:
+                salt = None
+            self.key, salt = key_manager.derive_key(self.password, salt)
+            if self.config_path:
+                key_manager.save_salt(self.config_path, salt)
         else:
-            salt = None
-        self.key, salt = key_manager.derive_key(self.password, salt)
-        key_manager.save_salt(self.config_path, salt)
+            self.key = ""
         self.conn = sqlcipher3.connect(self.path)
-        self.conn.execute(f"PRAGMA key = \"x'{self.key}'\"")
+        if self.key:
+            self.conn.execute(f"PRAGMA key = \"x'{self.key}'\"")
         run_migrations(self.conn)
         return self
 
@@ -92,7 +97,9 @@ class SaveManager(AbstractContextManager):
         return False
 
     def backup_config(self, backup_path: Path) -> None:
-        key_manager.backup_key_file(self.config_path, backup_path)
+        if self.config_path:
+            key_manager.backup_key_file(self.config_path, backup_path)
 
     def restore_config(self, backup_path: Path) -> None:
-        key_manager.restore_key_file(backup_path, self.config_path)
+        if self.config_path:
+            key_manager.restore_key_file(backup_path, self.config_path)

@@ -3,7 +3,7 @@
 ## Setup
 - Uses [SQLCipher](https://www.zetetic.net/sqlcipher/) via the `sqlcipher3-binary` package.
 - Install dependencies with `uv add sqlcipher3-binary`.
-- Saves are stored in `autofighter/saves/encrypted_store.py` using a context-managed `SaveManager`; `autofighter/saves/key_manager.py` derives and stores the SQLCipher key.
+- Saves are stored in `autofighter/saves/encrypted_store.py` using a context-managed `SaveManager`; `autofighter/saves/key_manager.py` derives and stores the SQLCipher key when a password is supplied.
 
 ## Schema
 - Compact tables:
@@ -21,16 +21,17 @@ with SaveManager(Path("save.db"), "password") as sm:
     run = sm.fetch_run('current')
     player = sm.fetch_player('player')
 ```
-- `key_manager.derive_key(password, salt)` returns the hex key and salt. `save_salt` and `load_salt` persist the salt next to the database as `save.key`.
+- `key_manager.derive_key(password, salt)` returns the hex key and salt. When a password is provided, `save_salt` and `load_salt` persist the salt next to the database as `save.key`.
 - Queued writes flush in a single transaction on context exit or `commit()`.
 - Use `key_manager.backup_key_file(src, dest)` and `key_manager.restore_key_file(src, dest)` to copy or restore the salt file.
-- High-level helpers in `autofighter/save.py` wrap `SaveManager` for run and player data.
+- High-level helpers in `autofighter/save.py` wrap `SaveManager` for run, player, and roster data.
 
 ## Settings File
 
 - `autofighter/save.py` also reads and writes a plain `settings.json`.
 - `load_settings()` returns audio volumes, stat refresh rate, and pause toggle with defaults.
 - `save_settings(settings)` persists those values so Options menu changes survive restarts.
+- `save_roster(roster)` and `load_roster()` manage the player's owned character list.
 
 ## Recovery
 - If a session exits with an exception, pending writes roll back.

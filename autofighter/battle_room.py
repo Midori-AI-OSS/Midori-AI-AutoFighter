@@ -31,6 +31,7 @@ class BattleRoom(Scene):
         return_scene_factory,
         player: Stats | None = None,
         *,
+        party: list[str] | None = None,
         floor: int = 1,
         room: int = 1,
         pressure: int = 0,
@@ -42,6 +43,8 @@ class BattleRoom(Scene):
         self.app = app
         self.return_scene_factory = return_scene_factory
         self.player = player or Stats(hp=100, max_hp=100, atk=10, defense=5)
+        self.party = party or []
+        self.players = [self.player]
         self.base_foe = Stats(hp=50, max_hp=50, atk=5, defense=3)
         self.pressure = pressure
         self.loop = loop
@@ -50,6 +53,7 @@ class BattleRoom(Scene):
         self.floor = floor
         self.room = room
         self.foe = self.scale_foe(floor, room, pressure, loop, floor_boss)
+        self.foes = [self.foe]
         self.turn = 0
         self.overtime_threshold = 500 if floor_boss else 100
         self.overtime = False
@@ -189,18 +193,30 @@ class BattleRoom(Scene):
             self.start_overtime()
 
     def run_round(self) -> None:
-        if self.player.hp <= 0 or self.foe.hp <= 0:
+        if self.players_defeated() or self.foes_defeated():
+            self.exit()
             return
         self.player_attack()
-        if self.foe.hp > 0:
-            self.foe_attack()
+        if self.players_defeated() or self.foes_defeated():
+            self.exit()
+            return
+        self.foe_attack()
+        if self.players_defeated() or self.foes_defeated():
+            self.exit()
+            return
         self.end_round()
 
     def _auto_round(self, task: Task) -> Task:
         self.run_round()
-        if self.player.hp <= 0 or self.foe.hp <= 0:
+        if self.players_defeated() or self.foes_defeated():
             return Task.done
         return task.again
+
+    def players_defeated(self) -> bool:
+        return all(p.hp <= 0 for p in self.players)
+
+    def foes_defeated(self) -> bool:
+        return all(f.hp <= 0 for f in self.foes)
 
     def show_damage(self, target: NodePath | None, amount: int) -> None:
         pos = (-0.7, 0, 0.2)

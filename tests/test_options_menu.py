@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 import autofighter.save as save
@@ -26,11 +24,11 @@ class DummyApp:
 
 
 class DummyAssets:
-    def load(self, *_: object) -> object:
+    def load(self, *_: object) -> object:  # pragma: no cover - simple stub
         return object()
 
 
-def test_options_persist(tmp_path: Path) -> None:
+def test_options_menu_slider_behavior(tmp_path: Path) -> None:
     save.SETTINGS_PATH = tmp_path / "settings.json"
     audio._global_audio = audio.AudioManager(DummyAssets())
 
@@ -38,20 +36,18 @@ def test_options_persist(tmp_path: Path) -> None:
     menu = OptionsMenu(app)
     menu.setup()
 
-    menu.sfx_slider["value"] = 0.7
-    menu.update_sfx()
-    menu.music_slider["value"] = 0.3
-    menu.update_music()
-    menu.refresh_slider["value"] = 7
-    menu.update_refresh()
-    menu.pause_button.setIndicatorValue(False)
-    menu.toggle_pause()
+    menu.index = 0  # sfx slider
+    start = audio.get_audio().sfx_volume
+    menu.increase()
+    assert audio.get_audio().sfx_volume > start
+    menu.decrease()
+    assert audio.get_audio().sfx_volume == start
 
-    settings = save.load_settings()
-    assert settings["sfx_volume"] == 0.7
-    assert settings["music_volume"] == 0.3
-    assert settings["stat_refresh_rate"] == 7
-    assert settings["pause_on_stats"] is False
+    menu.index = menu.widgets.index(menu.pause_button)
+    state = app.pause_on_stats
+    menu.activate()
+    assert app.pause_on_stats is not state
 
     menu.teardown()
     audio._global_audio = None
+

@@ -1,6 +1,8 @@
 from __future__ import annotations
-from dataclasses import field
 from dataclasses import dataclass
+from dataclasses import field
+
+from game.actors import CharacterType
 
 @dataclass
 class Stats:
@@ -11,6 +13,7 @@ class Stats:
     atk: int = 0
     defense: int = 0
     gold: int = 0
+    char_type: CharacterType = CharacterType.C
 
     # Core
     exp: int = 0

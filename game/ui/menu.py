@@ -6,12 +6,12 @@ import webbrowser
 from pathlib import Path
 
 try:
+    from direct.gui import DirectGuiGlobals as DGG
     from direct.gui.DirectGui import DirectButton
     from direct.gui.DirectGui import DirectCheckButton
     from direct.gui.DirectGui import DirectFrame
     from direct.gui.DirectGui import DirectLabel
     from direct.gui.DirectGui import DirectSlider
-    from direct.gui import DirectGuiGlobals as DGG
     from direct.showbase.ShowBase import ShowBase
     from panda3d.core import CardMaker
     from panda3d.core import TextureStage
@@ -71,6 +71,8 @@ except Exception:  # pragma: no cover - fallback for headless tests
         def getDefault() -> object:
             return object()
 
+from .options import OptionsMenu
+from .party_picker import PartyPicker
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import TEXT_COLOR
 from autofighter.gui import _window_size
@@ -78,11 +80,10 @@ from autofighter.gui import get_normalized_scale_pos
 from autofighter.gui import get_slider_scale
 from autofighter.gui import get_widget_scale
 from autofighter.gui import set_widget_pos
+from autofighter.scene import Scene
 from autofighter.save import load_player
 from autofighter.save import load_run
 from autofighter.assets import get_texture
-from autofighter.scene import Scene
-from game.ui.options import OptionsMenu
 
 
 ISSUE_URL = (
@@ -117,6 +118,7 @@ class MainMenu(Scene):
         self.top_bar = None
         self.banner = None
         self.corner_buttons: list[DirectButton] = []
+        self._feedback_label = None
 
     def setup(self) -> None:
         if hasattr(self.app, "disableMouse"):
@@ -243,6 +245,9 @@ class MainMenu(Scene):
                 self.app.taskMgr.remove("main-menu-bg")
             except Exception:  # pragma: no cover
                 pass
+        if self._feedback_label is not None:
+            self._feedback_label.destroy()
+            self._feedback_label = None
 
     def highlight(self) -> None:
         for i, button in enumerate(self.buttons):
@@ -275,14 +280,13 @@ class MainMenu(Scene):
         self.buttons[self.index]["command"]()
 
     def new_run(self) -> None:
-        from autofighter.battle_room import BattleRoom  # local import to defer Panda3D dependency
         loaded = load_player()
         if not loaded:
             print("No saved player. Use Edit Player first.")
             return
         _, _, _, _, stats, _ = loaded
-        battle = BattleRoom(self.app, return_scene_factory=lambda: MainMenu(self.app), player=stats)
-        self.app.scene_manager.switch_to(battle)
+        picker = PartyPicker(self.app, stats)
+        self.app.scene_manager.switch_to(picker)
 
     def load_run(self) -> None:
         self.app.scene_manager.switch_to(LoadRunMenu(self.app))
@@ -291,7 +295,12 @@ class MainMenu(Scene):
         try:
             webbrowser.open(ISSUE_URL)
         except Exception:
-            print(f"Open this page to give feedback: {ISSUE_URL}")
+            self._feedback_label = DirectLabel(
+                text=f"Open this page to give feedback:\n{ISSUE_URL}",
+                text_fg=TEXT_COLOR,
+                frameColor=FRAME_COLOR,
+                scale=get_widget_scale(),
+            )
 
     def edit_player(self) -> None:
         from autofighter.player_creator import PlayerCreator  # local import to defer Panda3D dependency
@@ -303,6 +312,10 @@ class MainMenu(Scene):
 
     def open_options(self) -> None:
         self.app.scene_manager.switch_to(OptionsMenu(self.app))
+
+    @property
+    def feedback_label(self) -> DirectLabel | None:
+        return self._feedback_label
 
 
 class LoadRunMenu(Scene):

@@ -1,11 +1,50 @@
 from __future__ import annotations
 
-from direct.gui.DirectGui import DirectLabel
-from direct.gui.DirectGui import DirectButton
-from direct.showbase.ShowBase import ShowBase
-from direct.interval.IntervalGlobal import Func
-from direct.interval.IntervalGlobal import Wait
-from direct.interval.IntervalGlobal import Sequence
+try:
+    from direct.gui.DirectGui import DirectLabel
+    from direct.gui.DirectGui import DirectButton
+    from direct.showbase.ShowBase import ShowBase
+    from direct.interval.IntervalGlobal import Func
+    from direct.interval.IntervalGlobal import Wait
+    from direct.interval.IntervalGlobal import Sequence
+except Exception:  # pragma: no cover - headless tests
+    class _Widget:
+        def __init__(self, **kwargs: object) -> None:
+            self.options = dict(kwargs)
+
+        def __getitem__(self, key: str) -> object:
+            return self.options.get(key)
+
+        def __setitem__(self, key: str, value: object) -> None:
+            self.options[key] = value
+
+        def destroy(self) -> None:
+            pass
+
+    class DirectLabel(_Widget):  # type: ignore[dead-code]
+        def setText(self, text: str) -> None:
+            self.options["text"] = text
+
+    class DirectButton(_Widget):  # type: ignore[dead-code]
+        pass
+
+    class ShowBase:  # type: ignore[dead-code]
+        pass
+
+    def Func(func, *args: object, **kwargs: object):  # type: ignore[dead-code]
+        return lambda: func(*args, **kwargs)
+
+    def Wait(_duration: float):  # type: ignore[dead-code]
+        return lambda: None
+
+    class Sequence:  # type: ignore[dead-code]
+        def __init__(self, *actions: object) -> None:
+            self.actions = actions
+
+        def start(self) -> None:
+            for action in self.actions:
+                if callable(action):
+                    action()
 
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene

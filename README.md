@@ -106,25 +106,26 @@ Event Rooms offer text-based encounters with selectable options that use seeded 
 
 ## Map Generation
 
-Runs progress through 45-room floors built by a seeded `MapGenerator`. Each floor includes at least two shops and two rest rooms, always ends in a floor boss, and can add extra rooms or boss fights as Pressure Level rises. Battle rooms may spawn chat rooms after combat without affecting room count.
+New runs begin by selecting up to four owned allies in a party picker before the map appears. Runs then progress through 45-room floors built by a seeded `MapGenerator`. Each floor includes at least two shops and two rest rooms, always ends in a floor boss, and can add extra rooms or boss fights as Pressure Level rises. Battle rooms may spawn chat rooms after combat without affecting room count.
 
 ## Playable Characters
 
-The roster in `plugins/players/` currently includes:
+The roster in `plugins/players/` currently includes and each entry lists its
+`CharacterType`:
 
-- Ally
-- Becca
-- Bubbles
-- Carly
-- Chibi
-- Graygray
-- Hilander
-- Kboshi
-- Lady Darkness
-- Lady Echo
-- Lady Fire and Ice
-- Lady Light
-- Lady of Fire
-- Luna
-- Mezzy
-- Mimic
+- Ally (B)
+- Becca (B)
+- Bubbles (A)
+- Carly (B)
+- Chibi (A)
+- Graygray (B)
+- Hilander (A)
+- Kboshi (A)
+- Lady Darkness (B)
+- Lady Echo (B)
+- Lady Fire and Ice (B)
+- Lady Light (B)
+- Lady of Fire (B)
+- Luna (B)
+- Mezzy (B)
+- Mimic (C)
