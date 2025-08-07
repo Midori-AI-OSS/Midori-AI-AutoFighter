@@ -52,6 +52,9 @@ class AutoFighterApp(ShowBase):
         props.set_title("Midori AI AutoFighter")
         props.set_size(BASE_WIDTH, BASE_HEIGHT)
         props.set_fixed_size(True)
+        # Add window decorations control for OS compatibility
+        props.set_minimized(False)
+        props.set_undecorated(False)  # Ensure proper OS window controls
         self.win.request_properties(props)
 
         self.accept("window-event", self.on_window_event)
@@ -69,14 +72,24 @@ class AutoFighterApp(ShowBase):
         self.scene_manager.switch_to(MainMenu(self))
 
     def on_window_event(self, window) -> None:
+        """Handle window events while maintaining 16:9 aspect ratio."""
         if window and window.is_closed():
             self.userExit()
             return
 
-        props = WindowProperties()
-        props.set_size(BASE_WIDTH, BASE_HEIGHT)
-        props.set_fixed_size(True)
-        self.win.request_properties(props)
+        # Enforce fixed size and aspect ratio to prevent horizontal stretching
+        if window:
+            current_props = window.get_properties()
+            current_width = current_props.get_x_size()
+            current_height = current_props.get_y_size()
+            
+            # Only reset if the size has actually changed from our target
+            if current_width != BASE_WIDTH or current_height != BASE_HEIGHT:
+                props = WindowProperties()
+                props.set_size(BASE_WIDTH, BASE_HEIGHT)
+                props.set_fixed_size(True)
+                props.set_undecorated(False)  # Ensure proper OS window controls
+                self.win.request_properties(props)
 
     def update(self, task):
         return task.cont

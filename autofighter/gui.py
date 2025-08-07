@@ -23,8 +23,13 @@ def get_widget_scale() -> float:
     """Return a scale that keeps widget size consistent across window sizes."""
 
     width, height = _window_size()
+    width = width or BASE_WIDTH
     height = height or BASE_HEIGHT
-    return BASE_SCALE * (BASE_HEIGHT / height)
+    # Use the minimum scale to prevent horizontal stretching
+    scale_w = width / BASE_WIDTH
+    scale_h = height / BASE_HEIGHT
+    scale = min(scale_w, scale_h)
+    return BASE_SCALE * scale
 
 
 def get_slider_scale() -> float:

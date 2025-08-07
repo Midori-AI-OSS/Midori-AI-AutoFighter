@@ -16,3 +16,5 @@ uv.lock
 # Game files
 Player.dat
 past_lives/
+save.db
+settings.json
