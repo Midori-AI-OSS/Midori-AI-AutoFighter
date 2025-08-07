@@ -68,7 +68,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Add unit tests for each damage and healing type.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-* [x] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
+* [ ] Main menu (`0d21008f`) – themed entry screen with New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Create a main menu with buttons for New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Implement Options submenu with sound-effects volume, music volume, and toggle for stat-screen pause behaviour.
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
@@ -93,7 +93,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Tag player and plugin characters with their type.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-* [x] Legacy character import (`7406afba`) – add all characters from the Pygame version.
+* [ ] Legacy character import (`7406afba`) – add all characters from the Pygame version.
    - [x] Port stats and abilities for Ally, Becca, Bubbles, Carly, Chibi, Graygray, Hilander, Kboshi, Lady Darkness, Lady Echo, Lady Fire and Ice, Lady Light, Luna, Mezzy, Mimic, and others.
    - [x] Recreate characters in the new architecture without reusing legacy code.
    - [x] Verify each character loads as a plugin.
@@ -309,7 +309,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Expose a simple API for other systems to request assets by key.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases, including missing entries and cache reuse.
-* [x] Audio system (`7f5c8c36`) – play music and effects with volume control.
+* [ ] Audio system (`7f5c8c36`) – play music and effects with volume control.
    - [x] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
    - [x] Implement cross-fades for boss themes and overtime warnings after long battles.
    - [x] Support toggling stat-screen pause behaviour for audio if needed.
