@@ -47,3 +47,9 @@ def test_stat_screen_clamps_refresh_rate() -> None:
     app.stat_refresh_rate = 20
     screen = StatScreen(app, Stats(hp=1, max_hp=1))
     assert screen.refresh_rate == 10
+
+def test_stat_screen_clamps_low_refresh_rate() -> None:
+    app = DummyApp()
+    app.stat_refresh_rate = 0
+    screen = StatScreen(app, Stats(hp=1, max_hp=1))
+    assert screen.refresh_rate == 1

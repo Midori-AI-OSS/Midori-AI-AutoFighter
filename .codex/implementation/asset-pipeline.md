@@ -37,3 +37,7 @@ internally uses Panda3D's global `Loader`. When loading assets
 manually, call `loadModel`, `loadTexture`, or `loadSound` on the
 `Loader` instance—Panda3D's APIs are camelCase and do not provide
 `load_model`, `load_texture`, or `load_sound` variants.
+
+The `autofighter.assets` module exposes `get_asset(category, name)`
+along with convenience helpers `get_model`, `get_texture`, and
+`get_audio` that call the shared `AssetManager` instance.

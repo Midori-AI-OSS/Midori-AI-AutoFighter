@@ -70,35 +70,38 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Create a main menu with buttons for New Run, Load Run, Edit Player, Options, and Quit.
    - [x] Implement Options submenu with sound-effects volume, music volume, and toggle for stat-screen pause behaviour.
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
+   - [x] Apply Arknights-style layout: anchor a 2×3 high-contrast grid of Lucide icons (including **Give Feedback**) near the bottom edge, add a central banner, a top bar with player avatar, name, and currencies, and quick-access corner icons.
+   - [x] Render a full-screen backdrop of slowly shifting dark color clouds so icons remain clear.
     - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
     - [x] Document this feature in `.codex/implementation`.
     - [x] Add unit tests covering success and failure cases.
-9. [ ] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
-   - [ ] Implement sound-effects and music volume sliders tied to the audio system.
-   - [ ] Provide a toggle for pausing the stat screen during gameplay.
-   - [ ] Persist settings across sessions.
+9. [x] Options submenu (`8e57e5f2`) – sound-effects volume, music volume, and stat-screen pause toggle.
+   - [x] Implement sound-effects and music volume sliders tied to the audio system.
+   - [x] Provide a toggle for pausing the stat screen during gameplay.
+   - [x] Persist settings across sessions.
+   - [x] Move submenu into dedicated `game/ui/options.py` referenced by the main menu.
    - [x] Document control icons and labels in `.codex/instructions/options-menu.md`.
    - [x] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [x] Add unit tests covering success and failure cases.
 10. [ ] Player customization (`f8d277d7`) – body types, hair styles, colors, and accessories.
    - [x] Allow players to choose among three body types.
    - [x] Provide hair styles, colors, and accessory options.
    - [x] Save the chosen appearance for use in runs.
    - [x] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-11. [ ] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
-   - [ ] Provide UI for distributing points among core stats.
-   - [ ] Clamp allocations to remaining points and enforce the +1% rule.
-   - [ ] Display remaining points and prevent confirmation until all are spent or saved.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-12. [ ] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
-   - [ ] Track 4★ upgrade item spending and apply bonus stat points.
-   - [ ] Warn when items are insufficient or bonuses exceed limits.
-   - [ ] Persist purchased bonuses to saves and the stat screen.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-13. [ ] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
+   - [x] Add unit tests covering success and failure cases.
+11. [x] Stat allocation (`4edfa4f8`) – 100‑point pool granting +1% increments per stat.
+   - [x] Provide UI for distributing points among core stats.
+   - [x] Clamp allocations to remaining points and enforce the +1% rule.
+   - [x] Display remaining points and prevent confirmation until all are spent or saved.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
+12. [x] Item bonus confirmation (`c0fd96e6`) – ensure upgrade-item points persist after player creation.
+   - [x] Track 4★ upgrade item spending and apply bonus stat points.
+   - [x] Warn when items are insufficient or bonuses exceed limits.
+   - [x] Persist purchased bonuses to saves and the stat screen.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
+13. [x] Stat screen display (`58ea00c8`) – grouped stats, status effects, and relics.
    - [x] Display core stats: HP, Max HP, EXP, Level, EXP buff multiplier, Actions per Turn.
    - [x] Show offense stats: Attack, Crit Rate, Crit Damage, Effect Hit Rate, base damage type.
    - [x] Show defense stats: Defense, Mitigation, Regain, Dodge Odds, Effect Resistance.
@@ -107,14 +110,14 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Refresh the screen at a user-defined rate (default every 5 frames, adjustable 1–10).
    - [x] Allow ESC or close to return to the previous scene, respecting the Options pause setting.
    - [x] Expose hooks for plugins to append custom lines to the Status section.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-14. [ ] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
+14. [x] Stat screen refresh control (`5855e3fe`) – configurable update frequency.
    - [x] Default refresh rate to every 5 frames.
    - [x] Let players choose a rate from 1 to 10 frames.
    - [x] Respect the pause setting from the Options menu.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 15. [ ] Battle room core (`1bfd343f`) – combat scenes with stat-driven accuracy.
    - [x] Render player and foe models or placeholders using Panda3D node graphs.
    - [x] Implement turn-based logic using messenger events and the shared `Stats` dataclass for accuracy and damage.
@@ -267,17 +270,17 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 37. [ ] AssetManager with manifest (`d5824730`) – load and cache assets via `assets.toml`.
-   - [ ] Create an `assets.toml` mapping logical keys to file paths and hashes.
+   - [x] Create an `assets.toml` mapping logical keys to file paths and hashes.
    - [x] Build an AssetManager to load and cache models, textures, and sounds.
-   - [ ] Expose a simple API for other systems to request assets by key.
+   - [x] Expose a simple API for other systems to request assets by key.
    - [x] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
-38. [ ] Audio system (`7f5c8c36`) – play music and effects with volume control.
-   - [ ] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
-   - [ ] Implement cross-fades for boss themes and overtime warnings after long battles.
-   - [ ] Support toggling stat-screen pause behaviour for audio if needed.
-   - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [x] Add unit tests covering success and failure cases, including missing entries and cache reuse.
+38. [x] Audio system (`7f5c8c36`) – play music and effects with volume control.
+   - [x] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
+   - [x] Implement cross-fades for boss themes and overtime warnings after long battles.
+   - [x] Support toggling stat-screen pause behaviour for audio if needed.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 39. [ ] UI polish and accessibility (`d6a657b0`) – dark glass theme, color-blind mode, keyboard navigation.
    - [ ] Implement dark, glassy theme with blurred gradient backgrounds, rounded panels, and accent highlights.
    - [ ] Provide color-blind friendly options and ensure star colors (1 gray, 2 blue, 3 green, 4 purple, 5 red, 6 gold) are readable.

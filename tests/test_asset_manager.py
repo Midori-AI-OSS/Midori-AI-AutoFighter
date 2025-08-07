@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import sys
 from pathlib import Path
 
@@ -7,6 +5,7 @@ import pytest
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
+from autofighter.assets import get_asset
 from autofighter.assets import get_audio
 from autofighter.assets import get_model
 from autofighter.assets import get_texture
@@ -38,6 +37,14 @@ def test_hash_verification_failure() -> None:
         manager.load("models", "cube")
 
 
+def test_missing_category_or_asset_raises_key_error() -> None:
+    manager = AssetManager(Path("assets.toml"))
+    with pytest.raises(KeyError):
+        manager.load("models", "nope")
+    with pytest.raises(KeyError):
+        manager.load("bogus", "cube")
+
+
 def test_asset_getters() -> None:
     manager = AssetManager(Path("assets.toml"))
     assert manager.get_model("cube") is manager.get_model("cube")
@@ -46,6 +53,7 @@ def test_asset_getters() -> None:
 
 
 def test_module_level_helpers() -> None:
+    assert get_asset("models", "cube") is get_asset("models", "cube")
     assert get_model("cube") is get_model("cube")
     assert get_texture("white") is get_texture("white")
     assert get_audio("boss_theme") is get_audio("boss_theme")

@@ -11,17 +11,56 @@ from unittest.mock import patch
 import autofighter.save as save
 import autofighter.audio as audio
 
-from autofighter.stats import Stats
-from autofighter.menu import MainMenu
+from game.ui.options import OptionsMenu
+from autofighter.gui import FRAME_COLOR
 from autofighter.menu import ISSUE_URL
 from autofighter.menu import LoadRunMenu
-from autofighter.menu import OptionsMenu
-from autofighter.gui import FRAME_COLOR
+from autofighter.menu import MainMenu
+from autofighter.stats import Stats
 
 EXPECTED_URL = (
     "https://github.com/Midori-AI-OSS/Midori-AI-AutoFighter/issues/"
     "new?template=feedback.md&title=Feedback"
 )
+
+class DummyNode:
+    def setTexture(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def setBin(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def setDepthWrite(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def setDepthTest(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def setTexOffset(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def setColorScale(self, *_: object) -> None:  # pragma: no cover - stub
+        pass
+
+    def removeNode(self) -> None:  # pragma: no cover - stub
+        pass
+
+
+class DummyRender:
+    def attachNewNode(self, *_: object) -> DummyNode:  # pragma: no cover - stub
+        return DummyNode()
+
+
+class DummyTaskMgr:
+    def __init__(self) -> None:
+        self.tasks: dict[str, object] = {}
+
+    def add(self, func, name: str) -> None:  # pragma: no cover - stub
+        self.tasks[name] = func
+
+    def remove(self, name: str) -> None:  # pragma: no cover - stub
+        self.tasks.pop(name, None)
+
 
 class DummyApp:
     def __init__(self) -> None:
@@ -29,6 +68,8 @@ class DummyApp:
         self.pause_on_stats = True
         self.stat_refresh_rate = 5
         self.events: dict[str, object] = {}
+        self.render2d = DummyRender()
+        self.taskMgr = DummyTaskMgr()
 
     def accept(self, name: str, func) -> None:
         self.events[name] = func
@@ -130,6 +171,41 @@ def test_options_menu_updates_refresh_rate(tmp_path: Path) -> None:
     menu.teardown()
 
 
+def test_options_menu_sliders_clamped(tmp_path: Path) -> None:
+    save.SETTINGS_PATH = tmp_path / "settings.json"
+
+    class DummyAssets:
+        def load(self, *_: object) -> object:
+            return object()
+
+    audio._global_audio = audio.AudioManager(DummyAssets())
+
+    app = DummyApp()
+    menu = OptionsMenu(app)
+    menu.setup()
+
+    menu.sfx_slider["value"] = 0
+    menu.decrease()
+    assert audio.get_audio().sfx_volume == 0
+
+    menu.sfx_slider["value"] = 1
+    menu.increase()
+    assert audio.get_audio().sfx_volume == 1
+
+    menu.next()
+    menu.next()
+    menu.refresh_slider["value"] = 1
+    menu.decrease()
+    assert app.stat_refresh_rate == 1
+
+    menu.refresh_slider["value"] = 10
+    menu.increase()
+    assert app.stat_refresh_rate == 10
+
+    menu.teardown()
+    audio._global_audio = None
+
+
 def test_main_menu_buttons_form_grid() -> None:
     app = DummyApp()
     menu = MainMenu(app)
@@ -139,6 +215,17 @@ def test_main_menu_buttons_form_grid() -> None:
     zs = sorted({round(p[2], 2) for p in positions}, reverse=True)
     assert len(xs) == 2
     assert len(zs) == 3
+    assert max(zs) < 0
+    menu.teardown()
+
+
+def test_main_menu_extra_elements() -> None:
+    app = DummyApp()
+    menu = MainMenu(app)
+    menu.setup()
+    assert menu.top_bar is not None
+    assert menu.banner is not None
+    assert len(menu.corner_buttons) == 2
     menu.teardown()
 
 

@@ -60,3 +60,17 @@ def test_crossfade_music_stops_previous_track() -> None:
     assert first.volume == 0
     assert second.volume == audio.music_volume
     assert audio.music is second
+
+
+def test_pause_mutes_and_restores_volume() -> None:
+    assets = DummyAssets()
+    audio = AudioManager(assets)
+
+    music = audio.play_music("track")
+    effect = audio.play_sfx("boom")
+    audio.set_paused(True)
+    assert music.volume == 0
+    assert effect.volume == 0
+    audio.set_paused(False)
+    assert music.volume == audio.music_volume
+    assert effect.volume == audio.sfx_volume

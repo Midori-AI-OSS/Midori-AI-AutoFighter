@@ -73,21 +73,22 @@ class AudioManager:
         self.music_volume = 0.5
         self.sfx_volume = 0.5
         self._music_interval: Sequence | None = None
+        self.paused = False
 
     def set_music_volume(self, volume: float) -> None:
         self.music_volume = volume
         if self.music is not None:
-            self.music.setVolume(volume)
+            self.music.setVolume(0 if self.paused else volume)
 
     def set_sfx_volume(self, volume: float) -> None:
         self.sfx_volume = volume
         for sound in self.sfx:
-            sound.setVolume(volume)
+            sound.setVolume(0 if self.paused else volume)
 
     def play_music(self, name: str, loop: bool = True) -> AudioSound:
         sound: AudioSound = self.assets.get_audio(name)
         sound.setLoop(loop)
-        sound.setVolume(self.music_volume)
+        sound.setVolume(0 if self.paused else self.music_volume)
         sound.play()
         self.music = sound
         return sound
@@ -107,11 +108,12 @@ class AudioManager:
         new_sound.play()
         old_sound = self.music
         self.music = new_sound
+        target_volume = 0 if self.paused else self.music_volume
         if old_sound is None:
-            new_sound.setVolume(self.music_volume)
+            new_sound.setVolume(target_volume)
             return new_sound
         fade_out = SoundInterval(old_sound, duration=duration, volume=0)
-        fade_in = SoundInterval(new_sound, duration=duration, volume=self.music_volume)
+        fade_in = SoundInterval(new_sound, duration=duration, volume=target_volume)
         self._music_interval = Sequence(
             Parallel(fade_out, fade_in),
             Func(old_sound.stop),
@@ -122,7 +124,7 @@ class AudioManager:
     def play_sfx(self, name: str) -> AudioSound:
         sound: AudioSound = self.assets.get_audio(name)
         sound.setLoop(False)
-        sound.setVolume(self.sfx_volume)
+        sound.setVolume(0 if self.paused else self.sfx_volume)
         sound.play()
         self.sfx.append(sound)
         return sound
@@ -131,6 +133,13 @@ class AudioManager:
         for sound in self.sfx:
             sound.stop()
         self.sfx.clear()
+
+    def set_paused(self, paused: bool) -> None:
+        self.paused = paused
+        if self.music is not None:
+            self.music.setVolume(0 if paused else self.music_volume)
+        for sound in self.sfx:
+            sound.setVolume(0 if paused else self.sfx_volume)
 
 
 _global_audio: AudioManager | None = None

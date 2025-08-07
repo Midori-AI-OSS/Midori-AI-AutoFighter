@@ -9,6 +9,7 @@ Provides global helpers for playing music and sound effects loaded via `AssetMan
 - `stop_sfx()` – stop all sound effects.
 - `set_music_volume(value: float)` / `set_sfx_volume(value: float)` – adjust volumes; active sounds update immediately.
 - `crossfade_music(name: str, duration: float = 1.0, loop: bool = True)` – fade the current music out while fading a new track in using Panda3D audio intervals.
+- `set_paused(paused: bool)` – mute or restore music and effects without stopping playback.
 
 Use `get_audio()` to access the shared `AudioManager` instance. The options menu hooks into these setters so slider changes update playback volume.
 

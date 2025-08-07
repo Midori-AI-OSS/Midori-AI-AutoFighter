@@ -281,7 +281,7 @@ class PlayerCreator(Scene):
         if self.remaining_label:
             self.remaining_label["text"] = f"Points left: {remaining}"
         if self.confirm_button:
-            self.confirm_button["state"] = "normal"
+            self.confirm_button["state"] = "normal" if total >= 100 else "disabled"
 
     def _apply_responsive(self) -> None:
         width, height = getattr(self.app.win, "get_size", lambda: (800, 600))()
@@ -299,9 +299,15 @@ class PlayerCreator(Scene):
     def confirm(self) -> None:
         raw_points = {k: int(s["value"]) for k, s in self.sliders.items()}
         spent = sum(raw_points.values())
-        bonus_used = min(self.bonus, max(0, spent - 100))
+        if spent < 100:
+            return
+        extra_spent = max(0, spent - 100)
+        if extra_spent > self.bonus:
+            if self.helper_label:
+                self.helper_label["text"] = "Need 4★ items for extra points"
+            return
         for t in DAMAGE_TYPES:
-            self.inventory[t] -= bonus_used * 100
+            self.inventory[t] -= extra_spent * 100
         points = {k: raw_points[k] + self.extras.get(k, 0) for k in raw_points}
         stats = Stats(
             hp=int(BASE_STATS["hp"] * (1 + points["hp"] / 100)),

@@ -33,29 +33,42 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 
 ## 3. UI Foundation
 1. **Theme: dark, glassy visuals**
-   - Background: blurred gradients in deep blues/purples with rounded, glass-like edges.
-   - Panels: colored borders matching mood with subtle shadows.
+   - Background: full-screen clouds of color that drift slowly and shift hues while staying dark enough for icons to stand out.
+   - Panels: frosted-glass surfaces with colored borders and subtle shadows for readability over illustrated backgrounds.
    - Headers: bold titles, small icons (close "X", status dots), accent highlights.
    - Text: modern sans-serif in light gray or white.
+   - Palette: charcoal or navy backgrounds with high-contrast white text and consistent accent colors.
    - Buttons: rounded pills with gradients or solid accents; hover slightly scales and brightens.
    - Inputs: rounded fields with faint borders and blurred backgrounds.
 2. **Menus**
    - Build main menu with *New Run*, *Load Run*, *Edit Player*, *Options*, *Quit*.
+   - Arrange options in a 2×3 high-contrast grid of large Lucide icons with clear labels, including a **Give Feedback** button.
+   - Anchor the grid near the bottom edge with generous spacing for touch targets.
+   - Reserve space for a central banner showcasing events and a top bar with player avatar, name, and currencies.
+   - Cluster quick-access icons (notifications, mail, settings) in corners without overlapping main content.
    - Option stubs:
      - *New Run* starts a fresh state.
      - *Load Run* lists save slots.
      - *Edit Player* opens customization.
        - Offer three body types and selectable hair styles, colors, and accessories.
        - Present a 100-point stat pool; each point grants +1% to a chosen stat.
+       - Clamp allocations so the total never exceeds the available points.
        - Spending 100 of each damage type's 4★ upgrade items buys one extra point.
+       - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
+       - Confirmation stays disabled until the 100 base points are allocated; bonus points can remain unspent.
    - Use DirectGUI and ensure keyboard/mouse navigation.
 3. **Options submenu**
    - Sound-effects volume.
    - Music volume.
    - Toggle stat-screen pause behaviour.
+   - Sliders clamp values within valid bounds and save immediately.
+   - Lives in `game/ui/options.py` and is invoked from the main menu.
 4. Code structure:
    - Create a `ui/` package with modules for menus, options, and widgets.
    - Use a base `MenuScreen` class that handles navigation and animation hooks.
+5. **Audio system**
+   - A global `AudioManager` plays music and sound effects loaded via the asset pipeline.
+   - Supports cross-fading tracks, volume sliders, and pausing via the Options menu.
 
 ## 4. Player Stat Screen
 1. Overlay displays and groups data:
@@ -95,7 +108,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
        - `Ice`
      - *Relics:* show collected stacks by name and star rank.
    - Track stats using Python's arbitrary-precision integers; chunk internally only if performance demands it and display formatted single values to players.
-2. Bind fields to player data and refresh at a user-defined rate (default every 5 frames, adjustable from every frame to every 10 frames).
+2. Bind fields to player data and refresh at a user-defined rate (default every 5 frames, adjustable from every frame to every 10 frames; values outside this range clamp to the nearest limit).
 3. ESC or close returns to the previous scene and respects the Options pause setting.
 4. Code structure:
    - Create `StatPanel` widgets for each category and populate from a shared `Stats` dataclass.
@@ -177,6 +190,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 5. Code structure:
    - Maintain an `assets.toml` manifest mapping asset keys to file paths and hashes.
    - Build an `AssetManager` that loads and caches models, textures, and sounds on demand.
+   - Expose `get_asset`, `get_model`, `get_texture`, and `get_audio` helpers with tests for missing entries and cache reuse.
 
 ## 9. Testing and Iteration
 1. Unit tests for menus, stat screen, map navigation, gacha logic, and data wiring.
