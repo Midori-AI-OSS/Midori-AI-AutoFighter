@@ -48,6 +48,8 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - [Player Stat Screen](a28124e9-player-stat-screen-plan.md)
 - [Map and Room Types](e158df1a-map-and-room-types-plan.md)
 - [Gacha Character Recruitment](82dc97b7-gacha-character-recruitment-plan.md)
+- [Card Design](726d03ae-card-plan.md)
+- [Relic Design](bd48a561-relic-plan.md)
 - [Encrypted Save System](43054f8b-encrypted-save-system-plan.md)
 - [Asset Pipeline](0c92aee1-asset-pipeline-plan.md)
 - [Testing and Iteration](0fc17c39-testing-and-iteration-plan.md)
