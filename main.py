@@ -70,6 +70,11 @@ class AutoFighterApp(ShowBase):
     def on_window_event(self, window) -> None:
         if window and window.is_closed():
             self.userExit()
+            return
+
+        props = WindowProperties()
+        props.set_size(BASE_WIDTH, BASE_HEIGHT)
+        self.win.request_properties(props)
 
     def update(self, task):
         return task.cont

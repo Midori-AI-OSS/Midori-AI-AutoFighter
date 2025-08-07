@@ -15,6 +15,22 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Ensure all three body types have working models.
 - Apply color themes to player objects.
 - Maintain `myunderstanding.md` with an up-to-date gameplay overview.
+- Map scene now loads player models after the asset loader was expanded
+  to handle both camelCase and snake_case Panda3D APIs; tests verify the
+  battle room attaches models correctly.
+- Window resize events are clamped back to 16:9 so menus keep their
+  layout instead of scaling with the window size.
+- The main menu top bar now displays the player portrait and themed banner art.
+
+## Current Issues
+- Main menu background shifts colors and scrolls unexpectedly.
+- UI elements stretch horizontally; scaling helper not applied consistently.
+- Edit Player and Options menus lack themed backgrounds and a player preview.
+- Load Run entries show tiny tooltips and duplicated button backdrops.
+- New Run skips the character picker, opens a black scene, and fails to load the map.
+- Map display uses placeholder text (e.g., reversed "BNSHBW"); should show icons from bottom to top and scroll vertically.
+- Runs need a top-right hamburger menu to access settings via touch.
+- Developers must work in a Panda3D-enabled environment and consult the official Panda3D docs (https://docs.panda3d.org/) instead of guessing APIs.
 
 ## Immediate Playable Flow
 1. Finalize the main menu so New Run can trigger the gameplay loop.

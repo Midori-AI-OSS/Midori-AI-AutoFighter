@@ -20,3 +20,7 @@ menu_bg = { path = "assets/textures/backgrounds/background_01.png", sha256 = "39
 [audio]
 placeholder = { path = "assets/audio/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
 boss_theme = { path = "assets/audio/boss_theme.wav", sha256 = "3fa20276d8a4131431490ed129d0b05fafa4e9c82d4339b5cf635512103d6615" }
+
+[player_photos]
+becca = { path = "assets/textures/players/becca.png", sha256 = "29c19cf914652ffffca27eb4978cd71994f6167d517c99097b5b951f0c52c432" }
+fallback_01 = { path = "assets/textures/players/fallbacks/fallback_01.png", sha256 = "678a5483d5b6ef0aaec00b0d51658a290f876e1faa1834aa8b31a407b6e02784" }

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import hashlib
 import tomllib
 
@@ -27,6 +28,7 @@ class AssetManager:
             "models": {},
             "textures": {},
             "audio": {},
+            "player_photos": {},
         }
 
     def _verify(self, file_path: Path, expected_hash: str) -> None:
@@ -36,12 +38,22 @@ class AssetManager:
 
     def _load_file(self, category: str, file_path: Path) -> Any:
         if _PANDA_LOADER:
+            os_path = file_path.as_posix()
             if category == "models":
-                return _PANDA_LOADER.loadModel(file_path.as_posix())
+                if hasattr(_PANDA_LOADER, "loadModel"):
+                    return _PANDA_LOADER.loadModel(os_path)
+                if hasattr(_PANDA_LOADER, "load_model"):
+                    return _PANDA_LOADER.load_model(os_path)
             if category == "textures" and TexturePool:
-                return TexturePool.loadTexture(file_path.as_posix())
+                if hasattr(TexturePool, "loadTexture"):
+                    return TexturePool.loadTexture(os_path)
+                if hasattr(TexturePool, "load_texture"):
+                    return TexturePool.load_texture(os_path)
             if category == "audio":
-                return _PANDA_LOADER.loadSound(file_path.as_posix())
+                if hasattr(_PANDA_LOADER, "loadSound"):
+                    return _PANDA_LOADER.loadSound(os_path)
+                if hasattr(_PANDA_LOADER, "load_sound"):
+                    return _PANDA_LOADER.load_sound(os_path)
         return file_path.read_bytes()
 
     def load(self, category: str, name: str) -> Any:
@@ -76,3 +88,24 @@ class AssetManager:
         """Return an audio asset by ``name``."""
 
         return self.load("audio", name)
+
+    def get_player_photo(self, name: str) -> Any:
+        """Return a player photo by ``name`` with fallback handling."""
+
+        cached = self.cache["player_photos"].get(name)
+        if cached is not None:
+            return cached
+
+        photos = self.manifest.get("player_photos", {})
+        entry = photos.get(name)
+        if entry is None:
+            fallbacks = [v for k, v in photos.items() if k.startswith("fallback_")]
+            if not fallbacks:
+                raise KeyError(f"player photo '{name}' not found and no fallbacks defined")
+            entry = random.choice(fallbacks)
+
+        file_path = Path(entry["path"])
+        self._verify(file_path, entry["sha256"])
+        asset = self._load_file("textures", file_path)
+        self.cache["player_photos"][name] = asset
+        return asset

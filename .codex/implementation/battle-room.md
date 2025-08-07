@@ -7,6 +7,10 @@
 
 When the player or foe is defeated, the room exits back to the previous scene so the run map continues automatically.
 
+Model assets load through the shared `AssetManager`, which now supports
+both camelCase and snake_case Panda3D loader APIs. Tests cover setup to
+ensure player and foe models attach correctly when a battle begins.
+
 # Loop scaling
 
 Foe stats scale via `balance.loop.scale_stats`, which multiplies base values by floor, room, and loop counts. Floor bosses apply an extra `100×` base factor. Tuning knobs live in `balance.loop.config` for adjusting loop multipliers without touching combat logic.

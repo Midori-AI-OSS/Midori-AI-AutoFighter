@@ -84,6 +84,7 @@ from autofighter.scene import Scene
 from autofighter.save import load_player
 from autofighter.save import load_run
 from autofighter.assets import get_texture
+from autofighter.assets import get_player_photo
 
 
 ISSUE_URL = (
@@ -117,6 +118,7 @@ class MainMenu(Scene):
         self.bg = None
         self.top_bar = None
         self.banner = None
+        self.avatar = None
         self.corner_buttons: list[DirectButton] = []
         self._feedback_label = None
 
@@ -157,16 +159,38 @@ class MainMenu(Scene):
         try:
             self.top_bar = DirectFrame(frameColor=FRAME_COLOR, scale=get_widget_scale())
             set_widget_pos(self.top_bar, (0, 0, 0.9))
+            try:
+                photo = get_player_photo("becca")
+            except Exception:
+                photo = get_texture("white")
+            self.avatar = DirectButton(
+                image=photo,
+                frameColor=(0, 0, 0, 0),
+                scale=get_widget_scale(),
+                parent=self.top_bar,
+            )
+            set_widget_pos(self.avatar, (-0.95, 0, 0))
             DirectLabel(
-                text="Player: ??? | Gold: 0 | Tickets: 0",
+                text="Player",
                 text_fg=TEXT_COLOR,
                 frameColor=(0, 0, 0, 0),
                 parent=self.top_bar,
+                pos=(-0.85, 0, 0),
             )
-            self.banner = DirectButton(
-                text="Banner",
-                frameColor=FRAME_COLOR,
+            DirectLabel(
+                text="Gold: 0 | Tickets: 0",
                 text_fg=TEXT_COLOR,
+                frameColor=(0, 0, 0, 0),
+                parent=self.top_bar,
+                pos=(0.2, 0, 0),
+            )
+            try:
+                banner_tex = get_texture("menu_bg")
+            except Exception:
+                banner_tex = get_texture("white")
+            self.banner = DirectButton(
+                image=banner_tex,
+                frameColor=(0, 0, 0, 0),
                 scale=get_widget_scale() * 2,
             )
             set_widget_pos(self.banner, (0, 0, 0.3))
@@ -181,6 +205,7 @@ class MainMenu(Scene):
         except Exception:  # pragma: no cover - headless tests
             self.top_bar = None
             self.banner = None
+            self.avatar = None
             self.corner_buttons = []
         buttons = [
             ("New Run", "icon_play", self.new_run),
@@ -233,6 +258,7 @@ class MainMenu(Scene):
         if self.top_bar is not None:
             self.top_bar.destroy()
             self.top_bar = None
+            self.avatar = None
         if self.banner is not None:
             self.banner.destroy()
             self.banner = None

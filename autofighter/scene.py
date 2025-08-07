@@ -36,7 +36,47 @@ class SceneManager:
         self.current: Scene | None = None
         self.overlays: list[Scene] = []
 
-    def switch_to(self, scene: Scene | None) -> None:
+    def switch_to(self, scene: Scene | None) -> bool:
+        """Switch to ``scene`` and return ``True`` on success."""
+
+        if scene is None:
+            if self.current:
+                try:
+                    self.current.transition_out()
+                except Exception:
+                    logger.exception("Error transitioning out scene %s", self.current)
+                try:
+                    self.current.teardown()
+                except Exception:
+                    logger.exception("Error tearing down scene %s", self.current)
+            for overlay in self.overlays:
+                try:
+                    overlay.transition_out()
+                except Exception:
+                    logger.exception("Error transitioning out overlay %s", overlay)
+                try:
+                    overlay.teardown()
+                except Exception:
+                    logger.exception("Error tearing down overlay %s", overlay)
+            self.current = None
+            self.overlays = []
+            return True
+
+        try:
+            scene.setup()
+        except Exception:
+            logger.exception("Error setting up scene %s", scene)
+            return False
+        try:
+            scene.transition_in()
+        except Exception:
+            logger.exception("Error transitioning in scene %s", scene)
+            try:
+                scene.teardown()
+            except Exception:
+                logger.exception("Error tearing down scene %s", scene)
+            return False
+
         if self.current:
             try:
                 self.current.transition_out()
@@ -55,19 +95,9 @@ class SceneManager:
                 overlay.teardown()
             except Exception:
                 logger.exception("Error tearing down overlay %s", overlay)
-        self.current = None
+        self.current = scene
         self.overlays = []
-        if scene:
-            try:
-                scene.setup()
-            except Exception:
-                logger.exception("Error setting up scene %s", scene)
-            else:
-                try:
-                    scene.transition_in()
-                except Exception:
-                    logger.exception("Error transitioning in scene %s", scene)
-                self.current = scene
+        return True
 
     def push_overlay(self, overlay: Scene) -> None:
         try:

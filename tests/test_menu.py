@@ -223,7 +223,9 @@ def test_main_menu_extra_elements() -> None:
     menu = MainMenu(app)
     menu.setup()
     assert menu.top_bar is not None
+    assert menu.avatar is not None
     assert menu.banner is not None
+    assert menu.banner["image"] is not None
     assert len(menu.corner_buttons) == 2
     menu.teardown()
 

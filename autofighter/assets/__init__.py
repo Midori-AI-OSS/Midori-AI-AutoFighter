@@ -25,6 +25,10 @@ def get_audio(name: str) -> Any:
     return ASSETS.get_audio(name)
 
 
+def get_player_photo(name: str) -> Any:
+    return ASSETS.get_player_photo(name)
+
+
 __all__ = [
     "AssetManager",
     "ASSETS",
@@ -32,4 +36,5 @@ __all__ = [
     "get_model",
     "get_texture",
     "get_audio",
+    "get_player_photo",
 ]

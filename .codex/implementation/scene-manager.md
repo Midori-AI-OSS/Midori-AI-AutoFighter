@@ -3,7 +3,7 @@
 Coordinates swapping scenes and managing overlay stacks.
 
 ## Lifecycle
-- `switch_to(scene)` – transition out the current scene and overlays, tear them down, then set up and transition into the new scene.
+- `switch_to(scene)` – set up and transition into the new scene before tearing down the current scene and overlays. Returns `True` on success and leaves the existing scene intact if setup or transition fails.
 - `push_overlay(overlay)` – set up and transition into an overlay while keeping the current scene active.
 - `pop_overlay()` – transition out and tear down the most recently pushed overlay.
 

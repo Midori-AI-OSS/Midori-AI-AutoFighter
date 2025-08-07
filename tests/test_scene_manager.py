@@ -30,10 +30,10 @@ def test_switch_to_invokes_hooks() -> None:
     first = DummyScene()
     second = DummyScene()
 
-    manager.switch_to(first)
+    assert manager.switch_to(first) is True
     assert first.calls == ["setup", "in"]
 
-    manager.switch_to(second)
+    assert manager.switch_to(second) is True
     assert first.calls[-2:] == ["out", "teardown"]
     assert second.calls == ["setup", "in"]
 
@@ -57,7 +57,7 @@ def test_switch_clears_overlays() -> None:
     scene = DummyScene()
 
     manager.push_overlay(overlay)
-    manager.switch_to(scene)
+    assert manager.switch_to(scene) is True
     assert overlay.calls == ["setup", "in", "out", "teardown"]
     assert manager.overlays == []
     assert manager.current is scene
@@ -68,3 +68,15 @@ def test_push_overlay_failure_does_not_register() -> None:
     bad = BadSetupScene()
     manager.push_overlay(bad)
     assert manager.overlays == []
+
+
+def test_switch_failure_restores_previous_scene() -> None:
+    manager = SceneManager(types.SimpleNamespace())
+    good = DummyScene()
+    bad = BadSetupScene()
+
+    assert manager.switch_to(good) is True
+    assert manager.current is good
+
+    assert manager.switch_to(bad) is False
+    assert manager.current is good

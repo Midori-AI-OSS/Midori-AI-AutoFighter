@@ -17,13 +17,23 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Verify layouts match the design at common resolutions.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
+   - [x] Fix residual window-size scaling bug causing janky resizing.
+* [ ] UI system overhaul (`b348c09e`) – rebuild menus and in-run UI to resolve layout and theming issues.
+   - [ ] Stabilize background colors and prevent unintended scrolling.
+   - [ ] Apply scaling helper so elements no longer stretch horizontally.
+   - [ ] Theme Edit Player and Options menus with proper backdrops and show a player preview.
+   - [ ] Remove tiny tooltips and doubled button backgrounds in the Load Run menu.
+   - [ ] Restore character picker for New Run and display the map with icons arranged bottom to top.
+   - [ ] Add a top-right hamburger menu during runs to open settings via touch.
+   - [ ] Document this feature in `.codex/implementation`.
+   - [ ] Add unit tests covering success and failure cases.
 * [ ] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
    - [x] Move existing Pygame code into `legacy/` and keep it read-only.
    - [x] Run `uv init` to create a fresh environment.
    - [x] Install Panda3D and optional LLM tooling via `uv add panda3d` and `uv add --optional llm`.
    - [x] Add `main.py` that launches `ShowBase` and renders a placeholder cube to verify the engine.
    - [x] Scaffold directories: `assets/models/`, `assets/textures/`, `assets/audio/`, `plugins/`, `mods/`, and `llms/`.
-    - [ ] Include player photos with fallback images in the asset pipeline.
+    - [x] Include player photos with fallback images in the asset pipeline.
    - [x] Organize source under a `game/` package with `actors/`, `ui/`, `rooms/`, `gacha/`, and `saves/` submodules.
    - [x] Document the new directory structure in `README.md` and warn contributors not to modify `legacy/`.
    - [x] Define `pyproject.toml` with package name `autofighter` and expose an entry point for `main.py`.
@@ -44,7 +54,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Create a manager class to load and unload scenes.
    - [x] Support pushing overlays and popping back to previous scenes.
    - [x] Provide hooks for transition effects and cleanup.
-   - [ ] Surface and recover from scene load errors.
+   - [x] Surface and recover from scene load errors.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
 * [ ] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
@@ -83,7 +93,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
    - [x] Apply Arknights-style layout: anchor a 2×3 high-contrast grid of Lucide icons (including **Give Feedback**) near the bottom edge, add a central banner, a top bar with player avatar, name, and currencies, and quick-access corner icons.
    - [x] Render a full-screen backdrop of slowly shifting dark color clouds so icons remain clear.
-   - [ ] Replace placeholder top bar and banner with avatar and themed art.
+   - [x] Replace placeholder top bar and banner with avatar and themed art.
     - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
     - [x] Document this feature in `.codex/implementation`.
     - [x] Add unit tests covering success and failure cases.
@@ -93,6 +103,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Remove placeholder menu code and wire the scene manager.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
+   - [x] Verify battle room loads required models after loader API fix.
 * [x] Placeholder room (`344b9c4a`) – load a single unthemed battle room.
    - [x] Define a minimal room scene and enter it from the map.
    - [x] Return to the map when the room is cleared.
@@ -321,6 +332,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Expose a simple API for other systems to request assets by key.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases, including missing entries and cache reuse.
+   - [x] Handle Panda3D camelCase vs snake_case loader APIs for runtime compatibility.
 * [ ] Audio system (`7f5c8c36`) – play music and effects with volume control.
    - [x] Set up an audio manager for playing background music and sound effects with volume controls tied to settings.
    - [x] Implement cross-fades for boss themes and overtime warnings after long battles.
@@ -340,6 +352,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Outline coding style and directory conventions for the new `game/` package and `assets/` structure.
    - [ ] Warn contributors not to modify `legacy/` and explain plugin documentation expectations.
    - [ ] Provide guidelines for contributing plugins and assets, including the `Give Feedback` menu and issue links.
+   - [ ] Require developers to use a Panda3D-enabled environment and verify APIs against the official docs (https://docs.panda3d.org/).
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
 * [ ] Testing and CI integration (`93a6a994`) – add headless tests, GitHub workflows, and run `uv run pytest` last.

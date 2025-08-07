@@ -1,13 +1,11 @@
-import importlib
-
 try:
-    importlib.import_module("direct.showbase.MessengerGlobal")
+    from panda3d.core import NodePath
 except ModuleNotFoundError:  # pragma: no cover - skip if Panda3D missing
     import pytest
 
     pytest.skip("Panda3D not available", allow_module_level=True)
 
-
+from autofighter.assets import ASSETS
 from autofighter.battle_room import BattleRoom
 from autofighter.stats import Stats
 
@@ -26,6 +24,7 @@ class DummyApp:
         self.scene_manager = type(
             "SM", (), {"switch_to": lambda self, scene: setattr(self, "scene", scene)}
         )()
+        self.render = NodePath("render")
 
     def accept(self, *_args, **_kwargs):  # pragma: no cover - event wiring stub
         pass
@@ -98,3 +97,14 @@ def test_room_exit_switches_scene() -> None:
     room.add_status_icon = lambda *a, **k: None
     room.run_round()
     assert getattr(app.scene_manager, "scene", None) == "MAP"
+
+
+def test_setup_loads_player_and_foe_models() -> None:
+    app = DummyApp()
+    room = BattleRoom(app, return_scene_factory=lambda: None, assets=ASSETS)
+    room.setup()
+    try:
+        assert room.player_model is not None
+        assert room.foe_model is not None
+    finally:
+        room.teardown()
