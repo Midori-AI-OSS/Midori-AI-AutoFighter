@@ -9,6 +9,15 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Audit Player and Settings menus for missing labels and verify UI scaling, font sizes, and DPI handling.
  - Menus are currently rendering at an oversized scale; introduce a global DirectGUI scaling system and regression checks so layouts stay consistent across resolutions.
 
+## Immediate Playable Flow
+1. Finalize the main menu so New Run can trigger the gameplay loop.
+2. Initialize a run when New Run is selected and show a basic floor map.
+3. Allow entering a single unthemed placeholder room from the map and returning afterward.
+4. Define character types: Type A (Masculine), Type B (Feminine), and Type C (Androgynous).
+5. Import all characters from the Pygame version and tag them with their type.
+6. Provide a party picker that lets the player choose four owned characters plus the player.
+7. Use the selected party to begin the run.
+
 ## 1. Project Setup
 1. Move current Pygame code into `legacy/`.
 2. Run `uv init` to create a fresh environment.
@@ -47,16 +56,20 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
    - Anchor the grid near the bottom edge with generous spacing for touch targets.
    - Reserve space for a central banner showcasing events and a top bar with player avatar, name, and currencies.
    - Cluster quick-access icons (notifications, mail, settings) in corners without overlapping main content.
-   - Option stubs:
-     - *New Run* starts a fresh state.
-     - *Load Run* lists save slots.
-     - *Edit Player* opens customization.
-       - Offer three body types and selectable hair styles, colors, and accessories.
+     - Option stubs:
+     - *New Run* begins the run setup flow.
+        - Present a party picker for four owned characters plus the player.
+        - If fewer than four characters are owned, allow starting with one to five party members; the player is always included.
+        - After selection, display the floor map.
+        - Allow entering a single unthemed room and returning to the map.
+      - *Load Run* lists save slots.
+      - *Edit Player* opens customization.
+       - Offer Type A (Masculine), Type B (Feminine), and Type C (Androgynous) body types with selectable hair styles, colors, and accessories.
        - Present a 100-point stat pool; each point grants +1% to a chosen stat.
        - Clamp allocations so the total never exceeds the available points.
-       - Spending 100 of each damage type's 4★ upgrade items buys one extra point.
-     - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
-     - Confirmation stays disabled until the 100 base points are allocated; bonus points can remain unspent.
+       - Spending 100 of each non-Generic damage type's 4★ upgrade item (Light, Dark, Wind, Lightning, Fire, Ice) buys one extra point; players must buy or craft these items before they can be spent.
+      - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
+      - Confirmation stays disabled until all available points—including any bonus points—are allocated.
    - Use DirectGUI and ensure keyboard/mouse navigation.
    - Provide a centralized scaling helper so menus keep their intended size regardless of window resolution.
 3. **Options submenu**
@@ -152,6 +165,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 
 ## 6. Gacha Character Recruitment
 1. Between runs, players spend collected upgrade items on gacha pulls for recruitable characters and chatable allies.
+    - Each character is classified as Type A (Masculine), Type B (Feminine), or Type C (Androgynous).
    - Seed the pool with existing player plugins such as Ally, Becca, Bubbles, Carly, Chibi, Graygray, Hilander, Kboshi, Lady Darkness, Lady Echo, Lady Fire and Ice, Lady Light, Luna, Mezzy, and Mimic.
 2. Pull options: spend for exactly 1, 5, or 10 pulls; players cannot choose other batch sizes.
    - Play a pre-made video keyed to the highest rarity obtained (1★–6★); videos are skippable or fast-forwardable.
@@ -162,7 +176,8 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
    - Before completing the 5★ roster: 25% chance to pull a duplicate, 75% new 5★.
    - After collecting all 5★ characters: 25% chance to get a duplicate of a heavily stacked 5★, 75% chance for a 5★ with few stacks; 6★ rolls remain extremely rare.
 5. Vitality bonus: first duplicate adds 0.01%; each additional stack adds 5% more than the previous increment (0.01%, 0.0105%, 0.011025%, ...). Vitality increases EXP gain and all other stats.
-6. Failed pulls give upgrade items (1★–4★) matching damage types; dual-type characters require both types.
+6. Failed pulls give upgrade items (1★–4★) for each damage type—Generic, Light, Dark, Wind, Lightning, Fire, and Ice; dual-type characters require both types.
+   - Player stat upgrades require collecting 4★ items from all non-Generic damage types to eventually choose a base damage type.
    - Costs: 1000×1★, 500×2★, 100×3★, or 20×4★ items per upgrade level.
    - 125 lower-star items combine into one higher star.
    - Trading 10×4★ items grants one additional pull.
@@ -174,6 +189,8 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
     - Implement a `GachaManager` handling pity counts, roll tables, and reward serialization.
     - Define `UpgradeItem` and `Character` dataclasses to represent inventory pieces and recruitable units.
     - Store upgrade items and character stacks in the encrypted save database for cross-run persistence.
+11. Party picker lets players choose four owned characters plus the player before starting a run.
+
 
 ## 7. Encrypted Save System
 1. Store run and player data in SQLite secured with SQLCipher.
