@@ -8,21 +8,28 @@ Coders must check in with the reviewer or task master before marking tasks compl
 
 > **Task Master Reminder:** Keep `myunderstanding.md` describing the game's flow up to date.
 
-## Task–Plan Alignment
-**Grade:** 9/10 – tasks mirror the planning document with minor gaps for build scripts and a feedback menu button now addressed.
-
 ## Tasks
+* [x] Menu scaling and layout responsiveness (`b9e25489`) – implement global DirectGUI scaling so menus keep a consistent size across window dimensions and follow the requested layout.
+   - [x] Create a scaling helper anchored to a base resolution.
+   - [x] Apply scaling to all menus so elements neither grow with larger windows nor shrink with smaller ones.
+   - [x] Use theme images from `game/` for menu backgrounds with fallbacks.
+   - [x] Default the window to a 16:9 resolution for consistent layouts on desktop and phone builds.
+   - [x] Verify layouts match the design at common resolutions.
+   - [x] Document this feature in `.codex/implementation`.
+   - [x] Add unit tests covering success and failure cases.
 * [ ] Project scaffold (`0f95beef`) – move legacy code, initialize uv project, install Panda3D, and set up assets and package structure.
    - [x] Move existing Pygame code into `legacy/` and keep it read-only.
    - [x] Run `uv init` to create a fresh environment.
    - [x] Install Panda3D and optional LLM tooling via `uv add panda3d` and `uv add --optional llm`.
    - [x] Add `main.py` that launches `ShowBase` and renders a placeholder cube to verify the engine.
    - [x] Scaffold directories: `assets/models/`, `assets/textures/`, `assets/audio/`, `plugins/`, `mods/`, and `llms/`.
+    - [ ] Include player photos with fallback images in the asset pipeline.
    - [x] Organize source under a `game/` package with `actors/`, `ui/`, `rooms/`, `gacha/`, and `saves/` submodules.
    - [x] Document the new directory structure in `README.md` and warn contributors not to modify `legacy/`.
    - [x] Define `pyproject.toml` with package name `autofighter` and expose an entry point for `main.py`.
    - [x] Research publishing `autofighter` to PyPI and note considerations for native dependencies.
    - [x] Commit minimal setup once `main.py` runs.
+    - [x] Populate `game/__init__.py` so the package exports modules.
     - [x] Document this feature in `.codex/implementation`.
      - [x] Add unit tests covering success and failure cases.
 * [ ] Main loop and window handling (`869cac49`) – create ShowBase subclass and handle window events.
@@ -37,6 +44,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Create a manager class to load and unload scenes.
    - [x] Support pushing overlays and popping back to previous scenes.
    - [x] Provide hooks for transition effects and cleanup.
+   - [ ] Surface and recover from scene load errors.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
 * [ ] Plugin loader (`56f168aa`) – discover player, foe, passive, DoT, HoT, weapon, and room plugins.
@@ -46,6 +54,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Wrap Panda3D's `messenger` with an event bus so plugins can subscribe and emit without engine imports.
    - [x] Document the plugin API and how to add new plugins.
    - [x] Document this feature in `.codex/implementation`.
+    - [x] Discover optional modules under `mods/` and test mod loading.
    - [x] Add unit tests covering success and failure cases.
 * [x] Event bus wrapper (`120c282f`) – expose decoupled messaging so plugins can emit and subscribe.
    - [x] Wrap Panda3D's `messenger` with subscribe and emit helpers.
@@ -74,6 +83,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Ensure keyboard and mouse navigation using DirectGUI with dark, glassy themed widgets.
    - [x] Apply Arknights-style layout: anchor a 2×3 high-contrast grid of Lucide icons (including **Give Feedback**) near the bottom edge, add a central banner, a top bar with player avatar, name, and currencies, and quick-access corner icons.
    - [x] Render a full-screen backdrop of slowly shifting dark color clouds so icons remain clear.
+   - [ ] Replace placeholder top bar and banner with avatar and themed art.
     - [x] Stub actions: New Run starts new state, Load Run lists save slots, Edit Player opens customization.
     - [x] Document this feature in `.codex/implementation`.
     - [x] Add unit tests covering success and failure cases.
@@ -99,6 +109,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Verify each character loads as a plugin.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
+   - [ ] Populate missing stats and abilities for each character plugin.
 * [x] Party picker (`f9c45e2e`) – choose four owned characters plus the player for each run.
    - [x] Build a selection UI listing owned characters with type icons.
    - [x] Allow runs to start with one to five party members, always including the player; cap at five.
@@ -170,10 +181,10 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Track rest usage per floor, ensuring at least two rest rooms appear on each floor.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
-* [ ] Shop room features (`07c1ea52`) – sell upgrade items and cards with reroll costs.
+* [ ] Shop room features (`07c1ea52`) – sell upgrade items and cards without rerolling.
    - [x] Design a shop interface listing items with prices, star ratings, and limited stock.
-   - [ ] Implement purchasing logic that deducts gold, grants items, and supports rerolls for a small fee.
-   - [ ] Persist purchases between visits and rerolls.
+   - [ ] Implement purchasing logic that deducts gold and grants items; remove the reroll option.
+   - [ ] Persist purchases between visits.
    - [x] Ensure at least two shop rooms appear per floor and inventory scales with difficulty.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
@@ -184,6 +195,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Ensure events triggered after battles do not consume the floor's room count.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
+   - [ ] Add branching options and failure-path tests to events.
 * [ ] Map generator (`3b2858e1`) – 45-room floors and looping logic.
    - [ ] Generate 45-room floors containing rest, chat, battle-weak, battle-normal, battle-boss, battle-boss-floor, and shop nodes.
    - [ ] Ensure each floor has at least two shops and two rest stops; chats occur after fights without consuming room count.
@@ -315,6 +327,7 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Support toggling stat-screen pause behaviour for audio if needed.
    - [x] Document this feature in `.codex/implementation`.
    - [x] Add unit tests covering success and failure cases.
+   - [ ] Use real Panda3D sound playback in tests.
 * [ ] UI polish and accessibility (`d6a657b0`) – dark glass theme, color-blind mode, keyboard navigation.
    - [ ] Implement dark, glassy theme with blurred gradient backgrounds, rounded panels, and accent highlights.
    - [ ] Provide color-blind friendly options and ensure star colors (1 gray, 2 blue, 3 green, 4 purple, 5 red, 6 gold) are readable.

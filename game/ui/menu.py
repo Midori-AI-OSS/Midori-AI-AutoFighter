@@ -128,7 +128,10 @@ class MainMenu(Scene):
                 pass
         if hasattr(self.app, "render2d") and hasattr(self.app, "taskMgr"):
             try:
-                tex = get_texture("icon_refresh_cw")
+                try:
+                    tex = get_texture("menu_bg")
+                except Exception:
+                    tex = get_texture("white")
                 cm = CardMaker("bg")
                 cm.setFrame(-1, 1, -1, 1)
                 self.bg = self.app.render2d.attachNewNode(cm.generate())

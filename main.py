@@ -4,11 +4,12 @@ from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
 from game.ui.menu import MainMenu
-from autofighter.save import load_settings
-from autofighter.audio import get_audio
-from autofighter.scene import SceneManager
 from plugins.event_bus import EventBus
+from autofighter.audio import get_audio
+from autofighter.save import load_settings
+from autofighter.scene import SceneManager
 from plugins.plugin_loader import PluginLoader
+from autofighter.gui import BASE_WIDTH, BASE_HEIGHT
 
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,7 @@ class AutoFighterApp(ShowBase):
 
         props = WindowProperties()
         props.set_title("Midori AI AutoFighter")
+        props.set_size(BASE_WIDTH, BASE_HEIGHT)
         self.win.request_properties(props)
 
         self.accept("window-event", self.on_window_event)

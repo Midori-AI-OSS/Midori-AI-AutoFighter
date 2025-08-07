@@ -7,9 +7,10 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Redesign the main menu with a high-contrast grid of large icons inspired by Arknights.
 - Standardize on Lucide icons and provide clear labels for every menu item.
 - Audit Player and Settings menus for missing labels and verify UI scaling, font sizes, and DPI handling.
- - Menus are currently rendering at an oversized scale; introduce a global DirectGUI scaling system and regression checks so layouts stay consistent across resolutions.
+- Menus use a global DirectGUI scaling system anchored to 16:9 so layouts stay consistent across window sizes and follow the requested layout.
+- Menu backgrounds pull from themed images with fallbacks, and the window defaults to a 16:9 resolution so desktop and phone builds share the same layout.
 - Create an initial set of cards and relics (10×1★, 5×2★, 2×3★, 2×4★, and 2×5★) using the plugin system like players and effects.
-- Fix the shop so purchases persist and reroll logic functions correctly.
+- Fix the shop so purchases persist and remove reroll mechanics.
 - Confirm the battle room includes a functional 3D space.
 - Ensure all three body types have working models.
 - Apply color themes to player objects.
@@ -32,17 +33,21 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
    - Use prebuilt Panda3D wheels; focus build notes on LangChain/transformers for NVIDIA, Intel/AMD GPU, and CPU-only setups.
 4. Add `main.py` launching `ShowBase` and rendering a placeholder cube to verify the engine.
 5. Scaffold `assets/` (`models/`, `textures/`, `audio/`), `plugins/`, `mods/`, and user-managed `llms/` directories and document the structure in `README.md`.
+   - Include player photos with fallback images for missing or failed loads.
 6. Update `README.md` to warn contributors not to modify `legacy/` and show how to install the latest code via `uv add git+https://github.com/Midori-AI/Midori-AI-AutoFighter@main`.
 7. Commit minimal setup once `main.py` runs.
 8. Define a `pyproject.toml` package named `autofighter` and expose an entry point for `main.py`.
    - Research publishing `autofighter` to PyPI once stable; expect moderate effort due to native dependencies and asset management.
+9. Ensure `game/__init__.py` initializes the package so imports work.
 
 ## 2. Core Architecture
 1. Implement a new `ShowBase` subclass from scratch and exclude legacy imports.
 2. Convert event logic to Panda3D's `messenger` and `taskMgr` while keeping frame loops light for low-end hardware.
 3. Replace Pygame rendering with Panda3D node graphs.
 4. Rebuild the plugin loader and APIs so new player, weapon, passive, DoT, and HoT plugins mirror current concepts without reusing legacy code and expose a mod interface.
+   - Add tests verifying discovery of modules under `mods/` to catch empty packages.
 5. Add a scene manager capable of swapping menus, gameplay states, and overlays.
+   - Handle exceptions gracefully and recover from failed scene loads.
 6. Organize source under a `game/` package with submodules (`actors/`, `ui/`, `rooms/`, `gacha/`, `saves/`).
 7. Define a `Stats` dataclass holding core attributes; share between players and foes.
 8. Provide an event bus wrapper for `messenger` so plugins can subscribe and emit without engine imports.
@@ -50,13 +55,15 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 ## 3. UI Foundation
 1. **Theme: dark, glassy visuals**
    - Background: full-screen clouds of color that drift slowly and shift hues while staying dark enough for icons to stand out.
+   - Use images from `game/` as backdrops, with fallbacks when assets fail to load.
    - Panels: frosted-glass surfaces with colored borders and subtle shadows for readability over illustrated backgrounds.
    - Headers: bold titles, small icons (close "X", status dots), accent highlights.
    - Text: modern sans-serif in light gray or white.
    - Palette: charcoal or navy backgrounds with high-contrast white text and consistent accent colors.
    - Buttons: rounded pills with gradients or solid accents; hover slightly scales and brightens.
    - Inputs: rounded fields with faint borders and blurred backgrounds.
-2. **Menus**
+2. Start the game in a 16:9 window (e.g., 1280×720) so desktop and phone builds behave consistently.
+3. **Menus**
    - Build main menu with *New Run*, *Load Run*, *Edit Player*, *Options*, *Quit*.
    - Arrange options in a 2×3 high-contrast grid of large Lucide icons with clear labels, including a **Give Feedback** button.
    - Anchor the grid near the bottom edge with generous spacing for touch targets.
@@ -78,18 +85,19 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
       - Confirmation stays disabled until all available points—including any bonus points—are allocated.
    - Use DirectGUI and ensure keyboard/mouse navigation.
    - Provide a centralized scaling helper so menus keep their intended size regardless of window resolution.
-3. **Options submenu**
+4. **Options submenu**
    - Sound-effects volume.
    - Music volume.
    - Toggle stat-screen pause behaviour.
    - Sliders clamp values within valid bounds and save immediately.
    - Lives in `game/ui/options.py` and is invoked from the main menu.
-4. Code structure:
+5. Code structure:
    - Create a `ui/` package with modules for menus, options, and widgets.
    - Use a base `MenuScreen` class that handles navigation and animation hooks.
-5. **Audio system**
+6. **Audio system**
    - A global `AudioManager` plays music and sound effects loaded via the asset pipeline.
    - Supports cross-fading tracks, volume sliders, and pausing via the Options menu.
+   - Tests must play real Panda3D sounds to verify playback.
 
 ## 4. Player Stat Screen
 1. Overlay displays and groups data:
@@ -168,6 +176,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
     - Implement `Room` subclasses (`RestRoom`, `BattleRoom`, `ChatRoom`, etc.) with shared interfaces for entry, reward, and exit hooks.
     - Build a `chat/` module that routes one-shot messages to local or remote LLMs stored under `llms/`.
     - Seed each floor from a run-specific base seed, mutate it several times, and forbid seed reuse so players cannot reproduce identical maps.
+    - Expand event plugins with branching outcomes and tests to cover failure paths.
 
 ## 6. Gacha Character Recruitment
 1. Between runs, players spend collected upgrade items on gacha pulls for recruitable characters and chatable allies.

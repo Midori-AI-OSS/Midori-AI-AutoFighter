@@ -2,7 +2,10 @@ from __future__ import annotations
 
 FRAME_COLOR = (0, 0, 0, 0.6)
 TEXT_COLOR = (1, 1, 1, 1)
-_BASE_DPI = 96
+
+BASE_WIDTH = 1280
+BASE_HEIGHT = 720
+BASE_SCALE = 0.1
 
 
 def _window_size() -> tuple[int, int]:
@@ -13,20 +16,15 @@ def _window_size() -> tuple[int, int]:
         except Exception:
             props = win.get_properties()
             return props.get_x_size(), props.get_y_size()
-    return 800, 600
+    return BASE_WIDTH, BASE_HEIGHT
 
 
 def get_widget_scale() -> float:
+    """Return a scale that keeps widget size consistent across window sizes."""
+
     width, height = _window_size()
-    win = getattr(globals().get("base"), "win", None)
-    dpi = _BASE_DPI
-    if win:
-        try:
-            info = win.get_display_information()
-            dpi = getattr(info, "get_pixels_per_display_unit", lambda: _BASE_DPI)() or _BASE_DPI
-        except Exception:
-            dpi = _BASE_DPI
-    return min(width, height) / (dpi * 10)
+    height = height or BASE_HEIGHT
+    return BASE_SCALE * (BASE_HEIGHT / height)
 
 
 def get_slider_scale() -> float:

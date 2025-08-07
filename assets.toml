@@ -15,6 +15,7 @@ icon_volume_2 = { path = "assets/textures/icon_volume_2.png", sha256 = "c7867724
 icon_music = { path = "assets/textures/icon_music.png", sha256 = "b558b7f264ac9db5a15bf7b2e0dce7737e5412ae2a7c74612a802caf4e8dacb8" }
 icon_pause = { path = "assets/textures/icon_pause.png", sha256 = "48e3e5c45bfa4b0324e0890072dd147cde4248b31d2bf81f1637cf686686e59d" }
 icon_refresh_cw = { path = "assets/textures/icon_refresh_cw.png", sha256 = "6a43ec4fffe97e606dec342c90a45758edeaf5490736f02aa35ef995f959d309" }
+menu_bg = { path = "assets/textures/backgrounds/background_01.png", sha256 = "3923df12c9d72dbe132a45e7d033b0f76e312ea09058a4eb4c0df4d31ddfcaeb" }
 
 [audio]
 placeholder = { path = "assets/audio/.gitkeep", sha256 = "2f73349cfc4630255319c6c8dfc1b46a8996ace9d14d8e07563b165915918ec2" }
