@@ -50,6 +50,15 @@ def test_window_event_ignored(monkeypatch) -> None:
     orig_exit()
 
 
+def test_window_fixed_size() -> None:
+    app = _make_app()
+    try:
+        props = app.win.get_properties()
+        assert props.get_fixed_size()
+    finally:
+        app.userExit()
+
+
 def test_window_resize_clamped(monkeypatch) -> None:
     app = _make_app()
     captured: dict[str, tuple[int, int]] = {}

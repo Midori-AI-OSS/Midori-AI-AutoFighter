@@ -19,8 +19,8 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [x] Add unit tests covering success and failure cases.
    - [x] Fix residual window-size scaling bug causing janky resizing.
 * [ ] UI system overhaul (`b348c09e`) – rebuild menus and in-run UI to resolve layout and theming issues.
-   - [ ] Stabilize background colors and prevent unintended scrolling.
-   - [ ] Apply scaling helper so elements no longer stretch horizontally.
+   - [x] Stabilize background colors and prevent unintended scrolling.
+   - [x] Apply scaling helper so elements no longer stretch horizontally.
    - [ ] Theme Edit Player and Options menus with proper backdrops and show a player preview.
    - [ ] Remove tiny tooltips and doubled button backgrounds in the Load Run menu.
    - [ ] Restore character picker for New Run and display the map with icons arranged bottom to top.

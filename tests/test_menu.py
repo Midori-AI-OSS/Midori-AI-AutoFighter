@@ -218,6 +218,14 @@ def test_main_menu_buttons_form_grid() -> None:
     menu.teardown()
 
 
+def test_main_menu_background_static() -> None:
+    app = DummyApp()
+    menu = MainMenu(app)
+    menu.setup()
+    assert "main-menu-bg" not in app.taskMgr.tasks
+    menu.teardown()
+
+
 def test_main_menu_extra_elements() -> None:
     app = DummyApp()
     menu = MainMenu(app)

@@ -51,6 +51,7 @@ class AutoFighterApp(ShowBase):
         props = WindowProperties()
         props.set_title("Midori AI AutoFighter")
         props.set_size(BASE_WIDTH, BASE_HEIGHT)
+        props.set_fixed_size(True)
         self.win.request_properties(props)
 
         self.accept("window-event", self.on_window_event)
@@ -74,6 +75,7 @@ class AutoFighterApp(ShowBase):
 
         props = WindowProperties()
         props.set_size(BASE_WIDTH, BASE_HEIGHT)
+        props.set_fixed_size(True)
         self.win.request_properties(props)
 
     def update(self, task):

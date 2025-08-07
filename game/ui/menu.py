@@ -14,7 +14,6 @@ try:
     from direct.gui.DirectGui import DirectSlider
     from direct.showbase.ShowBase import ShowBase
     from panda3d.core import CardMaker
-    from panda3d.core import TextureStage
 except Exception:  # pragma: no cover - fallback for headless tests
     class _Widget:
         """Minimal widget stand-ins for headless tests."""
@@ -66,18 +65,10 @@ except Exception:  # pragma: no cover - fallback for headless tests
         def generate(self) -> object:
             return object()
 
-    class TextureStage:  # type: ignore[dead-code]
-        @staticmethod
-        def getDefault() -> object:
-            return object()
-
 from .options import OptionsMenu
 from .party_picker import PartyPicker
 from autofighter.gui import FRAME_COLOR
 from autofighter.gui import TEXT_COLOR
-from autofighter.gui import _window_size
-from autofighter.gui import get_normalized_scale_pos
-from autofighter.gui import get_slider_scale
 from autofighter.gui import get_widget_scale
 from autofighter.gui import set_widget_pos
 from autofighter.scene import Scene
@@ -141,19 +132,7 @@ class MainMenu(Scene):
                 self.bg.setBin("background", 0)
                 self.bg.setDepthWrite(False)
                 self.bg.setDepthTest(False)
-                self.bg_offset = 0.0
-
-                def _animate_bg(task):
-                    self.bg_offset += 0.0005
-                    ts = TextureStage.getDefault()
-                    self.bg.setTexOffset(ts, self.bg_offset, self.bg_offset)
-                    r = 0.2 + 0.2 * math.sin(self.bg_offset)
-                    g = 0.2 + 0.2 * math.sin(self.bg_offset + 2)
-                    b = 0.2 + 0.2 * math.sin(self.bg_offset + 4)
-                    self.bg.setColorScale(r, g, b, 1)
-                    return task.cont
-
-                self.app.taskMgr.add(_animate_bg, "main-menu-bg")
+                self.bg.setColorScale(0.2, 0.2, 0.2, 1)
             except Exception:  # pragma: no cover - skip if Panda3D missing
                 self.bg = None
         try:
@@ -269,11 +248,6 @@ class MainMenu(Scene):
         self.app.ignore("enter")
         if self.bg is not None and hasattr(self.bg, "removeNode"):
             self.bg.removeNode()
-        if hasattr(self.app, "taskMgr"):
-            try:
-                self.app.taskMgr.remove("main-menu-bg")
-            except Exception:  # pragma: no cover
-                pass
         if self._feedback_label is not None:
             self._feedback_label.destroy()
             self._feedback_label = None
