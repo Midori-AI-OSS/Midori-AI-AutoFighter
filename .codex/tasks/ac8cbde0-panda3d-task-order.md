@@ -305,14 +305,14 @@ Coders must check in with the reviewer or task master before marking tasks compl
    - [ ] Perform smoke builds on supported platforms to catch cross-OS issues.
    - [ ] Document this feature in `.codex/implementation`.
    - [ ] Add unit tests covering success and failure cases.
-42. [ ] Main menu/New Run polish (`dc3d4f2e`) – audit DirectGUI scaling, fix New Run bugs, add a character picker and map route selection before the first fight, and remove placeholder code.
+42. [ ] Main menu/New Run polish (`dc3d4f2e`) – fix oversized menu scaling, audit DirectGUI values to prevent regressions, resolve New Run bugs, add a character picker and map route selection before the first fight, and remove placeholder code.
    - [ ] Reproduce and fix New Run menu bugs.
-   - [ ] Standardize DirectGUI scale values across all menus.
+   - [ ] Standardize DirectGUI scale values across all menus and implement a global scaling helper tied to window size so widgets never render blown up.
    - [ ] Show a character picker before runs start, even if no characters exist, letting players choose damage type and melee or spellcaster roles.
    - [ ] Display the floor map after setup so players can select a route instead of entering a fight immediately.
    - [ ] Remove placeholder or prototyping code from menu implementation.
    - [ ] Document this feature in `.codex/implementation`.
-   - [ ] Add unit tests covering success and failure cases.
+   - [ ] Add unit tests covering success and failure cases, including regression tests for menu scaling.
 
 43. [ ] Feedback menu button (`2a9e7f14`) – open a pre-filled GitHub issue from the in-game menu.
     - [x] Add a `Give Feedback` option to the main menu.

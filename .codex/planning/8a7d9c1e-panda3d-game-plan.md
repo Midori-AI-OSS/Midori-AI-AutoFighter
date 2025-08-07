@@ -7,6 +7,7 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Redesign the main menu with a high-contrast grid of large icons inspired by Arknights.
 - Standardize on Lucide icons and provide clear labels for every menu item.
 - Audit Player and Settings menus for missing labels and verify UI scaling, font sizes, and DPI handling.
+ - Menus are currently rendering at an oversized scale; introduce a global DirectGUI scaling system and regression checks so layouts stay consistent across resolutions.
 
 ## 1. Project Setup
 1. Move current Pygame code into `legacy/`.
@@ -54,9 +55,10 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
        - Present a 100-point stat pool; each point grants +1% to a chosen stat.
        - Clamp allocations so the total never exceeds the available points.
        - Spending 100 of each damage type's 4★ upgrade items buys one extra point.
-       - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
-       - Confirmation stays disabled until the 100 base points are allocated; bonus points can remain unspent.
+     - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
+     - Confirmation stays disabled until the 100 base points are allocated; bonus points can remain unspent.
    - Use DirectGUI and ensure keyboard/mouse navigation.
+   - Provide a centralized scaling helper so menus keep their intended size regardless of window resolution.
 3. **Options submenu**
    - Sound-effects volume.
    - Music volume.
