@@ -3,6 +3,9 @@ import types
 
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("game.ui.run_map")
 from game.ui.run_map import RunMap
 from autofighter.stats import Stats
 

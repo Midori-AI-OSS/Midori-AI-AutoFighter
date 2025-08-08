@@ -24,16 +24,16 @@ PASS – Comprehensive fields and helpers centralize shared attributes【F:autof
 PASS – DoT and HoT classes correctly tick and remove effects【F:autofighter/effects.py†L1-L44】.
 
 ### 8. Main menu (`0d21008f`)
-FAILED – Main menu code has been purged; rebuild it under `aspect2d` with polished theming.
+FAILED – Rebuilt menu uses plain text buttons instead of a Lucide icon grid and lacks scaled top‑bar polish; `start_run` even writes seeds to `used_seeds.json` rather than persisting to the database【F:game/ui/menu.py†L42-L57】【F:game/ui/menu.py†L91-L92】.
 
 ### 9. Run start and map display (`dc3d4f2e`)
-FAILED – `RunMap` module was removed during the GUI purge; run start flow needs rebuilding.
+FAILED – Start button skips the party picker and spawns a `RunMap` scene with only placeholder text while invoking `BattleRoom` without the required app or return callback, so the run flow breaks immediately【F:game/ui/menu.py†L88-L92】【F:game/ui/run_map.py†L33-L40】.
 
 ### 10. Placeholder room (`344b9c4a`)
-PASS – `BattleRoom` sets up cube models as minimal stand-ins【F:autofighter/battle_room.py†L59-L77】.
+FAILED – `RunMap.enter_first_room` instantiates `BattleRoom` without `return_scene_factory`, making it impossible to return to the map after the room ends【F:game/ui/run_map.py†L36-L40】【F:autofighter/battle_room.py†L28-L44】.
 
 ### 11. Character types (`f20caf99`)
-PASS – Enum defines the three body types used by plugins and stats【F:game/actors/types.py†L1-L9】.
+PASS – Enum lists the three body types and tests verify plugins reference them correctly【F:game/actors/types.py†L1-L9】【F:tests/test_character_types.py†L1-L21】.
 
 ### 12. Legacy character import (`7406afba`)
 FAILED – Player plugins include only names and type tags; stats and abilities are missing【F:plugins/players/ally.py†L1-L11】.
@@ -77,10 +77,10 @@ FAILED – Tests rely on dummy sounds, leaving real Panda3D playback unverified�
 ### 25. Feedback menu button (`2a9e7f14`)
 FAILED – Feedback button functionality removed with the old main menu; needs reimplementation.
 
-### 26. GUI overhaul planning
-PASS – Legacy `game/ui/` modules have been removed; rebuild the interface under `aspect2d` using the Panda3D GUI manual.
+### 26. Purge legacy GUI (`purge-old-gui`)
+PASS – Only the new `menu.py` and `run_map.py` remain under `game/ui`, confirming the old GUI modules were removed【a995a4†L1-L2】.
 
 ## Summary of nitpicky findings
-Placeholders masquerading as finished features (main menu, legacy characters, audio) betray a sloppy completion mindset. Empty packages, missing stats, and fake assets show a habit of checking boxes without delivering quality. Expect far harsher scrutiny next time unless these gaps vanish.
+Text‑only buttons, placeholder scenes, and missing callbacks show a pattern of ticking boxes without delivering the promised features. Stop shipping stubs as "done"—the next audit will dig even deeper.
 
 FAILED

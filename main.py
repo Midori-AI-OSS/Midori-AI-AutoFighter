@@ -9,6 +9,7 @@ from autofighter.save import load_settings
 from autofighter.scene import SceneManager
 from plugins.plugin_loader import PluginLoader
 from autofighter.gui import BASE_WIDTH, BASE_HEIGHT
+from game.ui.menu import MainMenu
 
 
 logger = logging.getLogger(__name__)
@@ -61,11 +62,9 @@ class AutoFighterApp(ShowBase):
 
         self.setBackgroundColor(0, 0, 0, 1)
 
-        # Removed placeholder model so only the main menu UI is visible
+        self.main_menu = MainMenu(self.aspect2d)
 
         self.task_mgr.add(self.update, "update")
-
-        # Main menu will be reintroduced after the GUI overhaul
 
     def on_window_event(self, window) -> None:
         """Handle window events while maintaining 16:9 aspect ratio."""

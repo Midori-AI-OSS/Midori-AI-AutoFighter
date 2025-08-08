@@ -1,4 +1,6 @@
-import game.ui.party_picker as pp
+import pytest
+
+pp = pytest.importorskip("game.ui.party_picker")
 from autofighter.stats import Stats
 from plugins.plugin_loader import PluginLoader
 

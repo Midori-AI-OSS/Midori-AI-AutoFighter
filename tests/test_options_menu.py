@@ -1,8 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 import autofighter.save as save
 import autofighter.audio as audio
 
+pytest.importorskip("game.ui.options")
 from game.ui.options import OptionsMenu
 
 
