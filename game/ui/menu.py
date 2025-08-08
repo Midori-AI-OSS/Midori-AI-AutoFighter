@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 import webbrowser
 
@@ -143,6 +144,7 @@ class MainMenu(Scene):
         self.banner = None
         self.avatar = None
         self.corner_buttons: list[DirectButton] = []
+        self.top_left_buttons: list[DirectButton] = []
         self._feedback_label = None
 
     def setup(self) -> None:
@@ -192,102 +194,52 @@ class MainMenu(Scene):
             self.bg = None
         # --- End background setup ---
 
-        # --- Left vertical bar ---
+        # --- Top-left buttons ---
         try:
-            left_bar_color = (0, 0, 0, 0.85)
-            left_bar = DirectFrame(
-                frameColor=left_bar_color,
-                frameSize=(-0.15, 0.15, -1.0, 1.0),
-                parent=parent_node,
-                scale=1.0,
-            )
-            # Three circular buttons: stacked VERTICALLY on left side with labels below each
             button_radius = 0.09
-            button_x = 0.0  # Centered in left bar
-            start_y = 0.85  # Top position
-            button_spacing = 0.25  # Vertical spacing between buttons
-            left_buttons = [
+            start_x = -0.9
+            start_z = 0.85
+            button_spacing = 0.25
+            top_buttons = [
                 ("Home", self.home_button),
                 ("Pulls", self.pulls_button),
                 ("Crafting", self.crafting_button),
             ]
-            for i, (label, cmd) in enumerate(left_buttons):
-                y = start_y - i * button_spacing  # Stack vertically downward
-                # Draw the visible red circle (DirectFrame)
+            for i, (label, cmd) in enumerate(top_buttons):
+                x = start_x + i * button_spacing
                 circle = DirectFrame(
                     frameColor=(1, 0, 0, 1),
                     frameSize=(-button_radius, button_radius, -button_radius, button_radius),
-                    pos=(button_x, 0, y),
+                    pos=(x, 0, start_z),
                     relief=None,
-                    parent=left_bar,
+                    parent=parent_node,
                 )
-                # Overlay an invisible DirectButton for interaction
                 btn = DirectButton(
                     frameColor=(1, 1, 1, 0),
                     frameSize=(-button_radius, button_radius, -button_radius, button_radius),
                     relief=None,
-                    pos=(button_x, 0, y),
+                    pos=(x, 0, start_z),
                     scale=1.0,
-                    parent=left_bar,
+                    parent=parent_node,
                     command=cmd,
                     text="",
                     rolloverSound=None,
                     clickSound=None,
                 )
-                # Add label directly below each button
+                self.top_left_buttons.append(btn)
                 DirectLabel(
                     text=f"{label} Button",
                     text_fg=(1, 1, 1, 1),
                     frameColor=(0, 0, 0, 0),
-                    pos=(button_x, 0, y - button_radius - 0.08),
+                    pos=(x, 0, start_z - button_radius - 0.08),
                     scale=0.06,
                     text_scale=1.0,
-                    parent=left_bar,
+                    parent=parent_node,
                 )
                 add_tooltip(btn, f"{label} Button")
-            # Player model (simple stick figure)
-            # Head
-            head = DirectFrame(
-                frameColor=(1, 0, 0, 1),
-                frameSize=(-0.03, 0.03, -0.03, 0.03),
-                pos=(0, 0, 0.5),
-                parent=left_bar,
-                scale=0.05,
-            )
-            # Body
-            body = DirectFrame(
-                frameColor=(0.7, 0.7, 0.7, 1),
-                frameSize=(-0.01, 0.01, -0.06, 0.06),
-                pos=(0, 0, 0.38),
-                parent=left_bar,
-                scale=0.05,
-            )
-            # Arms
-            left_arm = DirectFrame(
-                frameColor=(0.7, 0.7, 0.7, 1),
-                frameSize=(-0.04, 0.04, -0.007, 0.007),
-                pos=(0, 0, 0.45),
-                parent=left_bar,
-                scale=0.05,
-            )
-            # Legs
-            left_leg = DirectFrame(
-                frameColor=(0.7, 0.7, 0.7, 1),
-                frameSize=(-0.007, 0.007, -0.04, 0.04),
-                pos=(-0.88, 0, 0.28),
-                parent=left_bar,
-                scale=0.05,
-            )
-            right_leg = DirectFrame(
-                frameColor=(0.7, 0.7, 0.7, 1),
-                frameSize=(-0.007, 0.007, -0.04, 0.04),
-                pos=(-0.82, 0, 0.28),
-                parent=left_bar,
-                scale=0.05,
-            )
         except Exception:
             pass
-        # --- End left bar ---
+        # --- End top-left buttons ---
 
         # --- Right side: banner and vertical buttons ---
         try:
@@ -507,6 +459,12 @@ class MainMenu(Scene):
         for button in self.buttons:
             button.destroy()
         self.buttons.clear()
+        for button in self.top_left_buttons:
+            button.destroy()
+        self.top_left_buttons.clear()
+        for button in self.corner_buttons:
+            button.destroy()
+        self.corner_buttons.clear()
         self.app.ignore("arrow_up")
         self.app.ignore("arrow_down")
         self.app.ignore("enter")
@@ -547,4 +505,72 @@ class MainMenu(Scene):
 
     def back(self) -> None:
         self.app.scene_manager.switch_to(MainMenu(self.app))
+
+
+class LoadRunMenu(Scene):
+    RUNS_DIR = Path("runs")
+
+    def __init__(self, app: ShowBase) -> None:
+        self.app = app
+        self.buttons: list[DirectButton] = []
+        self.index = 0
+
+    def available_runs(self) -> list[tuple[Path, str]]:
+        runs: list[tuple[Path, str]] = []
+        for path in sorted(self.RUNS_DIR.glob("*.json")):
+            try:
+                data = json.loads(path.read_text())
+                stats = data.get("stats") or {}
+                hp = stats.get("hp")
+                max_hp = stats.get("max_hp")
+                if hp is None or max_hp is None:
+                    continue
+                label = f"{path.name}: HP {hp}/{max_hp}"
+                runs.append((path, label))
+            except Exception:
+                continue
+        return runs
+
+    def setup(self) -> None:
+        for btn in self.buttons:
+            btn.destroy()
+        self.buttons.clear()
+        for path, label in self.available_runs():
+            btn = DirectButton(text=label, command=lambda p=path: self.start_run(p))
+            btn["frameColor"] = FRAME_COLOR
+            self.buttons.append(btn)
+        self.highlight()
+
+    def highlight(self) -> None:
+        highlight = (0.2, 0.2, 0.2, 0.9)
+        for i, btn in enumerate(self.buttons):
+            btn["frameColor"] = highlight if i == self.index else FRAME_COLOR
+
+    def next(self) -> None:
+        if self.buttons:
+            self.index = (self.index + 1) % len(self.buttons)
+            self.highlight()
+
+    def prev(self) -> None:
+        if self.buttons:
+            self.index = (self.index - 1) % len(self.buttons)
+            self.highlight()
+
+    def start_run(self, path: Path) -> None:
+        from autofighter.battle_room import BattleRoom
+
+        stats = load_run(path)
+        if not stats:
+            return
+        battle = BattleRoom(
+            self.app,
+            return_scene_factory=lambda: MainMenu(self.app),
+            player=stats,
+        )
+        self.app.scene_manager.switch_to(battle)
+
+    def teardown(self) -> None:
+        for btn in self.buttons:
+            btn.destroy()
+        self.buttons.clear()
 

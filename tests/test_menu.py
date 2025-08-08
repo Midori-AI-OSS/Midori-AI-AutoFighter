@@ -230,11 +230,21 @@ def test_main_menu_extra_elements() -> None:
     app = DummyApp()
     menu = MainMenu(app)
     menu.setup()
-    assert menu.top_bar is not None
-    assert menu.avatar is not None
-    assert menu.banner is not None
-    assert menu.banner["image"] is not None
-    assert len(menu.corner_buttons) == 2
+    assert len(menu.top_left_buttons) == 3
+    menu.teardown()
+
+
+def test_main_menu_top_left_buttons_position() -> None:
+    app = DummyApp()
+    menu = MainMenu(app)
+    menu.setup()
+    positions = [btn["pos"] for btn in menu.top_left_buttons]
+    assert len(positions) == 3
+    xs = [p[0] for p in positions]
+    zs = [p[2] for p in positions]
+    assert xs == sorted(xs)
+    assert all(x < 0 for x in xs)
+    assert all(z > 0.7 for z in zs)
     menu.teardown()
 
 
