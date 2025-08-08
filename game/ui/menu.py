@@ -197,8 +197,9 @@ class MainMenu(Scene):
         # --- Top-left buttons ---
         try:
             button_radius = 0.09
-            start_x = -0.9
-            start_z = 0.85
+            margin = 0.02
+            start_x = -1 + button_radius + margin
+            start_z = 1 - button_radius - margin
             button_spacing = 0.25
             top_buttons = [
                 ("Home", self.home_button),
@@ -228,18 +229,30 @@ class MainMenu(Scene):
                 )
                 self.top_left_buttons.append(btn)
                 DirectLabel(
-                    text=f"{label} Button",
+                    text=label,
                     text_fg=(1, 1, 1, 1),
                     frameColor=(0, 0, 0, 0),
                     pos=(x, 0, start_z - button_radius - 0.08),
-                    scale=0.06,
-                    text_scale=1.0,
+                    scale=1.0,
+                    text_scale=get_widget_scale() * 4,
                     parent=parent_node,
                 )
-                add_tooltip(btn, f"{label} Button")
+                add_tooltip(btn, label)
         except Exception:
             pass
         # --- End top-left buttons ---
+
+        # --- Placeholder character model (bottom-left quadrant) ---
+        try:
+            self.char_placeholder = DirectFrame(
+                frameColor=(0.3, 0.3, 0.3, 1),
+                frameSize=(-0.2, 0.2, -0.2, 0.2),
+                pos=(-0.8, 0, -0.7),
+                parent=parent_node,
+            )
+        except Exception:
+            self.char_placeholder = None
+        # --- End placeholder character model ---
 
         # --- Right side: banner and vertical buttons ---
         try:
@@ -258,8 +271,8 @@ class MainMenu(Scene):
                 frameColor=(0, 0, 0, 0.3),
                 parent=banner,
                 pos=(0, 0, 0.07),
-                scale=0.07,
-                text_scale=0.07,
+                scale=1.0,
+                text_scale=get_widget_scale() * 4,
             )
             # Vertical stack of buttons
             right_buttons = [
@@ -272,8 +285,8 @@ class MainMenu(Scene):
                 btn = DirectButton(
                     text=label,
                     command=cmd,
-                    scale=0.07,
-                    text_scale=0.07,
+                    scale=get_widget_scale() * 0.7,
+                    text_scale=get_widget_scale() * 4,
                     frameColor=(0.7, 0.7, 0.7, 0.8),
                     text_fg=(1, 1, 1, 1),
                     frameSize=(-0.18, 0.18, -0.05, 0.05),
@@ -343,7 +356,7 @@ class MainMenu(Scene):
                 text=label,
                 command=cmd,
                 scale=1.0,
-                text_scale=0.04,
+                text_scale=get_widget_scale() * 4,
                 parent=parent_node,
             )
             col = i % cols
