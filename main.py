@@ -3,7 +3,6 @@ import logging
 from panda3d.core import WindowProperties
 from direct.showbase.ShowBase import ShowBase
 
-from game.ui.menu import MainMenu
 from plugins.event_bus import EventBus
 from autofighter.audio import get_audio
 from autofighter.save import load_settings
@@ -66,7 +65,7 @@ class AutoFighterApp(ShowBase):
 
         self.task_mgr.add(self.update, "update")
 
-        self.scene_manager.switch_to(MainMenu(self))
+        # Main menu will be reintroduced after the GUI overhaul
 
     def on_window_event(self, window) -> None:
         """Handle window events while maintaining 16:9 aspect ratio."""

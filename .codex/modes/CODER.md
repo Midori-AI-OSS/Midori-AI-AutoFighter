@@ -16,6 +16,7 @@ For contributors actively writing, refactoring, or reviewing code. Coder Mode em
 - Add or update tests for all changes; ensure high test coverage and passing tests.
 - Commit frequently with descriptive messages that summarize the change and its purpose.
 - Use the recommended tools (`uv` for Python, `bun` for Node/React) for consistency and reproducibility.
+- When working on GUI features, download all parts of the [Panda3D GUI manual](https://docs.panda3d.org/1.10/python/programming/gui/index) and review them before each session. Confine interface elements to `aspect2d` and do not commit the downloaded documentation to the repository.
 - Keep documentation in sync with code changes; update or create docs in `.codex/implementation/` and `.codex/instructions/` in the relevant service as needed.
 - Update documentation in `.codex/implementation/` and `.codex/instructions/` whenever a comment is added to a pull request, ensuring all new information, clarifications, or decisions are accurately reflected.
 - Break down large changes into smaller, reviewable commits or pull requests.

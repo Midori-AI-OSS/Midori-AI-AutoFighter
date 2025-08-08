@@ -21,6 +21,8 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Window resize events are clamped back to 16:9 so menus keep their
   layout instead of scaling with the window size.
 - The main menu top bar now displays the player portrait and themed banner art.
+- Existing GUI implementation has been removed; rebuild it from raw code using new guidelines for a clean, polished look.
+- GUI work must stay under `aspect2d`; download and review the full [Panda3D GUI manual](https://docs.panda3d.org/1.10/python/programming/gui/index) before modifying interfaces, and keep the downloaded files out of the repository.
 
 ## Current Issues
 - Main menu background shifts colors and scrolls unexpectedly.
@@ -33,13 +35,13 @@ Fully remake the Pygame-based roguelike autofighter in Panda3D with 3D-ready arc
 - Developers must work in a Panda3D-enabled environment and consult the official Panda3D docs (https://docs.panda3d.org/) instead of guessing APIs.
 
 ## Immediate Playable Flow
+0. Rebuild the main menu framework under `aspect2d` using the Panda3D GUI manual.
 1. Finalize the main menu so New Run can trigger the gameplay loop.
 2. Initialize a run when New Run is selected and show a basic floor map.
 3. Allow entering a single unthemed placeholder room from the map and returning afterward.
 4. Define character types: Type A (Masculine), Type B (Feminine), and Type C (Androgynous).
-5. Import all characters from the Pygame version and tag them with their type.
-6. Provide a party picker that lets the player choose four owned characters plus the player.
-7. Use the selected party to begin the run.
+5. Provide a party picker that lets the player choose four owned characters plus the player.
+6. Use the selected party to begin the run.
 
 ## Detailed Plans
 - [Project Setup](f94337b7-project-setup-plan.md)

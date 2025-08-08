@@ -24,10 +24,10 @@ PASS – Comprehensive fields and helpers centralize shared attributes【F:autof
 PASS – DoT and HoT classes correctly tick and remove effects【F:autofighter/effects.py†L1-L44】.
 
 ### 8. Main menu (`0d21008f`)
-FAILED – Top bar and banner remain placeholders, lacking avatar and polished theming【F:game/ui/menu.py†L155-L168】.
+FAILED – Main menu code has been purged; rebuild it under `aspect2d` with polished theming.
 
 ### 9. Run start and map display (`dc3d4f2e`)
-PASS – `RunMap` seeds floors and renders a text map before entering the first room【F:game/ui/run_map.py†L42-L59】.
+FAILED – `RunMap` module was removed during the GUI purge; run start flow needs rebuilding.
 
 ### 10. Placeholder room (`344b9c4a`)
 PASS – `BattleRoom` sets up cube models as minimal stand-ins【F:autofighter/battle_room.py†L59-L77】.
@@ -39,10 +39,10 @@ PASS – Enum defines the three body types used by plugins and stats【F:game/ac
 FAILED – Player plugins include only names and type tags; stats and abilities are missing【F:plugins/players/ally.py†L1-L11】.
 
 ### 13. Party picker (`f9c45e2e`)
-PASS – Selection UI limits parties to four allies and wires the run start【F:game/ui/party_picker.py†L52-L75】.
+FAILED – Party picker module was removed; selection UI must be recreated.
 
 ### 14. Options submenu (`8e57e5f2`)
-PASS – Sliders and toggles persist settings and support keyboard navigation【F:game/ui/options.py†L60-L115】.
+FAILED – Options menu code was removed during the GUI purge.
 
 ### 15. Stat allocation (`4edfa4f8`)
 PASS – `PlayerCreator` enforces a 100‑point pool and clamps excess【F:autofighter/player_creator.py†L90-L134】.
@@ -75,7 +75,10 @@ PASS – Animations select highest rarity and show results after skipping【F:au
 FAILED – Tests rely on dummy sounds, leaving real Panda3D playback unverified【F:tests/test_audio.py†L1-L41】.
 
 ### 25. Feedback menu button (`2a9e7f14`)
-PASS – Fallback displays an in-game label when browser launch fails【F:game/ui/menu.py†L294-L303】【F:tests/test_menu.py†L231-L246】.
+FAILED – Feedback button functionality removed with the old main menu; needs reimplementation.
+
+### 26. GUI overhaul planning
+PASS – Legacy `game/ui/` modules have been removed; rebuild the interface under `aspect2d` using the Panda3D GUI manual.
 
 ## Summary of nitpicky findings
 Placeholders masquerading as finished features (main menu, legacy characters, audio) betray a sloppy completion mindset. Empty packages, missing stats, and fake assets show a habit of checking boxes without delivering quality. Expect far harsher scrutiny next time unless these gaps vanish.
