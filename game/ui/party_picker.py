@@ -19,6 +19,7 @@ import tempfile
 
 from pathlib import Path
 from typing import get_origin
+from typing import get_type_hints
 from dataclasses import fields
 
 from PIL import Image
@@ -141,7 +142,8 @@ class PartyPicker(Scene):
         self.stat_labels: dict[str, DirectLabel] = {}
         self.stat_icons: dict[str, DirectLabel] = {}
         self.dmg_plugins: dict[str, type] = {}
-        self.model = None
+        self.model: NodePath | None = None
+        self.model_name: str | None = None
         self.rotation = 0.0
 
     # ------------------------------------------------------------------
@@ -305,36 +307,14 @@ class PartyPicker(Scene):
         )
         bottom_fade.setTransparency(TransparencyAttrib.MAlpha)
 
-        # Placeholder model preview; attaches to render if available
-        model_dir = Path("assets/models")
-        rebuild_models(model_dir)
-        loader = getattr(self.app, "loader", None)
-        render = getattr(self.app, "render", None)
-        if loader and render:
-            try:
-                # Preferred fast-loading BAM model
-                self.model = loader.loadModel(str(model_dir / "body_a.bam"))
-            except Exception:  # pragma: no cover - may not exist during dev
-                try:
-                    # Fallback to the source EGG if BAM is unavailable
-                    self.model = loader.loadModel(str(model_dir / "body_a.egg"))
-                except Exception:  # pragma: no cover - last resort primitive
-                    try:
-                        # Final fallback: Panda3D's built-in cube
-                        self.model = loader.loadModel("models/box")
-                    except Exception:
-                        self.model = None
-            if self.model:
-                self.model.reparentTo(render)
-                self.model.setPos(0, 5, 0)
+        # Tabbed stats panel on the right
+        self._build_stat_panel()
 
-        # Rotate model with arrow keys
+        # Load the player's model preview and enable rotation
+        self.show_body(self.player)
         if hasattr(self.app, "accept"):
             self.app.accept("arrow_left", self.rotate_model, [-10])
             self.app.accept("arrow_right", self.rotate_model, [10])
-
-        # Tabbed stats panel on the right
-        self._build_stat_panel()
 
         self.start_button = DirectButton(
             parent=self.root,
@@ -369,11 +349,13 @@ class PartyPicker(Scene):
         self.stat_tabs = {}
 
         groups: dict[str, list[str]] = {"Numbers": [], "Flags": [], "Lists": []}
+        hints = get_type_hints(Stats)
         for field in fields(Stats):
-            origin = get_origin(field.type)
-            if field.type in (int, float):
+            ftype = hints.get(field.name, field.type)
+            origin = get_origin(ftype)
+            if ftype in (int, float):
                 groups["Numbers"].append(field.name)
-            elif field.type is bool:
+            elif ftype is bool:
                 groups["Flags"].append(field.name)
             elif origin is list:
                 groups["Lists"].append(field.name)
@@ -451,6 +433,45 @@ class PartyPicker(Scene):
                 label["text_fg"] = (r / 255, g / 255, b / 255, 1)
             label["text"] = f"{stat}: {value}"
 
+    def show_body(self, stats: Stats) -> None:
+        """Display the body model for ``stats`` based on its ``char_type``."""
+
+        loader = getattr(self.app, "loader", None)
+        render = getattr(self.app, "render", None)
+        model_dir = Path("assets/models")
+        rebuild_models(model_dir)
+        model_name = f"body_{getattr(stats.char_type, 'value', 'a').lower()}"
+        if not (loader and render):
+            self.model_name = model_name
+            return
+        model = None
+        for ext in (".bam", ".egg"):
+            try:
+                model = loader.loadModel(str(model_dir / f"{model_name}{ext}"))
+                break
+            except Exception:  # pragma: no cover - missing asset
+                continue
+        if model is None:
+            try:
+                model = loader.loadModel("models/box")
+                model_name = "models/box"
+            except Exception:
+                return
+
+        if self.model:
+            try:
+                self.model.removeNode()
+            except Exception:  # pragma: no cover - safe cleanup
+                pass
+
+        self.model = model
+        self.model_name = model_name
+        try:
+            self.model.reparentTo(render)
+            self.model.setPos(0, 5, 0)
+        except Exception:  # pragma: no cover - render missing
+            pass
+
     def set_damage_type(self, dtype: str) -> None:
         self.player.base_damage_type = dtype
         self.player.damage_types = [dtype]
@@ -484,8 +505,19 @@ class PartyPicker(Scene):
             stats = self.char_stats.get(char_id)
             if stats:
                 self.show_stats(stats)
+                self.show_body(stats)
         else:
-            self.show_stats(self.player)
+            if self.player.max_hp <= 1:
+                self.home()
+                main_menu = getattr(self.app, "main_menu", None)
+                if main_menu and hasattr(main_menu, "edit_player"):
+                    try:
+                        main_menu.edit_player()
+                    except Exception:  # pragma: no cover - stub
+                        pass
+            else:
+                self.show_stats(self.player)
+                self.show_body(self.player)
 
     def start_run(self) -> None:
         if self.app is None:  # pragma: no cover - safeguard

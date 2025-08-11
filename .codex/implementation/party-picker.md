@@ -19,6 +19,12 @@ through the same selection handler so their stats panel refreshes like any
 other character. Their stats populate the panel by default so a damage type can
 be chosen even on a fresh save where no other characters are owned.
 
+Selecting any portrait swaps the 3D body preview and stat readout to match that
+character. Clicking the player when their stats are uninitialized (the default
+`hp=1` placeholder) returns to the Edit Player menu instead of displaying
+stats, ensuring new saves guide the user through player creation before
+starting a run.
+
 A placeholder 3D body model (`body_a`, `body_b`, or `body_c`) sits in the center
 and can be rotated left or right with the arrow keys. Models live in
 `assets/models` as `.egg` files that are converted to `.bam` when Panda3D tools

@@ -6,6 +6,7 @@ pytest.importorskip("PIL")
 
 import game.ui.party_picker as pp
 from autofighter.stats import Stats
+from game.actors import CharacterType
 from plugins.plugin_loader import PluginLoader
 
 
@@ -13,13 +14,20 @@ class DummyApp:
     def __init__(self) -> None:
         self.scene_manager = type("SM", (), {"switch_to": lambda self, scene: setattr(self, "scene", scene)})()
         self.events: dict[str, object] = {}
-        self.main_menu = type("MM", (), {"show": lambda self: setattr(self, "shown", True)})()
+        self.main_menu = type(
+            "MM",
+            (),
+            {
+                "show": lambda self: setattr(self, "shown", True),
+                "edit_player": lambda self: setattr(self, "edited", True),
+            },
+        )()
         self.plugin_loader = PluginLoader()
         self.plugin_loader.discover("plugins/players")
         self.plugin_loader.discover("plugins/damage_types")
 
-    def accept(self, name: str, func) -> None:
-        self.events[name] = func
+    def accept(self, name: str, func, extraArgs=None) -> None:  # noqa: N803 - matching Panda3D
+        self.events[name] = (func, extraArgs)
 
     def ignore(self, name: str) -> None:
         self.events.pop(name, None)
@@ -108,11 +116,22 @@ def test_selecting_player_shows_stats() -> None:
     picker = pp.PartyPicker(app, player_stats, roster=roster)
     picker.setup()
     other = roster[0]
+    picker.char_stats[other].char_type = CharacterType.B
     picker.select(other)
     assert picker.stat_labels["hp"]["text"] == "hp: 1000"
+    assert picker.model_name == "body_b"
     picker.select("player")
     assert picker.stat_labels["hp"]["text"] == "hp: 7"
+    assert picker.model_name == "body_c"
     picker.teardown()
+
+
+def test_clicking_unset_player_opens_editor() -> None:
+    app = DummyApp()
+    unset_stats = Stats(hp=1, max_hp=1)
+    picker = pp.PartyPicker(app, unset_stats, roster=[])
+    picker.select("player")
+    assert getattr(app.main_menu, "edited", False)
 
 
 def test_party_picker_random_background() -> None:
