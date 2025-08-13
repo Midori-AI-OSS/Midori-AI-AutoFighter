@@ -42,7 +42,7 @@ async def test_run_flow(app_with_db):
     app, db_path = app_with_db
     client = app.test_client()
 
-    start_resp = await client.post("/run/start")
+    start_resp = await client.post("/run/start", json={"party": ["player"]})
     start_data = await start_resp.get_json()
     run_id = start_data["run_id"]
 
@@ -75,7 +75,7 @@ async def test_players_and_rooms(app_with_db):
     assert player_entry["element"] == "Fire"
     assert player_entry["stats"]["hp"] == 1000
 
-    start_resp = await client.post("/run/start")
+    start_resp = await client.post("/run/start", json={"party": ["player"]})
     run_id = (await start_resp.get_json())["run_id"]
 
     await client.put(f"/party/{run_id}", json={"party": ["player"]})

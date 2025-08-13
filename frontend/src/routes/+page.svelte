@@ -1,14 +1,16 @@
 <script>
   import { onMount } from 'svelte';
-  import { Play, Users, Settings, SquareChartGantt } from 'lucide-svelte';
+  import { Play, Users, Settings, SquareChartGantt, PackageOpen } from 'lucide-svelte';
   import PartyPicker from '$lib/PartyPicker.svelte';
   import MapDisplay from '$lib/MapDisplay.svelte';
   import GameViewport from '$lib/GameViewport.svelte';
   import { layoutForWidth } from '$lib/layout.js';
   import {
+    startRun,
     battleRoom,
     shopRoom,
-    restRoom
+    restRoom,
+    pullGacha
   } from '$lib/api.js';
 
   let width = 0;
@@ -18,9 +20,18 @@
   let roomData = null;
   let viewportBg = '';
   let viewMode = 'main';
+  let lastPull = [];
 
-  function handleStart() {
-    viewMode = 'party';
+  async function handleStart() {
+    const data = await startRun(selectedParty);
+    runId = data.run_id;
+    currentMap = data.map.rooms.slice(data.map.current).map((n) => n.room_type);
+    viewMode = 'main';
+  }
+
+  async function handlePull() {
+    const data = await pullGacha(1);
+    lastPull = data.results || [];
   }
 
   function handleParty() {
@@ -36,11 +47,13 @@
     } else if (room === 'rest') {
       roomData = await restRoom(runId);
     }
+    currentMap = currentMap.slice(1);
   }
 
   const items = [
     { icon: Play, label: 'Run', action: handleStart },
     { icon: Users, label: 'Party', action: handleParty },
+    { icon: PackageOpen, label: 'Pulls', action: handlePull },
     { icon: Settings, label: 'Settings', action: () => (viewMode = 'settings') },
     { icon: SquareChartGantt, label: 'Stats' }
   ];
@@ -190,5 +203,16 @@
     <h3>Run</h3>
     <p data-testid="run-id" style="margin:0 0 0.5rem 0;">Run: {runId}</p>
     <MapDisplay map={currentMap} on:select={(e) => handleRoom(e.detail)} />
+  </div>
+{/if}
+
+{#if lastPull.length}
+  <div class="panel section" style="margin: 1rem;">
+    <h3>Gacha</h3>
+    <ul>
+      {#each lastPull as r}
+        <li>{r.type}: {r.id}</li>
+      {/each}
+    </ul>
   </div>
 {/if}

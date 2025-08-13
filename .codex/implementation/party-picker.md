@@ -14,5 +14,7 @@ small screens.
 
 `PartyPicker` exposes the `selected` array as a bound prop so parents can reactively read the lineup. Menus close through their own navigation controls; no explicit confirm action is required.
 
+`startRun` in `frontend/src/lib/api.js` posts the chosen party and optional player damage type to the Quart backend's `/run/start` endpoint, which validates ownership and returns run data with passive names.
+
 ## Testing
 - `bun test frontend/tests/partypicker.test.js`

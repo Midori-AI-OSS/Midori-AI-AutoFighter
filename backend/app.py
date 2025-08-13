@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import json
 
 from uuid import uuid4
@@ -12,12 +11,14 @@ from quart import jsonify
 from quart import request
 from quart import send_from_directory
 
+from plugins import passives as passive_plugins
 from plugins import players as player_plugins
 from autofighter.cards import award_card
-from autofighter.mapgen import MapGenerator, MapNode
 from autofighter.party import Party
 from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
 from autofighter.stats import apply_status_hooks
+from autofighter.gacha import GachaManager
+from autofighter.mapgen import MapGenerator, MapNode
 from plugins.players._base import PlayerBase
 from autofighter.save_manager import SaveManager
 
@@ -55,6 +56,17 @@ async def assets(filename: str):
     return await send_from_directory(ASSETS_DIR, filename)
 
 
+def _passive_names(ids: list[str]) -> list[str]:
+    names: list[str] = []
+    for pid in ids:
+        for mod in passive_plugins.__all__:
+            cls = getattr(passive_plugins, mod)
+            if getattr(cls, "id", None) == pid:
+                names.append(getattr(cls, "name", pid))
+                break
+    return names
+
+
 def _assign_damage_type(player: PlayerBase) -> None:
     with SAVE_MANAGER.connection() as conn:
         cur = conn.execute(
@@ -70,8 +82,100 @@ def _assign_damage_type(player: PlayerBase) -> None:
             )
 
 
+def _load_player_customization() -> tuple[str, dict[str, int]]:
+    pronouns = ""
+    stats: dict[str, int] = {"hp": 0, "attack": 0, "defense": 0}
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        cur = conn.execute(
+            "SELECT value FROM options WHERE key = ?", ("player_pronouns",)
+        )
+        row = cur.fetchone()
+        if row:
+            pronouns = row[0]
+        cur = conn.execute(
+            "SELECT value FROM options WHERE key = ?", ("player_stats",)
+        )
+        row = cur.fetchone()
+        if row:
+            try:
+                stats.update(json.loads(row[0]))
+            except (TypeError, ValueError, json.JSONDecodeError):
+                pass
+    return pronouns, stats
+
+
+def _apply_player_stats(player: PlayerBase) -> None:
+    _pronouns, stats = _load_player_customization()
+    hp_mod = 1 + stats.get("hp", 0) * 0.01
+    atk_mod = 1 + stats.get("attack", 0) * 0.01
+    def_mod = 1 + stats.get("defense", 0) * 0.01
+    player.max_hp = player.hp = int(player.hp * hp_mod)
+    player.atk = int(player.atk * atk_mod)
+    player.defense = int(player.defense * def_mod)
+
+
+@app.get("/gacha")
+async def gacha_state() -> tuple[str, int, dict[str, object]]:
+    manager = GachaManager(SAVE_MANAGER)
+    return jsonify(manager.get_state())
+
+
+@app.post("/gacha/pull")
+async def gacha_pull() -> tuple[str, int, dict[str, object]]:
+    data = await request.get_json(silent=True) or {}
+    count = int(data.get("count", 1))
+    manager = GachaManager(SAVE_MANAGER)
+    try:
+        results = manager.pull(count)
+    except ValueError:
+        return jsonify({"error": "invalid count"}), 400
+    state = manager.get_state()
+    state["results"] = [asdict(r) for r in results]
+    return jsonify(state)
+
+
+@app.post("/gacha/auto-craft")
+async def gacha_auto_craft() -> tuple[str, int, dict[str, object]]:
+    data = await request.get_json(silent=True) or {}
+    enabled = bool(data.get("enabled"))
+    manager = GachaManager(SAVE_MANAGER)
+    manager.set_auto_craft(enabled)
+    return jsonify({"status": "ok", "auto_craft": enabled})
+
+
 @app.post("/run/start")
-async def start_run() -> tuple[str, int, dict[str, str]]:
+async def start_run() -> tuple[str, int, dict[str, object]]:
+    data = await request.get_json(silent=True) or {}
+    members: list[str] = data.get("party", [])
+    damage_type = (data.get("damage_type") or "").capitalize()
+
+    if (
+        "player" not in members
+        or not 1 <= len(members) <= 5
+        or len(set(members)) != len(members)
+    ):
+        return jsonify({"error": "invalid party"}), 400
+
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT id FROM owned_players")
+        owned = {row[0] for row in cur.fetchall()}
+    for mid in members:
+        if mid != "player" and mid not in owned:
+            return jsonify({"error": "unowned character"}), 400
+
+    if damage_type:
+        allowed = {"Light", "Dark", "Wind", "Lightning", "Fire", "Ice"}
+        if damage_type not in allowed:
+            return jsonify({"error": "invalid damage type"}), 400
+        with SAVE_MANAGER.connection() as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO damage_types (id, type) VALUES (?, ?)",
+                ("player", damage_type),
+            )
+
     run_id = str(uuid4())
     generator = MapGenerator(run_id)
     nodes = generator.generate_floor()
@@ -81,11 +185,28 @@ async def start_run() -> tuple[str, int, dict[str, str]]:
             "INSERT INTO runs (id, party, map) VALUES (?, ?, ?)",
             (
                 run_id,
-                json.dumps({"members": [], "gold": 0, "relics": [], "cards": []}),
+                json.dumps({"members": members, "gold": 0, "relics": [], "cards": []}),
                 json.dumps(state),
             ),
         )
-    return jsonify({"run_id": run_id, "map": state})
+
+    party_info: list[dict[str, object]] = []
+    for pid in members:
+        for name in player_plugins.__all__:
+            cls = getattr(player_plugins, name)
+            if cls.id == pid:
+                inst = cls()
+                _assign_damage_type(inst)
+                party_info.append(
+                    {
+                        "id": inst.id,
+                        "name": inst.name,
+                        "passives": _passive_names(getattr(inst, "passives", [])),
+                    }
+                )
+                break
+
+    return jsonify({"run_id": run_id, "map": state, "party": party_info})
 
 
 @app.put("/party/<run_id>")
@@ -138,6 +259,8 @@ async def get_players() -> tuple[str, int, dict[str, str]]:
         cls = getattr(player_plugins, name)
         inst = cls()
         _assign_damage_type(inst)
+        if inst.id == "player":
+            _apply_player_stats(inst)
         stats = asdict(inst)
         stats["char_type"] = inst.char_type.name
         roster.append(
@@ -174,6 +297,7 @@ async def player_stats() -> tuple[str, int, dict[str, object]]:
     refresh = _get_stat_refresh_rate()
     player = player_plugins.player.Player()
     _assign_damage_type(player)
+    _apply_player_stats(player)
     apply_status_hooks(player)
     stats = {
         "core": {
@@ -215,6 +339,70 @@ async def player_stats() -> tuple[str, int, dict[str, object]]:
         },
     }
     return jsonify({"stats": stats, "refresh_rate": refresh})
+
+
+@app.get("/player/editor")
+async def get_player_editor() -> tuple[str, int, dict[str, object]]:
+    player = player_plugins.player.Player()
+    _assign_damage_type(player)
+    pronouns, stats = _load_player_customization()
+    return jsonify(
+        {
+            "pronouns": pronouns,
+            "damage_type": getattr(player.base_damage_type, "name", player.base_damage_type),
+            "hp": stats.get("hp", 0),
+            "attack": stats.get("attack", 0),
+            "defense": stats.get("defense", 0),
+        }
+    )
+
+
+@app.put("/player/editor")
+async def update_player_editor() -> tuple[str, int, dict[str, str]]:
+    data = await request.get_json(silent=True) or {}
+    pronouns = (data.get("pronouns") or "").strip()
+    damage_type = (data.get("damage_type") or "").capitalize()
+    try:
+        hp = int(data.get("hp", 0))
+        attack = int(data.get("attack", 0))
+        defense = int(data.get("defense", 0))
+    except (TypeError, ValueError):
+        return jsonify({"error": "invalid stats"}), 400
+    total = hp + attack + defense
+
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT COUNT(*) FROM runs")
+        if cur.fetchone()[0]:
+            return jsonify({"error": "run active"}), 400
+
+    if len(pronouns) > 15:
+        return jsonify({"error": "invalid pronouns"}), 400
+
+    allowed = {"Light", "Dark", "Wind", "Lightning", "Fire", "Ice"}
+    if damage_type and damage_type not in allowed:
+        return jsonify({"error": "invalid damage type"}), 400
+
+    if total > 100:
+        return jsonify({"error": "over-allocation"}), 400
+
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        conn.execute(
+            "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
+            ("player_pronouns", pronouns),
+        )
+        conn.execute(
+            "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
+            ("player_stats", json.dumps({"hp": hp, "attack": attack, "defense": defense})),
+        )
+        if damage_type:
+            conn.execute(
+                "INSERT OR REPLACE INTO damage_types (id, type) VALUES (?, ?)",
+                ("player", damage_type),
+            )
+    return jsonify({"status": "ok"})
 
 
 def load_party(run_id: str) -> Party:

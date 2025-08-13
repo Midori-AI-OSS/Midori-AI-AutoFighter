@@ -10,4 +10,5 @@ class Ally(PlayerBase):
     id = "ally"
     name = "Ally"
     char_type = CharacterType.B
+    gacha_rarity = 5
     base_damage_type: str = field(default_factory=lambda: get_damage_type("Ally"))

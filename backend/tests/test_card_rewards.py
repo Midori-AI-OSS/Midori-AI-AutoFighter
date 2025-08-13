@@ -41,7 +41,7 @@ async def test_battle_offers_choices_and_applies_effect(app_with_db, monkeypatch
     app, db_path = app_with_db
     client = app.test_client()
 
-    start_resp = await client.post("/run/start")
+    start_resp = await client.post("/run/start", json={"party": ["player"]})
     run_id = (await start_resp.get_json())["run_id"]
     await client.put(f"/party/{run_id}", json={"party": ["player"]})
 

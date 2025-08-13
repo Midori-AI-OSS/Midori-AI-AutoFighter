@@ -1,5 +1,9 @@
-export async function startRun() {
-  const res = await fetch('http://localhost:59002/run/start', { method: 'POST' });
+export async function startRun(party, damageType = '') {
+  const res = await fetch('http://localhost:59002/run/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ party, damage_type: damageType })
+  });
   return res.json();
 }
 
@@ -45,6 +49,43 @@ export async function restRoom(runId, action = '') {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action })
+  });
+  return res.json();
+}
+
+export async function getGacha() {
+  const res = await fetch('http://localhost:59002/gacha');
+  return res.json();
+}
+
+export async function pullGacha(count = 1) {
+  const res = await fetch('http://localhost:59002/gacha/pull', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ count })
+  });
+  return res.json();
+}
+
+export async function setAutoCraft(enabled) {
+  const res = await fetch('http://localhost:59002/gacha/auto-craft', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled })
+  });
+  return res.json();
+}
+
+export async function getPlayerConfig() {
+  const res = await fetch('http://localhost:59002/player/editor');
+  return res.json();
+}
+
+export async function savePlayerConfig(config) {
+  const res = await fetch('http://localhost:59002/player/editor', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config)
   });
   return res.json();
 }

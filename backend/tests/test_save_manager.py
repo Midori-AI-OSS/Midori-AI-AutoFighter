@@ -20,7 +20,7 @@ def test_password_derives_key(tmp_path, monkeypatch):
             "INSERT INTO runs (id, party, map) VALUES ('1', '[]', '[]')"
         )
         version = conn.execute("PRAGMA user_version").fetchone()[0]
-    assert version == 1
+    assert version == 2
     mgr2 = SaveManager.from_env()
     with mgr2.connection() as conn:
         cur = conn.execute("SELECT COUNT(*) FROM runs")

@@ -6,7 +6,12 @@ import {
   getPlayers,
   battleRoom,
   shopRoom,
-  restRoom
+  restRoom,
+  getPlayerConfig,
+  savePlayerConfig,
+  getGacha,
+  pullGacha,
+  setAutoCraft
 } from '../src/lib/api.js';
 
 // Helper to mock fetch
@@ -17,7 +22,7 @@ function createFetch(response) {
 describe('api calls', () => {
   test('startRun returns run data', async () => {
     global.fetch = createFetch({ run_id: '123', map: [] });
-    const result = await startRun();
+    const result = await startRun(['player']);
     expect(result).toEqual({ run_id: '123', map: [] });
   });
 
@@ -55,5 +60,36 @@ describe('api calls', () => {
     global.fetch = createFetch({ result: 'rest', party: [], foes: [] });
     const result = await restRoom('abc', 'sleep');
     expect(result).toEqual({ result: 'rest', party: [], foes: [] });
+  });
+
+  test('getPlayerConfig fetches editor data', async () => {
+    const payload = { pronouns: 'they', damage_type: 'Fire', hp: 0, attack: 0, defense: 0 };
+    global.fetch = createFetch(payload);
+    const result = await getPlayerConfig();
+    expect(result).toEqual(payload);
+  });
+
+  test('savePlayerConfig posts editor data', async () => {
+    global.fetch = createFetch({ status: 'ok' });
+    const result = await savePlayerConfig({ pronouns: 'they', damage_type: 'Fire', hp: 1, attack: 2, defense: 3 });
+    expect(result).toEqual({ status: 'ok' });
+  });
+
+  test('getGacha retrieves state', async () => {
+    global.fetch = createFetch({ pity: 0, items: {}, players: [] });
+    const result = await getGacha();
+    expect(result).toEqual({ pity: 0, items: {}, players: [] });
+  });
+
+  test('pullGacha posts count', async () => {
+    global.fetch = createFetch({ results: [], pity: 0 });
+    const result = await pullGacha(5);
+    expect(result).toEqual({ results: [], pity: 0 });
+  });
+
+  test('setAutoCraft posts flag', async () => {
+    global.fetch = createFetch({ status: 'ok', auto_craft: true });
+    const result = await setAutoCraft(true);
+    expect(result).toEqual({ status: 'ok', auto_craft: true });
   });
 });

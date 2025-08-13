@@ -64,6 +64,11 @@ class MapGenerator:
                 if room_types[i] != "shop":
                     room_types[i], room_types[swap_index] = room_types[swap_index], room_types[i]
                     break
+        if room_types and room_types[0] in {"shop", "rest"}:
+            for i, rt in enumerate(room_types[1:], start=1):
+                if rt not in {"shop", "rest"}:
+                    room_types[0], room_types[i] = room_types[i], room_types[0]
+                    break
         for rt in room_types:
             nodes.append(
                 MapNode(

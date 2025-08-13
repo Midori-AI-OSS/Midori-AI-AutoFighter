@@ -10,4 +10,5 @@ class Bubbles(PlayerBase):
     id = "bubbles"
     name = "Bubbles"
     char_type = CharacterType.A
+    gacha_rarity = 5
     base_damage_type: str = field(default_factory=lambda: get_damage_type("Bubbles"))

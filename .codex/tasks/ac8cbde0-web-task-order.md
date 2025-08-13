@@ -9,13 +9,7 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
- - [x] [Implement relic system](done/388bd733-relic-system.md) (`388bd733`)
-- [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
-- [ ] [Build gacha character recruitment](4d680dc8-gacha-recruitment.md) (`4d680dc8`)
-- [ ] [Add player character editor endpoint](6d267bac-player-character-editor-endpoint.md) (`6d267bac`)
-- [ ] [Add party picker endpoint for run setup](5ddc2157-party-picker-endpoint.md) (`5ddc2157`)
-- [ ] [Lock player stat editing during runs](1c7a29fa-lock-stat-editing.md) (`1c7a29fa`)
- - [x] [Persist random damage types](done/28c2b708-persist-damage-types.md) (`28c2b708`)
+ - [x] [Build gacha character recruitment](done/4d680dc8-gacha-recruitment.md) (`4d680dc8`)
 
 ### Completed
  - [x] [Integrate passive plugin system](done/822626e9-passive-system.md) (`822626e9`)
@@ -33,6 +27,10 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
  - [x] [Track shop purchases in shared party inventory](done/df5abccd-shop-inventory-tracking.md) (`df5abccd`)
  - [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
  - [x] [Implement relic system](done/388bd733-relic-system.md) (`388bd733`)
+ - [x] [Persist random damage types](done/28c2b708-persist-damage-types.md) (`28c2b708`)
+ - [x] [Add party picker endpoint for run setup](done/5ddc2157-party-picker-endpoint.md) (`5ddc2157`)
+ - [x] [Add player character editor endpoint](done/6d267bac-player-character-editor-endpoint.md) (`6d267bac`)
+ - [x] [Lock player stat editing during runs](done/1c7a29fa-lock-stat-editing.md) (`1c7a29fa`)
 
 ## Context
 Switching from Panda3D to a web-based GUI with a Quart backend managed via Docker Compose.

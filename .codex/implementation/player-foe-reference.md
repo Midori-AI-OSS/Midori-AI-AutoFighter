@@ -7,6 +7,9 @@ Players currently share placeholder stats of 1000 HP, 100 attack, 50 defense,
 5% crit rate, 2× crit damage, 1% effect hit, 100 mitigation, 0 dodge, and 1
 for remaining values.
 
+Player plugins also include a `gacha_rarity` field so the gacha system can
+automatically discover 5★ and 6★ recruits.
+
 - **Ally** (B, random) – applies `ally_passive` on load to grant ally-specific bonuses.
 - **Becca** (B, random) – builds high attack but takes more damage from lower defense.
 - **Bubbles** (A, random) – starts with a default item and applies `bubbles_passive`.
