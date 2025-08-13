@@ -6,3 +6,5 @@ Offers upgrade items and cards for gold with a reroll option.
 - **Reroll** – spending 10 gold refreshes the entire stock.
 - **Persistence** – exiting saves remaining gold and acquired items through `save_player`.
 - **Spawn rules** – `ShopRoom.should_spawn` ensures at least two shops appear per floor by tracking spawns in `spawns_per_floor`.
+
+The Svelte frontend exposes a stub `ShopMenu` built with `MenuPanel` that lists stock and provides **Buy**, **Reroll**, and **Leave** actions.

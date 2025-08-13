@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Play, Users, Settings, SquareChartGantt } from 'lucide-svelte';
   import PartyPicker from '$lib/PartyPicker.svelte';
-  import RunMap from '$lib/RunMap.svelte';
+  import MapDisplay from '$lib/MapDisplay.svelte';
   import GameViewport from '$lib/GameViewport.svelte';
   import { layoutForWidth } from '$lib/layout.js';
   import {
@@ -189,6 +189,6 @@
   <div class="panel section" style="margin: 1rem;">
     <h3>Run</h3>
     <p data-testid="run-id" style="margin:0 0 0.5rem 0;">Run: {runId}</p>
-    <RunMap map={currentMap} on:select={(e) => handleRoom(e.detail)} />
+    <MapDisplay map={currentMap} on:select={(e) => handleRoom(e.detail)} />
   </div>
 {/if}

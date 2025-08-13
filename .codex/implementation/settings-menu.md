@@ -1,13 +1,11 @@
 # Settings Menu
 
-The `SettingsMenu` component provides volume sliders for sound, music, and
-voice. It renders within the shared `OverlaySurface` so the panel fills the
-viewport beneath the stained-glass bar and scales with the window. The
-surface clips overflow, so the menu's container uses flexible sizing to stay
-just inside the available space without triggering scrollbars.
-
-Selecting **Settings** from the main menu or in-game toolbar opens this menu.
-Changes are not persisted yet; both **Confirm** and **Cancel** close the menu.
+The `SettingsMenu` component groups options into **Audio**, **Gameplay**, and
+**Server** sections inside a shared `MenuPanel`. Sliders adjust sound, music,
+and voice volumes; a dropdown toggles between Light, Dark, or Editable themes;
+and a **Frame Rate Cap** selector offers 30, 60, or 120 FPS. The backend polling
+rate derives from the selected cap (`1000 ÷ fps`). The menu auto-saves whenever a
+value changes and exposes a single **Close** button to exit.
 
 ## Testing
 - `bun test`

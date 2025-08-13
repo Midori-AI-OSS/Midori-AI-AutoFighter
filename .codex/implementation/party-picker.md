@@ -7,10 +7,10 @@ The roster only shows owned characters plus the player's avatar, which is pinned
 The layout uses percentage-based columns so the roster, preview, and stats
 panels all shrink with the viewport. Roster portraits fill a four‑column
 grid where each card spans **25%** of the available width, keeping images a
-constant ratio of the menu. The grid sits slightly under the overlay
-surface (about 99% of its width and height) to avoid a surrounding
-scrollbar. Preview portraits scale without a minimum size so they remain
-visible on small screens.
+constant ratio of the menu. Content is wrapped in `MenuPanel`, which sizes
+itself just under the overlay surface to avoid a surrounding scrollbar.
+Preview portraits scale without a minimum size so they remain visible on
+small screens.
 
 `PartyPicker` exposes the `selected` array as a bound prop so parents can reactively read the lineup. Menus close through their own navigation controls; no explicit confirm action is required.
 

@@ -3,6 +3,7 @@
   import { getPlayers } from './api.js';
   import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
   import { getCharacterImage, getHourlyBackground, getRandomFallback } from './assetLoader.js';
+  import MenuPanel from './MenuPanel.svelte';
 
   let background = '';
 
@@ -393,8 +394,8 @@
     {/each}
   </div>
 {:else}
+  <MenuPanel>
   <div class="full" data-testid="party-picker">
-    <!-- Left: Roster grid cards -->
     <!-- Left: Roster grid cards -->
     <div class="roster-grid">
       {#each roster as char}
@@ -476,4 +477,5 @@
       {/if}
     </div>
   </div>
+  </MenuPanel>
 {/if}

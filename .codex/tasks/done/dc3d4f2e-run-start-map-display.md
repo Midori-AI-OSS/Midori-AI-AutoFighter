@@ -1,7 +1,7 @@
 # Run start and map display
 
 ## Summary
-Trigger a run from the menu, collect party selection, and show a basic floor map.
+ Trigger a run from the menu, collect party selection, and show a basic icon-based floor map.
 
 ## Tasks
 - Start the gameplay loop when Start/Load Run is selected.
@@ -10,4 +10,4 @@ Trigger a run from the menu, collect party selection, and show a basic floor map
 
 ## Acceptance Criteria
 - Run button opens a modal PartyPicker and, after confirmation, displays the run ID and map buttons.
-- `bun test` covers the new RunMap and PartyPicker components and passes.
+- `bun test` covers the MapDisplay and PartyPicker components and passes.

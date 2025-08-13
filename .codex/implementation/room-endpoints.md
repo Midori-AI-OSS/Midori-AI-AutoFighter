@@ -28,9 +28,9 @@ maps.
   party by 5% of its total max HP, deducts the provided `cost` from the shared
   gold pool, and appends any purchased `item` to a shared relic list. Responses
   include updated `gold`, `relics`, and `cards` values.
-- `POST /rooms/<run_id>/rest` – validates the next node is a rest room, heals
-  the party to full, and advances the map pointer. Responses include the current
-  `cards` inventory.
+- `POST /rooms/<run_id>/rest` – validates the next node is a rest room, allows
+  gacha pulls or party swaps, and advances the map pointer. Responses include the
+  current `cards` inventory.
 - `POST /rooms/<run_id>/boss` – validates the next node is a `battle-boss-floor`
   room and runs a high-powered battle before advancing the map pointer. Responses
   mirror normal battles but scale foe stats heavily and offer higher-star

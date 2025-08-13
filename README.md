@@ -81,8 +81,8 @@ docker compose --profile llm-cpu up --build    # backend on 59002
 
 The Svelte frontend targets three breakpoints:
 
-- **Desktop** – displays the party picker, player editor, and floor map around
-  the active menu so most information is visible at once.
+ - **Desktop** – displays the party picker, player editor, and icon-based floor
+  map around the active menu so most information is visible at once.
 - **Tablet** – shows two panels side by side when space permits.
 - **Phone** – focuses on a single menu at a time for clarity on small screens.
 
@@ -146,9 +146,9 @@ next battle.
 
 ## Rest Room
 
-Recover HP or trade upgrade stones for a +5 Max HP boost. Each floor permits one
-rest, and map generation ensures at least two rest rooms per floor. The scene
-displays a brief message after the action.
+Pull for new characters, craft items, or rearrange the party before continuing a
+run. Map generation ensures at least two rest rooms per floor, and any recruits
+join the roster immediately.
 
 ## Shop Room
 
@@ -172,7 +172,9 @@ map appears. Runs then progress through 45-room floors built by a seeded
 `MapGenerator`. Each floor includes at least two shops and two rest rooms,
 battle nodes marked as `battle-weak` or `battle-normal`, and ends in a
 `battle-boss-floor`. Chat scenes may appear after battles only when the LLM
-profiles are installed and do not affect room count.
+profiles are installed and do not affect room count. The frontend shows these
+nodes as stained-glass buttons with `lucide-svelte` icons for battles, shops,
+rests, and bosses.
 
 ## Playable Characters
 

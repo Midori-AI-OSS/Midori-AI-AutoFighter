@@ -23,7 +23,7 @@ Source code lives under the backend:
  - Opening the Stat Screen pauses gameplay if the Options menu enables **Pause on Stat Screen**.
 - Damage-over-time and healing-over-time effects are handled by an `EffectManager` that records active effect names on `Stats`, supports Bleed, Celestial Atrophy, Abyssal Corruption that spreads on death, Blazing Torment with extra ticks via an `on_action` hook, and Impact Echo repeating half the last hit.
 - Selecting *New Run* starts a Battle Room that exchanges event-bus-driven turns with stat-based accuracy, scaled foes, floating damage numbers, attack effects, status icons, and an overtime warning after 100 turns (500 for floor bosses) that grants an Enraged buff.
- - Rest Rooms allow one heal or trade per floor, play a brief message animation, and at least two must appear on each floor via `RestRoom.should_spawn`.
+ - Rest Rooms grant access to gacha pulls and party swapping without advancing the run, and at least two must appear on each floor via `RestRoom.should_spawn`.
  - Shop Rooms sell upgrade items and cards with gold pricing, star ratings, floor-based inventory scaling, and reroll costs. Purchases add items to inventory, and class-level tracking ensures at least two appear per floor.
  - Event Rooms present text prompts with selectable options that deterministically modify stats or inventory using seeded randomness. They may occur after battles without consuming the floor's room count.
  - Chat Rooms let players send a single message to an LLM character. Usage is limited to six chats per floor, and rooms should not spawn once the limit is reached.

@@ -1,7 +1,9 @@
-# Player Customization
+# Player Editor
 
-The `PlayerCreator` menu lets players choose a body type, hair style and color, and an accessory before allocating stat points.
-Body types correspond to the `CharacterType` enum: Type A (Masculine), Type B (Feminine), and Type C (Androgynous).
+`PlayerEditor` is currently a placeholder in the frontend. It will eventually
+let players set custom pronouns up to 15 characters, pick a starting damage
+type—Light, Dark, Wind, Lightning, Fire, or Ice—and allocate stat points before
+starting a run.
 
 - Players start with 100 base points and may gain bonus points from owning 100 of each damage type's 4★ upgrade items.
 - Sliders for HP, Attack, and Defense clamp so the sum never exceeds the available pool.

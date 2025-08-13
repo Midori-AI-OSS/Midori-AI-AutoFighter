@@ -2,9 +2,8 @@
 
 Describes the rest room scene.
 
-- Offers a choice to heal or trade items.
+- Offers gacha pulls or party swapping without advancing the run.
 - Uses are limited per floor; options disable after the allowance is spent.
-- Trading one Upgrade Stone grants +5 Max HP and heals to full.
-- At least two Rest Rooms must spawn on each floor, enforced via `RestRoom.should_spawn`.
-- Plays a short message animation after healing or trading.
+- At least two Rest Rooms must spawn on each floor, enforced via
+  `RestRoom.should_spawn`.
 - Escape returns to the previous scene.
