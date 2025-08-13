@@ -11,8 +11,10 @@ bun dev
 ```
 
 The development server runs at `http://localhost:59001` and displays a
-high-contrast icon grid powered by `lucide-svelte`. Clicking **Run** opens a
-modal party picker that fetches available characters from the backend and only
-shows those you own plus your avatar. After confirming the lineup the app starts
-a run, saves the party, and shows the generated map as a row of buttons.
+high-contrast icon grid powered by `lucide-svelte`. Clicking **Party** opens a
+responsive party picker overlay that fetches available characters from the
+backend and lets you add or remove allies with a single button. Portraits
+use four equal columns so each image scales to 25% of the roster width, and
+no confirm action is required. The **Settings** icon opens a similar overlay
+with volume sliders.
 

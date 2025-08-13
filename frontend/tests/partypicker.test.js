@@ -8,9 +8,9 @@ describe('PartyPicker component', () => {
     expect(content).toContain('data-testid="party-picker"');
   });
 
-  test('includes confirm button test id', () => {
+  test('includes add/remove control', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/PartyPicker.svelte'), 'utf8');
-    expect(content).toContain('data-testid="confirm"');
+    expect(content).toContain('Add to party');
   });
 });
 

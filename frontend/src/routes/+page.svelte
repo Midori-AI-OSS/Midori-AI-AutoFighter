@@ -6,8 +6,6 @@
   import GameViewport from '$lib/GameViewport.svelte';
   import { layoutForWidth } from '$lib/layout.js';
   import {
-    startRun,
-    updateParty,
     battleRoom,
     shopRoom,
     restRoom
@@ -18,29 +16,15 @@
   let currentMap = [];
   let selectedParty = ['sample_player'];
   let roomData = null;
-  let showPicker = false;
-  let pickerMode = '';
   let viewportBg = '';
+  let viewMode = 'main';
 
   function handleStart() {
-    pickerMode = 'start';
-    showPicker = true;
+    viewMode = 'party';
   }
 
   function handleParty() {
-    pickerMode = 'party';
-    showPicker = false;
-  }
-
-  async function startAfterPick(event) {
-    selectedParty = event.detail;
-    if (pickerMode === 'start') {
-      const data = await startRun();
-      runId = data.run_id;
-      currentMap = data.map;
-      await updateParty(runId, selectedParty);
-    }
-    showPicker = false;
+    viewMode = 'party';
   }
 
   async function handleRoom(room) {
@@ -57,25 +41,9 @@
   const items = [
     { icon: Play, label: 'Run', action: handleStart },
     { icon: Users, label: 'Party', action: handleParty },
-    { icon: Settings, label: 'Settings', action: handleSettings },
+    { icon: Settings, label: 'Settings', action: () => (viewMode = 'settings') },
     { icon: SquareChartGantt, label: 'Stats' }
   ];
-  // Settings controls
-  let showSettings = false;
-  let soundVol = 50;
-  let musicVol = 50;
-  let voiceVol = 50;
-
-  function handleSettings() {
-    showSettings = true;
-  }
-  function confirmSettings() {
-    // TODO: apply volume settings via API or state
-    showSettings = false;
-  }
-  function cancelSettings() {
-    showSettings = false;
-  }
 
   onMount(() => {
     const update = () => (width = window.innerWidth);
@@ -190,10 +158,8 @@
       runId={runId}
       roomData={roomData}
       background={viewportBg}
-      showPicker={showPicker}
-      pickerMode={pickerMode}
       bind:selected={selectedParty}
-      on:confirm={startAfterPick}
+      bind:viewMode={viewMode}
     />
   </div>
 
@@ -224,30 +190,5 @@
     <h3>Run</h3>
     <p data-testid="run-id" style="margin:0 0 0.5rem 0;">Run: {runId}</p>
     <RunMap map={currentMap} on:select={(e) => handleRoom(e.detail)} />
-  </div>
-{/if}
-
-<!-- Settings Panel -->
-{#if showSettings}
-  <div class="overlay">
-    <div class="panel section" style="width: 90%; max-width: 400px;">
-      <h3>Settings</h3>
-      <div>
-        <label for="sound-vol">Sound Volume: {soundVol}%</label>
-        <input id="sound-vol" type="range" min="0" max="100" bind:value={soundVol} />
-      </div>
-      <div>
-        <label for="music-vol">Music Volume: {musicVol}%</label>
-        <input id="music-vol" type="range" min="0" max="100" bind:value={musicVol} />
-      </div>
-      <div>
-        <label for="voice-vol">Voice Volume: {voiceVol}%</label>
-        <input id="voice-vol" type="range" min="0" max="100" bind:value={voiceVol} />
-      </div>
-      <div class="stats-confirm" style="margin-top:1rem; display:flex; justify-content:flex-end; gap:0.5rem;">
-        <button class="cell" on:click={cancelSettings}>Cancel</button>
-        <button class="cell" on:click={confirmSettings}>Confirm</button>
-      </div>
-    </div>
   </div>
 {/if}

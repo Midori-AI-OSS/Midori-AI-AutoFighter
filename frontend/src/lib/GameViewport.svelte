@@ -1,31 +1,25 @@
 <script>
   import { ArrowLeft } from 'lucide-svelte';
-  let viewMode = 'main'; // 'main' or 'party'
-  import { createEventDispatcher } from 'svelte';
   import RoomView from './RoomView.svelte';
   import PartyPicker from './PartyPicker.svelte';
+  import SettingsMenu from './SettingsMenu.svelte';
+  import OverlaySurface from './OverlaySurface.svelte';
   import { Diamond, User, Users, Settings, Play, LogOut } from 'lucide-svelte';
   import { onMount } from 'svelte';
   import { getHourlyBackground } from './assetLoader.js';
-  
+
   export let runId = '';
   export let roomData = null;
   export let background = '';
+  export let viewMode = 'main'; // 'main', 'party', 'settings'
   let randomBg = '';
-  
+
   onMount(() => {
     if (!background) {
       randomBg = getHourlyBackground();
     }
   });
-  export let showPicker = false;
-  export let pickerMode = '';
   export let selected = [];
-
-  const dispatch = createEventDispatcher();
-  function handleConfirm(e) {
-    dispatch('confirm', e.detail);
-  }
 </script>
 
 <style>
@@ -52,27 +46,24 @@
     opacity: 0.99;
   }
   .viewport-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  /* height and max-height removed to restore aspect ratio */
-  overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
   .viewport {
-  aspect-ratio: 16 / 9;
-  width: 100%;
-  border: 2px solid #fff;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-image: var(--bg);
-  background-size: cover;
-  background-position: center;
-  /* height and max-height removed to restore aspect ratio */
-  overflow: hidden;
+    --ui-top-offset: calc(1.2rem + 2.9rem + 1.2rem);
+    width: 100%;
+    height: 100%;
+    border: 2px solid #fff;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-image: var(--bg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
   }
   .placeholder {
     color: #ddd;
@@ -132,21 +123,6 @@
     box-shadow: 0 2px 8px 0 rgba(0,40,120,0.18);
   }
 
-  /* Party picker fullscreen container below top bar */
-  .party-mode-surface {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 5.2rem; /* below stained glass bar */
-    display: flex;
-    padding: 0.4rem 0.75rem 0.75rem 0.75rem;
-    box-sizing: border-box;
-    z-index: 5; /* under top bar */
-    max-height: calc(85% - 5.2rem);
-    overflow: hidden;
-  }
-
 </style>
 
 <div class="viewport-wrap">
@@ -158,10 +134,10 @@
         <button class="icon-btn" title="User">
           <User size={22} color="#fff" />
         </button>
-        <button class="icon-btn" title="Settings">
+        <button class="icon-btn" title="Settings" on:click={() => viewMode = 'settings'}>
           <Settings size={22} color="#fff" />
         </button>
-        {#if viewMode === 'party'}
+        {#if viewMode !== 'main'}
           <button class="icon-btn" title="Back to Menu" on:click={() => viewMode = 'main'}>
             <ArrowLeft size={22} color="#fff" />
           </button>
@@ -175,7 +151,7 @@
             <button class="icon-btn" title="Party" on:click={() => viewMode = 'party'}>
               <Users size={32} color="#fff" />
             </button>
-            <button class="icon-btn" title="Settings">
+            <button class="icon-btn" title="Settings" on:click={() => viewMode = 'settings'}>
               <Settings size={32} color="#fff" />
             </button>
             <button class="icon-btn" title="Exit">
@@ -189,10 +165,15 @@
           {/if}
         {/if}
         {#if viewMode === 'party'}
-          <div class="party-mode-surface">
+          <OverlaySurface>
             <!-- full party picker overlay: show roster, preview, and stats -->
-            <PartyPicker bind:selected={selected} showConfirm on:confirm={handleConfirm} />
-          </div>
+            <PartyPicker bind:selected={selected} />
+          </OverlaySurface>
+        {/if}
+        {#if viewMode === 'settings'}
+          <OverlaySurface>
+            <SettingsMenu on:close={() => viewMode = 'main'} />
+          </OverlaySurface>
         {/if}
   </div>
   

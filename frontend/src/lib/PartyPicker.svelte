@@ -1,17 +1,15 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { getPlayers } from './api.js';
   import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
   import { getCharacterImage, getHourlyBackground, getRandomFallback } from './assetLoader.js';
 
-  const dispatch = createEventDispatcher();
   let background = '';
 
   let roster = [];
   let error = '';
 
   export let selected = [];
-  export let showConfirm = false;
   export let compact = false;
   let previewId;
 
@@ -44,23 +42,20 @@
     }
   });
 
-  function toggle(id) {
+  function select(id) {
     const char = roster.find(c => c.id === id);
-    if (char && char.is_player) {
-      // allow preview of player but prevent toggling selection
+    if (char) {
       previewId = id;
-      return;
     }
-    if (selected.includes(id)) {
-      selected = selected.filter(c => c !== id);
-    } else if (selected.length < 4) {
-      selected = [...selected, id];
-    }
-    previewId = id;
   }
 
-  function confirm() {
-    dispatch('confirm', selected);
+  function toggleMember() {
+    if (!previewId) return;
+    if (selected.includes(previewId)) {
+      selected = selected.filter(c => c !== previewId);
+    } else if (selected.length < 4) {
+      selected = [...selected, previewId];
+    }
   }
 
   function iconFor(element) {
@@ -87,44 +82,20 @@
     width: min(90vw, 480px);
     max-height: 80vh;
   }
-  /* Fullscreen layout inside game viewport */
-  .party-picker-in-viewport {
-  position: absolute;
-  top: 5rem;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: calc(100vh - 5rem);
-  max-width: 100vw;
-  max-height: calc(100vh - 5rem);
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  z-index: 20;
-  overflow: auto;
-  }
   .full {
-  display: grid;
-  grid-template-columns: 200px 1fr 350px;
-  gap: 0.75rem;
-  width: 100%;
-  height: 100%;
-  max-width: 100vw;
-  max-height: 100vh;
-  background: rgba(0,0,0,0.65);
-  border: 2px solid #777;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  backdrop-filter: blur(4px);
-  overflow: hidden;
-  }
-  .full > .roster {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    border-right: 2px solid #444;
-    border-left: 2px solid #444;
-    min-width: 0;
+    grid-template-columns: minmax(8rem, 22%) 1fr minmax(12rem, 26%);
+    gap: 0.75rem;
+    width: 99.5%;
+    height: 99.5%;
+    max-width: 99.5%;
+    max-height: 99.5%;
+    background: rgba(0,0,0,0.65);
+    border: 2px solid #777;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);
+    overflow: hidden;
   }
   .panel.compact {
     width: 100%;
@@ -188,7 +159,7 @@
     border-width: 1px;
   }
   :global(.elem) { width: 18px; height: 18px; opacity: 0.85; }
-  .preview { 
+  .preview {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -196,12 +167,14 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
   }
   .preview img {
-    max-width: 80%;
-    max-height: 80%;
     width: auto;
     height: auto;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     border: 3px solid #555;
     background: #222;
@@ -288,12 +261,15 @@
   }
   .roster-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(0, 25%));
     gap: 0.4rem;
     padding: 0.4rem;
     height: 100%;
     overflow-y: auto;
     justify-content: stretch;
+    border-right: 2px solid #444;
+    border-left: 2px solid #444;
+    min-width: 0;
   }
   .char-card {
   position: relative;
@@ -306,7 +282,6 @@
   width: 100%;
   aspect-ratio: 1;
   max-height: 100%;
-  min-height: 50px;
   margin: 0 auto;
   padding: 0;
   background: none;
@@ -412,7 +387,7 @@
       <button
         data-testid={`choice-${char.id}`}
         class="char-btn"
-        on:click={() => toggle(char.id)}>
+        on:click={() => select(char.id)}>
         <img src={char.img} alt={char.name} class="compact-img" />
       </button>
     {/each}
@@ -427,7 +402,7 @@
           data-testid={`choice-${char.id}`}
           class="char-card"
           class:selected={selected.includes(char.id)}
-          on:click={() => toggle(char.id)}>
+          on:click={() => select(char.id)}>
           <img src={char.img} alt={char.name} class="card-img" />
           <div class="card-overlay">
             <!-- use default small element icon -->
@@ -492,9 +467,11 @@
       {:else}
         <div class="stats-placeholder">Select a character to view stats</div>
       {/if}
-      {#if showConfirm}
+      {#if previewId}
         <div class="stats-confirm">
-          <button class="confirm" data-testid="confirm" on:click={confirm}>Confirm</button>
+          <button class="confirm" on:click={toggleMember}>
+            {selected.includes(previewId) ? 'Remove from party' : 'Add to party'}
+          </button>
         </div>
       {/if}
     </div>

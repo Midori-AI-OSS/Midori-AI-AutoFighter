@@ -4,6 +4,8 @@ export { default as PartyPicker } from './PartyPicker.svelte';
 export { default as PlayerEditor } from './PlayerEditor.svelte';
 export { default as StatsPanel } from './StatsPanel.svelte';
 export { default as RoomView } from './RoomView.svelte';
+export { default as OverlaySurface } from './OverlaySurface.svelte';
+export { default as SettingsMenu } from './SettingsMenu.svelte';
 export { layoutForWidth } from './layout.js';
 export {
   startRun,

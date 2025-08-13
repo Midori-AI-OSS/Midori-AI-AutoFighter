@@ -32,7 +32,8 @@ The main menu has been refactored to implement the Arknights-inspired design spe
 ## Technical Implementation
 
 ### Scaling System
-- All elements use `get_widget_scale()` for 16:9 consistency
+- Menus rely on responsive CSS; elements scale with the viewport rather
+  than a fixed 16:9 ratio.
 - Button scale: 2.0x base (2.1x when highlighted)
 - Icon scale: 1.2x base
 - Top bar and banner use proper frameSize for precise positioning
