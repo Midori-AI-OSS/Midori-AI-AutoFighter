@@ -12,6 +12,9 @@ The `Stats` dataclass stores core attributes for both players and foes:
 - **Status Lists:** `passives`, `dots`, `hots`, `damage_types`, `relics`
 
 `base_damage_type` is a `DamageType` plugin instance (default `Generic`) instead of a string, allowing damage hooks.
+Characters with random base damage types store their first rolled element in the
+save database and reuse it on later loads so elements stay consistent across
+sessions.
 
 `apply_damage()` and `apply_healing()` update `hp` and track totals such as `damage_taken` and `last_damage_taken`.
 

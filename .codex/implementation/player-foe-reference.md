@@ -25,6 +25,9 @@ for remaining values.
 - **Mimic** (C, random) – copies the player then lowers its stats by 25% on spawn.
 - **Player** (C, chosen) – avatar representing the user and may select any non-Generic damage type.
 
+Characters marked as "random" roll one of the six elements when first loaded
+and reuse that element in future sessions.
+
 ## Foe Generation
 Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. They are
 procedurally named by pairing an adjective from `themed_ajt` with a themed name

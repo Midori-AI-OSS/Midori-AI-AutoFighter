@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+import copy
 import random
 
-from dataclasses import asdict
-from dataclasses import dataclass
-from dataclasses import fields
 from typing import Any
+from dataclasses import asdict
+from dataclasses import fields
+from dataclasses import dataclass
 
+from .party import Party
 from .stats import Stats
 from .mapgen import MapNode
 from plugins import foes as foe_plugins
 from .passives import PassiveRegistry
+from autofighter.cards import apply_cards
+from autofighter.cards import card_choices
+from autofighter.relics import apply_relics
 from plugins.foes._base import FoeBase
-from plugins.players._base import PlayerBase
 
 
 def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
@@ -34,8 +38,8 @@ def _serialize(obj: Stats) -> dict[str, Any]:
     return data
 
 
-def _choose_foe(party: list[PlayerBase]) -> FoeBase:
-    party_ids = {p.id for p in party}
+def _choose_foe(party: Party) -> FoeBase:
+    party_ids = {p.id for p in party.members}
     candidates = [
         getattr(foe_plugins, name)
         for name in getattr(foe_plugins, "__all__", [])
@@ -51,83 +55,145 @@ def _choose_foe(party: list[PlayerBase]) -> FoeBase:
 class Room:
     node: MapNode
 
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
 
 @dataclass
 class BattleRoom(Room):
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
         foe = _choose_foe(party)
         _scale_stats(foe, self.node)
-        for member in party:
+        combat_party = Party(
+            members=[copy.deepcopy(m) for m in party.members],
+            gold=party.gold,
+            relics=party.relics,
+            cards=party.cards,
+        )
+        apply_cards(combat_party)
+        apply_relics(combat_party)
+        for member, orig in zip(combat_party.members, party.members):
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
             foe.hp = max(foe.hp - member.atk, 0)
             member.apply_damage(foe.atk)
+            orig.hp = min(member.hp, orig.max_hp)
+        options = card_choices(party, stars=1)
         foes = [_serialize(foe)]
-        party_data = [_serialize(p) for p in party]
-        return {"result": "battle", "party": party_data, "foes": foes}
+        party_data = [_serialize(p) for p in combat_party.members]
+        choice_data = [
+            {"id": c.id, "name": c.name, "stars": c.stars} for c in options
+        ]
+        return {
+            "result": "battle",
+            "party": party_data,
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+            "card_choices": choice_data,
+            "foes": foes,
+        }
 
 
 @dataclass
 class BossRoom(BattleRoom):
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
         foe = _choose_foe(party)
         _scale_stats(foe, self.node, 100)
-        for member in party:
+        combat_party = Party(
+            members=[copy.deepcopy(m) for m in party.members],
+            gold=party.gold,
+            relics=party.relics,
+            cards=party.cards,
+        )
+        apply_cards(combat_party)
+        apply_relics(combat_party)
+        for member, orig in zip(combat_party.members, party.members):
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
             foe.hp = max(foe.hp - member.atk, 0)
             member.apply_damage(foe.atk)
+            orig.hp = min(member.hp, orig.max_hp)
+        options = card_choices(party, stars=1)
         foes = [_serialize(foe)]
-        party_data = [_serialize(p) for p in party]
-        return {"result": "boss", "party": party_data, "foes": foes}
+        party_data = [_serialize(p) for p in combat_party.members]
+        choice_data = [
+            {"id": c.id, "name": c.name, "stars": c.stars} for c in options
+        ]
+        return {
+            "result": "boss",
+            "party": party_data,
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+            "card_choices": choice_data,
+            "foes": foes,
+        }
 
 
 @dataclass
 class ShopRoom(Room):
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
-        for member in party:
+        heal = int(sum(m.max_hp for m in party.members) * 0.05)
+        for member in party.members:
             registry.trigger("room_enter", member)
+            member.apply_healing(heal)
         cost = int(data.get("cost", 0))
         item = data.get("item")
-        total_gold = sum(p.gold for p in party)
-        if cost > 0 and total_gold >= cost:
-            remaining = cost
-            for member in party:
-                if remaining == 0:
-                    break
-                deduction = min(member.gold, remaining)
-                member.gold -= deduction
-                remaining -= deduction
-            if item and party:
-                party[0].relics.append(item)
-        party_data = [_serialize(p) for p in party]
-        return {"result": "shop", "party": party_data, "foes": []}
+        if cost > 0 and party.gold >= cost:
+            party.gold -= cost
+            if item:
+                party.relics.append(item)
+        party_data = [_serialize(p) for p in party.members]
+        return {
+            "result": "shop",
+            "party": party_data,
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+            "card": None,
+            "foes": [],
+        }
 
 
 @dataclass
 class RestRoom(Room):
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
-        for member in party:
+        for member in party.members:
             registry.trigger("room_enter", member)
             member.hp = member.max_hp
-        party_data = [_serialize(p) for p in party]
-        return {"result": "rest", "party": party_data, "foes": []}
+        party_data = [_serialize(p) for p in party.members]
+        return {
+            "result": "rest",
+            "party": party_data,
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+            "card": None,
+            "foes": [],
+        }
 
 
 @dataclass
 class ChatRoom(Room):
-    def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
+    def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
-        for member in party:
+        for member in party.members:
             registry.trigger("room_enter", member)
         message = data.get("message", "")
-        party_data = [_serialize(p) for p in party]
-        return {"result": "chat", "message": message, "party": party_data, "foes": []}
+        party_data = [_serialize(p) for p in party.members]
+        return {
+            "result": "chat",
+            "message": message,
+            "party": party_data,
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+            "card": None,
+            "foes": [],
+        }
 

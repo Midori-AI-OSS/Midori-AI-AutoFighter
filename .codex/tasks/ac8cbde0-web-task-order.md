@@ -10,14 +10,12 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 ## Tasks
 ### To Do
 - [ ] [Implement relic system](388bd733-relic-system.md) (`388bd733`)
-- [ ] [Implement card reward system](c7fd49f5-card-reward-system.md) (`c7fd49f5`)
+- [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
 - [ ] [Build gacha character recruitment](4d680dc8-gacha-recruitment.md) (`4d680dc8`)
-- [ ] [Provide player stat screen endpoint](9a1c88c4-stat-screen-endpoint.md) (`9a1c88c4`)
-- [ ] [Track shop purchases in shared party inventory](df5abccd-shop-inventory-tracking.md) (`df5abccd`)
 - [ ] [Add player character editor endpoint](6d267bac-player-character-editor-endpoint.md) (`6d267bac`)
 - [ ] [Add party picker endpoint for run setup](5ddc2157-party-picker-endpoint.md) (`5ddc2157`)
 - [ ] [Lock player stat editing during runs](1c7a29fa-lock-stat-editing.md) (`1c7a29fa`)
-- [ ] [Persist random damage types](28c2b708-persist-damage-types.md) (`28c2b708`)
+ - [x] [Persist random damage types](done/28c2b708-persist-damage-types.md) (`28c2b708`)
 
 ### Completed
  - [x] [Integrate passive plugin system](done/822626e9-passive-system.md) (`822626e9`)
@@ -31,6 +29,9 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
  - [x] [Add backend tests for run and rooms](5cc4df14-backend-tests.md) (`5cc4df14`)
  - [x] [Fix backend Dockerfile](done/34f8a5b0-fix-backend-dockerfile.md) (`34f8a5b0`)
  - [x] [Add Docker Compose profiles for LLM extras](e09f282f-compose-llm-profiles.md) (`e09f282f`)
+ - [x] [Provide player stat screen endpoint](done/9a1c88c4-stat-screen-endpoint.md) (`9a1c88c4`)
+ - [x] [Track shop purchases in shared party inventory](done/df5abccd-shop-inventory-tracking.md) (`df5abccd`)
+ - [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
 
 ## Context
 Switching from Panda3D to a web-based GUI with a Quart backend managed via Docker Compose.

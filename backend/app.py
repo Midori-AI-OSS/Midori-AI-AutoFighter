@@ -8,18 +8,26 @@ from pathlib import Path
 from dataclasses import asdict
 
 from quart import Quart
-from quart import request
 from quart import jsonify
+from quart import request
 from quart import send_from_directory
 
-from autofighter.mapgen import MapGenerator, MapNode
-from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
-from autofighter.save_manager import SaveManager
 from plugins import players as player_plugins
+from autofighter.cards import award_card
+from autofighter.mapgen import MapGenerator, MapNode
+from autofighter.party import Party
+from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
+from autofighter.stats import apply_status_hooks
+from plugins.players._base import PlayerBase
+from autofighter.save_manager import SaveManager
 
 
 SAVE_MANAGER = SaveManager.from_env()
 SAVE_MANAGER.migrate(Path(__file__).resolve().parent / "migrations")
+with SAVE_MANAGER.connection() as conn:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
+    )
 
 app = Quart(__name__)
 
@@ -47,6 +55,21 @@ async def assets(filename: str):
     return await send_from_directory(ASSETS_DIR, filename)
 
 
+def _assign_damage_type(player: PlayerBase) -> None:
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute(
+            "SELECT type FROM damage_types WHERE id = ?", (player.id,)
+        )
+        row = cur.fetchone()
+        if row:
+            player.base_damage_type = row[0]
+        else:
+            conn.execute(
+                "INSERT INTO damage_types (id, type) VALUES (?, ?)",
+                (player.id, player.base_damage_type),
+            )
+
+
 @app.post("/run/start")
 async def start_run() -> tuple[str, int, dict[str, str]]:
     run_id = str(uuid4())
@@ -56,7 +79,11 @@ async def start_run() -> tuple[str, int, dict[str, str]]:
     with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "INSERT INTO runs (id, party, map) VALUES (?, ?, ?)",
-            (run_id, json.dumps([]), json.dumps(state)),
+            (
+                run_id,
+                json.dumps({"members": [], "gold": 0, "relics": [], "cards": []}),
+                json.dumps(state),
+            ),
         )
     return jsonify({"run_id": run_id, "map": state})
 
@@ -64,7 +91,11 @@ async def start_run() -> tuple[str, int, dict[str, str]]:
 @app.put("/party/<run_id>")
 async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
-    party = data.get("party", [])
+    members = data.get("party", [])
+    gold = data.get("gold", 0)
+    relics = data.get("relics", [])
+    cards = data.get("cards", [])
+    party = {"members": members, "gold": gold, "relics": relics, "cards": cards}
     with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "UPDATE runs SET party = ? WHERE id = ?",
@@ -106,6 +137,7 @@ async def get_players() -> tuple[str, int, dict[str, str]]:
     for name in player_plugins.__all__:
         cls = getattr(player_plugins, name)
         inst = cls()
+        _assign_damage_type(inst)
         stats = asdict(inst)
         stats["char_type"] = inst.char_type.name
         roster.append(
@@ -121,19 +153,93 @@ async def get_players() -> tuple[str, int, dict[str, str]]:
     return jsonify({"players": roster})
 
 
-def load_party(run_id: str) -> list[player_plugins.PlayerBase]:
+def _get_stat_refresh_rate() -> int:
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        cur = conn.execute(
+            "SELECT value FROM options WHERE key = ?", ("stat_refresh_rate",)
+        )
+        row = cur.fetchone()
+    try:
+        rate = int(row[0]) if row else 5
+    except (TypeError, ValueError):
+        rate = 5
+    return max(1, min(rate, 10))
+
+
+@app.get("/player/stats")
+async def player_stats() -> tuple[str, int, dict[str, object]]:
+    refresh = _get_stat_refresh_rate()
+    player = player_plugins.player.Player()
+    _assign_damage_type(player)
+    apply_status_hooks(player)
+    stats = {
+        "core": {
+            "hp": player.hp,
+            "max_hp": player.max_hp,
+            "exp": player.exp,
+            "level": player.level,
+            "exp_multiplier": player.exp_multiplier,
+            "actions_per_turn": player.actions_per_turn,
+        },
+        "offense": {
+            "atk": player.atk,
+            "crit_rate": player.crit_rate,
+            "crit_damage": player.crit_damage,
+            "effect_hit_rate": player.effect_hit_rate,
+            "base_damage_type": getattr(
+                player.base_damage_type, "name", str(player.base_damage_type)
+            ),
+        },
+        "defense": {
+            "defense": player.defense,
+            "mitigation": player.mitigation,
+            "regain": player.regain,
+            "dodge_odds": player.dodge_odds,
+            "effect_resistance": player.effect_resistance,
+        },
+        "vitality": {"vitality": player.vitality},
+        "advanced": {
+            "action_points": player.action_points,
+            "damage_taken": player.damage_taken,
+            "damage_dealt": player.damage_dealt,
+            "kills": player.kills,
+        },
+        "status": {
+            "passives": player.passives,
+            "dots": player.dots,
+            "hots": player.hots,
+            "damage_types": player.damage_types,
+        },
+    }
+    return jsonify({"stats": stats, "refresh_rate": refresh})
+
+
+def load_party(run_id: str) -> Party:
     with SAVE_MANAGER.connection() as conn:
         cur = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,))
         row = cur.fetchone()
-    party_ids = json.loads(row[0]) if row else []
-    members: list[player_plugins.PlayerBase] = []
-    for pid in party_ids:
+    data = json.loads(row[0]) if row else {}
+    if isinstance(data, list):
+        data = {"members": data, "gold": 0, "relics": [], "cards": []}
+    members: list[PlayerBase] = []
+    for pid in data.get("members", []):
         for name in player_plugins.__all__:
             cls = getattr(player_plugins, name)
             if cls.id == pid:
-                members.append(cls())
+                inst = cls()
+                _assign_damage_type(inst)
+                members.append(inst)
                 break
-    return members
+    party = Party(
+        members=members,
+        gold=data.get("gold", 0),
+        relics=data.get("relics", []),
+        cards=data.get("cards", []),
+    )
+    return party
 
 
 def load_map(run_id: str) -> tuple[dict, list[MapNode]]:
@@ -155,6 +261,20 @@ def save_map(run_id: str, state: dict) -> None:
         )
 
 
+def save_party(run_id: str, party: Party) -> None:
+    with SAVE_MANAGER.connection() as conn:
+        data = {
+            "members": [m.id for m in party.members],
+            "gold": party.gold,
+            "relics": party.relics,
+            "cards": party.cards,
+        }
+        conn.execute(
+            "UPDATE runs SET party = ? WHERE id = ?",
+            (json.dumps(data), run_id),
+        )
+
+
 @app.post("/rooms/<run_id>/battle")
 async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
@@ -167,6 +287,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = room.resolve(party, data)
     state["current"] += 1
     save_map(run_id, state)
+    save_party(run_id, party)
     result.update({"run_id": run_id, "action": data.get("action", "")})
     return jsonify(result)
 
@@ -183,6 +304,7 @@ async def shop_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = room.resolve(party, data)
     state["current"] += 1
     save_map(run_id, state)
+    save_party(run_id, party)
     result.update({"run_id": run_id, "action": data.get("action", "")})
     return jsonify(result)
 
@@ -199,6 +321,7 @@ async def rest_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = room.resolve(party, data)
     state["current"] += 1
     save_map(run_id, state)
+    save_party(run_id, party)
     result.update({"run_id": run_id, "action": data.get("action", "")})
     return jsonify(result)
 
@@ -215,6 +338,7 @@ async def chat_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = room.resolve(party, data)
     state["current"] += 1
     save_map(run_id, state)
+    save_party(run_id, party)
     result.update({"run_id": run_id, "action": data.get("action", "")})
     return jsonify(result)
 
@@ -231,8 +355,24 @@ async def boss_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = room.resolve(party, data)
     state["current"] += 1
     save_map(run_id, state)
+    save_party(run_id, party)
     result.update({"run_id": run_id, "action": data.get("action", "")})
     return jsonify(result)
+
+
+@app.post("/cards/<run_id>")
+async def select_card(run_id: str) -> tuple[str, int, dict[str, str]]:
+    data = await request.get_json(silent=True) or {}
+    card_id = data.get("card")
+    if not card_id:
+        return jsonify({"error": "invalid card"}), 400
+    party = load_party(run_id)
+    card = award_card(party, card_id)
+    if card is None:
+        return jsonify({"error": "invalid card"}), 400
+    save_party(run_id, party)
+    card_data = {"id": card.id, "name": card.name, "stars": card.stars}
+    return jsonify({"card": card_data, "cards": party.cards})
 
 
 @app.post("/rooms/<run_id>/<room_id>/action")

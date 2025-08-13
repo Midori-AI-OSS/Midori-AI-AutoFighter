@@ -14,7 +14,6 @@ class PlayerBase(Stats):
     max_hp: int = 1000
     atk: int = 100
     defense: int = 50
-    gold: int = 1
     char_type: CharacterType = CharacterType.C
 
     exp: int = 1
@@ -44,7 +43,6 @@ class PlayerBase(Stats):
     dots: list[str] = field(default_factory=list)
     hots: list[str] = field(default_factory=list)
     damage_types: list[str] = field(default_factory=lambda: ["Generic"])
-    relics: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.damage_types = [self.base_damage_type]

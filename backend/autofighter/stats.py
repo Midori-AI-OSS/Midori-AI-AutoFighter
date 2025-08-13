@@ -1,3 +1,5 @@
+from typing import Callable
+
 from dataclasses import dataclass
 from dataclasses import field
 
@@ -37,7 +39,6 @@ class Stats:
     dots: list[str] = field(default_factory=list)
     hots: list[str] = field(default_factory=list)
     damage_types: list[str] = field(default_factory=list)
-    relics: list[str] = field(default_factory=list)
 
     def apply_damage(self, amount: int) -> None:
         self.last_damage_taken = amount
@@ -46,3 +47,16 @@ class Stats:
 
     def apply_healing(self, amount: int) -> None:
         self.hp = min(self.hp + amount, self.max_hp)
+
+
+StatusHook = Callable[["Stats"], None]
+STATUS_HOOKS: list[StatusHook] = []
+
+
+def add_status_hook(hook: StatusHook) -> None:
+    STATUS_HOOKS.append(hook)
+
+
+def apply_status_hooks(stats: "Stats") -> None:
+    for hook in STATUS_HOOKS:
+        hook(stats)

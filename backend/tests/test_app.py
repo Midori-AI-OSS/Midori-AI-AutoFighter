@@ -2,6 +2,11 @@ from pathlib import Path
 import importlib.util
 import json
 
+import json
+import importlib.util
+
+from pathlib import Path
+
 import pytest
 import sqlcipher3
 
@@ -52,7 +57,10 @@ async def test_run_flow(app_with_db):
     conn.execute("PRAGMA key = 'testkey'")
     cur = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,))
     row = cur.fetchone()
-    assert json.loads(row[0]) == ["player"]
+    party_data = json.loads(row[0])
+    assert party_data["members"] == ["player"]
+    assert party_data["gold"] == 0
+    assert party_data["relics"] == []
 
 
 @pytest.mark.asyncio

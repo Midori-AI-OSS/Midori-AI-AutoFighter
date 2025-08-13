@@ -120,9 +120,9 @@ encrypted `save.db` database for new runs.
 
 View grouped stats and status effects. The display refreshes every few frames
 and supports plugin-provided lines. Categories cover core, offense, defense,
-vitality, advanced data, and status lists for passives, DoTs, HoTs, damage types,
-and relics. When **Pause on Stat Screen** is enabled in Options, opening the
-screen halts gameplay until closed.
+vitality, advanced data, and status lists for passives, DoTs, HoTs, and damage
+types. When **Pause on Stat Screen** is enabled in Options, opening the screen
+halts gameplay until closed.
 
 ## Damage and Healing Effects
 
@@ -139,7 +139,10 @@ passives, and runs event-driven stat-based attacks against a `Slime` scaled by
 floor, room, Pressure level, and loop count. Foes inherit from a dedicated
 `FoeBase` that mirrors player stats; the default `Slime` reduces them by 90%
 on spawn. The scene shows floating damage numbers and status icons and flashes
-red and blue with an Enraged buff after 100 turns (500 for floor bosses).
+red and blue with an Enraged buff after 100 turns (500 for floor bosses). Each
+victory presents three unused cards of the appropriate star rank. Selecting one
+adds it to the party, and card and relic bonuses are applied at the start of the
+next battle.
 
 ## Rest Room
 
@@ -149,10 +152,10 @@ displays a brief message after the action.
 
 ## Shop Room
 
-Buy upgrade items or cards with star ratings. Inventory scales by floor,
-purchases add items to your inventory and disable the button, class-level
-tracking guarantees at least two shops per floor, and gold can reroll the
-current stock.
+Entering a shop heals the party by 5% of its combined max HP. Buy upgrade items
+or cards with star ratings. Inventory scales by floor, purchases add items to
+your inventory and disable the button, class-level tracking guarantees at least
+two shops per floor, and gold can reroll the current stock.
 
 ## Event and Chat Rooms
 
@@ -196,3 +199,6 @@ Pygame version:
 - Mezzy (B, random damage type)
 - Mimic (C, random damage type)
 - Player (C, chosen damage type)
+
+Characters with a "random damage type" roll their element on first load and
+reuse that result in future sessions.
