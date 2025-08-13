@@ -1,72 +1,38 @@
-from __future__ import annotations
-
 import random
+from pathlib import Path
 
-from dataclasses import dataclass
+from plugins import PluginLoader
+from plugins.cards._base import CardBase
 
 from .party import Party
 
+_loader: PluginLoader | None = None
 
-@dataclass(frozen=True)
-class Card:
-    id: str
-    name: str
-    stars: int
-    effects: dict[str, float]
+def _registry() -> dict[str, type[CardBase]]:
+    global _loader
+    if _loader is None:
+        plugin_dir = Path(__file__).resolve().parents[1] / "plugins" / "cards"
+        _loader = PluginLoader(required=["card"])
+        _loader.discover(str(plugin_dir))
+    return _loader.get_plugins("card")
 
-    def apply(self, party: Party) -> None:
-        for member in party.members:
-            for attr, pct in self.effects.items():
-                if attr == "max_hp":
-                    member.max_hp = type(member.max_hp)(member.max_hp * (1 + pct))
-                    member.hp = type(member.hp)(member.hp * (1 + pct))
-                else:
-                    value = getattr(member, attr, None)
-                    if value is None:
-                        continue
-                    new_value = type(value)(value * (1 + pct))
-                    setattr(member, attr, new_value)
-
-
-CARD_LIBRARY: dict[str, Card] = {
-    "micro_blade": Card("micro_blade", "Micro Blade", 1, {"atk": 0.03}),
-    "polished_shield": Card(
-        "polished_shield", "Polished Shield", 1, {"defense": 0.03}
-    ),
-    "sturdy_vest": Card("sturdy_vest", "Sturdy Vest", 1, {"max_hp": 0.03}),
-    "lucky_coin": Card("lucky_coin", "Lucky Coin", 1, {"crit_rate": 0.03}),
-    "sharpening_stone": Card(
-        "sharpening_stone", "Sharpening Stone", 1, {"crit_damage": 0.03}
-    ),
-    "mindful_tassel": Card(
-        "mindful_tassel", "Mindful Tassel", 1, {"effect_hit_rate": 0.03}
-    ),
-    "calm_beads": Card("calm_beads", "Calm Beads", 1, {"effect_resistance": 0.03}),
-    "balanced_diet": Card(
-        "balanced_diet", "Balanced Diet", 1, {"max_hp": 0.03, "defense": 0.03}
-    ),
-}
-
-
-def card_choices(party: Party, stars: int, count: int = 3) -> list[Card]:
-    available = [
-        c for c in CARD_LIBRARY.values() if c.stars == stars and c.id not in party.cards
-    ]
+def card_choices(party: Party, stars: int, count: int = 3) -> list[CardBase]:
+    cards = [cls() for cls in _registry().values()]
+    available = [c for c in cards if c.stars == stars and c.id not in party.cards]
     if not available:
         return []
     return random.sample(available, k=min(count, len(available)))
 
-
-def award_card(party: Party, card_id: str) -> Card | None:
-    card = CARD_LIBRARY.get(card_id)
-    if card is None or card.id in party.cards:
+def award_card(party: Party, card_id: str) -> CardBase | None:
+    card_cls = _registry().get(card_id)
+    if card_cls is None or card_id in party.cards:
         return None
-    party.cards.append(card.id)
-    return card
-
+    party.cards.append(card_id)
+    return card_cls()
 
 def apply_cards(party: Party) -> None:
+    registry = _registry()
     for cid in party.cards:
-        card = CARD_LIBRARY.get(cid)
-        if card:
-            card.apply(party)
+        card_cls = registry.get(cid)
+        if card_cls:
+            card_cls().apply(party)

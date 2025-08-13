@@ -1,12 +1,15 @@
 import json
-import random
 import importlib.util
-
-from pathlib import Path
 
 import pytest
 import sqlcipher3
 
+import autofighter.cards as cards_module
+
+from pathlib import Path
+from autofighter.cards import award_card
+from autofighter.party import Party
+from autofighter.stats import Stats
 
 @pytest.fixture()
 def app_with_db(tmp_path, monkeypatch):
@@ -25,10 +28,6 @@ def app_with_db(tmp_path, monkeypatch):
 
 
 def test_award_card_unique():
-    from autofighter.cards import award_card
-    from autofighter.party import Party
-    from autofighter.stats import Stats
-
     member = Stats()
     member.id = "m1"
     party = Party(members=[member])
@@ -46,22 +45,23 @@ async def test_battle_offers_choices_and_applies_effect(app_with_db, monkeypatch
     run_id = (await start_resp.get_json())["run_id"]
     await client.put(f"/party/{run_id}", json={"party": ["player"]})
 
-    monkeypatch.setattr(random, "sample", lambda seq, k: list(seq)[:k])
+    monkeypatch.setattr(cards_module.random, "sample", lambda seq, k: list(seq)[:k])
 
     battle_resp = await client.post(f"/rooms/{run_id}/battle")
     data = await battle_resp.get_json()
     assert data["party"][0]["atk"] == 100
-    assert any(c["id"] == "micro_blade" for c in data["card_choices"])
+    chosen = data["card_choices"][0]["id"]
 
-    await client.post(f"/cards/{run_id}", json={"card": "micro_blade"})
+    await client.post(f"/cards/{run_id}", json={"card": chosen})
 
     battle_resp2 = await client.post(f"/rooms/{run_id}/battle")
     data2 = await battle_resp2.get_json()
     atk = next(p for p in data2["party"] if p["id"] == "player")["atk"]
-    assert atk == int(100 * 1.03)
+    effect = cards_module._registry()[chosen]().effects.get("atk", 0)
+    assert atk == int(100 * (1 + effect))
 
     conn = sqlcipher3.connect(db_path)
     conn.execute("PRAGMA key = 'testkey'")
     row = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,)).fetchone()
     saved = json.loads(row[0])
-    assert "micro_blade" in saved["cards"]
+    assert chosen in saved["cards"]

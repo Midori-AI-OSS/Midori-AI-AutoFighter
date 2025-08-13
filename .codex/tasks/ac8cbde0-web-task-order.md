@@ -9,7 +9,7 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
-- [ ] [Implement relic system](388bd733-relic-system.md) (`388bd733`)
+ - [x] [Implement relic system](done/388bd733-relic-system.md) (`388bd733`)
 - [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
 - [ ] [Build gacha character recruitment](4d680dc8-gacha-recruitment.md) (`4d680dc8`)
 - [ ] [Add player character editor endpoint](6d267bac-player-character-editor-endpoint.md) (`6d267bac`)
@@ -32,6 +32,7 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
  - [x] [Provide player stat screen endpoint](done/9a1c88c4-stat-screen-endpoint.md) (`9a1c88c4`)
  - [x] [Track shop purchases in shared party inventory](done/df5abccd-shop-inventory-tracking.md) (`df5abccd`)
  - [x] [Implement card reward system](done/c7fd49f5-card-reward-system.md) (`c7fd49f5`)
+ - [x] [Implement relic system](done/388bd733-relic-system.md) (`388bd733`)
 
 ## Context
 Switching from Panda3D to a web-based GUI with a Quart backend managed via Docker Compose.

@@ -1,31 +1,30 @@
-from __future__ import annotations
+from pathlib import Path
 
-from dataclasses import dataclass
+from plugins import PluginLoader
+from plugins.relics._base import RelicBase
 
 from .party import Party
 
+_loader: PluginLoader | None = None
 
-@dataclass(frozen=True)
-class Relic:
-    id: str
-    name: str
-    effects: dict[str, float]
+def _registry() -> dict[str, type[RelicBase]]:
+    global _loader
+    if _loader is None:
+        plugin_dir = Path(__file__).resolve().parents[1] / "plugins" / "relics"
+        _loader = PluginLoader(required=["relic"])
+        _loader.discover(str(plugin_dir))
+    return _loader.get_plugins("relic")
 
-    def apply(self, party: Party) -> None:
-        for member in party.members:
-            for attr, pct in self.effects.items():
-                value = getattr(member, attr, None)
-                if value is None:
-                    continue
-                new_value = type(value)(value * (1 + pct))
-                setattr(member, attr, new_value)
-
-
-RELIC_LIBRARY: dict[str, Relic] = {}
-
+def award_relic(party: Party, relic_id: str) -> RelicBase | None:
+    relic_cls = _registry().get(relic_id)
+    if relic_cls is None:
+        return None
+    party.relics.append(relic_id)
+    return relic_cls()
 
 def apply_relics(party: Party) -> None:
+    registry = _registry()
     for rid in party.relics:
-        relic = RELIC_LIBRARY.get(rid)
-        if relic:
-            relic.apply(party)
+        relic_cls = registry.get(rid)
+        if relic_cls:
+            relic_cls().apply(party)

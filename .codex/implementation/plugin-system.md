@@ -17,6 +17,8 @@ The following categories are bundled:
 - **DoTs** – damage-over-time effects such as `Bleed`【F:plugins/dots/bleed.py†L4-L15】
 - **HoTs** – healing-over-time effects such as `Regeneration`【F:plugins/hots/regeneration.py†L4-L9】
 - **Weapons** – attack implementations such as `SampleWeapon`【F:plugins/weapons/sample_weapon.py†L4-L8】
+- **Cards** – stat-boosting rewards like `MicroBlade`【F:backend/plugins/cards/a_micro_blade.py†L1-L12】
+- **Relics** – run-limited party buffs such as `BentDagger`【F:backend/plugins/relics/bent_dagger.py†L1-L9】
 - **Rooms** – scene definitions such as `SampleRoom`【F:plugins/rooms/sample_room.py†L1-L3】
 
 ## Plugin Class Requirements
@@ -39,4 +41,3 @@ The following categories are bundled:
 2. Implement the class with `plugin_type` and optional `id`.
 3. Write category-specific behaviour.
 4. Run `discover`; import failures are logged and reported without stopping other plugins【F:plugins/plugin_loader.py†L28-L44】.
-
