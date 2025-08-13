@@ -1,18 +1,17 @@
-from dataclasses import dataclass
 from dataclasses import fields
+from dataclasses import dataclass
 
-from plugins.players.player import Player
+from plugins.foes._base import FoeBase
 
 
 @dataclass
-class Slime(Player):
-    plugin_type = "foe"
+class Slime(FoeBase):
     id = "slime"
     name = "Slime"
 
     def __post_init__(self) -> None:  # noqa: D401 - short init
         super().__post_init__()
-        for field in fields(Player):
+        for field in fields(FoeBase):
             value = getattr(self, field.name)
             if isinstance(value, (int, float)):
                 setattr(self, field.name, type(value)(value * 0.1))

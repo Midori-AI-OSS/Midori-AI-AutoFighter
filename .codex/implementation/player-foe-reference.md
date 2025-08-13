@@ -26,8 +26,9 @@ for remaining values.
 - **Player** (C, chosen) – avatar representing the user and may select any non-Generic damage type.
 
 ## Foe Generation
-Foes are procedurally named by pairing an adjective from `themed_ajt`
-with a themed name from `themed_names` in `themedstuff.py`. After naming,
+Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. They are
+procedurally named by pairing an adjective from `themed_ajt` with a themed name
+from `themed_names` in `themedstuff.py`. After naming,
 `foe_passive_builder.build_foe_stats` applies stat modifiers:
 
 1. `_apply_high_level_lady` boosts high-level foes with *Lady* in their names,
@@ -44,6 +45,6 @@ Example: **Atrocious Luna** receives dodge and defense from the "Luna" portion
 and an attack boost from "Atrocious", producing a foe whose name directly
 translates into combat bonuses.
 
-Development builds include a `Slime` foe plugin that copies all player stats
-then reduces them by 90% for simple battle testing. Standard battles may also
-spawn random player characters that are not currently in the party.
+Development builds include a `Slime` foe plugin that reduces all baseline stats
+by 90% for simple battle testing. Standard battles may also spawn random player
+characters that are not currently in the party.

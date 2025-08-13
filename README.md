@@ -136,9 +136,10 @@ Player Heal.
 
 Start a run in a battle scene that renders placeholder models, triggers party
 passives, and runs event-driven stat-based attacks against a `Slime` scaled by
-floor, room, Pressure level, and loop count. The scene shows floating damage
-numbers and status icons and flashes red and blue with an Enraged buff after 100
-turns (500 for floor bosses).
+floor, room, Pressure level, and loop count. Foes inherit from a dedicated
+`FoeBase` that mirrors player stats; the default `Slime` reduces them by 90%
+on spawn. The scene shows floating damage numbers and status icons and flashes
+red and blue with an Enraged buff after 100 turns (500 for floor bosses).
 
 ## Rest Room
 

@@ -1,28 +1,30 @@
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+
 from dataclasses import asdict
+from dataclasses import dataclass
 from dataclasses import fields
 from typing import Any
 
-from plugins import players as player_plugins
+from .stats import Stats
+from .mapgen import MapNode
+from plugins import foes as foe_plugins
+from .passives import PassiveRegistry
+from plugins.foes._base import FoeBase
 from plugins.players._base import PlayerBase
 
-from .mapgen import MapNode
-from .passives import PassiveRegistry
 
-
-def _scale_stats(obj: PlayerBase, node: MapNode, strength: float = 0.1) -> None:
+def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
     mult = strength * node.floor * node.index * node.loop
     mult *= 1 + 0.05 * node.pressure
-    for field in fields(PlayerBase):
+    for field in fields(type(obj)):
         value = getattr(obj, field.name, None)
         if isinstance(value, (int, float)):
             setattr(obj, field.name, type(value)(value * mult))
 
 
-def _serialize(obj: PlayerBase) -> dict[str, Any]:
+def _serialize(obj: Stats) -> dict[str, Any]:
     data = asdict(obj)
     data["id"] = obj.id
     if hasattr(obj, "name"):
@@ -32,15 +34,15 @@ def _serialize(obj: PlayerBase) -> dict[str, Any]:
     return data
 
 
-def _choose_foe(party: list[PlayerBase]) -> PlayerBase:
+def _choose_foe(party: list[PlayerBase]) -> FoeBase:
     party_ids = {p.id for p in party}
     candidates = [
-        getattr(player_plugins, name)
-        for name in getattr(player_plugins, "__all__", [])
-        if getattr(player_plugins, name).id not in party_ids
+        getattr(foe_plugins, name)
+        for name in getattr(foe_plugins, "__all__", [])
+        if getattr(foe_plugins, name).id not in party_ids
     ]
     if not candidates:
-        candidates = [player_plugins.Player]
+        candidates = [foe_plugins.Slime]
     foe_cls = random.choice(candidates)
     return foe_cls()
 
@@ -58,7 +60,7 @@ class BattleRoom(Room):
     def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
         foe = _choose_foe(party)
-        _scale_stats(foe, self.node, 0.1)
+        _scale_stats(foe, self.node)
         for member in party:
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
@@ -74,7 +76,7 @@ class BossRoom(BattleRoom):
     def resolve(self, party: list[PlayerBase], data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
         foe = _choose_foe(party)
-        _scale_stats(foe, self.node, 0.5)
+        _scale_stats(foe, self.node, 100)
         for member in party:
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
