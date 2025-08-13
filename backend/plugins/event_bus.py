@@ -10,7 +10,7 @@ except Exception:  # pragma: no cover - fallback when Rich is missing
     RichHandler = logging.StreamHandler
 
 
-class _Messenger:
+class _Bus:
     def __init__(self) -> None:
         self._subs: dict[str, list[tuple[object, Callable[..., Any]]]] = defaultdict(list)
 
@@ -27,7 +27,7 @@ class _Messenger:
             func(*args)
 
 
-messenger = _Messenger()
+bus = _Bus()
 
 log = logging.getLogger(__name__)
 if not log.handlers:
@@ -42,10 +42,10 @@ class EventBus:
             except Exception:
                 log.exception("Error in '%s' subscriber %s", event, callback)
 
-        messenger.accept(event, callback, wrapper)
+        bus.accept(event, callback, wrapper)
 
     def unsubscribe(self, event: str, callback: Callable[..., Any]) -> None:
-        messenger.ignore(event, callback)
+        bus.ignore(event, callback)
 
     def emit(self, event: str, *args: Any) -> None:
-        messenger.send(event, args)
+        bus.send(event, args)

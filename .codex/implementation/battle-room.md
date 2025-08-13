@@ -1,15 +1,13 @@
 
 # Battle Rooms
 
-`BattleRoom` hosts turn-based encounters against scaled foes. It handles attack rolls, damage display, and overtime warnings after long fights.
+`BattleRoom` hosts turn-based encounters against scaled foes drawn from player plugins you haven't selected. It triggers party passives, handles attack rolls, damage display, and overtime warnings after long fights.
 
 `BossRoom` extends this scene to load boss-specific models, music, and scripted attack patterns. Boss configurations live in `autofighter.rooms.boss_patterns` and expose reward data after victory.
 
 When the player or foe is defeated, the room exits back to the previous scene so the run map continues automatically.
 
-Model assets load through the shared `AssetManager`, which now supports
-both camelCase and snake_case Panda3D loader APIs. Tests cover setup to
-ensure player and foe models attach correctly when a battle begins.
+Model assets load through the shared `AssetManager`, which reads web-friendly formats through a unified loader. Tests cover setup to ensure player and foe models attach correctly when a battle begins.
 
 # Loop scaling
 

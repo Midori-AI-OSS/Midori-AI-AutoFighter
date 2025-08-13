@@ -23,6 +23,7 @@ for remaining values.
 - **Luna** (B, Generic) – applies `luna_passive`.
 - **Mezzy** (B, random) – only raises Max HP and takes less damage.
 - **Mimic** (C, random) – copies the player then lowers its stats by 25% on spawn.
+- **Player** (C, chosen) – avatar representing the user and may select any non-Generic damage type.
 
 ## Foe Generation
 Foes are procedurally named by pairing an adjective from `themed_ajt`
@@ -42,3 +43,7 @@ with a themed name from `themed_names` in `themedstuff.py`. After naming,
 Example: **Atrocious Luna** receives dodge and defense from the "Luna" portion
 and an attack boost from "Atrocious", producing a foe whose name directly
 translates into combat bonuses.
+
+Development builds include a `Slime` foe plugin that copies all player stats
+then reduces them by 90% for simple battle testing. Standard battles may also
+spawn random player characters that are not currently in the party.

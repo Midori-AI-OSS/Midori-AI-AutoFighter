@@ -31,7 +31,7 @@ Modules that fail to import are skipped so a broken plugin does not stop the
 discovery process.
  
 ## Event Bus
-Plugins communicate through `EventBus`, which wraps Panda3D's `messenger`:
+Plugins communicate through `EventBus` for decoupled messaging:
 
 ```
 from plugins.event_bus import EventBus

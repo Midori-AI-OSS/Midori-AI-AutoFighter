@@ -1,12 +1,12 @@
 # Passive System Planning
 
 ## Goal
-Integrate the existing plugin-based passive system into the Panda3D port while expanding support for new effects.
+Integrate the existing plugin-based passive system into the web build while expanding support for new effects.
 
 ## Actionable Steps
 1. **Plugin Migration**
    1. Review current passive plugins in `plugins/passives` and document their behaviors.
-   2. Port the plugin loader to work with Panda3D, ensuring lazy discovery and low-end performance.
+   2. Port the plugin loader to the new backend, ensuring lazy discovery and low-end performance.
    3. Define a registration schema so passives declare triggers (on hit, on turn start, etc.) and stack limits.
 2. **UI and Player Hooks**
    1. Expose active passives on the player stat screen with names, brief summaries, and stack counts.

@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
-from game.actors import CharacterType
+from autofighter.character import CharacterType
 from plugins.players._base import PlayerBase
-
 
 @dataclass
 class Carly(PlayerBase):

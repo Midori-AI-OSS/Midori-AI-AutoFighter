@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, party TEXT, map TEXT);
+CREATE TABLE IF NOT EXISTS owned_players (id TEXT PRIMARY KEY);
+INSERT OR IGNORE INTO owned_players (id) VALUES ('player'), ('luna');

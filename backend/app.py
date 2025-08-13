@@ -2,67 +2,24 @@ from __future__ import annotations
 
 import os
 import json
-from pathlib import Path
-from uuid import uuid4
 
-import sqlcipher3
+from uuid import uuid4
+from pathlib import Path
+from dataclasses import asdict
 
 from quart import Quart
-from quart import jsonify
 from quart import request
+from quart import jsonify
 from quart import send_from_directory
-from quart import url_for
 
+from autofighter.mapgen import MapGenerator, MapNode
+from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
+from autofighter.save_manager import SaveManager
 from plugins import players as player_plugins
-from plugins.foes.sample_foe import SampleFoe
 
 
-DB_PATH = Path(
-    os.getenv("AF_DB_PATH", Path(__file__).resolve().parent / "save.db")
-)
-DB_KEY = os.getenv("AF_DB_KEY", "")
-
-
-def connect_db() -> sqlcipher3.Connection:
-    # Try to open with encryption key if provided; otherwise open plaintext.
-    if DB_KEY:
-        try:
-            conn = sqlcipher3.connect(DB_PATH)
-            conn.execute(f"PRAGMA key = '{DB_KEY}'")
-            # Touch the database to validate key usage
-            conn.execute("PRAGMA user_version")
-            return conn
-        except Exception:
-            try:
-                conn.close()
-            except Exception:
-                pass
-            # Fallback to plaintext if the file is not encrypted
-            conn = sqlcipher3.connect(DB_PATH)
-            return conn
-    else:
-        # No key provided: open as plaintext
-        return sqlcipher3.connect(DB_PATH)
-
-
-def init_db() -> None:
-    conn = connect_db()
-    with conn:
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, party TEXT, map TEXT)"
-        )
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS owned_players (id TEXT PRIMARY KEY)"
-        )
-        cur = conn.execute("SELECT COUNT(*) FROM owned_players")
-        if cur.fetchone()[0] == 0:
-            conn.executemany(
-                "INSERT INTO owned_players (id) VALUES (?)",
-                [("sample_player",), ("becca",)],
-            )
-
-
-init_db()
+SAVE_MANAGER = SaveManager.from_env()
+SAVE_MANAGER.migrate(Path(__file__).resolve().parent / "migrations")
 
 app = Quart(__name__)
 
@@ -92,23 +49,23 @@ async def assets(filename: str):
 
 @app.post("/run/start")
 async def start_run() -> tuple[str, int, dict[str, str]]:
-    conn = connect_db()
     run_id = str(uuid4())
-    game_map = ["start", "battle", "boss"]
-    with conn:
+    generator = MapGenerator(run_id)
+    nodes = generator.generate_floor()
+    state = {"rooms": [n.to_dict() for n in nodes], "current": 1}
+    with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "INSERT INTO runs (id, party, map) VALUES (?, ?, ?)",
-            (run_id, json.dumps([]), json.dumps(game_map)),
+            (run_id, json.dumps([]), json.dumps(state)),
         )
-    return jsonify({"run_id": run_id, "map": game_map})
+    return jsonify({"run_id": run_id, "map": state})
 
 
 @app.put("/party/<run_id>")
 async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
     party = data.get("party", [])
-    conn = connect_db()
-    with conn:
+    with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "UPDATE runs SET party = ? WHERE id = ?",
             (json.dumps(party), run_id),
@@ -118,9 +75,9 @@ async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
 
 @app.get("/map/<run_id>")
 async def get_map(run_id: str) -> tuple[str, int, dict[str, str]]:
-    conn = connect_db()
-    cur = conn.execute("SELECT map FROM runs WHERE id = ?", (run_id,))
-    row = cur.fetchone()
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT map FROM runs WHERE id = ?", (run_id,))
+        row = cur.fetchone()
     if row is None:
         return jsonify({"error": "run not found"}), 404
     return jsonify({"map": json.loads(row[0])})
@@ -130,7 +87,9 @@ async def get_map(run_id: str) -> tuple[str, int, dict[str, str]]:
 async def room_images() -> tuple[str, int, dict[str, str]]:
     # Basic mapping of room types to background images
     mapping = {
-        "battle": "textures/backgrounds/background_01.png",
+        "battle-weak": "textures/backgrounds/background_01.png",
+        "battle-normal": "textures/backgrounds/background_01.png",
+        "battle-boss-floor": "textures/backgrounds/background_01.png",
         "shop": "textures/backgrounds/background_02.png",
         "rest": "textures/backgrounds/background_03.png",
     }
@@ -140,35 +99,32 @@ async def room_images() -> tuple[str, int, dict[str, str]]:
 
 @app.get("/players")
 async def get_players() -> tuple[str, int, dict[str, str]]:
-    conn = connect_db()
-    cur = conn.execute("SELECT id FROM owned_players")
-    owned = {row[0] for row in cur.fetchall()}
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT id FROM owned_players")
+        owned = {row[0] for row in cur.fetchall()}
     roster = []
     for name in player_plugins.__all__:
         cls = getattr(player_plugins, name)
         inst = cls()
+        stats = asdict(inst)
+        stats["char_type"] = inst.char_type.name
         roster.append(
             {
                 "id": inst.id,
                 "name": inst.name,
                 "owned": inst.id in owned,
-                "is_player": inst.id == "sample_player",
-                "element": getattr(inst, "base_damage_type", "Generic"),
-                "stats": {
-                    "hp": getattr(inst, "hp", 0),
-                    "atk": getattr(inst, "atk", 0),
-                    "defense": getattr(inst, "defense", 0),
-                    "level": getattr(inst, "level", 1),
-                },
+                "is_player": inst.id == "player",
+                "element": inst.base_damage_type,
+                "stats": stats,
             }
         )
     return jsonify({"players": roster})
 
 
 def load_party(run_id: str) -> list[player_plugins.PlayerBase]:
-    conn = connect_db()
-    cur = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,))
-    row = cur.fetchone()
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,))
+        row = cur.fetchone()
     party_ids = json.loads(row[0]) if row else []
     members: list[player_plugins.PlayerBase] = []
     for pid in party_ids:
@@ -180,59 +136,103 @@ def load_party(run_id: str) -> list[player_plugins.PlayerBase]:
     return members
 
 
+def load_map(run_id: str) -> tuple[dict, list[MapNode]]:
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT map FROM runs WHERE id = ?", (run_id,))
+        row = cur.fetchone()
+    if row is None:
+        return {"rooms": [], "current": 0}, []
+    state = json.loads(row[0])
+    rooms = [MapNode.from_dict(n) for n in state.get("rooms", [])]
+    return state, rooms
+
+
+def save_map(run_id: str, state: dict) -> None:
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute(
+            "UPDATE runs SET map = ? WHERE id = ?",
+            (json.dumps(state), run_id),
+        )
+
+
 @app.post("/rooms/<run_id>/battle")
 async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
     party = load_party(run_id)
-    foe = SampleFoe()
-    foe_hp = 100
-    for member in party:
-        foe_hp -= member.atk
-    foes = [{"id": foe.id, "hp": max(foe_hp, 0)}]
-    party_data = [{"id": p.id, "hp": p.hp, "atk": p.atk} for p in party]
-    return jsonify(
-        {
-            "run_id": run_id,
-            "result": "battle",
-            "party": party_data,
-            "foes": foes,
-            "action": data.get("action", ""),
-        }
-    )
+    state, rooms = load_map(run_id)
+    node = rooms[state["current"]]
+    if node.room_type not in {"battle-weak", "battle-normal"}:
+        return jsonify({"error": "invalid room"}), 400
+    room = BattleRoom(node)
+    result = room.resolve(party, data)
+    state["current"] += 1
+    save_map(run_id, state)
+    result.update({"run_id": run_id, "action": data.get("action", "")})
+    return jsonify(result)
 
 
 @app.post("/rooms/<run_id>/shop")
 async def shop_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
     party = load_party(run_id)
-    party_data = [{"id": p.id, "gold": p.gold} for p in party]
-    return jsonify(
-        {
-            "run_id": run_id,
-            "result": "shop",
-            "party": party_data,
-            "foes": [],
-            "action": data.get("action", ""),
-        }
-    )
+    state, rooms = load_map(run_id)
+    node = rooms[state["current"]]
+    if node.room_type != "shop":
+        return jsonify({"error": "invalid room"}), 400
+    room = ShopRoom(node)
+    result = room.resolve(party, data)
+    state["current"] += 1
+    save_map(run_id, state)
+    result.update({"run_id": run_id, "action": data.get("action", "")})
+    return jsonify(result)
 
 
 @app.post("/rooms/<run_id>/rest")
 async def rest_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
     party = load_party(run_id)
-    for member in party:
-        member.hp = member.max_hp
-    party_data = [{"id": p.id, "hp": p.hp, "max_hp": p.max_hp} for p in party]
-    return jsonify(
-        {
-            "run_id": run_id,
-            "result": "rest",
-            "party": party_data,
-            "foes": [],
-            "action": data.get("action", ""),
-        }
-    )
+    state, rooms = load_map(run_id)
+    node = rooms[state["current"]]
+    if node.room_type != "rest":
+        return jsonify({"error": "invalid room"}), 400
+    room = RestRoom(node)
+    result = room.resolve(party, data)
+    state["current"] += 1
+    save_map(run_id, state)
+    result.update({"run_id": run_id, "action": data.get("action", "")})
+    return jsonify(result)
+
+
+@app.post("/rooms/<run_id>/chat")
+async def chat_room(run_id: str) -> tuple[str, int, dict[str, str]]:
+    data = await request.get_json(silent=True) or {}
+    party = load_party(run_id)
+    state, rooms = load_map(run_id)
+    node = rooms[state["current"]]
+    if node.room_type != "chat":
+        return jsonify({"error": "invalid room"}), 400
+    room = ChatRoom(node)
+    result = room.resolve(party, data)
+    state["current"] += 1
+    save_map(run_id, state)
+    result.update({"run_id": run_id, "action": data.get("action", "")})
+    return jsonify(result)
+
+
+@app.post("/rooms/<run_id>/boss")
+async def boss_room(run_id: str) -> tuple[str, int, dict[str, str]]:
+    data = await request.get_json(silent=True) or {}
+    party = load_party(run_id)
+    state, rooms = load_map(run_id)
+    node = rooms[state["current"]]
+    if node.room_type != "battle-boss-floor":
+        return jsonify({"error": "invalid room"}), 400
+    room = BossRoom(node)
+    result = room.resolve(party, data)
+    state["current"] += 1
+    save_map(run_id, state)
+    result.update({"run_id": run_id, "action": data.get("action", "")})
+    return jsonify(result)
 
 
 @app.post("/rooms/<run_id>/<room_id>/action")

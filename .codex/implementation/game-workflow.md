@@ -3,18 +3,18 @@
 This document describes the full runtime sequence of Midori AI AutoFighter and how player progress is persisted between runs.
 
 ## Package layout
-Source code lives under the `game` package:
+Source code lives under the backend:
 
-- `actors` – player and foe logic
-- `ui` – menu screens and widgets
-- `rooms` – battle, rest, shop, and other scenes
+- `autofighter` – core game logic
+- `plugins` – player and foe extensions
+- `rooms` – battle, rest, shop, and other endpoints
 - `gacha` – pull logic and results presentation
 - `saves` – load and save utilities
 
 ## Startup
 - `PluginLoader` scans the `plugins/` directory to register available classes.
-- `SceneManager` swaps scenes, manages an overlay stack for menus or pause screens, and logs setup/teardown errors so faulty scenes or overlays are skipped instead of crashing.
-- The app listens for `window-event` to exit when the window closes and for the `escape` key to quit. `pause_game` and `resume_game` toggle the update task so gameplay can be paused and resumed cleanly.
+- `RoomManager` coordinates transitions between battle, shop, rest, and other rooms for each run.
+- The Quart app exposes endpoints that the web frontend calls to drive gameplay.
 - `MapGenerator` creates 45-room floors seeded per run, guaranteeing at least two shops and two rest rooms. Pressure Level adds extra rooms and boss encounters, and chat rooms may appear after battle nodes without increasing the room count.
 - A drifting color cloud fills the background while the camera stays fixed. The main menu presents an Arknights-style 2×3 grid of large Lucide icons with text labels for *New Run*, *Load Run*, *Edit Player*, *Options*, *Give Feedback*, and *Quit*. Icons show tooltips on hover, the focused option is highlighted for keyboard navigation, and the **Give Feedback** button launches a pre-filled GitHub issue in the user's browser. See [main-menu instructions](../instructions/main-menu.md) for layout details.
 - A Player Creator offers body style, hair style, hair color, and accessory options while distributing 100 stat points as +1% increments. Sliders clamp allocations so totals cannot exceed the available points. Each selector and stat slider now includes a label with helper text shown on hover or keyboard focus. Spending 100 of each damage type's 4★ upgrade items adds one extra point, and remaining inventory is saved when confirming.
@@ -22,7 +22,7 @@ Source code lives under the `game` package:
 - A Stat Screen scene displays grouped stats (core, offense, defense, vitality, advanced) and status lists for passives, DoTs, HoTs, damage types, and relic stacks, refreshing every few frames.
  - Opening the Stat Screen pauses gameplay if the Options menu enables **Pause on Stat Screen**.
 - Damage-over-time and healing-over-time effects are handled by an `EffectManager` that records active effect names on `Stats`, supports Bleed, Celestial Atrophy, Abyssal Corruption that spreads on death, Blazing Torment with extra ticks via an `on_action` hook, and Impact Echo repeating half the last hit.
-- Selecting *New Run* starts a Battle Room scene that renders placeholder models and runs messenger-driven turns with stat-based accuracy, scaled foes, floating damage numbers, attack effects, status icons, and an overtime warning after 100 turns (500 for floor bosses) that flashes the room and grants an Enraged buff.
+- Selecting *New Run* starts a Battle Room that exchanges event-bus-driven turns with stat-based accuracy, scaled foes, floating damage numbers, attack effects, status icons, and an overtime warning after 100 turns (500 for floor bosses) that grants an Enraged buff.
  - Rest Rooms allow one heal or trade per floor, play a brief message animation, and at least two must appear on each floor via `RestRoom.should_spawn`.
  - Shop Rooms sell upgrade items and cards with gold pricing, star ratings, floor-based inventory scaling, and reroll costs. Purchases add items to inventory, and class-level tracking ensures at least two appear per floor.
  - Event Rooms present text prompts with selectable options that deterministically modify stats or inventory using seeded randomness. They may occur after battles without consuming the floor's room count.

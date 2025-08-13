@@ -1,6 +1,6 @@
 # Event Bus Wrapper
 
-Provides a thin layer over Panda3D's `messenger` so plugins can communicate without importing engine modules.
+Provides a simple publish/subscribe bus so plugins can communicate without engine-specific dependencies.
 
 ## Usage
 - `subscribe(event: str, callback: Callable)` – register a function to run when an event is emitted.

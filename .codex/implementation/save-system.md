@@ -2,7 +2,8 @@
 
 ## Setup
 - Uses [SQLCipher](https://www.zetetic.net/sqlcipher/) via the `sqlcipher3-binary` package.
-- The backend reads `AF_DB_PATH` for the database location (defaults to `save.db` in the repository root) and `AF_DB_KEY` for the encryption key.
+- `SaveManager` reads `AF_DB_PATH` for the database location (defaults to `save.db` in the repository root) and derives a key
+  from either `AF_DB_KEY` or `AF_DB_PASSWORD`.
 - Install dependencies with `uv add sqlcipher3-binary`.
 
 ## Schema
@@ -11,19 +12,18 @@
 
 ## Usage
 ```python
-import os
-from pathlib import Path
+from autofighter.save_manager import SaveManager
 
-import sqlcipher3
-
-db_path = Path(os.getenv("AF_DB_PATH", "save.db"))
-key = os.getenv("AF_DB_KEY", "")
-
-conn = sqlcipher3.connect(db_path)
-conn.execute("PRAGMA key = ?", (key,))
+mgr = SaveManager.from_env()
+mgr.migrate(Path("backend/migrations"))
+with mgr.connection() as conn:
+    conn.execute("INSERT INTO runs (id, party, map) VALUES ('1', '[]', '[]')")
 ```
-Queries on `conn` transparently read and write encrypted data.
+All database access flows through `SaveManager`, which batches writes and
+handles key setup.
 
 ## Recovery
-- Supply the same `AF_DB_KEY` to reopen the database.
-- Back up both the encrypted `save.db` and any stored key material to prevent data loss.
+- Supply the same key material or password to reopen the database.
+- Back up both the encrypted `save.db` and any stored key material to prevent
+  data loss. Migration scripts under `backend/migrations/` keep schemas forward
+  compatible.

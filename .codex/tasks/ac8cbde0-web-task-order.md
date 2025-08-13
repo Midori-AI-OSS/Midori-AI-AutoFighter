@@ -9,23 +9,29 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
-
-
- - [x] [Party picker](done/f9c45e2e-party-picker.md) (`f9c45e2e`)
- - [x] [Responsive layout for Svelte UI](done/33c77b60-responsive-layout.md) (`33c77b60`)
- - [x] [Expose battle, shop, and rest endpoints](done/b0755eeb-room-endpoints.md) (`b0755eeb`)
- - [x] [Scaffold Quart backend](done/1faf53ba-quart-backend-scaffold.md) (`1faf53ba`)
- - [x] [Run start and map display](done/dc3d4f2e-run-start-map-display.md) (`dc3d4f2e`)
+- [ ] [Implement relic system](388bd733-relic-system.md) (`388bd733`)
+- [ ] [Implement card reward system](c7fd49f5-card-reward-system.md) (`c7fd49f5`)
+- [ ] [Build gacha character recruitment](4d680dc8-gacha-recruitment.md) (`4d680dc8`)
+- [ ] [Provide player stat screen endpoint](9a1c88c4-stat-screen-endpoint.md) (`9a1c88c4`)
+- [ ] [Track shop purchases in shared party inventory](df5abccd-shop-inventory-tracking.md) (`df5abccd`)
 
 ### Completed
-
-- [x] [Reuse existing encrypted save database](done/2f8d4e49-reuse-save-db.md) (`2f8d4e49`)
-- [x] [Add backend tests for run and rooms](5cc4df14-backend-tests.md) (`5cc4df14`)
-- [x] [Fix backend Dockerfile tooling](8f1bafea-dockerfile-tooling.md) (`8f1bafea`)
-- [x] [Fix backend Dockerfile](done/34f8a5b0-fix-backend-dockerfile.md) (`34f8a5b0`)
-- [x] [Wire Svelte UI to room endpoints](done/e1cfb77c-frontend-room-wiring.md) (`e1cfb77c`)
-- [x] [Make web build playable](done/7d79b17b-playable-flow.md) (`7d79b17b`)
-- [x] [Add Docker Compose profiles for LLM extras](e09f282f-compose-llm-profiles.md) (`e09f282f`)
+ - [x] [Integrate passive plugin system](done/822626e9-passive-system.md) (`822626e9`)
+ - [x] [Build map generator and room types](done/9767b3f3-map-generator-and-rooms.md) (`9767b3f3`)
+ - [x] [Implement encrypted save system](done/4b003150-encrypted-save-system.md) (`4b003150`)
+ - [x] [Replace legacy player plugin imports](done/f1245ae6-fix-plugin-imports.md) (`f1245ae6`)
+ - [x] [Implement room endpoints with game logic](done/541be07f-room-endpoints.md) (`541be07f`)
+ - [x] [Remove remaining Panda3D references](done/735b854e-remove-panda3d.md) (`735b854e`)
+ - [x] [Expose battle, shop, and rest endpoints](done/b0755eeb-room-endpoints.md) (`b0755eeb`)
+ - [x] [Scaffold Quart backend](done/1faf53ba-quart-backend-scaffold.md) (`1faf53ba`)
+ - [x] [Add backend tests for run and rooms](5cc4df14-backend-tests.md) (`5cc4df14`)
+ - [x] [Fix backend Dockerfile](done/34f8a5b0-fix-backend-dockerfile.md) (`34f8a5b0`)
+ - [x] [Add Docker Compose profiles for LLM extras](e09f282f-compose-llm-profiles.md) (`e09f282f`)
 
 ## Context
 Switching from Panda3D to a web-based GUI with a Quart backend managed via Docker Compose.
+
+## Task Master Notes
+- Persistent save database is intentionally omitted; do not ship `save.db` or add a volume.
+- `Dockerfile.python` chains `yay` commands with `&&`; this is required and needs no further task.
+- Compose profiles should continue sharing host port `59002` to prevent simultaneous use.

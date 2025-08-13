@@ -11,6 +11,7 @@ This document summarizes common development practices for all services in this r
   - `instructions/`: Contributor mode docs, process notes, and service-specific instructions. Place all new and updated process documentation here, following the structure and naming conventions. See examples in this folder.
   - `implementation/`: Service-specific implementation notes and technical docs. Keep these in sync with code changes.
   - Other subfolders: `requests/`, `prototyping/`, etc. for planning, feedback, and prototyping notes.
+- **Never edit files in `.codex/audit/` unless you are in Auditor mode.**
 - **`.github/`**: Workflow guidelines and UX standards.
 
 ---

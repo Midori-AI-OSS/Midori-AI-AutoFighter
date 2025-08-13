@@ -1,6 +1,6 @@
 # Card Design
 
-Parent: [Panda3D Game Remake Planning](8a7d9c1e-panda3d-game-plan.md)
+Parent: [Web Game Plan](8a7d9c1e-web-game-plan.md)
 
 ## Guiding Principles
 - Cards are unique rewards with a single copy each.

@@ -1,8 +1,9 @@
 # Backend
 
-Quart game logic server listening on port `59002`. By default, the server reads
-and writes the save database at `backend/save.db` (plaintext). Set `AF_DB_PATH`
-to change the location and `AF_DB_KEY` if using an encrypted database.
+Quart game logic server listening on port `59002`. A `SaveManager` wrapper
+handles SQLCipher encryption and reads the save database at
+`backend/save.db` by default. Set `AF_DB_PATH` to change the location and
+provide either `AF_DB_KEY` or `AF_DB_PASSWORD` for encryption.
 
 ## Setup
 
@@ -13,10 +14,11 @@ uv run app.py
 ```
 
 The root endpoint returns a simple status payload. Additional routes support
-starting runs, updating the party, retrieving floor maps, listing available
-player characters, returning room background images, and posting actions to
-battle, shop, or rest rooms. Run state is stored in `backend/save.db` by
-default; `compose.yaml` bind-mounts the `backend/` directory so the database is
+starting runs with a seeded 45-room map, updating the party, retrieving floor
+maps, listing available player characters, returning room background images,
+and posting actions to battle, shop, rest, or floor boss rooms. Run state is
+stored through the `SaveManager` in `backend/save.db` by default;
+`compose.yaml` bind-mounts the `backend/` directory so the database is
 persisted on the host.
 
 Static assets are served from `/assets/<path>`; for example, `GET /rooms/images`

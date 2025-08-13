@@ -25,7 +25,7 @@ Outline per-character themes for `battle-boss-floor` rooms so each final encount
 
 ## Actionable Next Steps
 1. Confirm the roster of bosses and assign a theme to each character.
-2. Prototype one themed room in Panda3D to validate the decoration pipeline.
+2. Prototype one themed room in the web UI to validate the decoration pipeline.
 3. Define a naming convention for theme assets (textures, props, audio) to keep them organized.
 4. Document how themes interact with floor-wide visual styles in `.codex/implementation`.
 

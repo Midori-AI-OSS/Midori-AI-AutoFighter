@@ -1,0 +1,11 @@
+from dataclasses import dataclass
+
+from autofighter.character import CharacterType
+from plugins.players._base import PlayerBase
+
+@dataclass
+class Player(PlayerBase):
+    id = "player"
+    name = "Player"
+    char_type = CharacterType.C
+    base_damage_type: str = "Fire"

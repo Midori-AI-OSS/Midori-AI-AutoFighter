@@ -3,9 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from dataclasses import field
 
-from game.actors import CharacterType
 from autofighter.stats import Stats
-
+from autofighter.character import CharacterType
 
 @dataclass
 class PlayerBase(Stats):

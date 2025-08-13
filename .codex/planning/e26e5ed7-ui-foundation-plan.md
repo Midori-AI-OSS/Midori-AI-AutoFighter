@@ -2,7 +2,7 @@
 
 1. **Theme: dark, glassy visuals**
    - Background: full-screen clouds of color that drift slowly and shift hues while staying dark enough for icons to stand out.
-   - Use images from `game/` as backdrops, with fallbacks when assets fail to load.
+   - Use images from `assets/` as backdrops, with fallbacks when assets fail to load.
    - Panels: frosted-glass surfaces with colored borders and subtle shadows for readability over illustrated backgrounds.
    - Headers: bold titles, small icons (close "X", status dots), accent highlights.
    - Text: modern sans-serif in light gray or white.
@@ -30,18 +30,18 @@
        - Spending 100 of each non-Generic damage type's 4★ upgrade item (Light, Dark, Wind, Lightning, Fire, Ice) buys one extra point; players must buy or craft these items before they can be spent.
       - Attempting to spend bonus points without sufficient 4★ items shows a warning and prevents confirmation.
       - Confirmation stays disabled until all available points—including any bonus points—are allocated.
-   - Use DirectGUI and ensure keyboard/mouse navigation.
-   - Provide a centralized scaling helper so menus keep their intended size regardless of window resolution.
+   - Build the interface with web components (e.g., Svelte) and ensure keyboard and mouse navigation.
+   - Provide a centralized scaling helper so menus keep their intended size across desktop and mobile viewports.
 4. **Options submenu**
    - Sound-effects volume.
    - Music volume.
    - Toggle stat-screen pause behaviour.
    - Sliders clamp values within valid bounds and save immediately.
-   - Lives in `game/ui/options.py` and is invoked from the main menu.
+   - Lives in the frontend UI package and is invoked from the main menu.
 5. Code structure:
    - Create a `ui/` package with modules for menus, options, and widgets.
    - Use a base `MenuScreen` class that handles navigation and animation hooks.
 6. **Audio system**
    - A global `AudioManager` plays music and sound effects loaded via the asset pipeline.
    - Supports cross-fading tracks, volume sliders, and pausing via the Options menu.
-   - Tests must play real Panda3D sounds to verify playback.
+   - Tests must play real browser audio to verify playback.

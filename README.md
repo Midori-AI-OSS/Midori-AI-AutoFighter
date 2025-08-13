@@ -24,8 +24,9 @@ docker compose up --build frontend backend
 
 Compose bind-mounts `frontend/` and `backend/` into the containers. The backend
 stores its database at `backend/save.db` by default (override with
-`AF_DB_PATH`). Set `AF_DB_KEY` only if you’re using an encrypted database. The
-Svelte dev server listens on `59001` and the Quart backend on `59002`.
+`AF_DB_PATH`). Provide `AF_DB_KEY` or `AF_DB_PASSWORD` for encryption via the
+`SaveManager`. The Svelte dev server listens on `59001` and the Quart backend
+on `59002`.
 
 ### Dev Workflow
 - Code changes are reflected immediately since source is bind-mounted into the containers.
@@ -55,8 +56,8 @@ uv run app.py
 ```
 
 The server uses `AF_DB_PATH` for the save database (default
-`backend/save.db`). If `AF_DB_KEY` is set, it attempts to open the database with
-that key; otherwise it opens plaintext.
+`backend/save.db`). Supply `AF_DB_KEY` or `AF_DB_PASSWORD` to open the
+encrypted database; without either it opens plaintext.
 
 4. Install the latest build into another project:
 
@@ -133,11 +134,11 @@ Player Heal.
 
 ## Battle Room
 
-Start a run in a battle scene that renders placeholder models, runs
-messenger-driven stat-based attacks, scales foes by floor, room, Pressure level,
-and loop count, shows floating damage numbers and attack effects, adds status
-icons, and flashes the room red and blue with an Enraged buff after 100 turns
-(500 for floor bosses).
+Start a run in a battle scene that renders placeholder models, triggers party
+passives, and runs event-driven stat-based attacks against a `Slime` scaled by
+floor, room, Pressure level, and loop count. The scene shows floating damage
+numbers and status icons and flashes red and blue with an Enraged buff after 100
+turns (500 for floor bosses).
 
 ## Rest Room
 
@@ -155,18 +156,19 @@ current stock.
 ## Event and Chat Rooms
 
 Event Rooms offer text-based encounters with selectable options that use seeded
-randomness to modify stats or inventory. Chat Rooms let players send a single
-message to an LLM character, track usage per floor, and do not count toward the
-floor's room limit; only six chats may occur on each floor.
+randomness to modify stats or inventory. Chat Rooms, available only when the LLM
+profiles are installed, let players send a single message to an LLM character,
+track usage per floor, and do not count toward the floor's room limit; only six
+chats may occur on each floor.
 
 ## Map Generation
 
 New runs begin by selecting up to four owned allies in a party picker before the
 map appears. Runs then progress through 45-room floors built by a seeded
 `MapGenerator`. Each floor includes at least two shops and two rest rooms,
-always ends in a floor boss, and can add extra rooms or boss fights as Pressure
-Level rises. Battle rooms may spawn chat rooms after combat without affecting
-room count.
+battle nodes marked as `battle-weak` or `battle-normal`, and ends in a
+`battle-boss-floor`. Chat scenes may appear after battles only when the LLM
+profiles are installed and do not affect room count.
 
 ## Playable Characters
 
@@ -192,3 +194,4 @@ Pygame version:
 - Luna (B, Generic)
 - Mezzy (B, random damage type)
 - Mimic (C, random damage type)
+- Player (C, chosen damage type)
