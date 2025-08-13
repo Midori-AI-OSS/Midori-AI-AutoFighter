@@ -1,7 +1,7 @@
 # Web Rewrite Task Order
 
 ## Summary
-Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python Quart backend. Reminder: list only task titles and file names—open each task file for details. (ready for audit)
+Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python Quart backend. Tasks now reflect pronoun limits, damage-type rules, and rest-node gacha access. Reminder: list only task titles and file names—open each task file for details. (ready for audit)
 
 - Read `.codex/planning/8a7d9c1e-web-game-plan.md` before starting or auditing any task.
 - Coordinate with the reviewer or Task Master before marking a task complete.
@@ -14,6 +14,10 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 - [ ] [Build gacha character recruitment](4d680dc8-gacha-recruitment.md) (`4d680dc8`)
 - [ ] [Provide player stat screen endpoint](9a1c88c4-stat-screen-endpoint.md) (`9a1c88c4`)
 - [ ] [Track shop purchases in shared party inventory](df5abccd-shop-inventory-tracking.md) (`df5abccd`)
+- [ ] [Add player character editor endpoint](6d267bac-player-character-editor-endpoint.md) (`6d267bac`)
+- [ ] [Add party picker endpoint for run setup](5ddc2157-party-picker-endpoint.md) (`5ddc2157`)
+- [ ] [Lock player stat editing during runs](1c7a29fa-lock-stat-editing.md) (`1c7a29fa`)
+- [ ] [Persist random damage types](28c2b708-persist-damage-types.md) (`28c2b708`)
 
 ### Completed
  - [x] [Integrate passive plugin system](done/822626e9-passive-system.md) (`822626e9`)
