@@ -146,6 +146,13 @@ async def gacha_auto_craft() -> tuple[str, int, dict[str, object]]:
     return jsonify({"status": "ok", "auto_craft": enabled})
 
 
+@app.post("/gacha/craft")
+async def gacha_craft() -> tuple[str, int, dict[str, object]]:
+    manager = GachaManager(SAVE_MANAGER)
+    items = manager.craft()
+    return jsonify({"status": "ok", "items": items})
+
+
 @app.post("/run/start")
 async def start_run() -> tuple[str, int, dict[str, object]]:
     data = await request.get_json(silent=True) or {}

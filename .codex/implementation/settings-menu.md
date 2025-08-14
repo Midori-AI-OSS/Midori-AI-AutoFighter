@@ -1,11 +1,9 @@
 # Settings Menu
 
-The `SettingsMenu` component groups options into **Audio**, **Gameplay**, and
-**Server** sections inside a shared `MenuPanel`. Sliders adjust sound, music,
-and voice volumes; a dropdown toggles between Light, Dark, or Editable themes;
-and a **Frame Rate Cap** selector offers 30, 60, or 120 FPS. The backend polling
-rate derives from the selected cap (`1000 ÷ fps`). The menu auto-saves whenever a
-value changes and exposes a single **Close** button to exit.
+`SettingsMenu.svelte` now follows the options spec. It includes Lucide icons,
+labels, and tooltips for **SFX Volume**, **Music Volume**, and a **Pause on Stat
+Screen** toggle. Buttons for speed and pause sit in the game viewport's
+top-right corner to access this menu.
 
 ## Testing
 - `bun test`

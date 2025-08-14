@@ -1,6 +1,7 @@
 # Player Editor
 
-`PlayerEditor` now connects to backend endpoints so players can set custom
+`PlayerEditor` now connects to backend endpoints and is launched from the main
+menu's **Edit** button or automatically before a run, so players can set custom
 pronouns up to 15 characters, pick a starting damage type—Light, Dark, Wind,
 Lightning, Fire, or Ice—and allocate stat points before starting a run.
 

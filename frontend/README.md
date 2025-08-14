@@ -22,7 +22,9 @@ similar overlay with volume sliders. An upcoming **Edit Player** panel will use
 boosting HP, Attack, and Defense by 1% per point.
 The **Pulls** icon calls `/gacha/pull` so players can recruit 5★ or 6★ characters or
 earn 1★–4★ upgrade items between runs. Pity raises the odds of higher-tier items,
-and auto-crafting those materials is an optional toggle.
+and auto-crafting those materials is an optional toggle. A **Craft** icon opens a
+menu listing upgrade items, offering a manual `/gacha/craft` action and a toggle
+for `/gacha/auto-craft`.
 During a run, `MapDisplay.svelte` shows upcoming rooms as stained-glass buttons
 with matching `lucide-svelte` icons.
 

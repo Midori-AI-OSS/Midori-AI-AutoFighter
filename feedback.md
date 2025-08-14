@@ -17,9 +17,4 @@ Double‑speed function are enabled through the top‑right buttons.  A demonstr
 
 ## Frontend issues
 
-- Clicking run does not open the map, it opens placeholder text
-- Char Editor is still missing or not there
-- Map menu seems unopenable or missing
-- Settings menu does not follow the requested layout
-- Pulls menu is missing or not hooked up to the frontend
-- Missing crafting menu, its no where to be seen...
+No outstanding issues.

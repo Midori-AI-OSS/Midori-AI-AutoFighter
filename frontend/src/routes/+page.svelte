@@ -1,16 +1,30 @@
 <script>
   import { onMount } from 'svelte';
-  import { Play, Users, Settings, SquareChartGantt, PackageOpen } from 'lucide-svelte';
+  import {
+    Play,
+    Map,
+    Users,
+    User,
+    Settings,
+    SquareChartGantt,
+    PackageOpen,
+    Hammer
+  } from 'lucide-svelte';
   import PartyPicker from '$lib/PartyPicker.svelte';
+  import PlayerEditor from '$lib/PlayerEditor.svelte';
   import MapDisplay from '$lib/MapDisplay.svelte';
   import GameViewport from '$lib/GameViewport.svelte';
+  import PullsMenu from '$lib/PullsMenu.svelte';
+  import CraftingMenu from '$lib/CraftingMenu.svelte';
   import { layoutForWidth } from '$lib/layout.js';
   import {
     startRun,
     battleRoom,
     shopRoom,
     restRoom,
-    pullGacha
+    fetchMap,
+    getPlayerConfig,
+    savePlayerConfig
   } from '$lib/api.js';
 
   let width = 0;
@@ -20,22 +34,45 @@
   let roomData = null;
   let viewportBg = '';
   let viewMode = 'main';
-  let lastPull = [];
+  let showPartyPicker = false;
+  let showMap = false;
+  let showEditor = false;
+  let showPulls = false;
+  let showCraft = false;
+  let editorState = { pronouns: '', damage: 'Light', hp: 0, attack: 0, defense: 0 };
+
+  function openRun() {
+    showPartyPicker = true;
+  }
+
+  async function openMap() {
+    if (!runId) return;
+    const data = await fetchMap(runId);
+    currentMap = data.rooms.slice(data.current).map((n) => n.room_type);
+    showMap = true;
+  }
 
   async function handleStart() {
     const data = await startRun(selectedParty);
     runId = data.run_id;
     currentMap = data.map.rooms.slice(data.map.current).map((n) => n.room_type);
-    viewMode = 'main';
-  }
-
-  async function handlePull() {
-    const data = await pullGacha(1);
-    lastPull = data.results || [];
+    showPartyPicker = false;
+    showMap = true;
   }
 
   function handleParty() {
     viewMode = 'party';
+  }
+
+  async function openEditor() {
+    const data = await getPlayerConfig();
+    editorState = data;
+    showEditor = true;
+  }
+
+  function handleEditorSave(e) {
+    editorState = e.detail;
+    savePlayerConfig(editorState);
   }
 
   async function handleRoom(room) {
@@ -47,13 +84,25 @@
     } else if (room === 'rest') {
       roomData = await restRoom(runId);
     }
-    currentMap = currentMap.slice(1);
+    const data = await fetchMap(runId);
+    currentMap = data.rooms.slice(data.current).map((n) => n.room_type);
+  }
+
+  function openPulls() {
+    showPulls = true;
+  }
+
+  function openCraft() {
+    showCraft = true;
   }
 
   const items = [
-    { icon: Play, label: 'Run', action: handleStart },
+    { icon: Play, label: 'Run', action: openRun },
+    { icon: Map, label: 'Map', action: openMap },
     { icon: Users, label: 'Party', action: handleParty },
-    { icon: PackageOpen, label: 'Pulls', action: handlePull },
+    { icon: User, label: 'Edit', action: openEditor },
+    { icon: PackageOpen, label: 'Pulls', action: openPulls },
+    { icon: Hammer, label: 'Craft', action: openCraft },
     { icon: Settings, label: 'Settings', action: () => (viewMode = 'settings') },
     { icon: SquareChartGantt, label: 'Stats' }
   ];
@@ -197,22 +246,40 @@
     <!-- Player Editor and Stats hidden for now to simplify layout -->
   </div>
 </div>
-
-{#if runId}
-  <div class="panel section" style="margin: 1rem;">
-    <h3>Run</h3>
-    <p data-testid="run-id" style="margin:0 0 0.5rem 0;">Run: {runId}</p>
-    <MapDisplay map={currentMap} on:select={(e) => handleRoom(e.detail)} />
+{#if showPartyPicker}
+  <div class="overlay">
+    <div>
+      <PartyPicker bind:selected={selectedParty} />
+      <button on:click={handleStart}>Start Run</button>
+      <button on:click={() => (showPartyPicker = false)}>Cancel</button>
+    </div>
   </div>
 {/if}
 
-{#if lastPull.length}
-  <div class="panel section" style="margin: 1rem;">
-    <h3>Gacha</h3>
-    <ul>
-      {#each lastPull as r}
-        <li>{r.type}: {r.id}</li>
-      {/each}
-    </ul>
+{#if showEditor}
+  <div class="overlay">
+    <PlayerEditor
+      {...editorState}
+      on:save={handleEditorSave}
+      on:close={() => (showEditor = false)}
+    />
+  </div>
+{/if}
+
+{#if showMap}
+  <div class="overlay">
+    <MapDisplay map={currentMap} on:select={(e) => { handleRoom(e.detail); showMap = false; }} />
+  </div>
+{/if}
+
+{#if showPulls}
+  <div class="overlay">
+    <PullsMenu on:close={() => (showPulls = false)} />
+  </div>
+{/if}
+
+{#if showCraft}
+  <div class="overlay">
+    <CraftingMenu on:close={() => (showCraft = false)} />
   </div>
 {/if}

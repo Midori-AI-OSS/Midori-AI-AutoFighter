@@ -9,9 +9,15 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
- - [x] [Build gacha character recruitment](done/4d680dc8-gacha-recruitment.md) (`4d680dc8`)
 
 ### Completed
+ - [x] [Align settings menu with spec](done/985b08e7-settings-layout-fix.md) (`985b08e7`)
+ - [x] [Implement crafting menu](done/b3912ca1-crafting-menu.md) (`b3912ca1`)
+ - [x] [Hook up pulls menu](done/c6639587-pulls-menu-hookup.md) (`c6639587`)
+ - [x] [Hook run button to floor map](done/fb16ba6b-run-button-map.md) (`fb16ba6b`)
+ - [x] [Enable map menu navigation](done/cc6b580b-map-menu-access.md) (`cc6b580b`)
+ - [x] [Add character editor menu](done/8b6dbc41-character-editor-menu.md) (`8b6dbc41`)
+ - [x] [Build gacha character recruitment](done/4d680dc8-gacha-recruitment.md) (`4d680dc8`)
  - [x] [Integrate passive plugin system](done/822626e9-passive-system.md) (`822626e9`)
  - [x] [Build map generator and room types](done/9767b3f3-map-generator-and-rooms.md) (`9767b3f3`)
  - [x] [Implement encrypted save system](done/4b003150-encrypted-save-system.md) (`4b003150`)

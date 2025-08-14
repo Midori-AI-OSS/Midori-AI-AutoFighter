@@ -135,6 +135,26 @@ async def test_auto_craft_setting(app_with_db):
 
 
 @pytest.mark.asyncio
+async def test_manual_craft_endpoint(app_with_db):
+    app, db_path = app_with_db
+    client = app.test_client()
+    conn = sqlcipher3.connect(db_path)
+    conn.execute("PRAGMA key = 'testkey'")
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)",
+    )
+    conn.execute(
+        "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
+        ("upgrade_items", '{"fire_1":125}')
+    )
+    conn.commit()
+    resp = await client.post("/gacha/craft")
+    data = await resp.get_json()
+    assert data["items"].get("fire_1", 0) == 0
+    assert data["items"]["fire_2"] == 1
+
+
+@pytest.mark.asyncio
 async def test_pity_scales_item_rarity(app_with_db):
     app, db_path = app_with_db
     client = app.test_client()

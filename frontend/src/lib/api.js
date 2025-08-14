@@ -76,6 +76,14 @@ export async function setAutoCraft(enabled) {
   return res.json();
 }
 
+export async function craftItems() {
+  const res = await fetch('http://localhost:59002/gacha/craft', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return res.json();
+}
+
 export async function getPlayerConfig() {
   const res = await fetch('http://localhost:59002/player/editor');
   return res.json();

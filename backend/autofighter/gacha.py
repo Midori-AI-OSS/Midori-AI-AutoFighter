@@ -115,6 +115,12 @@ class GachaManager:
                 items[f"{element}_4"] -= 10
                 items["ticket"] = items.get("ticket", 0) + 1
 
+    def craft(self) -> dict[str, int]:
+        items = self._get_items()
+        self._auto_craft(items)
+        self._set_items(items)
+        return items
+
     def _add_character(self, cid: str) -> int:
         with self.save.connection() as conn:
             conn.execute(

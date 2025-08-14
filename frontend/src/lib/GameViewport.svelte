@@ -4,7 +4,7 @@
   import PartyPicker from './PartyPicker.svelte';
   import SettingsMenu from './SettingsMenu.svelte';
   import OverlaySurface from './OverlaySurface.svelte';
-  import { Diamond, User, Users, Settings, Play, LogOut } from 'lucide-svelte';
+  import { Diamond, User, Settings, ChevronsRight, Pause } from 'lucide-svelte';
   import { onMount } from 'svelte';
   import { getHourlyBackground } from './assetLoader.js';
 
@@ -13,6 +13,7 @@
   export let background = '';
   export let viewMode = 'main'; // 'main', 'party', 'settings'
   let randomBg = '';
+  let speed2x = false;
 
   onMount(() => {
     if (!background) {
@@ -23,27 +24,13 @@
 </script>
 
 <style>
-  .viewport-right-bar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  /* height removed to allow stretching */
-  width: 3.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.2rem 0.7rem 1.2rem 0.7rem;
-  border-radius: 0;
-    background:
-      linear-gradient(135deg, rgba(10,10,10,0.96) 0%, rgba(30,30,30,0.92) 100%),
-      repeating-linear-gradient(120deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 8px),
-      linear-gradient(60deg, rgba(255,255,255,0.06) 10%, rgba(0,0,0,0.38) 80%);
-    box-shadow: 0 2px 18px 0 rgba(0,0,0,0.32), 0 1.5px 0 0 rgba(255,255,255,0.04) inset;
-    border: 1.5px solid rgba(40,40,40,0.44);
+  .top-right-controls {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    display: flex;
+    gap: 0.5rem;
     z-index: 10;
-    backdrop-filter: blur(3.5px) saturate(1.05);
-    opacity: 0.99;
   }
   .viewport-wrap {
     width: 100%;
@@ -143,21 +130,15 @@
           </button>
         {/if}
       </div>
+        <div class="top-right-controls">
+          <button class="icon-btn" title="Toggle Speed" on:click={() => (speed2x = !speed2x)}>
+            <ChevronsRight size={22} color="#fff" />
+          </button>
+          <button class="icon-btn" title="Pause" on:click={() => (viewMode = 'settings')}>
+            <Pause size={22} color="#fff" />
+          </button>
+        </div>
         {#if viewMode === 'main'}
-          <div class="viewport-right-bar">
-            <button class="icon-btn" title="Run">
-              <Play size={32} color="#fff" />
-            </button>
-            <button class="icon-btn" title="Party" on:click={() => viewMode = 'party'}>
-              <Users size={32} color="#fff" />
-            </button>
-            <button class="icon-btn" title="Settings" on:click={() => viewMode = 'settings'}>
-              <Settings size={32} color="#fff" />
-            </button>
-            <button class="icon-btn" title="Exit">
-              <LogOut size={32} color="#fff" />
-            </button>
-          </div>
           {#if runId && roomData}
             <RoomView result={roomData.result} foes={roomData.foes} party={roomData.party} />
           {:else if runId}

@@ -13,6 +13,14 @@ dependencies = [
     "pytest-asyncio>=0.23.0",
 ]
 
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["autofighter", "plugins"]
+
 [project.optional-dependencies]
 llm-cpu = [
     "torch",

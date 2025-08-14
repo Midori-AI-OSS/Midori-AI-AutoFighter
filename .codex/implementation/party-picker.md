@@ -12,7 +12,7 @@ itself just under the overlay surface to avoid a surrounding scrollbar.
 Preview portraits scale without a minimum size so they remain visible on
 small screens.
 
-`PartyPicker` exposes the `selected` array as a bound prop so parents can reactively read the lineup. Menus close through their own navigation controls; no explicit confirm action is required.
+`PartyPicker` exposes the `selected` array as a bound prop so parents can reactively read the lineup. When launched from the Run button it opens as a modal that requires an explicit **Start Run** confirmation before proceeding.
 
 `startRun` in `frontend/src/lib/api.js` posts the chosen party and optional player damage type to the Quart backend's `/run/start` endpoint, which validates ownership and returns run data with passive names.
 
