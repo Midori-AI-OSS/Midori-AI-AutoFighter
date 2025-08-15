@@ -16,7 +16,8 @@ Double‑speed function are enabled through the top‑right buttons.  A demonstr
 
 
 ## Frontend issues
-
 The settings panel is now completely incorrect. It does not offer three different columns. Column 1 should be audio, column 2 should be system or gameplay, and column 3 should be all other settings. There's no framerate setting that should be locked to 30, 60, 120 frames, and that will control the polling rate of the server. There's no way to set the autocraft setting in the settings menu, and it does not follow the standard of using the game view point.
 
-All of the other menus do not follow the standard of using the Game Viewpoint system. The menu that was supposed to be on the right-hand side somehow got removed, and now is only showing the combat. We need to remove the Shortcuts menu and move everything that's in the Shortcuts menu, remove the text, and put it back on the stained-glass, dark-themed right sidebar on the 
+The menu that was supposed to be on the right-hand side somehow got removed, and now is only showing the combat. We need to remove the Shortcuts menu and move everything that's in the Shortcuts menu, remove the text, and put it back on the stained-glass, dark-themed right sidebar on the side.
+
+On desktop, drop the party viewer and target stat windows and expand the game viewport to roughly 95% of the screen while keeping the current menu behavior.

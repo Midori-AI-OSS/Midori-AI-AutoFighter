@@ -11,8 +11,9 @@
   import StatsPanel from './StatsPanel.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Diamond, User, Settings, ChevronsRight, Pause } from 'lucide-svelte';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { getHourlyBackground } from './assetLoader.js';
+  import { setAutoCraft } from './api.js';
 
   export let runId = '';
   export let roomData = null;
@@ -20,8 +21,14 @@
   export let viewMode = 'main'; // 'main', 'party', 'settings'
   export let editorState = {};
   export let map = [];
+  export let sfxVolume = 50;
+  export let musicVolume = 50;
+  export let pauseOnStats = false;
+  export let framerate = 60;
+  export let autocraft = false;
   let randomBg = '';
   let speed2x = false;
+  let pollHandle;
   const dispatch = createEventDispatcher();
 
   onMount(() => {
@@ -31,6 +38,15 @@
   });
   export let selected = [];
   export let items = [];
+
+  $: {
+    clearInterval(pollHandle);
+    pollHandle = setInterval(() => {
+      dispatch('poll');
+    }, 1000 / framerate);
+  }
+
+  onDestroy(() => clearInterval(pollHandle));
 </script>
 
 <style>
@@ -223,7 +239,19 @@
         {/if}
         {#if viewMode === 'settings'}
           <OverlaySurface>
-            <SettingsMenu on:close={() => viewMode = 'main'} />
+            <SettingsMenu
+              {sfxVolume}
+              {musicVolume}
+              {pauseOnStats}
+              {framerate}
+              {autocraft}
+              on:save={(e) => {
+                ({ sfxVolume, musicVolume, pauseOnStats, framerate, autocraft } = e.detail);
+                setAutoCraft(autocraft);
+                viewMode = 'main';
+              }}
+              on:close={() => (viewMode = 'main')}
+            />
           </OverlaySurface>
         {/if}
   </div>

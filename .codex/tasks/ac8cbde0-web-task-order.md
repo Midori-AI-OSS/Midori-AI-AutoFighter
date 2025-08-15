@@ -9,7 +9,9 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
-
+ - [ ] [Simplify desktop layout to a single viewport](41c342ac-desktop-ui-sidebar-refactor.md) (`41c342ac`)
+ - [ ] [Rebuild settings panel with framerate and autocraft](2a4db820-settings-panel-overhaul.md) (`2a4db820`)
+ - [ ] [Fix menu-induced viewport scaling](a449cc04-fix-viewport-bug.md) (`a449cc04`)
 ### Completed
  - [x] [Align settings menu with spec](done/985b08e7-settings-layout-fix.md) (`985b08e7`)
  - [x] [Implement crafting menu](done/b3912ca1-crafting-menu.md) (`b3912ca1`)

@@ -3,7 +3,7 @@
 # Web Rewrite Audit
 
 ## Summary
-Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` finds existing room endpoints, tests, Docker tooling, and plugin imports functioning as described. Remaining work—encrypted saves, map generator, passives, relics, cards, gacha pulls, stat screen data, and shared shop inventory—still blocks a fully playable loop.
+Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` finds existing room endpoints, tests, Docker tooling, and plugin imports functioning as described. However, frontend documentation and layout have drifted from specifications. Opening menus enlarges the game viewport and desktop layout still expects left-side panels instead of letting the viewport fill about 95% of the screen. Remaining work—encrypted saves, map generator, passives, relics, cards, gacha pulls, stat screen data, shared shop inventory, and frontend alignment—still blocks a fully playable loop.
 
 ## Findings
 ### Replace legacy player plugin imports (`f1245ae6`) – PASSED
@@ -18,6 +18,9 @@ Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` fi
 ### Expose battle, shop, and rest endpoints (`b0755eeb`) – PASSED
 - Dedicated routes reuse existing game logic and persist run state in `save.db`【F:backend/app.py†L182-L246】【F:.codex/implementation/room-endpoints.md†L12-L23】
 
+### Frontend UI and documentation – FAILED
+- Desktop layout, settings menu, and viewport behavior do not match planned design【F:feedback.md†L18-L26】【F:.codex/planning/8a7d9c1e-web-game-plan.md†L9-L17】
+
 ### Scaffold Quart backend (`1faf53ba`) – PASSED
 - Quart app boots on port `59002`, root endpoint returns status, and setup steps live in the README【F:backend/app.py†L70-L106】【F:backend/README.md†L1-L24】
 
@@ -31,6 +34,6 @@ Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` fi
 - `compose.yaml` defines `llm-cuda`, `llm-amd`, and `llm-cpu` profiles, and the README documents usage【F:compose.yaml†L21-L53】【F:README.md†L67-L76】
 
 ## Status
-PASS
+ISSUES FOUND
 
 Coders: completed tasks withstand scrutiny, but the backlog is long. Encrypted saves, procedural maps, passives, relics, cards, gacha recruitment, stat screens, and shared shop inventory remain undone. Expect the next audit to pry even deeper—sloppiness will not be tolerated.
