@@ -16,6 +16,7 @@
   import GameViewport from '$lib/GameViewport.svelte';
   import PullsMenu from '$lib/PullsMenu.svelte';
   import CraftingMenu from '$lib/CraftingMenu.svelte';
+  import StatsPanel from '$lib/StatsPanel.svelte';
   import { layoutForWidth } from '$lib/layout.js';
   import {
     startRun,
@@ -35,6 +36,7 @@
   let viewportBg = '';
   let viewMode = 'main';
   let showMap = false;
+  let showTarget = false;
   let editorState = { pronouns: '', damage: 'Light', hp: 0, attack: 0, defense: 0 };
 
   function openRun() {
@@ -94,6 +96,10 @@
   viewMode = 'craft';
   }
 
+  function handleTarget() {
+    showTarget = true;
+  }
+
   const items = [
     { icon: Play, label: 'Run', action: openRun },
     { icon: Map, label: 'Map', action: openMap },
@@ -129,66 +135,33 @@
   /* Page split: viewport 75vh and panels auto height */
   .layout {
     display: grid;
-    /* viewport fills available space, panels auto height */
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 75vh auto;
     height: 100vh;
     gap: 1rem;
     padding: 1rem;
   }
 
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.3rem;
-    padding: 0.2rem;
-  }
-
-  .cell {
-    display: auto;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #fff;
-    padding: 0.3rem;
-    background: #111;
-    color: #fff;
-    cursor: pointer;
-    font-size: 0.85rem;
-  }
-
-  .cell svg {
-    width: 28px;
-    height: 28px;
-    stroke-width: 2;
-    margin-bottom: 0.2rem;
+  @media (min-width: 1024px) {
+    .layout {
+      grid-template-columns: 20rem 1fr;
+      grid-template-rows: 1fr;
+    }
   }
 
   .panel { border: 2px solid #fff; padding: 0.2rem; background: #0a0a0a; }
-  /* Bottom panels container: fill row and hide overflow */
-  .stack {
-    display: flex;
-    flex-direction: column;
-  gap: 0.4rem;
-  /* allow panel row to size to its content */
-  height: auto;
-    /* ensure panels fill grid track without overflow */
-    overflow: hidden;
-  }
-  @media (min-width: 1024px) {
-    .stack {
-      flex-direction: row;
-      /* allow shrink to content height */
-      height: auto;
-      overflow: hidden;
-    }
-    .stack > section {
-      flex: 1;
-      /* let section size to content and scroll internally */
-      height: auto;
-      overflow: auto;
-    }
-  }
   .section h3 { margin: 0 0 0.2rem 0; font-size: 0.8rem; color: #ddd; }
+  .side { position: relative; }
+  .target-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(-100%);
+    transition: transform 0.25s ease;
+  }
+  .target-panel.show {
+    transform: translateY(0);
+  }
 
   .overlay {
     position: fixed;
@@ -212,32 +185,29 @@
 </style>
 
 <div class="layout">
-  <!-- Game Viewport -->
+  <div class="side">
+    <section class="panel section">
+      <h3>Party</h3>
+      <PartyPicker compact bind:selected={selectedParty} on:click={handleTarget} />
+      <div class="target-panel" class:show={showTarget}>
+        <StatsPanel on:close={() => (showTarget = false)} />
+      </div>
+    </section>
+  </div>
+
   <div class="viewport-wrap">
     <GameViewport
       runId={runId}
       roomData={roomData}
-  background={viewportBg}
-  bind:selected={selectedParty}
-  bind:viewMode={viewMode}
-  items={items}
-  editorState={editorState}
-  map={currentMap}
-  on:startRun={() => { handleStart(); viewMode = 'main'; }}
-  on:editorSave={(e) => { handleEditorSave(e); viewMode = 'main'; }}
+      background={viewportBg}
+      bind:selected={selectedParty}
+      bind:viewMode={viewMode}
+      items={items}
+      editorState={editorState}
+      map={currentMap}
+      on:startRun={() => { handleStart(); viewMode = 'main'; }}
+      on:editorSave={(e) => { handleEditorSave(e); viewMode = 'main'; }}
+      on:target={handleTarget}
     />
-  </div>
-
-  <div class="stack">
-  <!-- Shortcuts moved into right stained-glass sidebar inside GameViewport -->
-
-    {#if viewMode === 'main'}
-    <section class="panel section">
-      <h3>Party</h3>
-      <PartyPicker compact bind:selected={selectedParty} />
-    </section>
-    {/if}
-
-    <!-- Player Editor and Stats hidden for now to simplify layout -->
   </div>
 </div>

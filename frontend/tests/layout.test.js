@@ -16,15 +16,15 @@ describe('layoutForWidth', () => {
 });
 
 describe('panelsForWidth', () => {
-  test('desktop shows all panels', () => {
-    expect(panelsForWidth(1200)).toEqual(['menu', 'party', 'editor', 'stats']);
+  test('desktop shows party and target panels', () => {
+    expect(panelsForWidth(1200)).toEqual(['party', 'target']);
   });
 
-  test('tablet shows menu and party picker', () => {
-    expect(panelsForWidth(800)).toEqual(['menu', 'party']);
+  test('tablet shows party picker only', () => {
+    expect(panelsForWidth(800)).toEqual(['party']);
   });
 
-  test('phone shows menu only', () => {
-    expect(panelsForWidth(400)).toEqual(['menu']);
+  test('phone shows no side panels', () => {
+    expect(panelsForWidth(400)).toEqual([]);
   });
 });

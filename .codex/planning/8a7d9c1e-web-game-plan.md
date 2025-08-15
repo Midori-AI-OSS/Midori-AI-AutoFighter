@@ -3,7 +3,7 @@
 ## Goal
 Transition Midori AI AutoFighter to a web-based architecture. The game's logic remains in Python, served through a Quart server, while the user interface runs in a separate Svelte frontend. The project no longer targets 3D rendering.
 
-Status: ready for audit.
+Status: under revision for frontend alignment.
 
 ## Project Lead Feedback
 - Use Svelte for the frontend, keeping the main menu's high-contrast icon grid inspired by Arknights.
@@ -11,9 +11,13 @@ Status: ready for audit.
 - Reuse existing plugin-driven combat, menus, stat screens, and multi-room run map.
 - Manage the JS frontend and Quart backend with Docker Compose.
 - Keep `myunderstanding.md` current with gameplay flow updates.
+- On desktop, present three windows: a landscape game viewport on the right, a small party viewer on the left, and a target stats panel that slides over the party viewer when a unit is selected.
+- The settings menu must contain three columns (audio, system/gameplay, other) and include 30/60/120 FPS options that govern server polling along with an autocraft toggle.
 
 ## Current Issues
-None.
+- Opening any menu enlarges the game viewport.
+- Desktop layout lacks the left-side party viewer and target stats panel.
+- Settings panel does not provide column layout, framerate options, or autocraft toggle.
 
 ## Immediate Playable Flow
 Playable loop is in place; future work will expand content and polish.

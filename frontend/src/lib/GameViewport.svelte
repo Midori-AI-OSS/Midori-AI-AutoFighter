@@ -20,6 +20,11 @@
   export let viewMode = 'main'; // 'main', 'party', 'settings'
   export let editorState = {};
   export let map = [];
+  export let sfxVolume = 50;
+  export let musicVolume = 50;
+  export let pauseOnStats = false;
+  export let framerate = 60;
+  export let autocraft = false;
   let randomBg = '';
   let speed2x = false;
   const dispatch = createEventDispatcher();
@@ -223,7 +228,18 @@
         {/if}
         {#if viewMode === 'settings'}
           <OverlaySurface>
-            <SettingsMenu on:close={() => viewMode = 'main'} />
+            <SettingsMenu
+              {sfxVolume}
+              {musicVolume}
+              {pauseOnStats}
+              {framerate}
+              {autocraft}
+              on:save={(e) => {
+                ({ sfxVolume, musicVolume, pauseOnStats, framerate, autocraft } = e.detail);
+                viewMode = 'main';
+              }}
+              on:close={() => (viewMode = 'main')}
+            />
           </OverlaySurface>
         {/if}
   </div>

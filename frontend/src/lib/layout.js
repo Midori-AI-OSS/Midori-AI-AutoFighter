@@ -6,7 +6,7 @@ export function layoutForWidth(width) {
 
 export function panelsForWidth(width) {
   const mode = layoutForWidth(width);
-  if (mode === 'desktop') return ['menu', 'party'];
-  if (mode === 'tablet') return ['menu', 'party'];
-  return ['menu'];
+  if (mode === 'desktop') return ['party', 'target'];
+  if (mode === 'tablet') return ['party'];
+  return [];
 }

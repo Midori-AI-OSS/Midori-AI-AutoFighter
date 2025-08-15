@@ -1,5 +1,7 @@
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:59002';
+
 export async function startRun(party, damageType = '') {
-  const res = await fetch('http://localhost:59002/run/start', {
+  const res = await fetch(`${API_BASE}/run/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ party, damage_type: damageType })
@@ -8,7 +10,7 @@ export async function startRun(party, damageType = '') {
 }
 
 export async function updateParty(runId, party) {
-  const res = await fetch(`http://localhost:59002/party/${runId}`, {
+  const res = await fetch(`${API_BASE}/party/${runId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ party })
@@ -17,17 +19,17 @@ export async function updateParty(runId, party) {
 }
 
 export async function fetchMap(runId) {
-  const res = await fetch(`http://localhost:59002/map/${runId}`);
+  const res = await fetch(`${API_BASE}/map/${runId}`);
   return res.json();
 }
 
 export async function getPlayers() {
-  const res = await fetch('http://localhost:59002/players');
+  const res = await fetch(`${API_BASE}/players`);
   return res.json();
 }
 
 export async function battleRoom(runId, action = '') {
-  const res = await fetch(`http://localhost:59002/rooms/${runId}/battle`, {
+  const res = await fetch(`${API_BASE}/rooms/${runId}/battle`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action })
@@ -36,7 +38,7 @@ export async function battleRoom(runId, action = '') {
 }
 
 export async function shopRoom(runId, action = '') {
-  const res = await fetch(`http://localhost:59002/rooms/${runId}/shop`, {
+  const res = await fetch(`${API_BASE}/rooms/${runId}/shop`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action })
@@ -45,7 +47,7 @@ export async function shopRoom(runId, action = '') {
 }
 
 export async function restRoom(runId, action = '') {
-  const res = await fetch(`http://localhost:59002/rooms/${runId}/rest`, {
+  const res = await fetch(`${API_BASE}/rooms/${runId}/rest`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action })
@@ -54,12 +56,12 @@ export async function restRoom(runId, action = '') {
 }
 
 export async function getGacha() {
-  const res = await fetch('http://localhost:59002/gacha');
+  const res = await fetch(`${API_BASE}/gacha`);
   return res.json();
 }
 
 export async function pullGacha(count = 1) {
-  const res = await fetch('http://localhost:59002/gacha/pull', {
+  const res = await fetch(`${API_BASE}/gacha/pull`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ count })
@@ -68,7 +70,7 @@ export async function pullGacha(count = 1) {
 }
 
 export async function setAutoCraft(enabled) {
-  const res = await fetch('http://localhost:59002/gacha/auto-craft', {
+  const res = await fetch(`${API_BASE}/gacha/auto-craft`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ enabled })
@@ -77,7 +79,7 @@ export async function setAutoCraft(enabled) {
 }
 
 export async function craftItems() {
-  const res = await fetch('http://localhost:59002/gacha/craft', {
+  const res = await fetch(`${API_BASE}/gacha/craft`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
   });
@@ -85,12 +87,12 @@ export async function craftItems() {
 }
 
 export async function getPlayerConfig() {
-  const res = await fetch('http://localhost:59002/player/editor');
+  const res = await fetch(`${API_BASE}/player/editor`);
   return res.json();
 }
 
 export async function savePlayerConfig(config) {
-  const res = await fetch('http://localhost:59002/player/editor', {
+  const res = await fetch(`${API_BASE}/player/editor`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config)
