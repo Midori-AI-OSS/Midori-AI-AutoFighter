@@ -14,6 +14,8 @@ The same guide illustrates Ultimate energy costs by pointing arrows at the Energ
 
 Double‑speed function are enabled through the top‑right buttons.  A demonstration screenshot shows the controls while characters fight automatically in the background.
 
+The desktop layout now removes the party and stat viewers on the left side so the game viewport can fill roughly 95% of the screen.
+
 
 ## Frontend issues
 No outstanding issues recorded.

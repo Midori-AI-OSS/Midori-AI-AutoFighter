@@ -1,7 +1,7 @@
 # Web Rewrite Task Order
 
 ## Summary
-Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python Quart backend. Tasks now reflect pronoun limits, damage-type rules, and rest-node gacha access. Reminder: list only task titles and file names—open each task file for details. (ready for audit)
+Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python Quart backend. Tasks now reflect pronoun limits, damage-type rules, rest-node gacha access, and the decision to drop left-side party and stat viewers in favor of a larger game window. Reminder: list only task titles and file names—open each task file for details. (ready for audit)
 
 - Read `.codex/planning/8a7d9c1e-web-game-plan.md` before starting or auditing any task.
 - Coordinate with the reviewer or Task Master before marking a task complete.
@@ -10,6 +10,7 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 ## Tasks
 ### To Do
 ### Completed
+ - [x] [Expand game viewport to 95% and remove side viewers](done/2e26511f-expand-game-viewport.md) (`2e26511f`)
  - [x] [Refactor desktop layout with right sidebar](done/41c342ac-desktop-ui-sidebar-refactor.md) (`41c342ac`)
  - [x] [Rebuild settings panel with framerate and autocraft](done/2a4db820-settings-panel-overhaul.md) (`2a4db820`)
  - [x] [Fix menu-induced viewport scaling](done/a449cc04-fix-viewport-bug.md) (`a449cc04`)
