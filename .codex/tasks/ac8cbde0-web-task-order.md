@@ -9,6 +9,17 @@ Ordered steps for moving Midori AI AutoFighter to a Svelte frontend and a Python
 
 ## Tasks
 ### To Do
+ - [ ] [Wire start run button to backend](d10d985e-start-run-endpoint.md) (`d10d985e`)
+ - [ ] [Theme start and cancel buttons](80ac2de0-theme-start-run-button.md) (`80ac2de0`)
+ - [ ] [Fix map orientation and room states](ee812dae-fix-map-orientation.md) (`ee812dae`)
+ - [ ] [Send room selection to backend battle endpoint](8c01491a-room-click-backend.md) (`8c01491a`)
+ - [ ] [Document battle endpoint payload](f74d328b-document-battle-payload.md) (`f74d328b`)
+ - [ ] [Lock menus during active battles](38560441-battle-lock-ui.md) (`38560441`)
+ - [ ] [Fix navigation buttons](f59f2c94-fix-menu-buttons.md) (`f59f2c94`)
+ - [ ] [Add voice setting to audio options](6cc0b67f-add-voice-setting.md) (`6cc0b67f`)
+ - [ ] [Verify unified room action route](fd1f6ffd-unified-room-route.md) (`fd1f6ffd`)
+ - [ ] [Build reward overlay](1457ed34-reward-overlay.md) (`1457ed34`)
+ - [ ] [Organize asset icon folders](1d6c6f08-asset-icon-structure.md) (`1d6c6f08`)
 ### Completed
  - [x] [Expand game viewport to 95% and remove side viewers](done/2e26511f-expand-game-viewport.md) (`2e26511f`)
  - [x] [Refactor desktop layout with right sidebar](done/41c342ac-desktop-ui-sidebar-refactor.md) (`41c342ac`)

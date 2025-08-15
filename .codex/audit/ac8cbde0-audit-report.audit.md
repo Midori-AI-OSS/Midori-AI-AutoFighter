@@ -3,7 +3,7 @@
 # Web Rewrite Audit
 
 ## Summary
-Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` finds existing room endpoints, tests, Docker tooling, and plugin imports functioning as described. However, frontend documentation and layout have drifted from specifications. Opening menus enlarges the game viewport and required side panels are missing. Remaining work—encrypted saves, map generator, passives, relics, cards, gacha pulls, stat screen data, shared shop inventory, and frontend alignment—still blocks a fully playable loop.
+Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` finds existing room endpoints, tests, Docker tooling, and plugin imports functioning as described. However, frontend documentation and layout have drifted from specifications. Opening menus enlarges the game viewport and required side panels are missing. Remaining work—encrypted saves, map generator, passives, relics, cards, gacha pulls, stat screen data, shared shop inventory, and frontend alignment—still blocks a fully playable loop. Additional issues: Start Run button returns to main menu, Start Run and Cancel buttons lack stained glass theme, map orientation is inverted, room clicks fail to contact the backend, the battle endpoint payload is undocumented, the Back button goes home, the Home and Player Editor buttons do nothing, the Settings menu lacks a voice option, the frontend never checks for ongoing battles, and item, relic, and card icons are missing. (ready for audit)
 
 ## Findings
 ### Replace legacy player plugin imports (`f1245ae6`) – PASSED
@@ -34,6 +34,6 @@ Audit of completed backend tasks in `.codex/tasks/ac8cbde0-web-task-order.md` fi
 - `compose.yaml` defines `llm-cuda`, `llm-amd`, and `llm-cpu` profiles, and the README documents usage【F:compose.yaml†L21-L53】【F:README.md†L67-L76】
 
 ## Status
-ISSUES FOUND
+ISSUES FOUND (ready for audit)
 
 Coders: completed tasks withstand scrutiny, but the backlog is long. Encrypted saves, procedural maps, passives, relics, cards, gacha recruitment, stat screens, and shared shop inventory remain undone. Expect the next audit to pry even deeper—sloppiness will not be tolerated.
