@@ -34,7 +34,7 @@ class SaveManager:
     def connection(self) -> Iterator[sqlcipher3.Connection]:
         conn = sqlcipher3.connect(self.db_path)
         if self.key:
-            conn.execute(f"PRAGMA key = '{self.key}'")
+            conn.set_key(self.key)
         try:
             yield conn
             conn.commit()

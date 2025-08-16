@@ -29,3 +29,24 @@ def test_password_derives_key(tmp_path, monkeypatch):
     with pytest.raises(sqlcipher3.DatabaseError):
         with bad_mgr.connection() as conn:
             conn.execute("SELECT COUNT(*) FROM runs")
+
+
+def test_malformed_key_does_not_execute_sql(tmp_path):
+    db_path = tmp_path / "save.db"
+    migrations = Path(__file__).resolve().parents[1] / "migrations"
+    mgr = SaveManager(db_path, "goodkey")
+    mgr.migrate(migrations)
+    with mgr.connection() as conn:
+        conn.execute(
+            "INSERT INTO runs (id, party, map) VALUES ('1', '[]', '[]')"
+        )
+
+    malicious_key = "x'; DROP TABLE runs;--"
+    bad_mgr = SaveManager(db_path, malicious_key)
+    with pytest.raises(sqlcipher3.DatabaseError):
+        with bad_mgr.connection() as conn:
+            conn.execute("SELECT COUNT(*) FROM runs")
+
+    with mgr.connection() as conn:
+        count = conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0]
+    assert count == 1
