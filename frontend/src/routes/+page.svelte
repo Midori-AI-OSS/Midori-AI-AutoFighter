@@ -7,7 +7,8 @@
     Settings,
     SquareChartGantt,
     PackageOpen,
-    Hammer
+    Hammer,
+    MessageSquare
   } from 'lucide-svelte';
   import GameViewport from '$lib/GameViewport.svelte';
   import {
@@ -21,6 +22,7 @@
     bossRoom,
     chooseCard
   } from '$lib/api.js';
+  import { FEEDBACK_URL } from '$lib/constants.js';
 
   let runId = '';
   let currentMap = [];
@@ -101,6 +103,10 @@
     setView('craft');
   }
 
+  function openFeedback() {
+    window.open(FEEDBACK_URL, '_blank');
+  }
+
   async function handleTarget() {
     if (await checkBattle()) return;
     setView('stats');
@@ -148,6 +154,7 @@
       action: () => setView('settings'),
       disabled: false
     },
+    { icon: MessageSquare, label: 'Feedback', action: openFeedback, disabled: false },
     { icon: SquareChartGantt, label: 'Stats', action: handleTarget, disabled: battleActive }
   ];
 
