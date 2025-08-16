@@ -25,4 +25,14 @@ describe('settings storage', () => {
     const result = loadSettings();
     expect(result.framerate).toBe(30);
   });
+
+  test('merges settings and normalizes numeric values', () => {
+    saveSettings({ musicVolume: 10, framerate: '60' });
+    saveSettings({ sfxVolume: 20 });
+    const result = loadSettings();
+    expect(result.musicVolume).toBe(10);
+    expect(result.sfxVolume).toBe(20);
+    expect(result.framerate).toBe(60);
+    expect(typeof result.framerate).toBe('number');
+  });
 });

@@ -75,9 +75,9 @@
       <div class="control" title="Limit server polling frequency.">
         <label>Framerate</label>
         <select bind:value={framerate}>
-          <option value="30">30</option>
-          <option value="60">60</option>
-          <option value="120">120</option>
+          <option value={30}>30</option>
+          <option value={60}>60</option>
+          <option value={120}>120</option>
         </select>
       </div>
       <div class="control" title="Clear all save data.">

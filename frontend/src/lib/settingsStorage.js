@@ -3,7 +3,10 @@ const SETTINGS_KEY = 'autofighter_settings';
 export function loadSettings() {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (!raw) return {};
+    const data = JSON.parse(raw);
+    if (data.framerate !== undefined) data.framerate = Number(data.framerate);
+    return data;
   } catch {
     return {};
   }
@@ -11,7 +14,9 @@ export function loadSettings() {
 
 export function saveSettings(settings) {
   try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    const current = loadSettings();
+    const merged = { ...current, ...settings };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(merged));
   } catch {
     // ignore write errors
   }

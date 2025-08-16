@@ -6,7 +6,7 @@ labels, and tooltips for **SFX Volume**, **Music Volume**, **Voice Volume**,
 the game viewport's top-right corner to access this menu. Controls are grouped
 under **Audio**, **System**, and **Gameplay** headings for clarity.
 
-The selected framerate is saved in local storage so server polling limits persist across sessions.
+The selected framerate is saved as a number and merged with existing settings in local storage so server polling limits persist across sessions.
 
 ## Testing
 - `bun test`

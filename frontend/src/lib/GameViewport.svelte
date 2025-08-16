@@ -41,7 +41,7 @@
     if (saved.sfxVolume !== undefined) sfxVolume = saved.sfxVolume;
     if (saved.musicVolume !== undefined) musicVolume = saved.musicVolume;
     if (saved.voiceVolume !== undefined) voiceVolume = saved.voiceVolume;
-    if (saved.framerate !== undefined) framerate = saved.framerate;
+    if (saved.framerate !== undefined) framerate = Number(saved.framerate);
     if (saved.autocraft !== undefined) autocraft = saved.autocraft;
   });
   export let selected = [];
