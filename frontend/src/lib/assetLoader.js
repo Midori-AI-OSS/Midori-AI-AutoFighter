@@ -46,7 +46,7 @@ function getHourSeed() {
 }
 
 // Get random image from character folder or fallback
-export function getCharacterImage(characterId, isPlayer = false) {
+export function getCharacterImage(characterId, _isPlayer = false) {
   // Check if character has dedicated images
   if (characterAssets[characterId] && characterAssets[characterId].length > 0) {
     const images = characterAssets[characterId];

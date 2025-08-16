@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Backend Tests
+        working-directory: backend
+        run: uv run pytest
+      - name: Backend Lint
+        run: uvx ruff check backend
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Frontend Tests
+        working-directory: frontend
+        run: bun test
+      - name: Frontend Lint
+        working-directory: frontend
+        run: ESLINT_USE_FLAT_CONFIG=false bunx eslint .
