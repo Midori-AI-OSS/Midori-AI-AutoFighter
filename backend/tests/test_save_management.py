@@ -1,12 +1,13 @@
-import base64
 import json
-import pytest
 import base64
 import hashlib
-import sqlcipher3
 import importlib.util
 
 from pathlib import Path
+
+import pytest
+import sqlcipher3
+
 from cryptography.fernet import Fernet
 
 
