@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import MenuPanel from './MenuPanel.svelte';
 	const dispatch = createEventDispatcher();
-	export let stats = { hp: 1000, def: 50, spd: '-', vitality: 1, regain: 1, exp: 1 };
+        export let stats = { hp: 1000, def: 50, vitality: 1, regain: 1, exp: 1 };
 	function close() { dispatch('close'); }
 </script>
 
@@ -15,7 +15,6 @@
 		<div class="stats-grid">
 			<div><span>HP</span><span>{stats.hp}</span></div>
 			<div><span>DEF</span><span>{stats.def}</span></div>
-			<div><span>SPD</span><span>{stats.spd}</span></div>
 			<div><span>Vitality</span><span>{stats.vitality}</span></div>
 			<div><span>Regain</span><span>{stats.regain}</span></div>
 			<div><span>EXP</span><span>{stats.exp}</span></div>

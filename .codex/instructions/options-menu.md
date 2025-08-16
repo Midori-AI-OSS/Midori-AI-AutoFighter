@@ -1,6 +1,6 @@
 # Options Menu
 
-The Options submenu lets players adjust audio levels and stat screen behaviour.
+The Options submenu lets players adjust audio levels, system behaviour, and gameplay automation. Controls appear under **Audio**, **System**, and **Gameplay** headings.
 
 ## Controls
 
@@ -16,11 +16,21 @@ The Options submenu lets players adjust audio levels and stat screen behaviour.
   - Label: `Music Volume`
   - Tooltip: `Adjust background music volume.`
 
-- **Pause on Stat Screen**
-  - Toggle that pauses game tasks when the stat screen is open.
-  - Lucide icon: `pause`
-  - Label: `Pause on Stat Screen`
-  - Tooltip: `Stop gameplay while viewing stats.`
+- **Voice Volume**
+  - Slider adjusting voice levels.
+  - Lucide icon: `mic`
+  - Label: `Voice Volume`
+  - Tooltip: `Adjust voice volume.`
+
+- **Framerate**
+  - Select box limiting server polling frequency.
+  - Label: `Framerate`
+  - Tooltip: `Limit server polling frequency.`
+
+- **Autocraft**
+  - Toggle that automatically crafts materials when possible.
+  - Label: `Autocraft`
+  - Tooltip: `Automatically craft materials when possible.`
 
 ## Guidelines
 

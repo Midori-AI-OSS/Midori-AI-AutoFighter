@@ -8,5 +8,7 @@ describe('PlayerEditor component', () => {
     expect(content).toContain('data-testid="player-editor"');
     expect(content).toContain('label for="pronouns"');
     expect(content).toContain('label for="damage"');
+    expect(content).toContain('damageType');
+    expect(content).toContain('hp: +hp');
   });
 });

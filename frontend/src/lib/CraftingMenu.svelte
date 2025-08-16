@@ -1,7 +1,38 @@
 <script>
-  import MenuPanel from './MenuPanel.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
+
   import { getGacha, setAutoCraft, craftItems } from './api.js';
+  import MenuPanel from './MenuPanel.svelte';
+
+  const iconModules = import.meta.glob('./assets/items/*/*.png', {
+    eager: true,
+    import: 'default',
+    query: '?url'
+  });
+  const fallbackIcon = new URL('./assets/cards/fallback/placeholder.png', import.meta.url).href;
+
+  const starColors = {
+    1: '#808080',
+    2: '#228B22',
+    3: '#1E90FF',
+    4: '#800080',
+    5: '#FFD700',
+    fallback: '#708090'
+  };
+
+  function getIcon(key) {
+    const [element, rank] = key.split('_');
+    return (
+      iconModules[`./assets/items/${element}/generic${rank}.png`] ||
+      iconModules[`./assets/items/generic/generic${rank}.png`] ||
+      fallbackIcon
+    );
+  }
+
+  function getStarColor(key) {
+    const rank = parseInt(key.split('_')[1]);
+    return starColors[rank] || starColors.fallback;
+  }
 
   const dispatch = createEventDispatcher();
   let items = {};
@@ -30,9 +61,13 @@
 
 <MenuPanel data-testid="crafting-menu">
   <h3>Crafting</h3>
-  <ul>
+  <ul class="item-list">
     {#each Object.entries(items) as [key, value]}
-      <li>{key}: {value}</li>
+      <li class="item" style={`--star-color: ${getStarColor(key)}`}>
+        <img class="item-icon" src={getIcon(key)} alt={key} />
+        <span class="label">{key}</span>
+        <span class="count">{value}</span>
+      </li>
     {/each}
   </ul>
   <div class="actions">
@@ -51,8 +86,16 @@
     padding: 0;
     margin: 0 0 0.5rem 0;
   }
-  li {
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
     font-size: 0.85rem;
+  }
+  .item-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--star-color, #708090);
   }
   .actions {
     display: flex;

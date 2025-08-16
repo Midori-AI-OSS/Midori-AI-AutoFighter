@@ -47,11 +47,15 @@ class SaveManager:
             current = conn.execute("PRAGMA user_version").fetchone()[0]
             for path in migrations:
                 version_part = path.stem.split("_")[0]
-                try:
-                    version = int(version_part)
-                except ValueError:
+                if not version_part.isdigit():
+                    # Skip files that don't begin with a numeric prefix. This ensures
+                    # we never execute a script whose version component could inject
+                    # arbitrary SQL when setting ``PRAGMA user_version``.
                     continue
+                version = int(version_part)
                 if version <= current:
                     continue
                 conn.executescript(path.read_text())
+                # ``PRAGMA user_version`` doesn't support parameter substitution.
+                # ``version`` is sanitized above, so this f-string remains safe.
                 conn.execute(f"PRAGMA user_version = {version}")

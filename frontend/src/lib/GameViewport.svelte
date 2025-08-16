@@ -11,9 +11,10 @@
   import PlayerEditor from './PlayerEditor.svelte';
   import StatsPanel from './StatsPanel.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { Diamond, User, Settings, ChevronsRight, Pause } from 'lucide-svelte';
+  import { Diamond, User, Settings, ChevronsRight } from 'lucide-svelte';
   import { onMount } from 'svelte';
   import { getHourlyBackground } from './assetLoader.js';
+  import { loadSettings, saveSettings } from './settingsStorage.js';
 
   export let runId = '';
   export let roomData = null;
@@ -24,7 +25,6 @@
   export let sfxVolume = 50;
   export let musicVolume = 50;
   export let voiceVolume = 50;
-  export let pauseOnStats = false;
   export let framerate = 60;
   export let autocraft = false;
   export let battleActive = false;
@@ -36,6 +36,12 @@
     if (!background) {
       randomBg = getHourlyBackground();
     }
+    const saved = loadSettings();
+    if (saved.sfxVolume !== undefined) sfxVolume = saved.sfxVolume;
+    if (saved.musicVolume !== undefined) musicVolume = saved.musicVolume;
+    if (saved.voiceVolume !== undefined) voiceVolume = saved.voiceVolume;
+    if (saved.framerate !== undefined) framerate = saved.framerate;
+    if (saved.autocraft !== undefined) autocraft = saved.autocraft;
   });
   export let selected = [];
   export let items = [];
@@ -277,11 +283,11 @@
               {sfxVolume}
               {musicVolume}
               {voiceVolume}
-              {pauseOnStats}
               {framerate}
               {autocraft}
               on:save={(e) => {
-                ({ sfxVolume, musicVolume, voiceVolume, pauseOnStats, framerate, autocraft } = e.detail);
+                ({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft } = e.detail);
+                saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft });
                 dispatch('back');
               }}
               on:close={() => dispatch('back')}

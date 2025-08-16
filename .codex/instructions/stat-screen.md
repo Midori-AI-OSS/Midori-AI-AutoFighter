@@ -42,6 +42,3 @@ The Stat Screen scene displays grouped combat statistics and active effects.
 
 ## Status Hooks
 - Call `add_status_hook` with a function returning a list of lines to append to the Status section.
-
-## Pausing
-- When the **Pause on Stat Screen** option is enabled, opening the Stat Screen pauses game tasks until it closes.

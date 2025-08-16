@@ -24,7 +24,8 @@ The **Pulls** icon calls `/gacha/pull` so players can recruit 5★ or 6★ chara
 earn 1★–4★ upgrade items between runs. Pity raises the odds of higher-tier items,
 and auto-crafting those materials is an optional toggle. A **Craft** icon opens a
 menu listing upgrade items, offering a manual `/gacha/craft` action and a toggle
-for `/gacha/auto-craft`.
+for `/gacha/auto-craft`. A **Feedback** icon opens a pre-filled GitHub issue in a new tab so players can report bugs or sugges
+tions.
 During a run, `MapDisplay.svelte` shows the path with the boss at the top and
 the current room highlighted at the bottom. Future rooms remain visible but are
 greyed out and disabled. Selecting the highlighted room posts `{ "action": "" }`

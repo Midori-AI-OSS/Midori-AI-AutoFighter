@@ -121,8 +121,7 @@ encrypted `save.db` database for new runs.
 View grouped stats and status effects. The display refreshes every few frames
 and supports plugin-provided lines. Categories cover core, offense, defense,
 vitality, advanced data, and status lists for passives, DoTs, HoTs, and damage
-types. When **Pause on Stat Screen** is enabled in Options, opening the screen
-halts gameplay until closed.
+types.
 
 ## Damage and Healing Effects
 

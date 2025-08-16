@@ -12,3 +12,11 @@ Lightning, Fire, or Ice—and allocate stat points before starting a run.
 - The Confirm button is disabled until the 100 base points are spent. Bonus points are optional and unspent amounts stay in the inventory.
 - Attempting to spend more points than covered by 4★ items shows a warning and prevents saving. Backend `PUT /player/editor`
   also enforces the 100-point cap and rejects edits while a run is active.
+
+## Persistence notes
+
+Earlier builds lost stat allocations because the editor saved `damage` and
+string-valued stats, causing the backend to ignore the update and return zeros
+on the next load. The component now dispatches numeric `hp`, `attack`, and
+`defense` values alongside a `damageType` field that the page converts to the
+API's `damage_type` key, so edited stats persist after saving and reloading.

@@ -8,4 +8,10 @@ describe('CraftingMenu component', () => {
     expect(content).toContain('Auto-craft');
     expect(content).toContain('Craft');
   });
+
+  test('renders item icons with star outlines', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/CraftingMenu.svelte'), 'utf8');
+    expect(content).toContain('item-icon');
+    expect(content).toContain('--star-color');
+  });
 });

@@ -442,7 +442,6 @@
             {#if activeTab === 'Core'}
               <div><span>HP</span><span>{sel.stats.hp ?? '-'}</span></div>
               <div><span>DEF</span><span>{sel.stats.defense ?? '-'}</span></div>
-              <div><span>SPD</span><span>{sel.stats.speed ?? sel.stats.spd ?? '-'}</span></div>
               <div><span>Vitality</span><span>{sel.stats.vitality ?? sel.stats.vita ?? '-'}</span></div>
               <div><span>Regain</span><span>{sel.stats.regain ?? sel.stats.regain_rate ?? '-'}</span></div>
               <div><span>EXP</span><span>{sel.stats.exp ?? sel.stats.xp ?? '-'}</span></div>

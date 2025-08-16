@@ -4,8 +4,8 @@
 Adds a main menu **Give Feedback** button that opens a pre-filled GitHub issue.
 
 ## Tasks
-- [ ] Link button to `FEEDBACK_URL` in the main menu grid
-- [ ] Display `MessageSquare` icon from `lucide-svelte`
+- [x] Link button to `FEEDBACK_URL` in the main menu grid
+- [x] Display `MessageSquare` icon from `lucide-svelte`
 
 ## Assets & Usage
 - `frontend/src/lib/constants.js` defines `FEEDBACK_URL`

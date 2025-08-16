@@ -2,7 +2,7 @@
 
 The Svelte `PartyPicker` component lets players choose up to four allies before a run. A random background image is selected from `frontend/src/lib/assets/backgrounds`, and portraits load from `assets/characters` with a fallback to a random portrait when an image is missing.
 
-The roster only shows owned characters plus the player's avatar, which is pinned to the top and preselected. The list scrolls vertically with a gradient fade at the top and bottom. Clicking a portrait now only previews the character. Party membership is managed with a button in the stats panel that switches between **Add to party** and **Remove from party**.
+The roster only shows owned characters plus the player's avatar, which is pinned to the top and preselected. The list scrolls vertically with a gradient fade at the top and bottom. Clicking a portrait now only previews the character. Party membership is managed with a button in the stats panel that switches between **Add to party** and **Remove from party**. The panel lists HP, DEF, Vitality, Regain, and EXP—Speed is omitted because the game has no speed mechanic.
 
 The layout uses percentage-based columns so the roster, preview, and stats
 panels all shrink with the viewport. Roster portraits fill a four‑column

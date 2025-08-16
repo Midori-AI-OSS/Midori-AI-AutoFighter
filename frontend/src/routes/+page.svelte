@@ -42,7 +42,7 @@
     viewStack = [];
     viewMode = 'main';
   }
-  let editorState = { pronouns: '', damage: 'Light', hp: 0, attack: 0, defense: 0 };
+  let editorState = { pronouns: '', damageType: 'Light', hp: 0, attack: 0, defense: 0 };
   let battleActive = false;
 
   function openRun() {
@@ -81,13 +81,30 @@
   async function openEditor() {
     if (await checkBattle()) return;
     const data = await getPlayerConfig();
-    editorState = data;
+    editorState = {
+      pronouns: data.pronouns,
+      damageType: data.damage_type,
+      hp: data.hp,
+      attack: data.attack,
+      defense: data.defense,
+    };
     setView('editor');
   }
 
   function handleEditorSave(e) {
-    editorState = e.detail;
-    savePlayerConfig(editorState);
+    editorState = {
+      ...e.detail,
+      hp: +e.detail.hp,
+      attack: +e.detail.attack,
+      defense: +e.detail.defense,
+    };
+    savePlayerConfig({
+      pronouns: editorState.pronouns,
+      damage_type: editorState.damageType,
+      hp: editorState.hp,
+      attack: editorState.attack,
+      defense: editorState.defense,
+    });
   }
 
   async function openPulls() {
@@ -101,7 +118,7 @@
   }
 
   function openFeedback() {
-    window.open(FEEDBACK_URL, '_blank');
+    window.open(FEEDBACK_URL, '_blank', 'noopener');
   }
 
   async function handleTarget() {

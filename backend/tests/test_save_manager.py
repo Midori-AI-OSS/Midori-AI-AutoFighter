@@ -50,3 +50,22 @@ def test_malformed_key_does_not_execute_sql(tmp_path):
     with mgr.connection() as conn:
         count = conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0]
     assert count == 1
+
+
+def test_migration_filename_injection_ignored(tmp_path):
+    migrations = tmp_path / "migrations"
+    migrations.mkdir()
+    (migrations / "001_init.sql").write_text(
+        "CREATE TABLE runs(id TEXT);"
+    )
+    # Attempt to inject SQL via the migration filename. Because the prefix isn't
+    # purely numeric, the migration should be skipped.
+    (migrations / "1; DROP TABLE runs;--_evil.sql").write_text(
+        "DROP TABLE runs;"
+    )
+    mgr = SaveManager(tmp_path / "save.db", "goodkey")
+    mgr.migrate(migrations)
+    with mgr.connection() as conn:
+        conn.execute("INSERT INTO runs (id) VALUES ('1')")
+        count = conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0]
+    assert count == 1

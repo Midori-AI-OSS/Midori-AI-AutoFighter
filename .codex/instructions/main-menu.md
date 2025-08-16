@@ -4,14 +4,14 @@ The main menu uses an Arknights-style grid of large [Lucide](https://lucide.dev)
 
 ## Layout
 - Arrange buttons in a 2×3 grid anchored near the bottom edge.
-- Provide icons and labels for **New Run**, **Load Run**, **Edit Player**, **Options**, **Give Feedback**, and **Quit**.
+- Provide icons and labels for **Run**, **Map**, **Party**, **Edit**, **Pulls**, **Craft**, **Settings**, **Feedback**, and **Stats**.
 - Reserve space for a centered banner above the grid and a top bar displaying the player avatar, name, and currencies.
 - Place quick-access corner icons (notifications, mail, etc.) away from main content.
 - Show a short tooltip on hover repeating each label for clarity.
 
 ## Give Feedback
 - Include a **Give Feedback** button in the grid.
-- Selecting it opens the user's browser to a pre-filled GitHub issue: `https://github.com/Midori-AI/Midori-AI-AutoFighter/issues/new?title=Feedback&body=...`.
+- Selecting it opens the user's browser to the `FEEDBACK_URL` constant in `src/lib/constants.js`, launching a pre-filled GitHub issue in a new tab.
 
 ## Navigation
 - Highlight the focused icon and support keyboard or mouse selection.

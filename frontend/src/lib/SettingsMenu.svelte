@@ -1,18 +1,23 @@
 <script>
   import MenuPanel from './MenuPanel.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { Volume2, Music, Mic, Pause } from 'lucide-svelte';
+  import { Volume2, Music, Mic } from 'lucide-svelte';
 
   const dispatch = createEventDispatcher();
   export let sfxVolume = 50;
   export let musicVolume = 50;
   export let voiceVolume = 50;
-  export let pauseOnStats = false;
   export let framerate = 60;
   export let autocraft = false;
 
   function save() {
-    dispatch('save', { sfxVolume, musicVolume, voiceVolume, pauseOnStats, framerate, autocraft });
+    dispatch('save', {
+      sfxVolume,
+      musicVolume,
+      voiceVolume,
+      framerate: Number(framerate),
+      autocraft
+    });
   }
 
   function close() {
@@ -24,6 +29,7 @@
   <h3>Settings</h3>
   <div class="cols">
     <div class="col">
+      <h4>Audio</h4>
       <div class="control" title="Adjust sound effect volume.">
         <Volume2 />
         <label>SFX Volume</label>
@@ -41,11 +47,7 @@
       </div>
     </div>
     <div class="col">
-      <div class="control" title="Stop gameplay while viewing stats.">
-        <Pause />
-        <label>Pause on Stat Screen</label>
-        <input type="checkbox" bind:checked={pauseOnStats} />
-      </div>
+      <h4>System</h4>
       <div class="control" title="Limit server polling frequency.">
         <label>Framerate</label>
         <select bind:value={framerate}>
@@ -56,6 +58,7 @@
       </div>
     </div>
     <div class="col">
+      <h4>Gameplay</h4>
       <div class="control" title="Automatically craft materials when possible.">
         <label>Autocraft</label>
         <input type="checkbox" bind:checked={autocraft} />
@@ -79,6 +82,11 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
   }
 
   .control {

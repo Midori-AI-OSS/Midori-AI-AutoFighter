@@ -2,7 +2,7 @@
   import MenuPanel from './MenuPanel.svelte';
   import { createEventDispatcher } from 'svelte';
   export let pronouns = '';
-  export let damage = 'Light';
+  export let damageType = 'Light';
   export let hp = 0;
   export let attack = 0;
   export let defense = 0;
@@ -12,7 +12,15 @@
   $: remaining = maxPoints - hp - attack - defense;
 
   function close() { dispatch('close'); }
-  function save() { dispatch('save', { pronouns, damage, hp, attack, defense }); }
+  function save() {
+    dispatch('save', {
+      pronouns,
+      damageType,
+      hp: +hp,
+      attack: +attack,
+      defense: +defense,
+    });
+  }
 </script>
 
 <MenuPanel data-testid="player-editor" padding="0.75rem">
@@ -26,7 +34,7 @@
       <label for="pronouns">Pronouns</label>
       <input id="pronouns" type="text" maxlength="15" bind:value={pronouns} />
       <label for="damage">Damage Type</label>
-      <select id="damage" bind:value={damage}>
+      <select id="damage" bind:value={damageType}>
         <option>Light</option>
         <option>Dark</option>
         <option>Wind</option>

@@ -4,9 +4,9 @@
 Crafting list shows item names and counts but lacks icons and star-rank outlines.
 
 ## Tasks
-- [ ] Verify asset paths and rendering logic for crafting items.
-- [ ] Add star-rank outlines and a fallback placeholder icon.
-- [ ] Document asset locations and CSS rules.
+- [x] Verify asset paths and rendering logic for crafting items.
+- [x] Add star-rank outlines and a fallback placeholder icon.
+- [x] Document asset locations and CSS rules.
 
 ## Context
 Feedback notes missing visuals in the crafting menu.
