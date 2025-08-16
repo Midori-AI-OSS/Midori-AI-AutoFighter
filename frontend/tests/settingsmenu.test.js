@@ -11,5 +11,9 @@ describe('SettingsMenu component', () => {
     expect(content).toContain('<h4>Audio</h4>');
     expect(content).toContain('<h4>System</h4>');
     expect(content).toContain('<h4>Gameplay</h4>');
+    expect(content).toContain('Wipe Save Data');
+    expect(content).toContain('Backup Save Data');
+    expect(content).toContain('Import Save Data');
+    expect(content).toContain('End Run');
   });
 });

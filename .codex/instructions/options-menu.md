@@ -27,10 +27,34 @@ The Options submenu lets players adjust audio levels, system behaviour, and game
   - Label: `Framerate`
   - Tooltip: `Limit server polling frequency.`
 
+- **Wipe Save Data**
+  - Button that clears all save records after confirmation.
+  - Lucide icon: `trash-2`
+  - Label: `Wipe Save Data`
+  - Tooltip: `Clear all save data.`
+
+- **Backup Save Data**
+  - Button that downloads an encrypted snapshot of save tables.
+  - Lucide icon: `download`
+  - Label: `Backup Save Data`
+  - Tooltip: `Download encrypted save backup.`
+
+- **Import Save Data**
+  - File picker that uploads an encrypted backup and restores it if valid.
+  - Lucide icon: `upload`
+  - Label: `Import Save Data`
+  - Tooltip: `Import encrypted save backup.`
+
 - **Autocraft**
   - Toggle that automatically crafts materials when possible.
   - Label: `Autocraft`
   - Tooltip: `Automatically craft materials when possible.`
+
+- **End Run**
+  - Button that terminates the active run.
+  - Lucide icon: `power`
+  - Label: `End Run`
+  - Tooltip: `End the current run.`
 
 ## Guidelines
 

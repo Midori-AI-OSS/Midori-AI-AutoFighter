@@ -285,6 +285,7 @@
               {voiceVolume}
               {framerate}
               {autocraft}
+              {runId}
               on:save={(e) => {
                 ({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft } = e.detail);
                 saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft });

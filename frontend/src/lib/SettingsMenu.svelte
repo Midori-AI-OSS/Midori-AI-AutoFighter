@@ -1,7 +1,8 @@
 <script>
   import MenuPanel from './MenuPanel.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { Volume2, Music, Mic } from 'lucide-svelte';
+  import { Volume2, Music, Mic, Power, Trash2, Download, Upload } from 'lucide-svelte';
+  import { endRun, wipeData, exportSave, importSave } from './api.js';
 
   const dispatch = createEventDispatcher();
   export let sfxVolume = 50;
@@ -9,6 +10,7 @@
   export let voiceVolume = 50;
   export let framerate = 60;
   export let autocraft = false;
+  export let runId = '';
 
   function save() {
     dispatch('save', {
@@ -22,6 +24,33 @@
 
   function close() {
     dispatch('close');
+  }
+
+  async function handleEndRun() {
+    if (runId) {
+      await endRun(runId);
+    }
+  }
+
+  async function handleWipe() {
+    await wipeData();
+  }
+
+  async function handleBackup() {
+    const blob = await exportSave();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup.afsave';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleImport(event) {
+    const [file] = event.target.files;
+    if (file) {
+      await importSave(file);
+    }
   }
 </script>
 
@@ -56,12 +85,32 @@
           <option value="120">120</option>
         </select>
       </div>
+      <div class="control" title="Clear all save data.">
+        <Trash2 />
+        <label>Wipe Save Data</label>
+        <button on:click={handleWipe}>Wipe</button>
+      </div>
+      <div class="control" title="Download encrypted backup of save data.">
+        <Download />
+        <label>Backup Save Data</label>
+        <button on:click={handleBackup}>Backup</button>
+      </div>
+      <div class="control" title="Import an encrypted save backup.">
+        <Upload />
+        <label>Import Save Data</label>
+        <input type="file" accept=".afsave" on:change={handleImport} />
+      </div>
     </div>
     <div class="col">
       <h4>Gameplay</h4>
       <div class="control" title="Automatically craft materials when possible.">
         <label>Autocraft</label>
         <input type="checkbox" bind:checked={autocraft} />
+      </div>
+      <div class="control" title="End the current run.">
+        <Power />
+        <label>End Run</label>
+        <button on:click={handleEndRun} disabled={!runId}>End</button>
       </div>
     </div>
   </div>

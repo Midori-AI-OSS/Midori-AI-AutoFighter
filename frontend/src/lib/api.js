@@ -91,3 +91,24 @@ export async function savePlayerConfig(config) {
   });
   return res.json();
 }
+
+export async function endRun(runId) {
+  await fetch(`${API_BASE}/run/${runId}`, { method: 'DELETE' });
+}
+
+export async function wipeData() {
+  await fetch(`${API_BASE}/save/wipe`, { method: 'POST' });
+}
+
+export async function exportSave() {
+  const res = await fetch(`${API_BASE}/save/backup`);
+  return res.blob();
+}
+
+export async function importSave(file) {
+  const res = await fetch(`${API_BASE}/save/restore`, {
+    method: 'POST',
+    body: await file.arrayBuffer()
+  });
+  return res.json();
+}

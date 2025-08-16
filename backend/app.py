@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import base64
+import hashlib
 
 from uuid import uuid4
 from pathlib import Path
@@ -10,6 +12,8 @@ from quart import Quart
 from quart import jsonify
 from quart import request
 from quart import send_from_directory
+
+from cryptography.fernet import Fernet
 
 from plugins import passives as passive_plugins
 from plugins import players as player_plugins
@@ -29,6 +33,11 @@ with SAVE_MANAGER.connection() as conn:
     conn.execute(
         "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
     )
+
+FERNET_KEY = base64.urlsafe_b64encode(
+    hashlib.sha256((SAVE_MANAGER.key or "plaintext").encode()).digest()
+)
+FERNET = Fernet(FERNET_KEY)
 
 app = Quart(__name__)
 
@@ -69,9 +78,7 @@ def _passive_names(ids: list[str]) -> list[str]:
 
 def _assign_damage_type(player: PlayerBase) -> None:
     with SAVE_MANAGER.connection() as conn:
-        cur = conn.execute(
-            "SELECT type FROM damage_types WHERE id = ?", (player.id,)
-        )
+        cur = conn.execute("SELECT type FROM damage_types WHERE id = ?", (player.id,))
         row = cur.fetchone()
         if row:
             player.base_damage_type = row[0]
@@ -95,9 +102,7 @@ def _load_player_customization() -> tuple[str, dict[str, int]]:
         row = cur.fetchone()
         if row:
             pronouns = row[0]
-        cur = conn.execute(
-            "SELECT value FROM options WHERE key = ?", ("player_stats",)
-        )
+        cur = conn.execute("SELECT value FROM options WHERE key = ?", ("player_stats",))
         row = cur.fetchone()
         if row:
             try:
@@ -107,8 +112,13 @@ def _load_player_customization() -> tuple[str, dict[str, int]]:
     return pronouns, stats
 
 
-def _apply_player_stats(player: PlayerBase) -> None:
-    _pronouns, stats = _load_player_customization()
+def _apply_player_stats(
+    player: PlayerBase,
+    stats: dict[str, int] | None = None,
+) -> None:
+    _, loaded = _load_player_customization()
+    if stats is None:
+        stats = loaded
     hp_mod = 1 + stats.get("hp", 0) * 0.01
     atk_mod = 1 + stats.get("attack", 0) * 0.01
     def_mod = 1 + stats.get("defense", 0) * 0.01
@@ -187,12 +197,33 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
     generator = MapGenerator(run_id)
     nodes = generator.generate_floor()
     state = {"rooms": [n.to_dict() for n in nodes], "current": 1, "battle": False}
+    pronouns, stats = _load_player_customization()
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute(
+            "SELECT type FROM damage_types WHERE id = ?",
+            ("player",),
+        )
+        row = cur.fetchone()
+    player_type = row[0] if row else player_plugins.player.Player().base_damage_type
+    snapshot = {
+        "pronouns": pronouns,
+        "damage_type": player_type,
+        "stats": stats,
+    }
     with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "INSERT INTO runs (id, party, map) VALUES (?, ?, ?)",
             (
                 run_id,
-                json.dumps({"members": members, "gold": 0, "relics": [], "cards": []}),
+                json.dumps(
+                    {
+                        "members": members,
+                        "gold": 0,
+                        "relics": [],
+                        "cards": [],
+                        "player": snapshot,
+                    }
+                ),
                 json.dumps(state),
             ),
         )
@@ -240,6 +271,93 @@ async def get_map(run_id: str) -> tuple[str, int, dict[str, str]]:
     if row is None:
         return jsonify({"error": "run not found"}), 404
     return jsonify({"map": json.loads(row[0])})
+
+
+@app.delete("/run/<run_id>")
+async def end_run(run_id: str) -> tuple[str, int, dict[str, str]]:
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("DELETE FROM runs WHERE id = ?", (run_id,))
+        if cur.rowcount == 0:
+            return jsonify({"error": "run not found"}), 404
+    return jsonify({"status": "ended"})
+
+
+@app.post("/save/wipe")
+async def wipe_save() -> tuple[str, int, dict[str, str]]:
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute("DELETE FROM runs")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        conn.execute("DELETE FROM options")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
+        )
+        conn.execute("DELETE FROM damage_types")
+    return jsonify({"status": "wiped"})
+
+
+@app.get("/save/backup")
+async def backup_save() -> tuple[bytes, int, dict[str, str]]:
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
+        )
+        runs = conn.execute("SELECT id, party, map FROM runs").fetchall()
+        options = conn.execute("SELECT key, value FROM options").fetchall()
+        dmg = conn.execute("SELECT id, type FROM damage_types").fetchall()
+    payload = {
+        "runs": runs,
+        "options": options,
+        "damage_types": dmg,
+    }
+    data = json.dumps(payload)
+    digest = hashlib.sha256(data.encode()).hexdigest()
+    package = json.dumps({"hash": digest, "data": data}).encode()
+    token = FERNET.encrypt(package)
+    headers = {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": "attachment; filename=backup.afsave",
+    }
+    return token, 200, headers
+
+
+@app.post("/save/restore")
+async def restore_save() -> tuple[str, int, dict[str, str]]:
+    blob = await request.get_data()
+    try:
+        package = FERNET.decrypt(blob)
+        obj = json.loads(package)
+    except Exception:
+        return jsonify({"error": "invalid backup"}), 400
+    data = obj.get("data", "")
+    digest = obj.get("hash", "")
+    if hashlib.sha256(data.encode()).hexdigest() != digest:
+        return jsonify({"error": "hash mismatch"}), 400
+    payload = json.loads(data)
+    with SAVE_MANAGER.connection() as conn:
+        conn.execute("DELETE FROM runs")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
+        )
+        conn.execute("DELETE FROM options")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
+        )
+        conn.execute("DELETE FROM damage_types")
+        conn.executemany(
+            "INSERT INTO runs (id, party, map) VALUES (?, ?, ?)", payload["runs"]
+        )
+        conn.executemany(
+            "INSERT INTO options (key, value) VALUES (?, ?)", payload["options"]
+        )
+        conn.executemany(
+            "INSERT INTO damage_types (id, type) VALUES (?, ?)", payload["damage_types"]
+        )
+    return jsonify({"status": "restored"})
 
 
 @app.get("/rooms/images")
@@ -356,7 +474,9 @@ async def get_player_editor() -> tuple[str, int, dict[str, object]]:
     return jsonify(
         {
             "pronouns": pronouns,
-            "damage_type": getattr(player.base_damage_type, "name", player.base_damage_type),
+            "damage_type": getattr(
+                player.base_damage_type, "name", player.base_damage_type
+            ),
             "hp": stats.get("hp", 0),
             "attack": stats.get("attack", 0),
             "defense": stats.get("defense", 0),
@@ -376,11 +496,6 @@ async def update_player_editor() -> tuple[str, int, dict[str, str]]:
     except (TypeError, ValueError):
         return jsonify({"error": "invalid stats"}), 400
     total = hp + attack + defense
-
-    with SAVE_MANAGER.connection() as conn:
-        cur = conn.execute("SELECT COUNT(*) FROM runs")
-        if cur.fetchone()[0]:
-            return jsonify({"error": "run active"}), 400
 
     if len(pronouns) > 15:
         return jsonify({"error": "invalid pronouns"}), 400
@@ -402,7 +517,10 @@ async def update_player_editor() -> tuple[str, int, dict[str, str]]:
         )
         conn.execute(
             "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
-            ("player_stats", json.dumps({"hp": hp, "attack": attack, "defense": defense})),
+            (
+                "player_stats",
+                json.dumps({"hp": hp, "attack": attack, "defense": defense}),
+            ),
         )
         if damage_type:
             conn.execute(
@@ -419,13 +537,20 @@ def load_party(run_id: str) -> Party:
     data = json.loads(row[0]) if row else {}
     if isinstance(data, list):
         data = {"members": data, "gold": 0, "relics": [], "cards": []}
+    snapshot = data.get("player", {})
     members: list[PlayerBase] = []
     for pid in data.get("members", []):
         for name in player_plugins.__all__:
             cls = getattr(player_plugins, name)
             if cls.id == pid:
                 inst = cls()
-                _assign_damage_type(inst)
+                if inst.id == "player":
+                    inst.base_damage_type = snapshot.get(
+                        "damage_type", inst.base_damage_type
+                    )
+                    _apply_player_stats(inst, snapshot.get("stats", {}))
+                else:
+                    _assign_damage_type(inst)
                 members.append(inst)
                 break
     party = Party(
@@ -579,7 +704,9 @@ async def select_card(run_id: str) -> tuple[str, int, dict[str, str]]:
 @app.post("/rooms/<run_id>/<room_id>/action")
 async def room_action(run_id: str, room_id: str) -> tuple[str, int, dict[str, str]]:
     data = await request.get_json(silent=True) or {}
-    return jsonify({"run_id": run_id, "room_id": room_id, "action": data.get("action", "noop")})
+    return jsonify(
+        {"run_id": run_id, "room_id": room_id, "action": data.get("action", "noop")}
+    )
 
 
 if __name__ == "__main__":
