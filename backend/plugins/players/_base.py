@@ -17,6 +17,8 @@ class PlayerBase(Stats):
     atk: int = 100
     defense: int = 50
     char_type: CharacterType = CharacterType.C
+    prompt: str = "Player prompt placeholder"
+    about: str = "Player description placeholder"
 
     exp: int = 1
     level: int = 1

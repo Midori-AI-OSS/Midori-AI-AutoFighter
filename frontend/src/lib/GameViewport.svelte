@@ -4,6 +4,7 @@
   import PartyPicker from './PartyPicker.svelte';
   import SettingsMenu from './SettingsMenu.svelte';
   import OverlaySurface from './OverlaySurface.svelte';
+  import PopupWindow from './PopupWindow.svelte';
   import MapDisplay from './MapDisplay.svelte';
   import PullsMenu from './PullsMenu.svelte';
   import CraftingMenu from './CraftingMenu.svelte';
@@ -273,12 +274,12 @@
           </OverlaySurface>
         {/if}
         {#if viewMode === 'stats'}
-          <OverlaySurface>
-            <StatsPanel on:close={() => dispatch('back')} />
-          </OverlaySurface>
+          <PopupWindow title="Stats" padding="0.75rem" on:close={() => dispatch('back')}>
+            <StatsPanel />
+          </PopupWindow>
         {/if}
         {#if viewMode === 'settings'}
-          <OverlaySurface>
+          <PopupWindow title="Settings" on:close={() => dispatch('back')}>
             <SettingsMenu
               {sfxVolume}
               {musicVolume}
@@ -291,9 +292,8 @@
                 saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft });
                 dispatch('back');
               }}
-              on:close={() => dispatch('back')}
             />
-          </OverlaySurface>
+          </PopupWindow>
         {/if}
         {#if roomData && roomData.card_choices && roomData.card_choices.length > 0}
           <OverlaySurface>

@@ -8,6 +8,8 @@ from plugins.foes._base import FoeBase
 class Slime(FoeBase):
     id = "slime"
     name = "Slime"
+    prompt: str = "Foe prompt placeholder"
+    about: str = "Foe description placeholder"
 
     def __post_init__(self) -> None:  # noqa: D401 - short init
         super().__post_init__()

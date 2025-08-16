@@ -1,5 +1,4 @@
 <script>
-  import MenuPanel from './MenuPanel.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Volume2, Music, Mic, Power, Trash2, Download, Upload } from 'lucide-svelte';
   import { endRun, wipeData, exportSave, importSave } from './api.js';
@@ -22,9 +21,6 @@
     });
   }
 
-  function close() {
-    dispatch('close');
-  }
 
   async function handleEndRun() {
     if (runId) {
@@ -54,8 +50,7 @@
   }
 </script>
 
-<MenuPanel data-testid="settings-menu">
-  <h3>Settings</h3>
+<div data-testid="settings-menu">
   <div class="cols">
     <div class="col">
       <h4>Audio</h4>
@@ -116,9 +111,8 @@
   </div>
   <div class="actions">
     <button on:click={save}>Save</button>
-    <button on:click={close}>Close</button>
   </div>
-</MenuPanel>
+</div>
 
 <style>
   .cols {

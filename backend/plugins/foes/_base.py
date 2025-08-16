@@ -19,6 +19,8 @@ class FoeBase(Stats):
     defense: int = 50
     gold: int = 1
     char_type: CharacterType = CharacterType.C
+    prompt: str = "Foe prompt placeholder"
+    about: str = "Foe description placeholder"
 
     exp: int = 1
     level: int = 1

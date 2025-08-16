@@ -9,3 +9,5 @@ class Player(PlayerBase):
     name = "Player"
     char_type = CharacterType.C
     base_damage_type: str = "Fire"
+    prompt: str = "Player prompt placeholder"
+    about: str = "Player description placeholder"

@@ -14,6 +14,7 @@ export { default as RestRoom } from './RestRoom.svelte';
 export { default as ShopMenu } from './ShopMenu.svelte';
 export { default as CraftingMenu } from './CraftingMenu.svelte';
 export { default as RewardOverlay } from './RewardOverlay.svelte';
+export { default as PopupWindow } from './PopupWindow.svelte';
 export { layoutForWidth } from './layout.js';
 export {
   startRun,

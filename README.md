@@ -108,6 +108,8 @@ uv run pytest
 The game auto-discovers classes under `plugins/` and `mods/` by `plugin_type`
 and wires them to a shared event bus. See
 `.codex/implementation/plugin-system.md` for loader details and examples.
+Player and foe plugins also expose `prompt` and `about` strings with
+placeholder text for future character customization.
 
 ## Player Creator
 

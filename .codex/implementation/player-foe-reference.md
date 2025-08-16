@@ -9,6 +9,8 @@ for remaining values.
 
 Player plugins also include a `gacha_rarity` field so the gacha system can
 automatically discover 5★ and 6★ recruits.
+Each player and foe defines `prompt` and `about` strings with placeholder text
+to support future character-specific prompts.
 
 - **Ally** (B, random) – applies `ally_passive` on load to grant ally-specific bonuses.
 - **Becca** (B, random) – builds high attack but takes more damage from lower defense.
