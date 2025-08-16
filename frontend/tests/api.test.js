@@ -4,10 +4,7 @@ import {
   updateParty,
   fetchMap,
   getPlayers,
-  battleRoom,
-  shopRoom,
-  restRoom,
-  bossRoom,
+  roomAction,
   getPlayerConfig,
   savePlayerConfig,
   getGacha,
@@ -17,8 +14,8 @@ import {
 } from '../src/lib/api.js';
 
 // Helper to mock fetch
-function createFetch(response) {
-  return mock(async () => ({ json: async () => response }));
+function createFetch(response, ok = true, status = 200) {
+  return mock(async () => ({ ok, status, json: async () => response }));
 }
 
 describe('api calls', () => {
@@ -47,28 +44,15 @@ describe('api calls', () => {
     expect(result).toEqual({ players: [{ id: 'sample_player', owned: true }] });
   });
 
-  test('battleRoom posts action', async () => {
+  test('roomAction posts action', async () => {
     global.fetch = createFetch({ result: 'battle', party: [], foes: [] });
-    const result = await battleRoom('abc', 'attack');
+    const result = await roomAction('abc', 'battle', 'attack');
     expect(result).toEqual({ result: 'battle', party: [], foes: [] });
   });
 
-  test('shopRoom posts action', async () => {
-    global.fetch = createFetch({ result: 'shop', party: [], foes: [] });
-    const result = await shopRoom('abc', 'buy');
-    expect(result).toEqual({ result: 'shop', party: [], foes: [] });
-  });
-
-  test('restRoom posts action', async () => {
-    global.fetch = createFetch({ result: 'rest', party: [], foes: [] });
-    const result = await restRoom('abc', 'sleep');
-    expect(result).toEqual({ result: 'rest', party: [], foes: [] });
-  });
-
-  test('bossRoom posts action', async () => {
-    global.fetch = createFetch({ result: 'boss', party: [], foes: [] });
-    const result = await bossRoom('abc', 'attack');
-    expect(result).toEqual({ result: 'boss', party: [], foes: [] });
+  test('roomAction throws on HTTP error', async () => {
+    global.fetch = createFetch({}, false, 500);
+    await expect(roomAction('abc', 'battle', 'attack')).rejects.toThrow('HTTP error 500');
   });
 
   test('getPlayerConfig fetches editor data', async () => {

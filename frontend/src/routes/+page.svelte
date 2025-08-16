@@ -15,10 +15,7 @@
     fetchMap,
     getPlayerConfig,
     savePlayerConfig,
-    battleRoom,
-    shopRoom,
-    restRoom,
-    bossRoom,
+    roomAction,
     chooseCard
   } from '$lib/api.js';
 
@@ -112,14 +109,14 @@
     let data;
     if (room.includes('battle')) {
       battleActive = true;
-      data = await battleRoom(runId);
+      data = await roomAction(runId, 'battle');
     } else if (room.includes('shop')) {
-      data = await shopRoom(runId);
+      data = await roomAction(runId, 'shop');
     } else if (room.includes('rest')) {
-      data = await restRoom(runId);
+      data = await roomAction(runId, 'rest');
     } else if (room.includes('boss')) {
       battleActive = true;
-      data = await bossRoom(runId);
+      data = await roomAction(runId, 'boss');
     } else {
       return;
     }

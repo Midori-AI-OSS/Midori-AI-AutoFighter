@@ -19,9 +19,6 @@ export {
   startRun,
   updateParty,
   fetchMap,
-  battleRoom,
-  shopRoom,
-  restRoom,
-  bossRoom,
+  roomAction,
   chooseCard
 } from './api.js';

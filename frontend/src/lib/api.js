@@ -28,39 +28,13 @@ export async function getPlayers() {
   return res.json();
 }
 
-export async function battleRoom(runId, action = '') {
-  const res = await fetch(`${API_BASE}/rooms/${runId}/battle`, {
+export async function roomAction(runId, type, action = '') {
+  const res = await fetch(`${API_BASE}/rooms/${runId}/${type}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action })
   });
-  return res.json();
-}
-
-export async function shopRoom(runId, action = '') {
-  const res = await fetch(`${API_BASE}/rooms/${runId}/shop`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action })
-  });
-  return res.json();
-}
-
-export async function restRoom(runId, action = '') {
-  const res = await fetch(`${API_BASE}/rooms/${runId}/rest`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action })
-  });
-  return res.json();
-}
-
-export async function bossRoom(runId, action = '') {
-  const res = await fetch(`${API_BASE}/rooms/${runId}/boss`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action })
-  });
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
   return res.json();
 }
 
