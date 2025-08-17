@@ -3,10 +3,30 @@
 import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
 
 // Load all character images (including folders and fallbacks)
-const glob = typeof import.meta?.glob === 'function' ? import.meta.glob : () => ({});
-const characterModules = glob('./assets/characters/**/*.png', { eager: true, import: 'default', query: '?url' });
-const fallbackModules = glob('./assets/characters/fallbacks/*.png', { eager: true, import: 'default', query: '?url' });
-const backgroundModules = glob('./assets/backgrounds/*.png', { eager: true, import: 'default', query: '?url' });
+const characterModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/characters/**/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
+const fallbackModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/characters/fallbacks/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
+const backgroundModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/backgrounds/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
 
 const ELEMENT_ICONS = {
   fire: Flame,
