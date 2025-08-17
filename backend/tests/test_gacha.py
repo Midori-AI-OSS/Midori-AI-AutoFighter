@@ -1,9 +1,9 @@
+import importlib.util
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 import sqlcipher3
-import importlib.util
 
 
 @pytest.fixture()
@@ -19,6 +19,8 @@ def app_with_db(tmp_path, monkeypatch):
     assert spec.loader is not None
     spec.loader.exec_module(app_module)
     app_module.app.testing = True
+    manager = app_module.GachaManager(app_module.SAVE_MANAGER)
+    manager._set_items({"ticket": 1})
     return app_module.app, db_path
 
 
@@ -40,7 +42,14 @@ async def test_pull_items(app_with_db):
 
 @pytest.mark.asyncio
 async def test_pull_requires_ticket(app_with_db):
-    app, _ = app_with_db
+    app, db_path = app_with_db
+    conn = sqlcipher3.connect(db_path)
+    conn.execute("PRAGMA key = 'testkey'")
+    conn.execute(
+        "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
+        ("upgrade_items", '{}')
+    )
+    conn.commit()
     client = app.test_client()
     resp = await client.post("/gacha/pull", json={"count": 1})
     assert resp.status_code == 403
@@ -66,7 +75,11 @@ async def test_pull_five_star_duplicate(app_with_db):
     conn.execute("PRAGMA key = 'testkey'")
     others = [cid for cid in FIVE_STAR if cid != char_id]
     for cid in others:
-        conn.execute("INSERT INTO owned_players (id) VALUES (?)", (cid,))
+        conn.execute("INSERT OR IGNORE INTO owned_players (id) VALUES (?)", (cid,))
+    conn.execute(
+        "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
+        ("upgrade_items", '{"ticket":1}')
+    )
     conn.commit()
 
     with patch(
@@ -115,7 +128,7 @@ async def test_auto_craft_setting(app_with_db):
     )
     conn.execute(
         "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
-        ("upgrade_items", '{"fire_1":125}')
+        ("upgrade_items", '{"ticket":1,"fire_1":125}')
     )
     conn.commit()
     with patch(
@@ -130,7 +143,7 @@ async def test_auto_craft_setting(app_with_db):
     assert (await resp.get_json())["auto_craft"] is True
     conn.execute(
         "INSERT OR REPLACE INTO options (key, value) VALUES (?, ?)",
-        ("upgrade_items", '{"fire_1":125}')
+        ("upgrade_items", '{"ticket":1,"fire_1":125}')
     )
     conn.commit()
     with patch(
