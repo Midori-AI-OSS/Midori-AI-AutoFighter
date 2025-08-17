@@ -1,10 +1,18 @@
 import { describe, expect, test } from 'bun:test';
+import fs from 'fs';
 import { getCharacterImage, getElementColor, getElementIcon } from '../src/lib/assetLoader.js';
 
 describe('asset loader', () => {
-  test('returns string or null for unknown character', () => {
+  test('returns fallback string for unknown character', () => {
     const img = getCharacterImage('nonexistent');
-    expect(img === null || typeof img === 'string').toBe(true);
+    expect(typeof img).toBe('string');
+  });
+
+  test('resolves existing character portrait', () => {
+    const url = getCharacterImage('becca');
+    expect(url).toContain('becca');
+    const filePath = new URL(url);
+    expect(fs.existsSync(filePath)).toBe(true);
   });
 
   test('provides damage type color and icon', () => {

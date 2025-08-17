@@ -1,32 +1,82 @@
 // Enhanced asset loader for characters, backgrounds, and damage types
 
+import fs from 'fs';
+import path from 'path';
+import { pathToFileURL } from 'url';
+
 import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
+
+function toUrl(src) {
+  return new URL(src, import.meta.url).href;
+}
+
+// Node fallback when `import.meta.glob` is unavailable (tests)
+function collectPngs(dir) {
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .flatMap(entry => {
+      const full = path.join(dir, entry.name);
+      return entry.isDirectory() ? collectPngs(full) : full.endsWith('.png') ? [full] : [];
+    });
+}
+
+const charactersDir = new URL('./assets/characters', import.meta.url);
+const backgroundsDir = new URL('./assets/backgrounds', import.meta.url);
 
 // Load all character images (including folders and fallbacks)
 const characterModules =
   typeof import.meta.glob === 'function'
-    ? import.meta.glob('./assets/characters/**/*.png', {
-        eager: true,
-        import: 'default',
-        query: '?url'
-      })
-    : {};
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/characters/**/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : Object.fromEntries(
+        collectPngs(charactersDir.pathname).map(p => [
+          `./assets/characters/${path.relative(charactersDir.pathname, p).replace(/\\/g, '/')}`,
+          pathToFileURL(p).href
+        ])
+      );
+
 const fallbackModules =
   typeof import.meta.glob === 'function'
-    ? import.meta.glob('./assets/characters/fallbacks/*.png', {
-        eager: true,
-        import: 'default',
-        query: '?url'
-      })
-    : {};
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/characters/fallbacks/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : Object.fromEntries(
+        collectPngs(path.join(charactersDir.pathname, 'fallbacks')).map(p => [
+          `./assets/characters/fallbacks/${path.basename(p)}`,
+          pathToFileURL(p).href
+        ])
+      );
+
 const backgroundModules =
   typeof import.meta.glob === 'function'
-    ? import.meta.glob('./assets/backgrounds/*.png', {
-        eager: true,
-        import: 'default',
-        query: '?url'
-      })
-    : {};
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/backgrounds/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : Object.fromEntries(
+        collectPngs(backgroundsDir.pathname).map(p => [
+          `./assets/backgrounds/${path.basename(p)}`,
+          pathToFileURL(p).href
+        ])
+      );
 
 const ELEMENT_ICONS = {
   fire: Flame,
@@ -52,6 +102,7 @@ const ELEMENT_COLORS = {
 const characterAssets = {};
 const fallbackAssets = Object.values(fallbackModules);
 const backgroundAssets = Object.values(backgroundModules);
+const defaultFallback = toUrl('./assets/midoriai-logo.png');
 
 // Organize character assets by character ID (folder or single file)
 Object.keys(characterModules).forEach(path => {
@@ -103,13 +154,13 @@ export function getCharacterImage(characterId, _isPlayer = false) {
     return fallbackAssets[randomIndex];
   }
   
-  // Final fallback - return null or empty string
-  return null;
+  // Final fallback - use repository logo
+  return defaultFallback;
 }
 
 // Get background with hourly consistency
 export function getHourlyBackground() {
-  if (backgroundAssets.length === 0) return null;
+  if (backgroundAssets.length === 0) return defaultFallback;
   
   const seed = getHourSeed();
   const randomIndex = Math.floor(seededRandom(seed) * backgroundAssets.length);
@@ -118,7 +169,7 @@ export function getHourlyBackground() {
 
 // Get random background (for immediate random needs)
 export function getRandomBackground() {
-  if (backgroundAssets.length === 0) return null;
+  if (backgroundAssets.length === 0) return defaultFallback;
 
   const randomIndex = Math.floor(Math.random() * backgroundAssets.length);
   return backgroundAssets[randomIndex];
@@ -131,7 +182,7 @@ export function getAvailableCharacterIds() {
 
 // Get random fallback image
 export function getRandomFallback() {
-  if (fallbackAssets.length === 0) return null;
+  if (fallbackAssets.length === 0) return defaultFallback;
 
   const randomIndex = Math.floor(Math.random() * fallbackAssets.length);
   return fallbackAssets[randomIndex];

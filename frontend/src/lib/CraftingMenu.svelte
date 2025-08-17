@@ -5,11 +5,14 @@
   import MenuPanel from './MenuPanel.svelte';
   import { stackItems, formatName } from './craftingUtils.js';
 
-  const iconModules = import.meta.glob('./assets/items/*/*.png', {
+  const rawIconModules = import.meta.glob('./assets/items/*/*.png', {
     eager: true,
     import: 'default',
     query: '?url'
   });
+  const iconModules = Object.fromEntries(
+    Object.entries(rawIconModules).map(([path, src]) => [path, new URL(src, import.meta.url).href])
+  );
   const fallbackIcon = new URL('./assets/cards/fallback/placeholder.png', import.meta.url).href;
 
   const starColors = {

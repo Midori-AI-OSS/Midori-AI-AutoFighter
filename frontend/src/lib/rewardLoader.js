@@ -6,7 +6,7 @@ function prepare(mods) {
   const assets = {};
   for (const path in mods) {
     const name = path.split('/').pop().replace('.png', '');
-    assets[name] = mods[path];
+    assets[name] = new URL(mods[path], import.meta.url).href;
   }
   const values = Object.values(assets);
   if (values.length) {
