@@ -35,6 +35,8 @@ async def test_backup_restore_and_wipe(app_with_db):
     resp = await client.post("/run/start", json={"party": ["player"]})
     run_id = (await resp.get_json())["run_id"]
 
+    original_mtime = db_path.stat().st_mtime
+
     backup = await client.get("/save/backup")
     token = await backup.get_data()
     key = base64.urlsafe_b64encode(hashlib.sha256(b"testkey").digest())
@@ -50,6 +52,7 @@ async def test_backup_restore_and_wipe(app_with_db):
     await client.delete(f"/run/{run_id}")
     wipe = await client.post("/save/wipe")
     assert wipe.status_code == 200
+    assert db_path.stat().st_mtime > original_mtime
 
     conn = sqlcipher3.connect(db_path)
     conn.execute("PRAGMA key = 'testkey'")
@@ -59,3 +62,35 @@ async def test_backup_restore_and_wipe(app_with_db):
     assert good.status_code == 200
     assert conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 1
     conn.close()
+
+
+@pytest.mark.asyncio
+async def test_wipe_allows_new_run(app_with_db):
+    app, _ = app_with_db
+    client = app.test_client()
+
+    resp = await client.post("/run/start", json={"party": ["player"]})
+    run_id = (await resp.get_json())["run_id"]
+    await client.delete(f"/run/{run_id}")
+    await client.post("/save/wipe")
+
+    fresh = await client.post("/run/start", json={"party": ["player"]})
+    assert fresh.status_code == 200
+    data = await fresh.get_json()
+    assert "run_id" in data
+
+
+@pytest.mark.asyncio
+async def test_wipe_seeds_random_persona(app_with_db):
+    app, db_path = app_with_db
+    client = app.test_client()
+
+    await client.post("/save/wipe")
+
+    conn = sqlcipher3.connect(db_path)
+    conn.execute("PRAGMA key = 'testkey'")
+    rows = {row[0] for row in conn.execute("SELECT id FROM owned_players")}
+    conn.close()
+
+    assert rows <= {"player", "lady_darkness", "lady_light"}
+    assert len(rows) == 2

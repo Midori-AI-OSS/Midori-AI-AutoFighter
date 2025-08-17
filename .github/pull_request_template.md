@@ -5,7 +5,7 @@
 - [ ] Backend tests
 - [ ] Frontend tests
 - [ ] Linting
-- [ ] Doc sync updates (README and `.codex/implementation` docs)
+- [ ] Doc sync updates (README and `.codex/implementation` docs; link tasks below)
 
 ## Checklist
 - [ ] Linked or updated relevant `.codex/tasks` entries

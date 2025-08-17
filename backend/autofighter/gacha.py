@@ -158,6 +158,9 @@ class GachaManager:
         results: list[PullResult] = []
         pity = self._get_pity()
         items = self._get_items()
+        if items.get("ticket", 0) < count:
+            raise PermissionError("insufficient tickets")
+        items["ticket"] = items.get("ticket", 0) - count
         owned = self._get_owned()
         auto_craft = self._get_auto_craft()
         for _ in range(count):

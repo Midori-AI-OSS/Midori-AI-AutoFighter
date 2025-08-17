@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from 'bun:test';
-import { loadSettings, saveSettings } from '../src/lib/settingsStorage.js';
+import { loadSettings, saveSettings, clearSettings } from '../src/lib/settingsStorage.js';
 
 function mockStorage() {
   let store = {};
@@ -7,6 +7,9 @@ function mockStorage() {
     getItem: (k) => (k in store ? store[k] : null),
     setItem: (k, v) => {
       store[k] = String(v);
+    },
+    removeItem: (k) => {
+      delete store[k];
     },
     clear: () => {
       store = {};
@@ -34,5 +37,12 @@ describe('settings storage', () => {
     expect(result.sfxVolume).toBe(20);
     expect(result.framerate).toBe(60);
     expect(typeof result.framerate).toBe('number');
+  });
+
+  test('clearSettings removes stored values', () => {
+    saveSettings({ sfxVolume: 40 });
+    clearSettings();
+    const result = loadSettings();
+    expect(result).toEqual({});
   });
 });

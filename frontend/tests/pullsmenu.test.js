@@ -8,5 +8,6 @@ describe('PullsMenu component', () => {
     expect(content).toContain('data-testid="pulls-menu"');
     expect(content).toContain('Pull 1');
     expect(content).toContain('Pull 10');
+    expect(content).toContain('(items.ticket || 0) < 1');
   });
 });

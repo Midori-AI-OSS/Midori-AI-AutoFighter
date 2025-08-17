@@ -21,3 +21,11 @@ export function saveSettings(settings) {
     // ignore write errors
   }
 }
+
+export function clearSettings() {
+  try {
+    localStorage.removeItem(SETTINGS_KEY);
+  } catch {
+    // ignore clear errors
+  }
+}

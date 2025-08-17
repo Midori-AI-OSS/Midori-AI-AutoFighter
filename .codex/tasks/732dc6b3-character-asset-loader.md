@@ -5,7 +5,8 @@ Unify character asset handling so map, party picker, and battle scenes load icon
 
 ## Tasks
 - [ ] Implement a shared loader for character icons and damage type assets.
-- [ ] Integrate the loader into battle UI to display party icons and damage types.
+- [ ] Integrate the loader into map, party picker, and battle UIs.
+- [ ] Ensure consistent damage type mapping across modules.
 - [ ] Document loader usage and add tests verifying asset retrieval.
 
 ## Context

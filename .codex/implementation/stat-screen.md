@@ -16,5 +16,5 @@ Provides an in-game overlay for grouped statistics and active status effects.
 - Refresh interval clamps to the 1–10 range and triggers a re-render on every `refresh_rate` ticks using a browser timer.
 
 ## Pausing
-- When `pause_on_stats` is enabled on the app, opening the stat screen calls `pause_game` and closing it resumes.
+The stat screen no longer pauses gameplay when opened; it only displays player information.
 

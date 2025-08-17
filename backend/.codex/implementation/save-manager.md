@@ -14,8 +14,12 @@ Wrapper around SQLCipher connections and database migrations.
   encrypts the package with Fernet using a key derived from the database key.
 - `POST /save/restore` accepts the encrypted blob, decrypts and verifies the
   embedded hash, and repopulates the tables only if the digest matches.
-- `POST /save/wipe` clears all save-related tables. `DELETE /run/<id>` removes
-  a single active run without touching other data.
+- `POST /save/wipe` deletes the encrypted database file and reruns migrations,
+  recreating `runs`, `owned_players`, `options`, and `damage_types`. A random
+  starting persona (either LadyDarkness or LadyLight) is inserted into
+  `owned_players` after migrations. Any new tables must have corresponding
+  migrations so wipes rebuild them.
+  `DELETE /run/<id>` removes a single active run without touching other data.
 
 ## Run snapshots
 - `POST /run/start` clones the player's pronouns, damage type, and stat points

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import random
 import base64
 import hashlib
 
@@ -33,6 +34,10 @@ with SAVE_MANAGER.connection() as conn:
     conn.execute(
         "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
     )
+    count = conn.execute("SELECT COUNT(*) FROM owned_players").fetchone()[0]
+    if count == 1:
+        persona = random.choice(["lady_darkness", "lady_light"])
+        conn.execute("INSERT INTO owned_players (id) VALUES (?)", (persona,))
 
 FERNET_KEY = base64.urlsafe_b64encode(
     hashlib.sha256((SAVE_MANAGER.key or "plaintext").encode()).digest()
@@ -142,6 +147,8 @@ async def gacha_pull() -> tuple[str, int, dict[str, object]]:
         results = manager.pull(count)
     except ValueError:
         return jsonify({"error": "invalid count"}), 400
+    except PermissionError:
+        return jsonify({"error": "insufficient tickets"}), 403
     state = manager.get_state()
     state["results"] = [asdict(r) for r in results]
     return jsonify(state)
@@ -284,16 +291,20 @@ async def end_run(run_id: str) -> tuple[str, int, dict[str, str]]:
 
 @app.post("/save/wipe")
 async def wipe_save() -> tuple[str, int, dict[str, str]]:
+    # Remove the entire save database and recreate it from migrations so a wipe
+    # behaves like a fresh install. Future tables must be added to the
+    # migrations directory; otherwise they will be lost here.
+    SAVE_MANAGER.db_path.unlink(missing_ok=True)
+    SAVE_MANAGER.migrate(Path(__file__).resolve().parent / "migrations")
+    persona = random.choice(["lady_darkness", "lady_light"])
     with SAVE_MANAGER.connection() as conn:
-        conn.execute("DELETE FROM runs")
+        conn.execute("INSERT INTO owned_players (id) VALUES (?)", (persona,))
         conn.execute(
             "CREATE TABLE IF NOT EXISTS options (key TEXT PRIMARY KEY, value TEXT)"
         )
-        conn.execute("DELETE FROM options")
         conn.execute(
             "CREATE TABLE IF NOT EXISTS damage_types (id TEXT PRIMARY KEY, type TEXT)"
         )
-        conn.execute("DELETE FROM damage_types")
     return jsonify({"status": "wiped"})
 
 

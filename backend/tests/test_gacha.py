@@ -39,6 +39,14 @@ async def test_pull_items(app_with_db):
 
 
 @pytest.mark.asyncio
+async def test_pull_requires_ticket(app_with_db):
+    app, _ = app_with_db
+    client = app.test_client()
+    resp = await client.post("/gacha/pull", json={"count": 1})
+    assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
 async def test_pull_five_star_duplicate(app_with_db):
     app, db_path = app_with_db
     client = app.test_client()

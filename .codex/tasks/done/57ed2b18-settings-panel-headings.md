@@ -1,7 +1,7 @@
 # Add settings panel headings (`57ed2b18`)
 
 ## Summary
-Add visible column titles "Audio", "System", and "Gameplay" to the settings panel to clarify groupings.
+Added "Audio", "System", and "Gameplay" column headers to the settings panel so controls are clearly grouped.
 
 ## Tasks
 - [x] Insert "Audio", "System", and "Gameplay" headers in the settings menu.

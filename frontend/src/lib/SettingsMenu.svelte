@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Volume2, Music, Mic, Power, Trash2, Download, Upload } from 'lucide-svelte';
   import { endRun, wipeData, exportSave, importSave } from './api.js';
+  import { clearSettings } from './settingsStorage.js';
 
   const dispatch = createEventDispatcher();
   export let sfxVolume = 50;
@@ -29,7 +30,16 @@
   }
 
   async function handleWipe() {
+    if (!confirm('This will erase all save data. Continue?')) return;
     await wipeData();
+    clearSettings();
+    sfxVolume = 50;
+    musicVolume = 50;
+    voiceVolume = 50;
+    framerate = 60;
+    autocraft = false;
+    runId = '';
+    alert('Save data wiped.');
   }
 
   async function handleBackup() {

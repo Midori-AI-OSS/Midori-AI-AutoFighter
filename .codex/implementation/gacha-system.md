@@ -15,8 +15,10 @@ its pools dynamically so new recruits become pullable without code changes.
 
 ## Features
 - 1, 5, or 10 pulls at a time.
+- Each pull consumes one ticket; the server rejects requests when tickets are insufficient.
 - Failed pulls grant element-specific upgrade items. Roll table: 1★ 10%, 2★ 50%,
   3★ 30%, 4★ 10%. Higher pity shifts these odds toward rarer items.
+ - The pulls menu disables pull buttons when available tickets are below the selected count.
 - Upgrade items can auto-craft within their element (125 lower-star items
   form one higher star, ten 4★ items become a ticket), but this setting is
   disabled by default so players can spend lower-tier items on upgrades.

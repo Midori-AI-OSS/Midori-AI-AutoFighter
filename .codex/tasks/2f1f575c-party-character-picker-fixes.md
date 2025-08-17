@@ -8,7 +8,9 @@ Party and character pickers show incorrect types, stat placement, colors, and la
 - [ ] Move DEF to the top of the Defense tab and EXP beneath HP in the Core tab.
 - [ ] Correct type icon color and outline color in the character picker.
 - [ ] Display one character per row for better readability.
+- [ ] Audit CSS grid and layout to prevent overlapping elements or multi-character rows.
 - [ ] Add tests verifying stat positions and type assignments.
+- [ ] Capture DOM snapshots confirming correct layout and color mapping.
 
 ## Context
 Feedback identifies multiple UI and data inconsistencies in these pickers.

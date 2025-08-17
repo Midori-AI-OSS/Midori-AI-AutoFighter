@@ -15,10 +15,15 @@
   });
   async function pull(count) {
     loading = true;
-    const data = await pullGacha(count);
-    pity = data.pity;
-    items = data.items;
-    results = data.results || [];
+    try {
+      const data = await pullGacha(count);
+      pity = data.pity;
+      items = data.items;
+      results = data.results || [];
+    } catch (err) {
+      console.error('pull failed', err);
+      alert('Not enough tickets');
+    }
     loading = false;
   }
   function close() {
@@ -31,8 +36,8 @@
   <p>Pity: {pity}</p>
   <p>Tickets: {items.ticket || 0}</p>
   <div class="actions">
-    <button disabled={loading} on:click={() => pull(1)}>Pull 1</button>
-    <button disabled={loading} on:click={() => pull(10)}>Pull 10</button>
+    <button disabled={loading || (items.ticket || 0) < 1} on:click={() => pull(1)}>Pull 1</button>
+    <button disabled={loading || (items.ticket || 0) < 10} on:click={() => pull(10)}>Pull 10</button>
     <button on:click={close}>Done</button>
   </div>
   {#if results.length}

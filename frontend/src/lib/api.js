@@ -58,6 +58,7 @@ export async function pullGacha(count = 1) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ count })
   });
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
   return res.json();
 }
 
