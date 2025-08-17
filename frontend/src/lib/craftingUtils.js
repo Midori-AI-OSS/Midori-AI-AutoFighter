@@ -15,12 +15,12 @@ export function stackItems(raw) {
 
 const ELEMENT_NAMES = {
   fire: 'Fire',
-  water: 'Water',
   ice: 'Ice',
-  earth: 'Earth',
   wind: 'Wind',
   light: 'Light',
+  lightning: 'Lightning',
   dark: 'Dark',
+  generic: 'Generic',
   ticket: 'Ticket'
 };
 

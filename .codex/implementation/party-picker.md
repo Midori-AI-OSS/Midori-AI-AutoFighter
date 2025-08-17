@@ -1,16 +1,18 @@
 # Party Picker
 
-The Svelte `PartyPicker` component lets players choose up to four allies before a run. A random background image is selected from `frontend/src/lib/assets/backgrounds`, and portraits load from `assets/characters` with a fallback to a random portrait when an image is missing.
+The Svelte `PartyPicker` component lets players choose up to four allies before a run. The shared `assetLoader` picks a random background from `frontend/src/lib/assets/backgrounds`, provides portraits from `assets/characters` with fallbacks, and supplies damage type icons and colors via `getElementIcon` and `getElementColor`.
 
-The roster only shows owned characters plus the player's avatar, which is pinned to the top and preselected. The list scrolls vertically with a gradient fade at the top and bottom. Clicking a portrait now only previews the character. Party membership is managed with a button in the stats panel that switches between **Add to party** and **Remove from party**. The panel lists HP, DEF, Vitality, Regain, and EXP—Speed is omitted because the game has no speed mechanic.
+The roster only shows owned characters plus the player's avatar, which is pinned to the top and preselected. Any characters removed by a data wipe are filtered from both the roster and the current selection. Entries render one per row with a small portrait, name, and element icon. Each row's outline and icon are tinted with `getElementColor` so damage types are visible at a glance. Clicking a row previews the character without toggling party membership. The stats panel provides an **Add to party** / **Remove from party** control.
 
 The layout uses percentage-based columns so the roster, preview, and stats
-panels all shrink with the viewport. Roster portraits fill a four‑column
-grid where each card spans **25%** of the available width, keeping images a
-constant ratio of the menu. Content is wrapped in `MenuPanel`, which sizes
-itself just under the overlay surface to avoid a surrounding scrollbar.
-Preview portraits scale without a minimum size so they remain visible on
-small screens.
+panels all shrink with the viewport. Content is wrapped in `MenuPanel`,
+which sizes itself just under the overlay surface to avoid a surrounding
+scrollbar. Preview portraits scale without a minimum size so they remain
+visible on small screens.
+
+Player stats are grouped into Core, Offense, and Defense tabs. The Core tab
+lists HP, EXP, Vitality, and Regain. The Defense tab begins with DEF
+followed by Mitigation, Dodge Odds, and Effect Resist.
 
 `PartyPicker` exposes the `selected` array as a bound prop so parents can reactively read the lineup. When launched from the Run button it opens as a modal that requires an explicit **Start Run** confirmation before proceeding.
 

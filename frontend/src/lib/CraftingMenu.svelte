@@ -21,6 +21,10 @@
     fallback: '#708090'
   };
 
+  function onIconError(event) {
+    event.target.src = fallbackIcon;
+  }
+
   function getIcon(key) {
     const [element, rank] = key.split('_');
     return (
@@ -71,7 +75,12 @@
           style={`--star-color: ${getStarColor(key)}`}
           on:click={() => (selected = key)}
         >
-          <img class="item-icon" src={getIcon(key)} alt={key} />
+          <img
+            class="item-icon"
+            src={getIcon(key)}
+            alt={key}
+            on:error={onIconError}
+          />
           <span class="label">{formatName(key)}</span>
           <span class="count">{value}</span>
         </li>
@@ -84,6 +93,7 @@
           style={`--star-color: ${getStarColor(selected)}`}
           src={getIcon(selected)}
           alt={selected}
+          on:error={onIconError}
         />
         <div class="detail-name">{formatName(selected)}</div>
         <div class="detail-count">x{items[selected]}</div>
@@ -125,6 +135,7 @@
     width: 24px;
     height: 24px;
     border: 2px solid var(--star-color, #708090);
+    box-shadow: 0 0 0 1px var(--star-color, #708090);
   }
   .detail {
     border: 2px solid #fff;
@@ -136,6 +147,7 @@
     width: 48px;
     height: 48px;
     border: 2px solid var(--star-color, #708090);
+    box-shadow: 0 0 0 1px var(--star-color, #708090);
     margin-bottom: 0.25rem;
   }
   .placeholder {

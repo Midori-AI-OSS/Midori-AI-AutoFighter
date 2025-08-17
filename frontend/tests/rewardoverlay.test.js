@@ -13,5 +13,6 @@ describe('reward overlay assets', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/RewardOverlay.svelte'), 'utf8');
     expect(content).toContain('Choose a Card');
     expect(content).toContain('select(\'card\'');
+    expect(content).toContain('MenuPanel');
   });
 });

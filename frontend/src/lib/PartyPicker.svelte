@@ -1,8 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { getPlayers } from './api.js';
-  import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
-  import { getCharacterImage, getHourlyBackground, getRandomFallback } from './assetLoader.js';
+  import { getCharacterImage, getHourlyBackground, getRandomFallback, getElementIcon, getElementColor } from './assetLoader.js';
   import MenuPanel from './MenuPanel.svelte';
 
   let background = '';
@@ -22,18 +21,19 @@
     try {
       const data = await getPlayers();
       roster = data.players
-        .map(p => ({
+        .map((p) => ({
           id: p.id,
           name: p.name,
           img: getCharacterImage(p.id, p.is_player) || getRandomFallback(),
           owned: p.owned,
           is_player: p.is_player,
-          element: p.element ?? 'Generic',
+          element: p.element?.name ?? p.element ?? 'Generic',
           stats: p.stats ?? { hp: 0, atk: 0, defense: 0, level: 1 }
         }))
-        .filter(p => p.owned || p.is_player)
+        .filter((p) => p.owned || p.is_player)
         .sort((a, b) => (a.is_player ? -1 : b.is_player ? 1 : 0));
-      const player = roster.find(p => p.is_player);
+      selected = selected.filter((id) => roster.some((c) => c.id === id));
+      const player = roster.find((p) => p.is_player);
       if (player) {
         selected = [player.id];
         previewId = player.id;
@@ -59,16 +59,6 @@
     }
   }
 
-  function iconFor(element) {
-    const e = (element || '').toLowerCase();
-    if (e === 'fire') return Flame;
-    if (e === 'ice') return Snowflake;
-    if (e === 'lightning') return Zap;
-    if (e === 'light') return Sun;
-    if (e === 'dark') return Moon;
-    if (e === 'wind') return Wind;
-    return Circle;
-  }
 </script>
 
 <style>
@@ -210,13 +200,6 @@
     width: 24px;
     height: 24px;
   }
-  /* Element type colors */
-  .type-icon.fire { color: #e25822; }
-  .type-icon.ice { color: #82caff; }
-  .type-icon.lightning { color: #ffd700; }
-  .type-icon.light { color: #ffff99; }
-  .type-icon.dark { color: #8a2be2; }
-  .type-icon.wind { color: #7fff7f; }
   .stats-list {
     display: flex;
     flex-direction: column;
@@ -253,68 +236,53 @@
   min-height: 28px;
   border-radius: 6px;
   }
-  .roster-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(0, 25%));
+  .roster-list {
+    display: flex;
+    flex-direction: column;
     gap: 0.4rem;
     padding: 0.4rem;
     height: 100%;
     overflow-y: auto;
-    justify-content: stretch;
     border-right: 2px solid #444;
     border-left: 2px solid #444;
     min-width: 0;
   }
-  .char-card {
-  position: relative;
-  cursor: pointer;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  transition: all 0.2s ease;
-  width: 100%;
-  aspect-ratio: 1;
-  max-height: 100%;
-  margin: 0 auto;
-  padding: 0;
-  background: none;
-  }
-  .char-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  }
-  .char-card.selected {
-    border-color: #FFD700;
-    box-shadow: 0 0 12px rgba(255,215,0,0.6);
-  }
-  .card-img {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto;
-  }
-  .card-overlay {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.6);
-    padding: 0.25rem;
+  .char-row {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    padding: 0.25rem 0.4rem;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
   }
-  .card-name {
+  .char-row:hover {
+    background: rgba(20,20,20,0.8);
+  }
+  .char-row.selected {
+    border-color: #ffd700;
+    box-shadow: 0 0 8px rgba(255,215,0,0.5);
+  }
+  .row-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #222;
+    flex-shrink: 0;
+  }
+  .row-name {
+    flex: 1;
+    text-align: left;
     color: #fff;
-    font-size: 0.85rem;
-    text-align: center;
+    font-size: 0.9rem;
   }
-  .card-level {
-    color: #ccc;
-    font-size: 0.75rem;
+  .row-type {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
   }
   .stats-tabs {
     display: flex;
@@ -389,21 +357,23 @@
 {:else}
   <MenuPanel>
   <div class="full" data-testid="party-picker">
-    <!-- Left: Roster grid cards -->
-    <div class="roster-grid">
+    <!-- Left: Roster list -->
+    <div class="roster-list">
       {#each roster as char}
-        <button type="button"
+        <button
+          type="button"
           data-testid={`choice-${char.id}`}
-          class="char-card"
+          class="char-row"
           class:selected={selected.includes(char.id)}
-          on:click={() => select(char.id)}>
-          <img src={char.img} alt={char.name} class="card-img" />
-          <div class="card-overlay">
-            <!-- use default small element icon -->
-            <svelte:component this={iconFor(char.element)} class="elem" aria-hidden="true" />
-            <span class="card-name">{char.name}</span>
-            <span class="card-level">LVL {char.stats.level}</span>
-          </div>
+          on:click={() => select(char.id)}
+          style={`border-color: ${getElementColor(char.element)}`}>
+          <img src={char.img} alt={char.name} class="row-img" />
+          <span class="row-name">{char.name}</span>
+          <svelte:component
+            this={getElementIcon(char.element)}
+            class="row-type"
+            style={`color: ${getElementColor(char.element)}`}
+            aria-hidden="true" />
         </button>
       {/each}
     </div>
@@ -434,23 +404,25 @@
           <div class="stats-header">
             <span class="char-name">{sel.name}</span>
             <span class="char-level">Lv {sel.stats.level}</span>
-            <svelte:component this={iconFor(sel.element)}
-              class={`type-icon ${sel.element.toLowerCase()}`}
+            <svelte:component
+              this={getElementIcon(sel.element)}
+              class="type-icon"
+              style={`color: ${getElementColor(sel.element)}`}
               aria-hidden="true" />
           </div>
           <div class="stats-list">
             {#if activeTab === 'Core'}
               <div><span>HP</span><span>{sel.stats.hp ?? '-'}</span></div>
-              <div><span>DEF</span><span>{sel.stats.defense ?? '-'}</span></div>
+              <div><span>EXP</span><span>{sel.stats.exp ?? sel.stats.xp ?? '-'}</span></div>
               <div><span>Vitality</span><span>{sel.stats.vitality ?? sel.stats.vita ?? '-'}</span></div>
               <div><span>Regain</span><span>{sel.stats.regain ?? sel.stats.regain_rate ?? '-'}</span></div>
-              <div><span>EXP</span><span>{sel.stats.exp ?? sel.stats.xp ?? '-'}</span></div>
             {:else if activeTab === 'Offense'}
               <div><span>ATK</span><span>{sel.stats.atk ?? '-'}</span></div>
               <div><span>CRIT Rate</span><span>{(sel.stats.critRate ?? sel.stats.crit_rate ?? 0) + '%'}</span></div>
               <div><span>CRIT DMG</span><span>{(sel.stats.critDamage ?? sel.stats.crit_dmg ?? 0) + '%'}</span></div>
               <div><span>Effect Hit Rate</span><span>{(sel.stats.effectHit ?? sel.stats.effect_hit ?? 0) + '%'}</span></div>
             {:else if activeTab === 'Defense'}
+              <div><span>DEF</span><span>{sel.stats.defense ?? '-'}</span></div>
               <div><span>Mitigation</span><span>{sel.stats.mitigation ?? '-'}</span></div>
               <div><span>Dodge Odds</span><span>{sel.stats.dodge ?? sel.stats.dodgeOdds ?? '-'}</span></div>
               <div><span>Effect Resist</span><span>{sel.stats.effectResist ?? sel.stats.effect_res ?? '-'}</span></div>

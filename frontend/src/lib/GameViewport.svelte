@@ -6,6 +6,7 @@
   import OverlaySurface from './OverlaySurface.svelte';
   import PopupWindow from './PopupWindow.svelte';
   import MapDisplay from './MapDisplay.svelte';
+  import BattleView from './BattleView.svelte';
   import PullsMenu from './PullsMenu.svelte';
   import CraftingMenu from './CraftingMenu.svelte';
   import RewardOverlay from './RewardOverlay.svelte';
@@ -16,6 +17,7 @@
   import { onMount } from 'svelte';
   import { getHourlyBackground } from './assetLoader.js';
   import { loadSettings, saveSettings } from './settingsStorage.js';
+  import { getPlayers } from './api.js';
 
   export let runId = '';
   export let roomData = null;
@@ -31,9 +33,13 @@
   export let battleActive = false;
   let randomBg = '';
   let speed2x = false;
+  let roster = [];
+  export let selected = [];
+  export let items = [];
+  let selectedParty = [];
   const dispatch = createEventDispatcher();
 
-  onMount(() => {
+  onMount(async () => {
     if (!background) {
       randomBg = getHourlyBackground();
     }
@@ -43,9 +49,18 @@
     if (saved.voiceVolume !== undefined) voiceVolume = saved.voiceVolume;
     if (saved.framerate !== undefined) framerate = Number(saved.framerate);
     if (saved.autocraft !== undefined) autocraft = saved.autocraft;
+    try {
+      const data = await getPlayers();
+      roster = data.players.map(p => ({ id: p.id, element: p.element?.name ?? p.element ?? 'Generic' }));
+    } catch (e) {
+      roster = [];
+    }
   });
-  export let selected = [];
-  export let items = [];
+
+  $: selectedParty = selected.map(id => {
+    const info = roster.find(r => r.id === id);
+    return { id, element: info?.element || 'Generic' };
+  });
 </script>
 
 <style>
@@ -180,11 +195,11 @@
 
 <div class="viewport-wrap">
   <div class="viewport" style={`--bg: url(${background || randomBg})`}>
+      {#if !battleActive}
       <div class="stained-glass-bar">
         <button
           class="icon-btn"
           title="Home"
-          disabled={battleActive}
           on:click={() => dispatch('home')}
         >
           <Diamond size={22} color="#fff" />
@@ -192,7 +207,6 @@
         <button
           class="icon-btn"
           title="Player Editor"
-          disabled={battleActive}
           on:click={() => dispatch('openEditor')}
         >
           <User size={22} color="#fff" />
@@ -206,8 +220,9 @@
           </button>
         {/if}
       </div>
+      {/if}
         <!-- right stained-glass sidebar (mirrors top-left bar styling) -->
-        {#if viewMode === 'main'}
+        {#if viewMode === 'main' && !battleActive}
           <div class="stained-glass-side">
             {#each items as item}
               <button class="icon-btn" title={item.label} on:click={item.action} disabled={item.disabled}>
@@ -235,6 +250,7 @@
           <OverlaySurface>
             <MapDisplay
               map={map}
+              party={selectedParty}
               on:select={(e) => {
                 dispatch('roomSelect', e.detail);
                 dispatch('back');
@@ -305,7 +321,7 @@
         {/if}
         {#if battleActive && viewMode === 'main'}
           <div class="overlay-inset">
-            <div class="placeholder">Battle in progress...</div>
+            <BattleView party={selectedParty} />
           </div>
         {/if}
   </div>

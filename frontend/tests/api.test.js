@@ -10,7 +10,8 @@ import {
   getGacha,
   pullGacha,
   setAutoCraft,
-  chooseCard
+  chooseCard,
+  wipeData
 } from '../src/lib/api.js';
 
 // Helper to mock fetch
@@ -91,5 +92,16 @@ describe('api calls', () => {
     global.fetch = createFetch(payload);
     const result = await chooseCard('abc', 'c1');
     expect(result).toEqual(payload);
+  });
+
+  test('wipeData posts wipe and returns status', async () => {
+    global.fetch = createFetch({ status: 'wiped' });
+    const result = await wipeData();
+    expect(result).toEqual({ status: 'wiped' });
+  });
+
+  test('wipeData throws on HTTP error', async () => {
+    global.fetch = createFetch({}, false, 500);
+    await expect(wipeData()).rejects.toThrow('HTTP error 500');
   });
 });

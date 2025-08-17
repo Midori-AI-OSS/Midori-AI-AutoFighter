@@ -1,0 +1,23 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PartyPicker component roster layout snapshot 1`] = `
+"<div class="roster-list">
+      {#each roster as char}
+        <button
+          type="button"
+          data-testid={\`choice-\${char.id}\`}
+          class="char-row"
+          class:selected={selected.includes(char.id)}
+          on:click={() => select(char.id)}
+          style={\`border-color: \${getElementColor(char.element)}\`}>
+          <img src={char.img} alt={char.name} class="row-img" />
+          <span class="row-name">{char.name}</span>
+          <svelte:component
+            this={getElementIcon(char.element)}
+            class="row-type"
+            style={\`color: \${getElementColor(char.element)}\`}
+            aria-hidden="true" />
+        </button>
+      {/each}
+    </div>"
+`;

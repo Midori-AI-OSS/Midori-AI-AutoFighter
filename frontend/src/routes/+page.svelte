@@ -91,14 +91,14 @@
     setView('editor');
   }
 
-  function handleEditorSave(e) {
+  async function handleEditorSave(e) {
     editorState = {
       ...e.detail,
       hp: +e.detail.hp,
       attack: +e.detail.attack,
       defense: +e.detail.defense,
     };
-    savePlayerConfig({
+    await savePlayerConfig({
       pronouns: editorState.pronouns,
       damage_type: editorState.damageType,
       hp: editorState.hp,

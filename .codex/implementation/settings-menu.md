@@ -8,9 +8,9 @@ labels, and tooltips for **SFX Volume**, **Music Volume**, **Voice Volume**,
 The selected framerate is saved as a number and merged with existing settings in local storage so server polling limits persist across sessions.
 `frameratePersistence.test.js` verifies the viewport loads this saved value on startup.
 
-Choosing **Wipe Save Data** prompts for confirmation. If accepted, the app calls the `/save/wipe` endpoint, which deletes runs,
-options, and damage type records from the backend database, clears stored settings, resets menu values to defaults, and alerts the
-player that progress was erased.
+Choosing **Wipe Save Data** prompts for confirmation. If accepted, the app calls the `/save/wipe` endpoint with error handling.
+On success it deletes runs, options, and damage type records from the backend database, clears stored settings, resets menu values
+to defaults, and displays a status message confirming the wipe. Errors surface a failure message.
 
 ## Testing
 - `bun test`

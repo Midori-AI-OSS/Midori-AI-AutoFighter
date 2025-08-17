@@ -29,17 +29,24 @@
     }
   }
 
+  let wipeStatus = '';
+
   async function handleWipe() {
+    wipeStatus = '';
     if (!confirm('This will erase all save data. Continue?')) return;
-    await wipeData();
-    clearSettings();
-    sfxVolume = 50;
-    musicVolume = 50;
-    voiceVolume = 50;
-    framerate = 60;
-    autocraft = false;
-    runId = '';
-    alert('Save data wiped.');
+    try {
+      await wipeData();
+      clearSettings();
+      sfxVolume = 50;
+      musicVolume = 50;
+      voiceVolume = 50;
+      framerate = 60;
+      autocraft = false;
+      runId = '';
+      wipeStatus = 'Save data wiped.';
+    } catch (e) {
+      wipeStatus = 'Failed to wipe data.';
+    }
   }
 
   async function handleBackup() {
@@ -95,6 +102,9 @@
         <label>Wipe Save Data</label>
         <button on:click={handleWipe}>Wipe</button>
       </div>
+      {#if wipeStatus}
+        <p class="status" data-testid="wipe-status">{wipeStatus}</p>
+      {/if}
       <div class="control" title="Download encrypted backup of save data.">
         <Download />
         <label>Backup Save Data</label>
@@ -176,6 +186,11 @@
     background: #0a0a0a;
     color: #fff;
     padding: 0.3rem 0.6rem;
+  }
+
+  .status {
+    margin: 0;
+    font-size: 0.8rem;
   }
 </style>
 

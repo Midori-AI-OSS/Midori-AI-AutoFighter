@@ -15,5 +15,7 @@ describe('SettingsMenu component', () => {
     expect(content).toContain('Backup Save Data');
     expect(content).toContain('Import Save Data');
     expect(content).toContain('End Run');
+    expect(content).toContain('data-testid="wipe-status"');
+    expect(content).not.toContain('alert(');
   });
 });

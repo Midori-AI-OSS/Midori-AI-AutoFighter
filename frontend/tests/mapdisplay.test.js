@@ -9,9 +9,15 @@ describe('MapDisplay component', () => {
     expect(content).toContain('data-testid="map-display"');
   });
 
-  test('reverses map and disables future rooms', () => {
+  test('slices map and disables future rooms', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/MapDisplay.svelte'), 'utf8');
-    expect(content).toContain('reverse()');
-    expect(content).toContain('disabled={i !== ordered.length - 1}');
+    expect(content).toContain('map.slice(-4)');
+    expect(content).toContain('visible[visible.length - 1]');
+    expect(content).toContain('disabled={room !== current}');
+  });
+
+  test('applies element colors to party preview', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/MapDisplay.svelte'), 'utf8');
+    expect(content).toContain('getElementColor(member.element)');
   });
 });

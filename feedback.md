@@ -39,6 +39,8 @@ Details:
   - Symptom: Map requires manual scrolling to bottom to view content; players should only need to see next 4 room groups instead of full map scroll.
   - Suggested follow-up: Implement viewport clipping or pagination to show only the next 4 room groups; reduce DOM nodes rendered for performance.
 
+- Status: Map component now slices the run's rooms with `map.slice(-4)` to limit rendering and trim excess DOM nodes.
+
 - Battle UI issues (start of battle / in-battle):
   - Missing party member icons and unknown damage types for characters — party members render without icons, likely missing asset loading or incorrect type mapping.
   - Rewards menu appears unthemed and outside of the battle viewport; right sidebar remains visible inside battle window.

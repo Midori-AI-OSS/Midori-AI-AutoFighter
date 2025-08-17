@@ -10,10 +10,12 @@ describe('CraftingMenu component', () => {
     expect(content).toContain('Craft');
   });
 
-  test('renders item icons with star outlines', () => {
+  test('renders item icons with star outlines and fallback', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/CraftingMenu.svelte'), 'utf8');
     expect(content).toContain('item-icon');
     expect(content).toContain('--star-color');
+    expect(content).toContain('on:error={onIconError}');
+    expect(content).toContain('fallbackIcon');
   });
 
   test('includes detail panel placeholder', () => {
@@ -26,6 +28,8 @@ describe('CraftingMenu component', () => {
     const stacked = stackItems(['ice_4', 'ice_4', 'fire_2']);
     expect(stacked).toEqual({ ice_4: 2, fire_2: 1 });
     expect(formatName('ice_4')).toBe('Ice ★★★★');
+    expect(formatName('lightning_3')).toBe('Lightning ★★★');
+    expect(formatName('generic_2')).toBe('Generic ★★');
     expect(formatName('ticket')).toBe('Ticket');
   });
 });

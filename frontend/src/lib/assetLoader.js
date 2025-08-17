@@ -1,9 +1,32 @@
-// Enhanced asset loader for characters and backgrounds
+// Enhanced asset loader for characters, backgrounds, and damage types
+
+import { Flame, Snowflake, Zap, Sun, Moon, Wind, Circle } from 'lucide-svelte';
 
 // Load all character images (including folders and fallbacks)
-const characterModules = import.meta.glob('./assets/characters/**/*.png', { eager: true, import: 'default', query: '?url' });
-const fallbackModules = import.meta.glob('./assets/characters/fallbacks/*.png', { eager: true, import: 'default', query: '?url' });
-const backgroundModules = import.meta.glob('./assets/backgrounds/*.png', { eager: true, import: 'default', query: '?url' });
+const glob = typeof import.meta?.glob === 'function' ? import.meta.glob : () => ({});
+const characterModules = glob('./assets/characters/**/*.png', { eager: true, import: 'default', query: '?url' });
+const fallbackModules = glob('./assets/characters/fallbacks/*.png', { eager: true, import: 'default', query: '?url' });
+const backgroundModules = glob('./assets/backgrounds/*.png', { eager: true, import: 'default', query: '?url' });
+
+const ELEMENT_ICONS = {
+  fire: Flame,
+  ice: Snowflake,
+  lightning: Zap,
+  light: Sun,
+  dark: Moon,
+  wind: Wind,
+  generic: Circle
+};
+
+const ELEMENT_COLORS = {
+  fire: '#e25822',
+  ice: '#82caff',
+  lightning: '#ffd700',
+  light: '#ffff99',
+  dark: '#8a2be2',
+  wind: '#7fff7f',
+  generic: '#cccccc'
+};
 
 // Parse character assets into organized structure
 const characterAssets = {};
@@ -76,7 +99,7 @@ export function getHourlyBackground() {
 // Get random background (for immediate random needs)
 export function getRandomBackground() {
   if (backgroundAssets.length === 0) return null;
-  
+
   const randomIndex = Math.floor(Math.random() * backgroundAssets.length);
   return backgroundAssets[randomIndex];
 }
@@ -89,9 +112,17 @@ export function getAvailableCharacterIds() {
 // Get random fallback image
 export function getRandomFallback() {
   if (fallbackAssets.length === 0) return null;
-  
+
   const randomIndex = Math.floor(Math.random() * fallbackAssets.length);
   return fallbackAssets[randomIndex];
+}
+
+export function getElementIcon(element) {
+  return ELEMENT_ICONS[(element || '').toLowerCase()] || Circle;
+}
+
+export function getElementColor(element) {
+  return ELEMENT_COLORS[(element || '').toLowerCase()] || '#aaa';
 }
 
 // Export assets for debugging

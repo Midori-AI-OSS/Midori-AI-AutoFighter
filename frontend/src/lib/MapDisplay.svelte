@@ -2,12 +2,16 @@
   import { createEventDispatcher } from 'svelte';
   import { Swords, Bed, ShoppingBag, Crown, HelpCircle } from 'lucide-svelte';
   import MenuPanel from './MenuPanel.svelte';
+  import { getCharacterImage, getElementColor } from './assetLoader.js';
 
   export let map = [];
+  export let party = [];
   const dispatch = createEventDispatcher();
-  let ordered = [];
+  let visible = [];
+  let current = '';
 
-  $: ordered = [...map].reverse();
+  $: visible = map.slice(-4);
+  $: current = visible[visible.length - 1];
 
   function iconFor(room) {
     const r = (room || '').toLowerCase();
@@ -22,23 +26,30 @@
     return (room || '').replace(/-/g, ' ');
   }
 
-  function select(room, i) {
-    if (i !== ordered.length - 1) return;
+  function select(room) {
+    if (room !== current) return;
     dispatch('select', room);
   }
 </script>
 
 <MenuPanel>
+  {#if party.length}
+    <div class="party-preview">
+      {#each party as member}
+        <img src={getCharacterImage(member.id)} alt="" class="party-icon" style={`border-color: ${getElementColor(member.element)}`} />
+      {/each}
+    </div>
+  {/if}
   <div class="wrap" data-testid="map-display">
     <h4>Map</h4>
     <div class="help">Tap a room to proceed</div>
     <ul>
-      {#each ordered as room, i}
+      {#each visible as room}
         <li>
           <button
-            on:click={() => select(room, i)}
-            class:current={i === ordered.length - 1}
-            disabled={i !== ordered.length - 1}
+            on:click={() => select(room)}
+            class:current={room === current}
+            disabled={room !== current}
             data-testid={`room-${room}`}
           >
             <svelte:component this={iconFor(room)} class="icon" aria-hidden="true" />
@@ -53,6 +64,17 @@
 <style>
   .wrap {
     width: min(100%, 640px);
+  }
+  .party-preview {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .party-icon {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #444;
+    border-radius: 4px;
   }
   ul {
     list-style: none;

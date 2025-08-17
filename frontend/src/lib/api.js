@@ -98,7 +98,9 @@ export async function endRun(runId) {
 }
 
 export async function wipeData() {
-  await fetch(`${API_BASE}/save/wipe`, { method: 'POST' });
+  const res = await fetch(`${API_BASE}/save/wipe`, { method: 'POST' });
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+  return res.json();
 }
 
 export async function exportSave() {
