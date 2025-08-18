@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import random
 import asyncio
-
 from typing import Any
 from dataclasses import asdict
 from dataclasses import fields
@@ -12,13 +11,13 @@ from dataclasses import dataclass
 from .party import Party
 from .stats import Stats
 from .mapgen import MapNode
+from plugins.foes._base import FoeBase
 from plugins import foes as foe_plugins
 from .passives import PassiveRegistry
 from autofighter.cards import apply_cards
 from autofighter.cards import card_choices
 from autofighter.relics import apply_relics
 from autofighter.effects import EffectManager
-from plugins.foes._base import FoeBase
 
 
 def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
@@ -38,6 +37,27 @@ def _serialize(obj: Stats) -> dict[str, Any]:
     if hasattr(obj, "char_type"):
         data["char_type"] = getattr(obj.char_type, "value", obj.char_type)
     return data
+
+
+def _pick_card_stars(room: Room) -> int:
+    roll = random.random()
+    if isinstance(room, BossRoom):
+        if roll < 0.60:
+            return 3
+        if roll < 0.85:
+            return 4
+        return 5
+    if isinstance(room, BattleRoom) and room.strength > 1.0:
+        if roll < 0.40:
+            return 1
+        if roll < 0.70:
+            return 2
+        if roll < 0.7015:
+            return 3
+        if roll < 0.7025:
+            return 4
+        return 5
+    return 1 if roll < 0.80 else 2
 
 
 def _choose_foe(party: Party) -> FoeBase:
@@ -87,12 +107,17 @@ class BattleRoom(Room):
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
 
+        exp_reward = 0
+        turn = 0
         while foe.hp > 0 and any(m.hp > 0 for m in combat_party.members):
             for member_effect, member in zip(party_effects, combat_party.members):
                 if member.hp <= 0:
                     continue
+                turn += 1
                 registry.trigger("turn_start", member)
+                member.maybe_regain(turn)
                 member_effect.tick(foe_effects)
+                await asyncio.sleep(0)
                 if member.hp <= 0:
                     registry.trigger("turn_end", member)
                     continue
@@ -101,12 +126,16 @@ class BattleRoom(Room):
                 foe_effects.maybe_inflict_dot(member, dmg)
                 registry.trigger("turn_end", member)
                 if foe.hp <= 0:
+                    exp_reward += foe.level * 12 + 5 * self.node.index
                     break
                 await asyncio.sleep(0.01)
                 registry.trigger("turn_start", foe)
+                foe.maybe_regain(turn)
                 foe_effects.tick(member_effect)
+                await asyncio.sleep(0)
                 if foe.hp <= 0:
                     registry.trigger("turn_end", foe)
+                    exp_reward += foe.level * 12 + 5 * self.node.index
                     break
                 foe_effects.on_action()
                 dmg = member.apply_damage(foe.atk, attacker=foe)
@@ -120,15 +149,23 @@ class BattleRoom(Room):
         registry.trigger("battle_end", foe)
         for member in combat_party.members:
             registry.trigger("battle_end", member)
-
         for member, orig in zip(combat_party.members, party.members):
             orig.hp = min(member.hp, orig.max_hp)
+            orig.gain_exp(exp_reward)
+            for f in fields(type(orig)):
+                setattr(member, f.name, getattr(orig, f.name))
 
-        options = card_choices(party, stars=1)
+        options = card_choices(party, stars=_pick_card_stars(self))
         foes = [_serialize(foe)]
         party_data = [_serialize(p) for p in combat_party.members]
         choice_data = [
-            {"id": c.id, "name": c.name, "stars": c.stars} for c in options
+            {
+                "id": c.id,
+                "name": c.name,
+                "stars": c.stars,
+                "about": getattr(c, "about", ""),
+            }
+            for c in options
         ]
         return {
             "result": "boss" if self.strength > 1.0 else "battle",
@@ -138,6 +175,8 @@ class BattleRoom(Room):
             "cards": party.cards,
             "card_choices": choice_data,
             "foes": foes,
+            "room_number": self.node.index,
+            "exp_reward": exp_reward,
         }
 
 

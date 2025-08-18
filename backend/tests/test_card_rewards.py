@@ -5,6 +5,7 @@ import pytest
 import sqlcipher3
 
 import autofighter.cards as cards_module
+import autofighter.rooms as rooms_module
 
 from pathlib import Path
 from autofighter.cards import award_card
@@ -47,10 +48,13 @@ async def test_battle_offers_choices_and_applies_effect(app_with_db, monkeypatch
 
     monkeypatch.setattr(cards_module.random, "sample", lambda seq, k: list(seq)[:k])
 
+    monkeypatch.setattr(rooms_module.random, "random", lambda: 0.0)
     battle_resp = await client.post(f"/rooms/{run_id}/battle")
     data = await battle_resp.get_json()
     assert data["party"][0]["atk"] == 100
     chosen = data["card_choices"][0]["id"]
+    assert data["card_choices"][0]["stars"] == 1
+    assert "about" in data["card_choices"][0]
 
     await client.post(f"/cards/{run_id}", json={"card": chosen})
     while True:

@@ -1,16 +1,40 @@
-const cardModules = import.meta.glob('../../../.codex/downloads/card-art/*.png', { eager: true, import: 'default', query: '?url' });
-const relicModules = import.meta.glob('../../../.codex/downloads/relics/*.png', { eager: true, import: 'default', query: '?url' });
-const itemModules = import.meta.glob('../../../.codex/downloads/item-art/*.png', { eager: true, import: 'default', query: '?url' });
+const cardModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/cards/gray/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
+const relicModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/relics/*/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
+const itemModules =
+  typeof import.meta.glob === 'function'
+    ? import.meta.glob('./assets/items/*/*.png', {
+        eager: true,
+        import: 'default',
+        query: '?url'
+      })
+    : {};
 
 function prepare(mods) {
   const assets = {};
+  const list = [];
   for (const path in mods) {
     const name = path.split('/').pop().replace('.png', '');
-    assets[name] = new URL(mods[path], import.meta.url).href;
+    const href = new URL(mods[path], import.meta.url).href;
+    assets[name] = href;
+    list.push(href);
   }
-  const values = Object.values(assets);
-  if (values.length) {
-    assets._fallback = values[0];
+  if (list.length) {
+    assets._fallback = list[0];
+    assets._all = list;
   }
   return assets;
 }
@@ -24,3 +48,11 @@ export function getRewardArt(type, id) {
   return lookup[id] || lookup._fallback || '';
 }
 
+export function randomCardArt() {
+  const list = cardArt._all || [];
+  if (!list.length) {
+    return cardArt._fallback || '';
+  }
+  const idx = Math.floor(Math.random() * list.length);
+  return list[idx];
+}

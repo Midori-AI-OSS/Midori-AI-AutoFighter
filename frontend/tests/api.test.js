@@ -2,7 +2,6 @@ import { describe, expect, test, mock } from 'bun:test';
 import {
   startRun,
   updateParty,
-  fetchMap,
   getPlayers,
   roomAction,
   getPlayerConfig,
@@ -30,13 +29,6 @@ describe('api calls', () => {
     global.fetch = createFetch({ status: 'ok' });
     const result = await updateParty('abc', ['sample_player']);
     expect(result).toEqual({ status: 'ok' });
-  });
-
-  test('fetchMap retrieves map', async () => {
-    const payload = { map: { rooms: ['start'], current: 0, battle: false } };
-    global.fetch = createFetch(payload);
-    const result = await fetchMap('abc');
-    expect(result).toEqual(payload);
   });
 
   test('getPlayers retrieves roster', async () => {

@@ -12,6 +12,16 @@ class CardBase:
     name: str = ""
     stars: int = 1
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.about and self.effects:
+            parts: list[str] = []
+            for attr, pct in self.effects.items():
+                sign = "+" if pct >= 0 else ""
+                pretty = attr.replace("_", " ")
+                parts.append(f"{sign}{pct * 100:.0f}% {pretty}")
+            self.about = ", ".join(parts)
 
     def apply(self, party: Party) -> None:
         for member in party.members:

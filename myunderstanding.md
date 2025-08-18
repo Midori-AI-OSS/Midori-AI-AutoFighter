@@ -8,7 +8,7 @@ When I first load the web game I see a dark, glassy main menu with buttons for *
 
 To get the game playable, the map now mimics Slay the Spire with the boss at the top and the path rising upward. Finished rooms disappear so I can see my progress.
 
-After each battle the backend may return card choices; the viewport now opens a reward overlay with art from `.codex/downloads` so I can pick one before moving on.
+After each battle the backend may return card choices; the viewport now opens a reward overlay with art from `src/lib/assets` so I can pick one before moving on.
 
 This is my current understanding of how the game behaves. I'll update it as new pieces fall into place.
 

@@ -5,13 +5,12 @@
   import SettingsMenu from './SettingsMenu.svelte';
   import OverlaySurface from './OverlaySurface.svelte';
   import PopupWindow from './PopupWindow.svelte';
-  import MapDisplay from './MapDisplay.svelte';
   import BattleView from './BattleView.svelte';
   import PullsMenu from './PullsMenu.svelte';
   import CraftingMenu from './CraftingMenu.svelte';
   import RewardOverlay from './RewardOverlay.svelte';
   import PlayerEditor from './PlayerEditor.svelte';
-  import StatsPanel from './StatsPanel.svelte';
+  import InventoryPanel from './InventoryPanel.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Diamond, User, Settings, ChevronsRight } from 'lucide-svelte';
   import { onMount } from 'svelte';
@@ -22,9 +21,8 @@
   export let runId = '';
   export let roomData = null;
   export let background = '';
-  export let viewMode = 'main'; // 'main', 'party', 'settings'
+  export let viewMode = 'main'; // 'main', 'party', 'settings', 'inventory'
   export let editorState = {};
-  export let map = [];
   export let sfxVolume = 50;
   export let musicVolume = 50;
   export let voiceVolume = 50;
@@ -238,24 +236,12 @@
         {#if runId && roomData}
           <RoomView result={roomData.result} foes={roomData.foes} party={roomData.party} />
         {:else if runId}
-          <div class="placeholder">Select a room on the map to begin</div>
+          <div class="placeholder">Awaiting next room...</div>
         {/if}
         {#if viewMode === 'party'}
           <OverlaySurface>
             <!-- full party picker overlay: show roster, preview, and stats -->
             <PartyPicker bind:selected={selected} />
-          </OverlaySurface>
-        {/if}
-        {#if viewMode === 'map'}
-          <OverlaySurface>
-            <MapDisplay
-              map={map}
-              party={selectedParty}
-              on:select={(e) => {
-                dispatch('roomSelect', e.detail);
-                dispatch('back');
-              }}
-            />
           </OverlaySurface>
         {/if}
         {#if viewMode === 'party-start'}
@@ -289,9 +275,9 @@
             />
           </OverlaySurface>
         {/if}
-        {#if viewMode === 'stats'}
-          <PopupWindow title="Stats" padding="0.75rem" on:close={() => dispatch('back')}>
-            <StatsPanel />
+        {#if viewMode === 'inventory'}
+          <PopupWindow title="Inventory" padding="0.75rem" on:close={() => dispatch('back')}>
+            <InventoryPanel cards={roomData?.cards ?? []} relics={roomData?.relics ?? []} />
           </PopupWindow>
         {/if}
         {#if viewMode === 'settings'}

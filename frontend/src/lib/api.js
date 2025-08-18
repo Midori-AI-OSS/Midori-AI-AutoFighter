@@ -18,11 +18,6 @@ export async function updateParty(runId, party) {
   return res.json();
 }
 
-export async function fetchMap(runId) {
-  const res = await fetch(`${API_BASE}/map/${runId}`, { cache: 'no-store' });
-  return res.json();
-}
-
 export async function getPlayers() {
   const res = await fetch(`${API_BASE}/players`, { cache: 'no-store' });
   return res.json();

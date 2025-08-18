@@ -1,11 +1,10 @@
 <script>
   import {
     Play,
-    Map,
     Users,
     User,
     Settings,
-    SquareChartGantt,
+    Package,
     PackageOpen,
     Hammer,
     MessageSquare
@@ -13,7 +12,6 @@
   import GameViewport from '$lib/GameViewport.svelte';
   import {
     startRun,
-    fetchMap,
     getPlayerConfig,
     savePlayerConfig,
     roomAction,
@@ -22,12 +20,12 @@
   import { FEEDBACK_URL } from '$lib/constants.js';
 
   let runId = '';
-  let currentMap = [];
   let selectedParty = ['sample_player'];
   let roomData = null;
   let viewportBg = '';
   let viewMode = 'main';
   let viewStack = [];
+  let nextRoom = '';
 
   function setView(mode) {
     viewStack.push(viewMode);
@@ -46,40 +44,32 @@
   let battleActive = false;
 
   function openRun() {
-    setView('party-start');
-  }
-
-  async function checkBattle() {
-    if (!runId) return false;
-    const data = await fetchMap(runId);
-    const map = data.map;
-    currentMap = map.rooms.slice(map.current).map((n) => n.room_type);
-    battleActive = map.battle;
-    return battleActive;
-  }
-
-  async function openMap() {
-    if (!runId) return;
-    if (await checkBattle()) return;
-    setView('map');
+    if (runId) {
+      viewMode = 'main';
+      if (!battleActive && nextRoom) {
+        enterRoom();
+      }
+    } else {
+      setView('party-start');
+    }
   }
 
   async function handleStart() {
     const data = await startRun(selectedParty);
     runId = data.run_id;
-    currentMap = data.map.rooms.slice(data.map.current).map((n) => n.room_type);
-    battleActive = data.map.battle;
+    nextRoom = data.map.rooms[data.map.current].room_type;
     viewStack = ['main'];
-    viewMode = 'map';
+    viewMode = 'main';
+    await enterRoom();
   }
 
   async function handleParty() {
-    if (await checkBattle()) return;
+    if (battleActive) return;
     setView('party');
   }
 
   async function openEditor() {
-    if (await checkBattle()) return;
+    if (battleActive) return;
     const data = await getPlayerConfig();
     editorState = {
       pronouns: data.pronouns,
@@ -108,12 +98,12 @@
   }
 
   async function openPulls() {
-    if (await checkBattle()) return;
+    if (battleActive) return;
     setView('pulls');
   }
 
   async function openCraft() {
-    if (await checkBattle()) return;
+    if (battleActive) return;
     setView('craft');
   }
 
@@ -121,30 +111,24 @@
     window.open(FEEDBACK_URL, '_blank', 'noopener');
   }
 
-  async function handleTarget() {
-    if (await checkBattle()) return;
-    setView('stats');
+  async function openInventory() {
+    if (battleActive) return;
+    setView('inventory');
   }
 
-  async function handleRoomSelect(e) {
-    if (!runId || battleActive) return;
-    const room = e.detail;
-    let data;
-    if (room.includes('battle')) {
-      battleActive = true;
-      data = await roomAction(runId, 'battle');
-    } else if (room.includes('shop')) {
-      data = await roomAction(runId, 'shop');
-    } else if (room.includes('rest')) {
-      data = await roomAction(runId, 'rest');
-    } else if (room.includes('boss')) {
-      battleActive = true;
-      data = await roomAction(runId, 'boss');
-    } else {
-      return;
+  async function enterRoom() {
+    if (!runId || !nextRoom) return;
+    let endpoint = nextRoom;
+    if (endpoint.includes('battle')) {
+      endpoint = nextRoom.includes('boss') ? 'boss' : 'battle';
     }
+    const data = await roomAction(runId, endpoint);
     roomData = data;
-    await checkBattle();
+    nextRoom = data.next_room || '';
+    battleActive = data.result === 'battle' || data.result === 'boss';
+    if (!battleActive && (!data.card_choices || data.card_choices.length === 0) && nextRoom) {
+      await enterRoom();
+    }
   }
 
   async function handleRewardSelect(detail) {
@@ -153,11 +137,11 @@
     if (roomData) {
       roomData.card_choices = [];
     }
+    await enterRoom();
   }
   let items = [];
   $: items = [
-    { icon: Play, label: 'Run', action: openRun, disabled: battleActive },
-    { icon: Map, label: 'Map', action: openMap, disabled: battleActive },
+    { icon: Play, label: 'Run', action: openRun, disabled: false },
     { icon: Users, label: 'Party', action: handleParty, disabled: battleActive },
     { icon: User, label: 'Edit', action: openEditor, disabled: battleActive },
     { icon: PackageOpen, label: 'Pulls', action: openPulls, disabled: battleActive },
@@ -169,7 +153,7 @@
       disabled: false
     },
     { icon: MessageSquare, label: 'Feedback', action: openFeedback, disabled: false },
-    { icon: SquareChartGantt, label: 'Stats', action: handleTarget, disabled: battleActive }
+    { icon: Package, label: 'Inventory', action: openInventory, disabled: battleActive }
   ];
 
 </script>
@@ -211,12 +195,10 @@
     bind:viewMode={viewMode}
     items={items}
     editorState={editorState}
-    map={currentMap}
     battleActive={battleActive}
     on:startRun={handleStart}
     on:editorSave={(e) => handleEditorSave(e)}
-    on:target={handleTarget}
-    on:roomSelect={handleRoomSelect}
+    on:target={openInventory}
     on:back={goBack}
     on:home={goHome}
     on:openEditor={openEditor}

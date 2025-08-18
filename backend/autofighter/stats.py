@@ -1,12 +1,15 @@
-from dataclasses import dataclass
-from dataclasses import field
 import importlib
+import random
+
+from dataclasses import field
+from dataclasses import fields
+from dataclasses import dataclass
 from typing import Callable
 from typing import Optional
 
-from plugins.damage_types._base import DamageTypeBase
-from plugins.damage_types.generic import Generic
 from plugins.event_bus import EventBus
+from plugins.damage_types.generic import Generic
+from plugins.damage_types._base import DamageTypeBase
 
 @dataclass
 class Stats:
@@ -42,6 +45,39 @@ class Stats:
     hots: list[str] = field(default_factory=list)
     damage_types: list[str] = field(default_factory=list)
 
+    def exp_to_level(self) -> int:
+        return (2 ** self.level) * 50
+
+    def maybe_regain(self, turn: int) -> None:
+        if turn % 2 != 0:
+            return
+        bonus = max(self.regain - 100, 0) * 0.00005
+        percent = 0.01 + bonus
+        heal = int(self.max_hp * percent)
+        self.apply_healing(heal)
+
+    def _on_level_up(self) -> None:
+        inc = random.uniform(0.003 * self.level, 0.008 * self.level)
+        for f in fields(type(self)):
+            if f.name in {"exp", "level", "vitality", "exp_multiplier"}:
+                continue
+            value = getattr(self, f.name, None)
+            if isinstance(value, (int, float)):
+                new_val = value * (1 + inc)
+                setattr(self, f.name, type(value)(new_val))
+        self.max_hp += 10 * self.level
+        self.hp = self.max_hp
+        self.atk += 5 * self.level
+        self.defense += 3 * self.level
+
+    def gain_exp(self, amount: int) -> None:
+        self.exp += int(amount * self.exp_multiplier * self.vitality)
+        while self.exp >= self.exp_to_level():
+            needed = self.exp_to_level()
+            self.exp -= needed
+            self.level += 1
+            self._on_level_up()
+
     def apply_damage(self, amount: int, attacker: Optional["Stats"] = None) -> int:
         def _ensure(obj: "Stats") -> DamageTypeBase:
             dt = getattr(obj, "base_damage_type", Generic())
@@ -58,7 +94,10 @@ class Stats:
         self_type = _ensure(self)
         amount = self_type.on_damage_taken(amount, attacker, self)
         amount = self_type.on_party_damage_taken(amount, attacker, self)
-        amount = int(amount)
+        src_vit = attacker.vitality if attacker is not None else 1.0
+        defense_term = max(self.defense ** 5, 1)
+        amount = ((amount ** 2) * src_vit) / (defense_term * self.vitality * self.mitigation)
+        amount = max(int(amount), 1)
         self.last_damage_taken = amount
         self.damage_taken += amount
         self.hp = max(self.hp - amount, 0)
@@ -82,7 +121,9 @@ class Stats:
             amount = heal_type.on_heal(amount, healer, self)
         self_type = _ensure(self)
         amount = self_type.on_heal_received(amount, healer, self)
-        amount = int(amount)
+        src_vit = healer.vitality if healer is not None else 1.0
+        # Healing is amplified by both source and target vitality
+        amount = int(amount * src_vit * self.vitality)
         self.hp = min(self.hp + amount, self.max_hp)
         BUS.emit("heal_received", self, healer, amount)
         if healer is not None:

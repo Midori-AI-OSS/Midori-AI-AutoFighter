@@ -228,6 +228,8 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
                         "gold": 0,
                         "relics": [],
                         "cards": [],
+                        "exp": {pid: 0 for pid in members},
+                        "level": {pid: 1 for pid in members},
                         "player": snapshot,
                     }
                 ),
@@ -241,12 +243,16 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
             cls = getattr(player_plugins, name)
             if cls.id == pid:
                 inst = cls()
+                inst.exp = 0
+                inst.level = 1
                 _assign_damage_type(inst)
                 party_info.append(
                     {
                         "id": inst.id,
                         "name": inst.name,
                         "passives": _passive_names(getattr(inst, "passives", [])),
+                        "exp": inst.exp,
+                        "level": inst.level,
                     }
                 )
                 break
@@ -261,7 +267,14 @@ async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
     gold = data.get("gold", 0)
     relics = data.get("relics", [])
     cards = data.get("cards", [])
-    party = {"members": members, "gold": gold, "relics": relics, "cards": cards}
+    party = {
+        "members": members,
+        "gold": gold,
+        "relics": relics,
+        "cards": cards,
+        "exp": {pid: 0 for pid in members},
+        "level": {pid: 1 for pid in members},
+    }
     with SAVE_MANAGER.connection() as conn:
         conn.execute(
             "UPDATE runs SET party = ? WHERE id = ?",
@@ -549,6 +562,8 @@ def load_party(run_id: str) -> Party:
     if isinstance(data, list):
         data = {"members": data, "gold": 0, "relics": [], "cards": []}
     snapshot = data.get("player", {})
+    exp_map: dict[str, int] = data.get("exp", {})
+    level_map: dict[str, int] = data.get("level", {})
     members: list[PlayerBase] = []
     for pid in data.get("members", []):
         for name in player_plugins.__all__:
@@ -562,6 +577,8 @@ def load_party(run_id: str) -> Party:
                     _apply_player_stats(inst, snapshot.get("stats", {}))
                 else:
                     _assign_damage_type(inst)
+                inst.exp = exp_map.get(pid, 0)
+                inst.level = level_map.get(pid, 1)
                 members.append(inst)
                 break
     party = Party(
@@ -599,6 +616,8 @@ def save_party(run_id: str, party: Party) -> None:
             "gold": party.gold,
             "relics": party.relics,
             "cards": party.cards,
+            "exp": {m.id: m.exp for m in party.members},
+            "level": {m.id: m.level for m in party.members},
         }
         conn.execute(
             "UPDATE runs SET party = ? WHERE id = ?",
@@ -620,9 +639,14 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = await room.resolve(party, data)
     state["battle"] = False
     state["current"] += 1
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
     save_map(run_id, state)
     save_party(run_id, party)
-    result.update({"run_id": run_id, "action": data.get("action", "")})
+    result.update(
+        {"run_id": run_id, "action": data.get("action", ""), "next_room": next_type}
+    )
     return jsonify(result)
 
 
@@ -637,9 +661,14 @@ async def shop_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     room = ShopRoom(node)
     result = await room.resolve(party, data)
     state["current"] += 1
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
     save_map(run_id, state)
     save_party(run_id, party)
-    result.update({"run_id": run_id, "action": data.get("action", "")})
+    result.update(
+        {"run_id": run_id, "action": data.get("action", ""), "next_room": next_type}
+    )
     return jsonify(result)
 
 
@@ -654,9 +683,14 @@ async def rest_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     room = RestRoom(node)
     result = await room.resolve(party, data)
     state["current"] += 1
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
     save_map(run_id, state)
     save_party(run_id, party)
-    result.update({"run_id": run_id, "action": data.get("action", "")})
+    result.update(
+        {"run_id": run_id, "action": data.get("action", ""), "next_room": next_type}
+    )
     return jsonify(result)
 
 
@@ -671,9 +705,14 @@ async def chat_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     room = ChatRoom(node)
     result = await room.resolve(party, data)
     state["current"] += 1
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
     save_map(run_id, state)
     save_party(run_id, party)
-    result.update({"run_id": run_id, "action": data.get("action", "")})
+    result.update(
+        {"run_id": run_id, "action": data.get("action", ""), "next_room": next_type}
+    )
     return jsonify(result)
 
 
@@ -691,9 +730,14 @@ async def boss_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     result = await room.resolve(party, data)
     state["battle"] = False
     state["current"] += 1
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
     save_map(run_id, state)
     save_party(run_id, party)
-    result.update({"run_id": run_id, "action": data.get("action", "")})
+    result.update(
+        {"run_id": run_id, "action": data.get("action", ""), "next_room": next_type}
+    )
     return jsonify(result)
 
 
