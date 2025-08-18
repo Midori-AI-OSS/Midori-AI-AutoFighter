@@ -13,7 +13,12 @@
 
 <MenuPanel data-testid="shop-menu">
   <h3>Shop</h3>
-  <p class="currency"><Coins size={16} class="coin-icon" class:shine={!reducedMotion} /> {gold}</p>
+  <p class="currency">
+    <Coins
+      size={16}
+      class={`coin-icon${!reducedMotion ? ' shine' : ''}`}
+    /> {gold}
+  </p>
   <ul class="items">
     {#each items as item}
       <li>
