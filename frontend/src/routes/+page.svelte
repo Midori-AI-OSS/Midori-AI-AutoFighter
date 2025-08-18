@@ -126,7 +126,13 @@
     roomData = data;
     nextRoom = data.next_room || '';
     battleActive = data.result === 'battle' || data.result === 'boss';
-    if (!battleActive && (!data.card_choices || data.card_choices.length === 0) && nextRoom) {
+    if (
+      !battleActive &&
+      (!data.card_choices || data.card_choices.length === 0) &&
+      nextRoom &&
+      data.result !== 'shop' &&
+      data.result !== 'rest'
+    ) {
       await enterRoom();
     }
   }
@@ -137,6 +143,32 @@
     if (roomData) {
       roomData.card_choices = [];
     }
+    await enterRoom();
+  }
+  async function handleShopBuy(item) {
+    if (!runId) return;
+    roomData = await roomAction(runId, 'shop', item);
+  }
+  async function handleShopReroll() {
+    if (!runId) return;
+    roomData = await roomAction(runId, 'shop', 'reroll');
+  }
+  async function handleShopLeave() {
+    await enterRoom();
+  }
+  async function handleRestPull() {
+    if (!runId) return;
+    roomData = await roomAction(runId, 'rest', 'pull');
+  }
+  async function handleRestSwap() {
+    if (!runId) return;
+    roomData = await roomAction(runId, 'rest', 'swap');
+  }
+  async function handleRestCraft() {
+    if (!runId) return;
+    roomData = await roomAction(runId, 'rest', 'craft');
+  }
+  async function handleRestLeave() {
     await enterRoom();
   }
   let items = [];
@@ -204,5 +236,12 @@
     on:openEditor={openEditor}
     on:settings={() => setView('settings')}
     on:rewardSelect={(e) => handleRewardSelect(e.detail)}
+    on:shopBuy={(e) => handleShopBuy(e.detail)}
+    on:shopReroll={handleShopReroll}
+    on:shopLeave={handleShopLeave}
+    on:restPull={handleRestPull}
+    on:restSwap={handleRestSwap}
+    on:restCraft={handleRestCraft}
+    on:restLeave={handleRestLeave}
   />
 </div>

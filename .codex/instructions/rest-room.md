@@ -7,3 +7,4 @@ Describes the rest room scene.
 - At least two Rest Rooms must spawn on each floor, enforced via
   `RestRoom.should_spawn`.
 - Escape returns to the previous scene.
+- The interface mirrors the reward pop-up, displaying current gold with options to pull, swap, craft, or leave.

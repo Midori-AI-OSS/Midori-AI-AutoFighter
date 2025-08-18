@@ -26,6 +26,10 @@ The Options submenu lets players adjust audio levels, system behaviour, and game
   - Select box limiting server polling frequency.
   - Label: `Framerate`
   - Tooltip: `Limit server polling frequency.`
+- **Reduced Motion**
+  - Toggle that slows animation effects for accessibility.
+  - Label: `Reduced Motion`
+  - Tooltip: `Slow down battle animations.`
 
 - **Wipe Save Data**
   - Button that clears all save records after confirmation.

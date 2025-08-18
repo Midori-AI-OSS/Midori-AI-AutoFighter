@@ -6,6 +6,7 @@ export function loadSettings() {
     if (!raw) return {};
     const data = JSON.parse(raw);
     if (data.framerate !== undefined) data.framerate = Number(data.framerate);
+    if (data.reducedMotion !== undefined) data.reducedMotion = Boolean(data.reducedMotion);
     return data;
   } catch {
     return {};
@@ -33,8 +34,8 @@ export function clearSettings() {
 // Best‑effort client wipe: local/session storage, caches, SW, and IndexedDB
 export async function clearAllClientData() {
   // Local + session storage
-  try { localStorage.clear(); } catch {}
-  try { sessionStorage && sessionStorage.clear && sessionStorage.clear(); } catch {}
+  try { localStorage.clear(); } catch { /* ignore */ }
+  try { sessionStorage && sessionStorage.clear && sessionStorage.clear(); } catch { /* ignore */ }
 
   // CacheStorage
   try {
@@ -42,7 +43,7 @@ export async function clearAllClientData() {
       const names = await caches.keys();
       await Promise.all(names.map((n) => caches.delete(n)));
     }
-  } catch {}
+  } catch { /* ignore */ }
 
   // Service workers
   try {
@@ -50,7 +51,7 @@ export async function clearAllClientData() {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map((r) => r.unregister()));
     }
-  } catch {}
+  } catch { /* ignore */ }
 
   // IndexedDB (supported in Chromium via indexedDB.databases())
   try {
@@ -69,5 +70,5 @@ export async function clearAllClientData() {
           )
       );
     }
-  } catch {}
+  } catch { /* ignore */ }
 }

@@ -19,6 +19,9 @@ from autofighter.cards import card_choices
 from autofighter.relics import apply_relics
 from autofighter.effects import EffectManager
 
+ENRAGE_TURNS_NORMAL = 100
+ENRAGE_TURNS_BOSS = 500
+
 
 def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
     mult = strength * node.floor * node.index * node.loop
@@ -107,6 +110,10 @@ class BattleRoom(Room):
             registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
 
+        base_foe_atk = foe.atk
+        enrage_active = False
+        enrage_stacks = 0
+        threshold = ENRAGE_TURNS_BOSS if isinstance(self, BossRoom) else ENRAGE_TURNS_NORMAL
         exp_reward = 0
         turn = 0
         while foe.hp > 0 and any(m.hp > 0 for m in combat_party.members):
@@ -114,6 +121,12 @@ class BattleRoom(Room):
                 if member.hp <= 0:
                     continue
                 turn += 1
+                if turn > threshold:
+                    if not enrage_active:
+                        enrage_active = True
+                        foe.passives.append("Enraged")
+                    enrage_stacks = turn - threshold
+                    foe.atk = int(base_foe_atk * (1 + 0.4 * enrage_stacks))
                 registry.trigger("turn_start", member)
                 member.maybe_regain(turn)
                 member_effect.tick(foe_effects)
@@ -177,6 +190,7 @@ class BattleRoom(Room):
             "foes": foes,
             "room_number": self.node.index,
             "exp_reward": exp_reward,
+            "enrage": {"active": enrage_active, "stacks": enrage_stacks},
         }
 
 

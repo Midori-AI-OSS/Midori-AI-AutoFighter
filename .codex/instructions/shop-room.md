@@ -7,3 +7,4 @@ Describes the shop room scene.
 - ShopRoom records spawns per floor and `ShopRoom.should_spawn(floor)` enforces at least two shops on every floor.
 - Inventory scales with floor level and can be rerolled for additional gold.
 - Escape returns to the previous scene.
+- The UI reuses the reward pop-up layout, shows current gold, and lists items with prices and buy buttons.

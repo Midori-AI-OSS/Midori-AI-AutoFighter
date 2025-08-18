@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { getRewardArt, randomCardArt } from './rewardLoader.js';
+  import { cardArt, getRewardArt, randomCardArt } from './rewardLoader.js';
   import MenuPanel from './MenuPanel.svelte';
 
   const starColors = {
@@ -21,7 +21,11 @@
 
   function artFor(card) {
     if (!artMap.has(card.id)) {
-      artMap.set(card.id, randomCardArt());
+      if (cardArt[card.id]) {
+        artMap.set(card.id, getRewardArt('card', card.id));
+      } else {
+        artMap.set(card.id, randomCardArt());
+      }
     }
     return artMap.get(card.id);
   }
@@ -41,10 +45,22 @@
 </script>
 
 <style>
+  .reward {
+    margin: auto;
+    width: fit-content;
+    height: fit-content;
+  }
+
+  .reward :global(.panel) {
+    width: fit-content;
+    height: fit-content;
+  }
+
   .choices {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    grid-auto-rows: 96px;
     gap: 0.5rem;
-    flex-wrap: wrap;
     justify-content: center;
   }
   .choice {
@@ -64,6 +80,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: grayscale(1);
     mix-blend-mode: multiply;
   }
   .label {
@@ -81,6 +98,7 @@
   }
 </style>
 
+<div class="reward">
 <MenuPanel>
   {#if cards.length}
     <h3>Choose a Card</h3>
@@ -141,3 +159,4 @@
     </div>
   {/if}
 </MenuPanel>
+</div>

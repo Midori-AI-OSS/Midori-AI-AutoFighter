@@ -10,6 +10,7 @@
   export let voiceVolume = 50;
   export let framerate = 60;
   export let autocraft = false;
+  export let reducedMotion = false;
   export let runId = '';
 
   function save() {
@@ -18,7 +19,8 @@
       musicVolume,
       voiceVolume,
       framerate: Number(framerate),
-      autocraft
+      autocraft,
+      reducedMotion
     });
   }
 
@@ -48,6 +50,7 @@
       voiceVolume = 50;
       framerate = 60;
       autocraft = false;
+      reducedMotion = false;
       runId = '';
       wipeStatus = ok ? 'Save data wiped. Reloading…' : 'Backend wipe failed; cleared local data. Reloading…';
       setTimeout(() => {
@@ -103,6 +106,10 @@
           <option value={60}>60</option>
           <option value={120}>120</option>
         </select>
+      </div>
+      <div class="control" title="Slow down battle animations.">
+        <label>Reduced Motion</label>
+        <input type="checkbox" bind:checked={reducedMotion} />
       </div>
       <div class="control" title="Clear all save data.">
         <Trash2 />

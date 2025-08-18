@@ -1,6 +1,6 @@
 const cardModules =
   typeof import.meta.glob === 'function'
-    ? import.meta.glob('./assets/cards/gray/*.png', {
+    ? import.meta.glob('./assets/cards/*/*.png', {
         eager: true,
         import: 'default',
         query: '?url'
@@ -23,7 +23,7 @@ const itemModules =
       })
     : {};
 
-function prepare(mods) {
+function prepare(mods, fallback) {
   const assets = {};
   const list = [];
   for (const path in mods) {
@@ -32,14 +32,17 @@ function prepare(mods) {
     assets[name] = href;
     list.push(href);
   }
-  if (list.length) {
-    assets._fallback = list[0];
-    assets._all = list;
-  }
+  assets._all = list;
+  assets._fallback = fallback || list[0] || '';
   return assets;
 }
 
-export const cardArt = prepare(cardModules);
+const defaultCardFallback = new URL(
+  './assets/cards/fallback/placeholder.png',
+  import.meta.url
+).href;
+
+export const cardArt = prepare(cardModules, defaultCardFallback);
 export const relicArt = prepare(relicModules);
 export const itemArt = prepare(itemModules);
 

@@ -9,9 +9,15 @@ describe('GameViewport battle lock', () => {
     expect(content).toContain('disabled={item.disabled}');
   });
 
-  test('hides sidebars in battle', () => {
+  test('shows battle icon during combat', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/GameViewport.svelte'), 'utf8');
-    expect(content).toContain('{#if !battleActive}');
+    expect(content).toContain('{#if battleActive}');
+    expect(content).toContain('<Swords');
+    expect(content).not.toContain('{#if !battleActive}');
+  });
+
+  test('hides side sidebar in battle', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/GameViewport.svelte'), 'utf8');
     expect(content).toContain("viewMode === 'main' && !battleActive");
   });
 

@@ -6,10 +6,12 @@ function toUrl(src) {
   return new URL(src, import.meta.url).href;
 }
 
+const glob = typeof import.meta.glob === 'function' ? import.meta.glob : () => ({});
+
 // Load all character images (including folders and fallbacks)
 const characterModules = Object.fromEntries(
   Object.entries(
-    import.meta.glob('./assets/characters/**/*.png', {
+    glob('./assets/characters/**/*.png', {
       eager: true,
       import: 'default',
       query: '?url'
@@ -19,7 +21,7 @@ const characterModules = Object.fromEntries(
 
 const fallbackModules = Object.fromEntries(
   Object.entries(
-    import.meta.glob('./assets/characters/fallbacks/*.png', {
+    glob('./assets/characters/fallbacks/*.png', {
       eager: true,
       import: 'default',
       query: '?url'
@@ -29,7 +31,7 @@ const fallbackModules = Object.fromEntries(
 
 const backgroundModules = Object.fromEntries(
   Object.entries(
-    import.meta.glob('./assets/backgrounds/*.png', {
+    glob('./assets/backgrounds/*.png', {
       eager: true,
       import: 'default',
       query: '?url'

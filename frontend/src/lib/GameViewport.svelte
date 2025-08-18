@@ -11,8 +11,10 @@
   import RewardOverlay from './RewardOverlay.svelte';
   import PlayerEditor from './PlayerEditor.svelte';
   import InventoryPanel from './InventoryPanel.svelte';
+  import ShopMenu from './ShopMenu.svelte';
+  import RestRoom from './RestRoom.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { Diamond, User, Settings, ChevronsRight } from 'lucide-svelte';
+  import { Diamond, User, Settings, ChevronsRight, Swords } from 'lucide-svelte';
   import { onMount } from 'svelte';
   import { getRandomBackground } from './assetLoader.js';
   import { loadSettings, saveSettings } from './settingsStorage.js';
@@ -28,6 +30,7 @@
   export let voiceVolume = 50;
   export let framerate = 60;
   export let autocraft = false;
+  export let reducedMotion = false;
   export let battleActive = false;
   let randomBg = '';
   let speed2x = false;
@@ -47,6 +50,7 @@
     if (saved.voiceVolume !== undefined) voiceVolume = saved.voiceVolume;
     if (saved.framerate !== undefined) framerate = Number(saved.framerate);
     if (saved.autocraft !== undefined) autocraft = saved.autocraft;
+    if (saved.reducedMotion !== undefined) reducedMotion = saved.reducedMotion;
     try {
       const data = await getPlayers();
       roster = data.players.map(p => ({ id: p.id, element: p.element?.name ?? p.element ?? 'Generic' }));
@@ -193,15 +197,20 @@
 
 <div class="viewport-wrap">
   <div class="viewport" style={`--bg: url(${background || randomBg})`}>
-      {#if !battleActive}
       <div class="stained-glass-bar">
-        <button
-          class="icon-btn"
-          title="Home"
-          on:click={() => dispatch('home')}
-        >
-          <Diamond size={22} color="#fff" />
-        </button>
+        {#if battleActive}
+          <button class="icon-btn" title="Battle">
+            <Swords size={22} color="#fff" />
+          </button>
+        {:else}
+          <button
+            class="icon-btn"
+            title="Home"
+            on:click={() => dispatch('home')}
+          >
+            <Diamond size={22} color="#fff" />
+          </button>
+        {/if}
         <button
           class="icon-btn"
           title="Player Editor"
@@ -218,7 +227,6 @@
           </button>
         {/if}
       </div>
-      {/if}
         <!-- right stained-glass sidebar (mirrors top-left bar styling) -->
         {#if viewMode === 'main' && !battleActive}
           <div class="stained-glass-side">
@@ -288,10 +296,11 @@
               {voiceVolume}
               {framerate}
               {autocraft}
+              {reducedMotion}
               {runId}
               on:save={(e) => {
-                ({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft } = e.detail);
-                saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft });
+                ({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft, reducedMotion } = e.detail);
+                saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft, reducedMotion });
                 dispatch('back');
               }}
             />
@@ -305,9 +314,39 @@
             />
           </OverlaySurface>
         {/if}
+        {#if roomData && roomData.result === 'shop'}
+          <OverlaySurface>
+            <ShopMenu
+              items={roomData.items || []}
+              gold={roomData.gold}
+              reducedMotion={reducedMotion}
+              on:buy={(e) => dispatch('shopBuy', e.detail)}
+              on:reroll={() => dispatch('shopReroll')}
+              on:close={() => dispatch('shopLeave')}
+            />
+          </OverlaySurface>
+        {/if}
+        {#if roomData && roomData.result === 'rest'}
+          <OverlaySurface>
+            <RestRoom
+              gold={roomData.gold}
+              reducedMotion={reducedMotion}
+              on:pull={() => dispatch('restPull')}
+              on:swap={() => dispatch('restSwap')}
+              on:craft={() => dispatch('restCraft')}
+              on:close={() => dispatch('restLeave')}
+            />
+          </OverlaySurface>
+        {/if}
         {#if battleActive && viewMode === 'main'}
           <div class="overlay-inset">
-            <BattleView party={selectedParty} />
+            <BattleView
+              runId={runId}
+              framerate={framerate}
+              party={selectedParty}
+              enrage={roomData?.enrage}
+              reducedMotion={reducedMotion}
+            />
           </div>
         {/if}
   </div>
