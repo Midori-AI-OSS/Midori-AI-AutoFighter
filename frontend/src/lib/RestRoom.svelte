@@ -19,7 +19,10 @@
 {:else}
   <MenuPanel data-testid="rest-room">
     <h3>Rest Room</h3>
-    <p class="currency"><Coins size={16} class="coin-icon" class:shine={!reducedMotion} /> {gold}</p>
+    <p class="currency"><Coins
+        size={16}
+        class={`coin-icon${!reducedMotion ? ' shine' : ''}`}
+      /> {gold}</p>
     <div class="actions">
       <button on:click={pull}>Pull Character</button>
       <button on:click={swap}>Switch Party</button>
