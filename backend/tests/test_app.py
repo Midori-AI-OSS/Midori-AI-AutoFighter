@@ -95,6 +95,7 @@ async def test_players_and_rooms(app_with_db):
                 resp = await client.post(url, json={"cost": 1, "item": "potion"})
             else:
                 resp = await client.post(url)
+            await client.post(f"/run/{run_id}/next")
             if predicate(rt):
                 return resp
 

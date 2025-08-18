@@ -22,4 +22,11 @@ describe('BattleView layout and polling', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
     expect(content).toContain("roomAction(runId, 'battle', 'snapshot')");
   });
+
+  test('shows hp bars and core stats', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
+    expect(content).toContain('hp-bar');
+    expect(content).toContain('DEF {');
+    expect(content).toContain('CRIT');
+  });
 });

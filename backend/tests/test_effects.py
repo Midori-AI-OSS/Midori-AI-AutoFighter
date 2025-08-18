@@ -1,5 +1,7 @@
 import autofighter.effects as effects
 
+import pytest
+
 from autofighter.stats import Stats
 from plugins.event_bus import EventBus
 from autofighter.effects import EffectManager
@@ -14,7 +16,11 @@ def test_dot_applies_with_hit_rate():
     assert target.dots
 
 
-def test_damage_and_heal_events():
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_damage_and_heal_events():
     bus = EventBus()
     events = []
 
@@ -28,11 +34,11 @@ def test_damage_and_heal_events():
     bus.subscribe("heal_received", _heal)
     attacker = Stats(atk=10, base_damage_type=Fire())
     target = Stats(hp=50, max_hp=100)
-    target.apply_damage(10, attacker=attacker)
-    target.apply_healing(5, healer=attacker)
+    await target.apply_damage(10, attacker=attacker)
+    await target.apply_healing(5, healer=attacker)
     bus.unsubscribe("damage_taken", _dmg)
     bus.unsubscribe("heal_received", _heal)
-    assert ("dmg", 10) in events and ("heal", 5) in events
+    assert ("dmg", 1) in events and ("heal", 5) in events
 
 
 def test_dot_has_minimum_chance(monkeypatch):

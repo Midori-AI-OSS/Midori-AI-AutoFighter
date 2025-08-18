@@ -10,6 +10,7 @@ import {
   pullGacha,
   setAutoCraft,
   chooseCard,
+  chooseRelic,
   wipeData
 } from '../src/lib/api.js';
 
@@ -83,6 +84,13 @@ describe('api calls', () => {
     const payload = { card: { id: 'c1', name: 'Card', stars: 1 }, cards: ['c1'] };
     global.fetch = createFetch(payload);
     const result = await chooseCard('abc', 'c1');
+    expect(result).toEqual(payload);
+  });
+
+  test('chooseRelic posts relic selection', async () => {
+    const payload = { relic: { id: 'r1', name: 'Relic', stars: 1 }, relics: ['r1'] };
+    global.fetch = createFetch(payload);
+    const result = await chooseRelic('abc', 'r1');
     expect(result).toEqual(payload);
   });
 

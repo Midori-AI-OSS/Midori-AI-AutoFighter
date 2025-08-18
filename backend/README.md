@@ -17,12 +17,14 @@ The root endpoint returns a simple status payload. Additional routes support
 starting runs with a seeded 45-room map, updating the party, retrieving floor
 maps, listing available player characters, returning room background images,
 editing player pronouns and starting stats, and posting actions to battle, shop,
-rest, or floor boss rooms. `POST /run/start` accepts a JSON body with `party`
-(1–5 owned character IDs including `player`) and an optional `damage_type` for
-the player chosen from Light, Dark, Wind, Lightning, Fire, or Ice. The response
-includes the validated party with passive names. Run state is
-stored through the `SaveManager` in `backend/save.db` by default;
-`compose.yaml` bind-mounts the `backend/` directory so the database is
+rest, or floor boss rooms. Room endpoints no longer advance the map
+automatically—after processing a room (and any card rewards) the frontend must
+call `POST /run/<run_id>/next` to move to the next node. `POST /run/start`
+accepts a JSON body with `party` (1–5 owned character IDs including `player`)
+and an optional `damage_type` for the player chosen from Light, Dark, Wind,
+Lightning, Fire, or Ice. The response includes the validated party with passive
+names. Run state is stored through the `SaveManager` in `backend/save.db` by
+default; `compose.yaml` bind-mounts the `backend/` directory so the database is
 persisted on the host.
 
 `GET /gacha` returns the current pity counter, element-based upgrade items,

@@ -35,9 +35,10 @@ describe('GameViewport battle lock', () => {
     expect(content).toContain("dispatch('back')");
   });
 
-  test('shows reward overlay when card choices exist', () => {
+  test('shows reward overlay when reward choices exist', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/GameViewport.svelte'), 'utf8');
     expect(content).toContain('RewardOverlay');
+    expect(content).toContain('relic_choices');
     expect(content).toContain('card_choices');
   });
 });

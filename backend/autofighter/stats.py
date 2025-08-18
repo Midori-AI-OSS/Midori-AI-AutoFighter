@@ -48,13 +48,13 @@ class Stats:
     def exp_to_level(self) -> int:
         return (2 ** self.level) * 50
 
-    def maybe_regain(self, turn: int) -> None:
+    async def maybe_regain(self, turn: int) -> None:
         if turn % 2 != 0:
             return
         bonus = max(self.regain - 100, 0) * 0.00005
         percent = 0.01 + bonus
         heal = int(self.max_hp * percent)
-        self.apply_healing(heal)
+        await self.apply_healing(heal)
 
     def _on_level_up(self) -> None:
         inc = random.uniform(0.003 * self.level, 0.008 * self.level)
@@ -78,7 +78,7 @@ class Stats:
             self.level += 1
             self._on_level_up()
 
-    def apply_damage(self, amount: int, attacker: Optional["Stats"] = None) -> int:
+    async def apply_damage(self, amount: int, attacker: Optional["Stats"] = None) -> int:
         def _ensure(obj: "Stats") -> DamageTypeBase:
             dt = getattr(obj, "base_damage_type", Generic())
             if isinstance(dt, str):
@@ -107,7 +107,7 @@ class Stats:
             BUS.emit("damage_dealt", attacker, self, amount)
         return amount
 
-    def apply_healing(self, amount: int, healer: Optional["Stats"] = None) -> int:
+    async def apply_healing(self, amount: int, healer: Optional["Stats"] = None) -> int:
         def _ensure(obj: "Stats") -> DamageTypeBase:
             dt = getattr(obj, "base_damage_type", Generic())
             if isinstance(dt, str):

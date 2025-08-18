@@ -1,5 +1,9 @@
 <script>
   import { ArrowLeft } from 'lucide-svelte';
+  import { Diamond, User, Settings, ChevronsRight, Swords } from 'lucide-svelte';
+  import { createEventDispatcher } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+
   import RoomView from './RoomView.svelte';
   import PartyPicker from './PartyPicker.svelte';
   import SettingsMenu from './SettingsMenu.svelte';
@@ -13,12 +17,10 @@
   import InventoryPanel from './InventoryPanel.svelte';
   import ShopMenu from './ShopMenu.svelte';
   import RestRoom from './RestRoom.svelte';
-  import { createEventDispatcher } from 'svelte';
-  import { Diamond, User, Settings, ChevronsRight, Swords } from 'lucide-svelte';
-  import { onMount } from 'svelte';
   import { getRandomBackground } from './assetLoader.js';
   import { loadSettings, saveSettings } from './settingsStorage.js';
   import { getPlayers } from './api.js';
+  import { getRandomMusicTrack } from './music.js';
 
   export let runId = '';
   export let roomData = null;
@@ -40,6 +42,10 @@
   let selectedParty = [];
   const dispatch = createEventDispatcher();
 
+  let gameAudio;
+  let volumeTimer;
+  let snapshotLoading = false;
+
   onMount(async () => {
     if (!background) {
       randomBg = getRandomBackground();
@@ -57,11 +63,52 @@
     } catch (e) {
       roster = [];
     }
+    startGameMusic();
   });
 
   $: selectedParty = selected.map(id => {
     const info = roster.find(r => r.id === id);
     return { id, element: info?.element || 'Generic' };
+  });
+  function startGameMusic() {
+    stopGameMusic();
+    const src = getRandomMusicTrack();
+    if (!src) return;
+    gameAudio = new Audio(src);
+    applyMusicVolume();
+    gameAudio.addEventListener('ended', startGameMusic);
+    gameAudio.play().catch(() => {});
+    volumeTimer = setInterval(() => {
+      const saved = loadSettings();
+      if (saved.musicVolume !== undefined) {
+        musicVolume = saved.musicVolume;
+      }
+      applyMusicVolume();
+    }, 500);
+  }
+
+  function applyMusicVolume() {
+    if (gameAudio) {
+      gameAudio.volume = musicVolume / 100;
+    }
+  }
+
+  $: applyMusicVolume();
+
+  function stopGameMusic() {
+    if (volumeTimer) {
+      clearInterval(volumeTimer);
+      volumeTimer = null;
+    }
+    if (gameAudio) {
+      gameAudio.removeEventListener('ended', startGameMusic);
+      gameAudio.pause();
+      gameAudio = null;
+    }
+  }
+
+  onDestroy(() => {
+    stopGameMusic();
   });
 </script>
 
@@ -110,21 +157,26 @@
     .viewport { aspect-ratio: auto; min-height: 240px; }
   }
 
-  .stained-glass-bar {
+  .nav-wrapper {
     position: absolute;
     top: 1.2rem;
     left: 1.2rem;
     display: flex;
     gap: 0.5rem;
+    z-index: 10;
+  }
+
+  .stained-glass-bar {
+    display: flex;
+    gap: 0.5rem;
     padding: 0.5rem 0.7rem;
-  border-radius: 0;
+    border-radius: 0;
     background:
       linear-gradient(135deg, rgba(10,10,10,0.96) 0%, rgba(30,30,30,0.92) 100%),
       repeating-linear-gradient(120deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 8px),
       linear-gradient(60deg, rgba(255,255,255,0.06) 10%, rgba(0,0,0,0.38) 80%);
     box-shadow: 0 2px 18px 0 rgba(0,0,0,0.32), 0 1.5px 0 0 rgba(255,255,255,0.04) inset;
     border: 1.5px solid rgba(40,40,40,0.44);
-    z-index: 10;
     backdrop-filter: blur(3.5px) saturate(1.05);
     opacity: 0.99;
   }
@@ -144,6 +196,40 @@
   .icon-btn:hover {
     background: rgba(120,180,255,0.22);
     box-shadow: 0 2px 8px 0 rgba(0,40,120,0.18);
+  }
+
+  .snapshot-panel {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0;
+    background:
+      linear-gradient(135deg, rgba(10,10,10,0.96) 0%, rgba(30,30,30,0.92) 100%),
+      repeating-linear-gradient(120deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 8px),
+      linear-gradient(60deg, rgba(255,255,255,0.06) 10%, rgba(0,0,0,0.38) 80%);
+    box-shadow: 0 2px 18px 0 rgba(0,0,0,0.32), 0 1.5px 0 0 rgba(255,255,255,0.04) inset;
+    border: 1.5px solid rgba(40,40,40,0.44);
+    backdrop-filter: blur(3.5px) saturate(1.05);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .snapshot-panel.active {
+    opacity: 0.99;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #fff;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
   .icon-btn:disabled {
     opacity: 0.4;
@@ -197,7 +283,8 @@
 
 <div class="viewport-wrap">
   <div class="viewport" style={`--bg: url(${background || randomBg})`}>
-      <div class="stained-glass-bar">
+      <div class="nav-wrapper">
+        <div class="stained-glass-bar">
         {#if battleActive}
           <button class="icon-btn" title="Battle">
             <Swords size={22} color="#fff" />
@@ -226,6 +313,11 @@
             <ArrowLeft size={22} color="#fff" />
           </button>
         {/if}
+        </div>
+        <div class="snapshot-panel" class:active={snapshotLoading}>
+          <div class="spinner"></div>
+          <span>Updating...</span>
+        </div>
       </div>
         <!-- right stained-glass sidebar (mirrors top-left bar styling) -->
         {#if viewMode === 'main' && !battleActive}
@@ -306,11 +398,14 @@
             />
           </PopupWindow>
         {/if}
-        {#if roomData && roomData.card_choices && roomData.card_choices.length > 0}
+        {#if roomData && roomData.result === 'battle'}
           <OverlaySurface>
             <RewardOverlay
-              cards={roomData.card_choices}
+              gold={roomData.loot?.gold || 0}
+              cards={roomData.card_choices || []}
+              relics={roomData.relic_choices || []}
               on:select={(e) => dispatch('rewardSelect', e.detail)}
+              on:next={() => dispatch('nextRoom')}
             />
           </OverlaySurface>
         {/if}
@@ -346,6 +441,11 @@
               party={selectedParty}
               enrage={roomData?.enrage}
               reducedMotion={reducedMotion}
+              on:snapshot-start={() => (snapshotLoading = true)}
+              on:snapshot-end={e => {
+                snapshotLoading = false;
+                console.log(`round-trip ${e.detail.duration.toFixed(1)}ms`);
+              }}
             />
           </div>
         {/if}

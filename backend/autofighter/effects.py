@@ -18,11 +18,11 @@ class DamageOverTime:
     id: str
     source: Optional[Stats] = None
 
-    def tick(self, target: Stats, *_: object) -> bool:
+    async def tick(self, target: Stats, *_: object) -> bool:
         attacker = self.source or target
         dmg = target.base_damage_type.on_dot_damage_taken(self.damage, attacker, target)
         dmg = target.base_damage_type.on_party_dot_damage_taken(dmg, attacker, target)
-        target.apply_damage(int(dmg), attacker=attacker)
+        await target.apply_damage(int(dmg), attacker=attacker)
         self.turns -= 1
         return self.turns > 0
 
@@ -37,11 +37,11 @@ class HealingOverTime:
     id: str
     source: Optional[Stats] = None
 
-    def tick(self, target: Stats, *_: object) -> bool:
+    async def tick(self, target: Stats, *_: object) -> bool:
         healer = self.source or target
         heal = target.base_damage_type.on_hot_heal_received(self.healing, healer, target)
         heal = target.base_damage_type.on_party_hot_heal_received(heal, healer, target)
-        target.apply_healing(int(heal), healer=healer)
+        await target.apply_healing(int(heal), healer=healer)
         self.turns -= 1
         return self.turns > 0
 
@@ -55,6 +55,13 @@ class EffectManager:
         self.hots: List[HealingOverTime] = []
 
     def add_dot(self, effect: DamageOverTime, max_stacks: Optional[int] = None) -> None:
+        """Attach a DoT instance to the tracked stats.
+
+        DoTs with the same ``id`` stack independently, allowing multiple
+        copies to tick each turn.  When ``max_stacks`` is provided, extra
+        applications beyond that limit are ignored rather than refreshed.
+        """
+
         if max_stacks is not None:
             current = len([d for d in self.dots if d.id == effect.id])
             if current >= max_stacks:
@@ -63,6 +70,12 @@ class EffectManager:
         self.stats.dots.append(effect.id)
 
     def add_hot(self, effect: HealingOverTime) -> None:
+        """Attach a HoT instance to the tracked stats.
+
+        Healing effects simply accumulate; each copy heals separately every
+        tick with no inherent stack cap.
+        """
+
         self.hots.append(effect)
         self.stats.hots.append(effect.id)
 
@@ -75,11 +88,11 @@ class EffectManager:
         if random.random() < chance:
             self.add_dot(dot)
 
-    def tick(self, others: Optional[EffectManager] = None) -> None:
+    async def tick(self, others: Optional[EffectManager] = None) -> None:
         for collection, names in ((self.dots, self.stats.dots), (self.hots, self.stats.hots)):
             expired: List[object] = []
             for eff in collection:
-                if not eff.tick(self.stats):
+                if not await eff.tick(self.stats):
                     expired.append(eff)
             for eff in expired:
                 collection.remove(eff)
@@ -91,8 +104,10 @@ class EffectManager:
                 if callable(on_death):
                     on_death(others)
 
-    def on_action(self) -> None:
+    async def on_action(self) -> None:
         for eff in list(self.dots) + list(self.hots):
             handler = getattr(eff, "on_action", None)
             if callable(handler):
-                handler(self.stats)
+                result = handler(self.stats)
+                if hasattr(result, "__await"):
+                    await result

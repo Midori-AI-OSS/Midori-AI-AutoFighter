@@ -33,11 +33,26 @@ export async function roomAction(runId, type, action = '') {
   return res.json();
 }
 
+export async function advanceRoom(runId) {
+  const res = await fetch(`${API_BASE}/run/${runId}/next`, { method: 'POST' });
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+  return res.json();
+}
+
 export async function chooseCard(runId, cardId) {
   const res = await fetch(`${API_BASE}/cards/${runId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ card: cardId })
+  });
+  return res.json();
+}
+
+export async function chooseRelic(runId, relicId) {
+  const res = await fetch(`${API_BASE}/relics/${runId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ relic: relicId })
   });
   return res.json();
 }

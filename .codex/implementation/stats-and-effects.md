@@ -33,8 +33,10 @@ hooks so plugins can modify dot damage or hot healing globally. Damage types may
 attacks via `maybe_inflict_dot`, which rolls the attacker's `effect_hit_rate` against the target's `effect_resistance` before
 adding the effect. The difference is clamped to zero and jittered by ±10%, and there is always at least a 1% chance to apply the status.
 
-- `add_dot(effect, max_stacks=None)` – registers a DoT; optional stack caps are enforced.
-- `add_hot(effect)` – registers a HoT.
+- `add_dot(effect, max_stacks=None)` – registers a DoT. Effects with the same
+  ID stack independently, but a `max_stacks` cap can limit simultaneous copies.
+- `add_hot(effect)` – registers a HoT. Healing effects always accumulate and
+  tick separately with no inherent stack limit.
 - `tick(others=None)` – advances all effects, applying damage or healing and removing expired ones. DoT names are removed from `stats.dots` when finished. If `others` is provided, effects with `on_death` hooks may spread on target death.
 - `on_action()` – triggers `on_action` hooks for effects that react when the target performs an action.
 

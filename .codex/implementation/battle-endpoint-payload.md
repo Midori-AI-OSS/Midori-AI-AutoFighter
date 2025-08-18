@@ -14,6 +14,8 @@
 - `relics` (array): list of acquired relic IDs.
 - `cards` (array): list of owned card IDs.
 - `card_choices` (array): up to three card options with `id`, `name`, and `stars`.
+- `relic_choices` (array): up to three relic options with `id`, `name`, and `stars`.
+- `loot` (object): summary of rewards with `gold`, `card_choices`, `relic_choices`, and `items` arrays.
 - `foes` (array): stats for spawned foes.
 
 Generic damage types are reserved for the Luna player character; other combatants use elemental types such as Fire, Ice, Lightning, Light, Dark, or Wind.
@@ -65,6 +67,17 @@ Example:
     {"id": "mindful_tassel", "name": "Mindful Tassel", "stars": 1},
     {"id": "micro_blade", "name": "Micro Blade", "stars": 1}
   ],
+  "relic_choices": [],
+  "loot": {
+    "gold": 0,
+    "card_choices": [
+      {"id": "balanced_diet", "name": "Balanced Diet", "stars": 1},
+      {"id": "mindful_tassel", "name": "Mindful Tassel", "stars": 1},
+      {"id": "micro_blade", "name": "Micro Blade", "stars": 1}
+    ],
+    "relic_choices": [],
+    "items": []
+  },
   "foes": [
     {
       "id": "slime",

@@ -4,6 +4,7 @@ import json
 import random
 import base64
 import hashlib
+import time
 
 from uuid import uuid4
 from pathlib import Path
@@ -19,6 +20,7 @@ from cryptography.fernet import Fernet
 from plugins import passives as passive_plugins
 from plugins import players as player_plugins
 from autofighter.cards import award_card
+from autofighter.relics import award_relic
 from autofighter.party import Party
 from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
 from autofighter.stats import apply_status_hooks
@@ -203,7 +205,14 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
     run_id = str(uuid4())
     generator = MapGenerator(run_id)
     nodes = generator.generate_floor()
-    state = {"rooms": [n.to_dict() for n in nodes], "current": 1, "battle": False, "awaiting_card": False}
+    state = {
+        "rooms": [n.to_dict() for n in nodes],
+        "current": 1,
+        "battle": False,
+        "awaiting_card": False,
+        "awaiting_relic": False,
+        "awaiting_next": False,
+    }
     pronouns, stats = _load_player_customization()
     with SAVE_MANAGER.connection() as conn:
         cur = conn.execute(
@@ -627,14 +636,17 @@ def save_party(run_id: str, party: Party) -> None:
 
 @app.post("/rooms/<run_id>/battle")
 async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
+    start = time.perf_counter()
     data = await request.get_json(silent=True) or {}
     party = load_party(run_id)
     state, rooms = load_map(run_id)
     node = rooms[state["current"]]
     if node.room_type not in {"battle-weak", "battle-normal"}:
         return jsonify({"error": "invalid room"}), 400
-    # If player needs to choose a card, don't start another battle.
-    if state.get("awaiting_card"):
+    if state.get("awaiting_next"):
+        return jsonify({"error": "awaiting next"}), 400
+    # If player needs to choose a reward, don't start another battle.
+    if state.get("awaiting_card") or state.get("awaiting_relic"):
         party_data = [
             {
                 "id": m.id,
@@ -655,6 +667,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             "relics": party.relics,
             "cards": party.cards,
             "card_choices": [],
+            "relic_choices": [],
             "enrage": {"active": False, "stacks": 0},
         })
     state["battle"] = True
@@ -662,14 +675,19 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     room = BattleRoom(node)
     result = await room.resolve(party, data)
     state["battle"] = False
-    has_choices = bool(result.get("card_choices"))
-    if has_choices:
-        state["awaiting_card"] = True
+    has_card_choices = bool(result.get("card_choices"))
+    has_relic_choices = bool(result.get("relic_choices"))
+    if has_card_choices or has_relic_choices:
+        state["awaiting_card"] = has_card_choices
+        state["awaiting_relic"] = has_relic_choices
+        state["awaiting_next"] = False
         next_type = None
     else:
-        state["current"] += 1
+        state["awaiting_next"] = True
         next_type = (
-            rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
         )
     save_map(run_id, state)
     save_party(run_id, party)
@@ -681,7 +699,13 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             "current_room": node.room_type,
             "current_index": state["current"],
             "awaiting_card": state.get("awaiting_card", False),
+            "awaiting_relic": state.get("awaiting_relic", False),
         }
+    )
+    app.logger.info(
+        "battle_room action=%s %.1fms",
+        data.get("action", ""),
+        (time.perf_counter() - start) * 1000,
     )
     return jsonify(result)
 
@@ -694,12 +718,20 @@ async def shop_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     node = rooms[state["current"]]
     if node.room_type != "shop":
         return jsonify({"error": "invalid room"}), 400
+    if state.get("awaiting_next"):
+        return jsonify({"error": "awaiting next"}), 400
     room = ShopRoom(node)
     result = await room.resolve(party, data)
-    state["current"] += 1
-    next_type = (
-        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
-    )
+    if data.get("action") == "leave":
+        state["awaiting_next"] = True
+        next_type = (
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
+        )
+    else:
+        state["awaiting_next"] = False
+        next_type = None
     save_map(run_id, state)
     save_party(run_id, party)
     result.update(
@@ -710,6 +742,7 @@ async def shop_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             "current_room": node.room_type,
             "current_index": state["current"],
             "awaiting_card": state.get("awaiting_card", False),
+            "awaiting_relic": state.get("awaiting_relic", False),
         }
     )
     return jsonify(result)
@@ -723,12 +756,20 @@ async def rest_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     node = rooms[state["current"]]
     if node.room_type != "rest":
         return jsonify({"error": "invalid room"}), 400
+    if state.get("awaiting_next"):
+        return jsonify({"error": "awaiting next"}), 400
     room = RestRoom(node)
     result = await room.resolve(party, data)
-    state["current"] += 1
-    next_type = (
-        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
-    )
+    if data.get("action") == "leave":
+        state["awaiting_next"] = True
+        next_type = (
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
+        )
+    else:
+        state["awaiting_next"] = False
+        next_type = None
     save_map(run_id, state)
     save_party(run_id, party)
     result.update(
@@ -739,6 +780,7 @@ async def rest_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             "current_room": node.room_type,
             "current_index": state["current"],
             "awaiting_card": state.get("awaiting_card", False),
+            "awaiting_relic": state.get("awaiting_relic", False),
         }
     )
     return jsonify(result)
@@ -752,11 +794,15 @@ async def chat_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     node = rooms[state["current"]]
     if node.room_type != "chat":
         return jsonify({"error": "invalid room"}), 400
+    if state.get("awaiting_next"):
+        return jsonify({"error": "awaiting next"}), 400
     room = ChatRoom(node)
     result = await room.resolve(party, data)
-    state["current"] += 1
+    state["awaiting_next"] = True
     next_type = (
-        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+        rooms[state["current"] + 1].room_type
+        if state["current"] + 1 < len(rooms)
+        else None
     )
     save_map(run_id, state)
     save_party(run_id, party)
@@ -768,6 +814,7 @@ async def chat_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             "current_room": node.room_type,
             "current_index": state["current"],
             "awaiting_card": state.get("awaiting_card", False),
+            "awaiting_relic": state.get("awaiting_relic", False),
         }
     )
     return jsonify(result)
@@ -781,8 +828,8 @@ async def boss_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     node = rooms[state["current"]]
     if node.room_type != "battle-boss-floor":
         return jsonify({"error": "invalid room"}), 400
-    # Prevent starting a boss battle while awaiting a card selection
-    if state.get("awaiting_card"):
+    # Prevent starting a boss battle while awaiting a card selection or next-room trigger
+    if state.get("awaiting_card") or state.get("awaiting_relic") or state.get("awaiting_next"):
         party_data = [
             {
                 "id": m.id,
@@ -810,14 +857,19 @@ async def boss_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     room = BossRoom(node)
     result = await room.resolve(party, data)
     state["battle"] = False
-    has_choices = bool(result.get("card_choices"))
-    if has_choices:
-        state["awaiting_card"] = True
+    has_card_choices = bool(result.get("card_choices"))
+    has_relic_choices = bool(result.get("relic_choices"))
+    if has_card_choices or has_relic_choices:
+        state["awaiting_card"] = has_card_choices
+        state["awaiting_relic"] = has_relic_choices
+        state["awaiting_next"] = False
         next_type = None
     else:
-        state["current"] += 1
+        state["awaiting_next"] = True
         next_type = (
-            rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
         )
     save_map(run_id, state)
     save_party(run_id, party)
@@ -840,14 +892,64 @@ async def select_card(run_id: str) -> tuple[str, int, dict[str, str]]:
     # Advance the map now that the player chose a reward
     state, rooms = load_map(run_id)
     state["awaiting_card"] = False
-    state["current"] += 1
-    next_type = (
-        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
-    )
+    if not state.get("awaiting_relic"):
+        state["awaiting_next"] = True
+        next_type = (
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
+        )
+    else:
+        state["awaiting_next"] = False
+        next_type = None
     save_map(run_id, state)
     save_party(run_id, party)
     card_data = {"id": card.id, "name": card.name, "stars": card.stars}
     return jsonify({"card": card_data, "cards": party.cards, "next_room": next_type})
+
+
+@app.post("/relics/<run_id>")
+async def select_relic(run_id: str) -> tuple[str, int, dict[str, str]]:
+    data = await request.get_json(silent=True) or {}
+    relic_id = data.get("relic")
+    if not relic_id:
+        return jsonify({"error": "invalid relic"}), 400
+    party = load_party(run_id)
+    relic = award_relic(party, relic_id)
+    if relic is None:
+        return jsonify({"error": "invalid relic"}), 400
+    state, rooms = load_map(run_id)
+    state["awaiting_relic"] = False
+    if not state.get("awaiting_card"):
+        state["awaiting_next"] = True
+        next_type = (
+            rooms[state["current"] + 1].room_type
+            if state["current"] + 1 < len(rooms)
+            else None
+        )
+    else:
+        state["awaiting_next"] = False
+        next_type = None
+    save_map(run_id, state)
+    save_party(run_id, party)
+    relic_data = {"id": relic.id, "name": relic.name, "stars": relic.stars}
+    return jsonify({"relic": relic_data, "relics": party.relics, "next_room": next_type})
+
+
+@app.post("/run/<run_id>/next")
+async def advance_room(run_id: str) -> tuple[str, int, dict[str, str]]:
+    state, rooms = load_map(run_id)
+    if state.get("awaiting_card") or state.get("awaiting_relic"):
+        return jsonify({"error": "awaiting reward"}), 400
+    if not state.get("awaiting_next"):
+        return jsonify({"error": "not ready"}), 400
+    state["current"] += 1
+    state["awaiting_next"] = False
+    next_type = (
+        rooms[state["current"]].room_type if state["current"] < len(rooms) else None
+    )
+    save_map(run_id, state)
+    return jsonify({"next_room": next_type, "current_index": state["current"]})
 
 
 @app.post("/rooms/<run_id>/<room_id>/action")

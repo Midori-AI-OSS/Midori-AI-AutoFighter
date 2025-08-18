@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 from plugins import PluginLoader
@@ -21,6 +22,16 @@ def award_relic(party: Party, relic_id: str) -> RelicBase | None:
         return None
     party.relics.append(relic_id)
     return relic_cls()
+
+
+def relic_choices(party: Party, stars: int, count: int = 3) -> list[RelicBase]:
+    relics = [cls() for cls in _registry().values()]
+    available = [r for r in relics if r.stars == stars and r.id not in party.relics]
+    if not available:
+        return []
+    if len(available) >= count:
+        return random.sample(available, k=count)
+    return random.choices(available, k=count)
 
 def apply_relics(party: Party) -> None:
     registry = _registry()

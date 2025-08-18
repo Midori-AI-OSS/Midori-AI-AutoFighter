@@ -9,9 +9,9 @@ class PlayerHeal(HealingOverTime):
         super().__init__(f"{player_name}'s Heal", healing, turns, self.id)
         self.total_turns = turns
 
-    def tick(self, target, *_):
+    async def tick(self, target, *_):
         if self.turns == self.total_turns:
-            target.apply_healing(self.healing)
-        target.apply_healing(int(target.max_hp * 0.01))
+            await target.apply_healing(self.healing)
+        await target.apply_healing(int(target.max_hp * 0.01))
         self.turns -= 1
         return self.turns > 0

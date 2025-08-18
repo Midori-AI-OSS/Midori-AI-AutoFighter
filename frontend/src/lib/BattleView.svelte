@@ -1,5 +1,5 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { roomAction } from './api.js';
   import { getCharacterImage, getRandomBackground } from './assetLoader.js';
   export let runId = '';
@@ -9,27 +9,35 @@
   export let reducedMotion = false;
   let foes = [];
   let timer;
+  const dispatch = createEventDispatcher();
+  let pollDelay = 1000 / framerate;
+  $: pollDelay = 1000 / framerate;
   let bg = getRandomBackground();
   $: flashDuration = reducedMotion ? 20 : 10;
 
   async function fetchSnapshot() {
+    const start = performance.now();
+    dispatch('snapshot-start');
     try {
       const snap = await roomAction(runId, 'battle', 'snapshot');
       if (snap.party) party = snap.party;
       if (snap.foes) foes = snap.foes;
     } catch (e) {
       /* ignore */
+    } finally {
+      const duration = performance.now() - start;
+      dispatch('snapshot-end', { duration });
+      console.log(`snapshot ${duration.toFixed(1)}ms`);
+      timer = setTimeout(fetchSnapshot, Math.max(50, pollDelay - duration));
     }
   }
 
   onMount(() => {
     fetchSnapshot();
-    const delay = 1000 / framerate;
-    timer = setInterval(fetchSnapshot, delay);
   });
 
   onDestroy(() => {
-    clearInterval(timer);
+    clearTimeout(timer);
   });
 </script>
 
@@ -43,6 +51,12 @@
     {#each party as member (member.id)}
       <div class="combatant">
         <div class="portrait-wrap">
+          <div class="hp-bar">
+            <div
+              class="hp-fill"
+              style={`width: ${member.max_hp ? (100 * member.hp) / member.max_hp : 0}%`}
+            ></div>
+          </div>
           <img src={getCharacterImage(member.id, true)} alt="" class="portrait" />
           <div class="effects">
             {#each member.hots || [] as h}
@@ -56,6 +70,9 @@
         <div class="stats right">
           <div>HP {member.hp}/{member.max_hp}</div>
           <div>ATK {member.atk}</div>
+          <div>DEF {member.defense}</div>
+          <div>MIT {member.mitigation}</div>
+          <div>CRIT {(member.crit_rate * 100).toFixed(0)}%</div>
         </div>
       </div>
     {/each}
@@ -66,8 +83,17 @@
         <div class="stats left">
           <div>HP {foe.hp}/{foe.max_hp}</div>
           <div>ATK {foe.atk}</div>
+          <div>DEF {foe.defense}</div>
+          <div>MIT {foe.mitigation}</div>
+          <div>CRIT {(foe.crit_rate * 100).toFixed(0)}%</div>
         </div>
         <div class="portrait-wrap">
+          <div class="hp-bar">
+            <div
+              class="hp-fill"
+              style={`width: ${foe.max_hp ? (100 * foe.hp) / foe.max_hp : 0}%`}
+            ></div>
+          </div>
           <img src={getCharacterImage(foe.id)} alt="" class="portrait" />
           <div class="effects">
             {#each foe.hots || [] as h}
@@ -128,15 +154,26 @@
     flex-direction: column;
     align-items: center;
   }
+  .hp-bar {
+    width: 6rem;
+    height: 0.5rem;
+    border: 1px solid #000;
+    background: #333;
+    margin-bottom: 0.2rem;
+  }
+  .hp-fill {
+    height: 100%;
+    background: #0f0;
+  }
   .portrait {
-    width: 48px;
-    height: 48px;
+    width: 6rem;
+    height: 6rem;
     border: 2px solid #555;
     border-radius: 4px;
   }
   .stats {
     font-size: 0.7rem;
-    width: 4.5rem;
+    width: 6rem;
   }
   .stats.right {
     margin-left: 0.25rem;
@@ -159,4 +196,18 @@
   }
   .hot { background: #0f0; }
   .dot { background: #f00; }
+
+  @media (max-width: 600px) {
+    .hp-bar {
+      width: 4rem;
+    }
+    .portrait {
+      width: 4rem;
+      height: 4rem;
+    }
+    .stats {
+      width: 4rem;
+      font-size: 0.6rem;
+    }
+  }
 </style>

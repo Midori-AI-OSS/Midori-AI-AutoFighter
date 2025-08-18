@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import copy
+import time
 import random
 import asyncio
+
 from typing import Any
 from dataclasses import asdict
 from dataclasses import fields
@@ -17,6 +19,7 @@ from .passives import PassiveRegistry
 from autofighter.cards import apply_cards
 from autofighter.cards import card_choices
 from autofighter.relics import apply_relics
+from autofighter.relics import relic_choices
 from autofighter.effects import EffectManager
 
 ENRAGE_TURNS_NORMAL = 100
@@ -63,6 +66,28 @@ def _pick_card_stars(room: Room) -> int:
     return 1 if roll < 0.80 else 2
 
 
+def _roll_relic_drop(room: Room) -> bool:
+    roll = random.random()
+    if isinstance(room, BossRoom):
+        return roll < 0.5
+    return roll < 0.1
+
+
+def _pick_relic_stars(room: Room) -> int:
+    roll = random.random()
+    if isinstance(room, BossRoom):
+        if roll < 0.6:
+            return 3
+        if roll < 0.9:
+            return 4
+        return 5
+    if roll < 0.7:
+        return 1
+    if roll < 0.9:
+        return 2
+    return 3
+
+
 def _choose_foe(party: Party) -> FoeBase:
     party_ids = {p.id for p in party.members}
     candidates = [
@@ -90,7 +115,9 @@ class BattleRoom(Room):
 
     async def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
+        start_gold = party.gold
         foe = _choose_foe(party)
+        # TODO: Extend to support battles with multiple foes and target selection.
         _scale_stats(foe, self.node, self.strength)
         combat_party = Party(
             members=[copy.deepcopy(m) for m in party.members],
@@ -127,34 +154,54 @@ class BattleRoom(Room):
                         foe.passives.append("Enraged")
                     enrage_stacks = turn - threshold
                     foe.atk = int(base_foe_atk * (1 + 0.4 * enrage_stacks))
+                turn_start = time.perf_counter()
                 registry.trigger("turn_start", member)
-                member.maybe_regain(turn)
-                member_effect.tick(foe_effects)
-                await asyncio.sleep(0)
+                await member.maybe_regain(turn)
+                await member_effect.tick(foe_effects)
                 if member.hp <= 0:
                     registry.trigger("turn_end", member)
+                    elapsed = time.perf_counter() - turn_start
+                    if elapsed < 0.5:
+                        await asyncio.sleep(0.5 - elapsed)
                     continue
-                member_effect.on_action()
-                dmg = foe.apply_damage(member.atk, attacker=member)
+                await member_effect.on_action()
+                dmg = await foe.apply_damage(member.atk, attacker=member)
                 foe_effects.maybe_inflict_dot(member, dmg)
                 registry.trigger("turn_end", member)
                 if foe.hp <= 0:
                     exp_reward += foe.level * 12 + 5 * self.node.index
+                    elapsed = time.perf_counter() - turn_start
+                    if elapsed < 0.5:
+                        await asyncio.sleep(0.5 - elapsed)
                     break
-                await asyncio.sleep(0.01)
+                # Foe targets a living party member weighted by DEF and mitigation
+                alive = [
+                    (idx, m)
+                    for idx, m in enumerate(combat_party.members)
+                    if m.hp > 0
+                ]
+                idx, target = random.choices(
+                    alive,
+                    weights=[m.defense * m.mitigation for _, m in alive],
+                )[0]
+                target_effect = party_effects[idx]
                 registry.trigger("turn_start", foe)
-                foe.maybe_regain(turn)
-                foe_effects.tick(member_effect)
-                await asyncio.sleep(0)
+                await foe.maybe_regain(turn)
+                await foe_effects.tick(target_effect)
                 if foe.hp <= 0:
                     registry.trigger("turn_end", foe)
                     exp_reward += foe.level * 12 + 5 * self.node.index
+                    elapsed = time.perf_counter() - turn_start
+                    if elapsed < 0.5:
+                        await asyncio.sleep(0.5 - elapsed)
                     break
-                foe_effects.on_action()
-                dmg = member.apply_damage(foe.atk, attacker=foe)
-                member_effect.maybe_inflict_dot(foe, dmg)
+                await foe_effects.on_action()
+                dmg = await target.apply_damage(foe.atk, attacker=foe)
+                target_effect.maybe_inflict_dot(foe, dmg)
                 registry.trigger("turn_end", foe)
-                await asyncio.sleep(0.01)
+                elapsed = time.perf_counter() - turn_start
+                if elapsed < 0.5:
+                    await asyncio.sleep(0.5 - elapsed)
             else:
                 continue
             break
@@ -169,6 +216,10 @@ class BattleRoom(Room):
                 setattr(member, f.name, getattr(orig, f.name))
 
         options = card_choices(party, stars=_pick_card_stars(self))
+        relic_opts = []
+        if _roll_relic_drop(self):
+            rstars = _pick_relic_stars(self)
+            relic_opts = relic_choices(party, stars=rstars)
         foes = [_serialize(foe)]
         party_data = [_serialize(p) for p in combat_party.members]
         choice_data = [
@@ -180,6 +231,15 @@ class BattleRoom(Room):
             }
             for c in options
         ]
+        relic_choice_data = [
+            {"id": r.id, "name": r.name, "stars": r.stars} for r in relic_opts
+        ]
+        loot = {
+            "gold": party.gold - start_gold,
+            "card_choices": choice_data,
+            "relic_choices": relic_choice_data,
+            "items": [],
+        }
         return {
             "result": "boss" if self.strength > 1.0 else "battle",
             "party": party_data,
@@ -187,6 +247,8 @@ class BattleRoom(Room):
             "relics": party.relics,
             "cards": party.cards,
             "card_choices": choice_data,
+            "relic_choices": relic_choice_data,
+            "loot": loot,
             "foes": foes,
             "room_number": self.node.index,
             "exp_reward": exp_reward,
@@ -206,7 +268,7 @@ class ShopRoom(Room):
         heal = int(sum(m.max_hp for m in party.members) * 0.05)
         for member in party.members:
             registry.trigger("room_enter", member)
-            member.apply_healing(heal)
+            await member.apply_healing(heal)
         cost = int(data.get("cost", 0))
         item = data.get("item")
         if cost > 0 and party.gold >= cost:

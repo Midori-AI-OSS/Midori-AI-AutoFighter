@@ -15,6 +15,7 @@
   export let cards = [];
   export let relics = [];
   export let items = [];
+  export let gold = 0;
 
   const dispatch = createEventDispatcher();
   const artMap = new Map();
@@ -31,6 +32,7 @@
   }
 
   let selected = null;
+  $: remaining = cards.length + relics.length + items.length;
 
   function show(type, entry) {
     selected = { type, data: entry };
@@ -124,7 +126,10 @@
     <div class="choices">
       {#each relics as relic}
         <button class="choice" on:click={() => show('relic', relic)}>
-          <div class="art" style="--star-color: #708090">
+          <div
+            class="art"
+            style={`--star-color: ${starColors[relic.stars] || starColors.fallback}`}
+          >
             {#if getRewardArt('relic', relic.id)}
               <img src={getRewardArt('relic', relic.id)} alt={relic.name} />
             {/if}
@@ -158,5 +163,11 @@
       <button on:click={confirm}>Confirm</button>
     </div>
   {/if}
+  {#if gold}
+    <div class="status">Gold +{gold}</div>
+  {/if}
+  <div class="status">
+    <button on:click={() => dispatch('next')} disabled={remaining > 0}>Next Room</button>
+  </div>
 </MenuPanel>
 </div>

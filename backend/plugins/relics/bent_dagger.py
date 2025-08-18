@@ -8,5 +8,6 @@ from plugins.relics._base import RelicBase
 class BentDagger(RelicBase):
     id: str = "bent_dagger"
     name: str = "Bent Dagger"
+    stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"atk": 0.03})
 

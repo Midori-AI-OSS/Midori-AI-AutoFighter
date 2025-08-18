@@ -10,6 +10,7 @@ class RelicBase:
 
     id: str = ""
     name: str = ""
+    stars: int = 1
     effects: dict[str, float] = field(default_factory=dict)
 
     def apply(self, party: Party) -> None:

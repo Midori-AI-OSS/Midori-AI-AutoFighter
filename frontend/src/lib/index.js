@@ -19,5 +19,6 @@ export {
   startRun,
   updateParty,
   roomAction,
-  chooseCard
+  chooseCard,
+  chooseRelic
 } from './api.js';

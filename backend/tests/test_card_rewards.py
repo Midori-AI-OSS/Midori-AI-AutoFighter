@@ -57,6 +57,7 @@ async def test_battle_offers_choices_and_applies_effect(app_with_db, monkeypatch
     assert "about" in data["card_choices"][0]
 
     await client.post(f"/cards/{run_id}", json={"card": chosen})
+    await client.post(f"/run/{run_id}/next")
     while True:
         map_resp = await client.get(f"/map/{run_id}")
         map_state = (await map_resp.get_json())["map"]
@@ -66,8 +67,10 @@ async def test_battle_offers_choices_and_applies_effect(app_with_db, monkeypatch
             break
         if room_type == "shop":
             await client.post(f"/rooms/{run_id}/shop")
+            await client.post(f"/run/{run_id}/next")
         elif room_type == "rest":
             await client.post(f"/rooms/{run_id}/rest")
+            await client.post(f"/run/{run_id}/next")
         else:
             raise AssertionError(f"unexpected room type: {room_type}")
 

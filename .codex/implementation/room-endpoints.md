@@ -15,6 +15,8 @@ echoed in responses for parity across room types.
 - `POST /run/start` – seeds a `MapGenerator` with the run ID and stores a 45
   node map; responses include the full map and a `current` pointer. Each floor
   guarantees at least one rest room appears after the first shop.
+- `POST /run/<run_id>/next` – advances to the next room after the frontend
+  signals that it finished processing the previous one.
 - `GET /map/<run_id>` – returns the current map state with fields:
   - `rooms`: upcoming room nodes
   - `current`: index of the next room
@@ -25,24 +27,24 @@ echoed in responses for parity across room types.
 - `GET /assets/<path>` – serves static assets bundled under `backend/assets/`.
 - `POST /rooms/<run_id>/battle` – validates the next map node is a battle,
   spawns a random player plugin not in the party as the foe, scales all stats by
-  floor, room index, loop, and Pressure, triggers passives, exchanges attacks with
-  the party, and advances the map pointer. The async loop sleeps briefly between
-  turns. The request accepts `{ "action": "" }` and responses include full stats
-  for both sides plus up to three unused `card_choices` of the appropriate star
-  rank and the party's full `cards` list. See `battle-endpoint-payload.md` for
-  payload details.
+  floor, room index, loop, and Pressure, triggers passives, and exchanges attacks
+  with the party. The async loop sleeps briefly between turns. Responses include
+  full stats for both sides plus up to three unused `card_choices` of the appropriate
+  star rank and the party's full `cards` list. See `battle-endpoint-payload.md` for
+  payload details. The map pointer is not advanced until the client calls
+  `POST /run/<run_id>/next` (after any card selection).
 - `POST /rooms/<run_id>/shop` – validates the next node is a shop, heals the
   party by 5% of its total max HP, deducts the provided `cost` from the shared
   gold pool, and appends any purchased `item` to a shared relic list. The request
   accepts `{ "action": "" }` and responses include updated `gold`, `relics`, and
-  `cards` values.
-- `POST /rooms/<run_id>/rest` – validates the next node is a rest room, allows
-  gacha pulls or party swaps, and advances the map pointer. The request accepts
-  `{ "action": "" }` and responses include the current `cards` inventory.
+  `cards` values. The pointer only advances after `POST /run/<run_id>/next`.
+- `POST /rooms/<run_id>/rest` – validates the next node is a rest room and allows
+  gacha pulls or party swaps. The pointer only advances after `POST /run/<run_id>/next`.
 - `POST /rooms/<run_id>/boss` – validates the next node is a `battle-boss-floor`
-  room and runs a high-powered battle before advancing the map pointer. The
-  request accepts `{ "action": "" }` and responses mirror normal battles but
-  scale foe stats heavily and offer higher-star `card_choices` when available.
+  room and runs a high-powered battle. The request accepts `{ "action": "" }`
+  and responses mirror normal battles but scale foe stats heavily and offer
+  higher-star `card_choices` when available. The map pointer advances only after
+  `POST /run/<run_id>/next`.
 - `POST /cards/<run_id>` – accepts a chosen `card` ID from the latest battle and
   adds it to the party if unowned, returning the updated `cards` list.
 - `POST /rooms/<run_id>/<room_id>/action` – generic handler for unimplemented room

@@ -12,6 +12,7 @@ describe('reward overlay assets', () => {
   test('overlay provides confirm flow', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/RewardOverlay.svelte'), 'utf8');
     expect(content).toContain('Choose a Card');
+    expect(content).toContain('Choose a Relic');
     expect(content).toContain('Confirm');
     expect(content).toContain('selected = { type');
     expect(content).toContain('filter: grayscale(1)');

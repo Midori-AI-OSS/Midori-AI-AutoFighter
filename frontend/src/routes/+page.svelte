@@ -15,7 +15,9 @@
     getPlayerConfig,
     savePlayerConfig,
     roomAction,
-    chooseCard
+    chooseCard,
+    chooseRelic,
+    advanceRoom
   } from '$lib/api.js';
   import { FEEDBACK_URL } from '$lib/constants.js';
 
@@ -125,28 +127,22 @@
     const data = await roomAction(runId, endpoint);
     roomData = data;
     nextRoom = data.next_room || '';
-    battleActive = data.result === 'battle' || data.result === 'boss';
-    if (
-      !battleActive &&
-      (!data.card_choices || data.card_choices.length === 0) &&
-      nextRoom &&
-      data.result !== 'shop' &&
-      data.result !== 'rest'
-    ) {
-      await enterRoom();
-    }
+    battleActive = false;
   }
 
   async function handleRewardSelect(detail) {
     if (!runId) return;
-    const res = await chooseCard(runId, detail.id);
+    let res;
+    if (detail.type === 'card') {
+      res = await chooseCard(runId, detail.id);
+      if (roomData) roomData.card_choices = [];
+    } else if (detail.type === 'relic') {
+      res = await chooseRelic(runId, detail.id);
+      if (roomData) roomData.relic_choices = [];
+    }
     if (res && res.next_room) {
       nextRoom = res.next_room;
     }
-    if (roomData) {
-      roomData.card_choices = [];
-    }
-    await enterRoom();
   }
   async function handleShopBuy(item) {
     if (!runId) return;
@@ -157,6 +153,9 @@
     roomData = await roomAction(runId, 'shop', 'reroll');
   }
   async function handleShopLeave() {
+    if (!runId) return;
+    await roomAction(runId, 'shop', 'leave');
+    await advanceRoom(runId);
     await enterRoom();
   }
   async function handleRestPull() {
@@ -172,6 +171,15 @@
     roomData = await roomAction(runId, 'rest', 'craft');
   }
   async function handleRestLeave() {
+    if (!runId) return;
+    await roomAction(runId, 'rest', 'leave');
+    await advanceRoom(runId);
+    await enterRoom();
+  }
+
+  async function handleNextRoom() {
+    if (!runId) return;
+    await advanceRoom(runId);
     await enterRoom();
   }
   let items = [];
@@ -246,5 +254,6 @@
     on:restSwap={handleRestSwap}
     on:restCraft={handleRestCraft}
     on:restLeave={handleRestLeave}
+    on:nextRoom={handleNextRoom}
   />
 </div>
