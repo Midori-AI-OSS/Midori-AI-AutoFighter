@@ -6,38 +6,45 @@ function toUrl(src) {
   return new URL(src, import.meta.url).href;
 }
 
-const glob = typeof import.meta.glob === 'function' ? import.meta.glob : () => ({});
-
 // Load all character images (including folders and fallbacks)
-const characterModules = Object.fromEntries(
-  Object.entries(
-    glob('./assets/characters/**/*.png', {
-      eager: true,
-      import: 'default',
-      query: '?url'
-    })
-  ).map(([p, src]) => [p, toUrl(src)])
-);
+const characterModules =
+  typeof import.meta.glob === 'function'
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/characters/**/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : {};
 
-const fallbackModules = Object.fromEntries(
-  Object.entries(
-    glob('./assets/characters/fallbacks/*.png', {
-      eager: true,
-      import: 'default',
-      query: '?url'
-    })
-  ).map(([p, src]) => [p, toUrl(src)])
-);
+const fallbackModules =
+  typeof import.meta.glob === 'function'
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/characters/fallbacks/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : {};
 
-const backgroundModules = Object.fromEntries(
-  Object.entries(
-    glob('./assets/backgrounds/*.png', {
-      eager: true,
-      import: 'default',
-      query: '?url'
-    })
-  ).map(([p, src]) => [p, toUrl(src)])
-);
+const backgroundModules =
+  typeof import.meta.glob === 'function'
+    ? Object.fromEntries(
+        Object.entries(
+          import.meta.glob('./assets/backgrounds/*.png', {
+            eager: true,
+            import: 'default',
+            query: '?url'
+          })
+        ).map(([p, src]) => [p, toUrl(src)])
+      )
+    : {};
 
 const ELEMENT_ICONS = {
   fire: Flame,
