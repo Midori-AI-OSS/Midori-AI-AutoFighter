@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Volume2, Music, Mic, Power, Trash2, Download, Upload } from 'lucide-svelte';
   import { endRun, wipeData, exportSave, importSave } from './api.js';
-  import { clearSettings, clearAllClientData } from './settingsStorage.js';
+  import { saveSettings, clearSettings, clearAllClientData } from './settingsStorage.js';
 
   const dispatch = createEventDispatcher();
   export let sfxVolume = 50;
@@ -13,7 +13,19 @@
   export let reducedMotion = false;
   export let runId = '';
 
+  let saveStatus = '';
+  let saveTimeout;
+  let resetTimeout;
+
   function save() {
+    saveSettings({
+      sfxVolume,
+      musicVolume,
+      voiceVolume,
+      framerate: Number(framerate),
+      autocraft,
+      reducedMotion
+    });
     dispatch('save', {
       sfxVolume,
       musicVolume,
@@ -22,6 +34,16 @@
       autocraft,
       reducedMotion
     });
+    saveStatus = 'Saved';
+    clearTimeout(resetTimeout);
+    resetTimeout = setTimeout(() => {
+      saveStatus = '';
+    }, 1000);
+  }
+
+  function scheduleSave() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(save, 300);
   }
 
 
@@ -84,24 +106,24 @@
       <div class="control" title="Adjust sound effect volume.">
         <Volume2 />
         <label>SFX Volume</label>
-        <input type="range" min="0" max="100" bind:value={sfxVolume} />
+        <input type="range" min="0" max="100" bind:value={sfxVolume} on:input={scheduleSave} />
       </div>
       <div class="control" title="Adjust background music volume.">
         <Music />
         <label>Music Volume</label>
-        <input type="range" min="0" max="100" bind:value={musicVolume} />
+        <input type="range" min="0" max="100" bind:value={musicVolume} on:input={scheduleSave} />
       </div>
       <div class="control" title="Adjust voice volume.">
         <Mic />
         <label>Voice Volume</label>
-        <input type="range" min="0" max="100" bind:value={voiceVolume} />
+        <input type="range" min="0" max="100" bind:value={voiceVolume} on:input={scheduleSave} />
       </div>
     </div>
     <div class="col">
       <h4>System</h4>
       <div class="control" title="Limit server polling frequency.">
         <label>Framerate</label>
-        <select bind:value={framerate}>
+        <select bind:value={framerate} on:change={scheduleSave}>
           <option value={30}>30</option>
           <option value={60}>60</option>
           <option value={120}>120</option>
@@ -109,7 +131,7 @@
       </div>
       <div class="control" title="Slow down battle animations.">
         <label>Reduced Motion</label>
-        <input type="checkbox" bind:checked={reducedMotion} />
+        <input type="checkbox" bind:checked={reducedMotion} on:change={scheduleSave} />
       </div>
       <div class="control" title="Clear all save data.">
         <Trash2 />
@@ -134,7 +156,7 @@
       <h4>Gameplay</h4>
       <div class="control" title="Automatically craft materials when possible.">
         <label>Autocraft</label>
-        <input type="checkbox" bind:checked={autocraft} />
+        <input type="checkbox" bind:checked={autocraft} on:change={scheduleSave} />
       </div>
       <div class="control" title="End the current run.">
         <Power />
@@ -144,7 +166,9 @@
     </div>
   </div>
   <div class="actions">
-    <button on:click={save}>Save</button>
+    {#if saveStatus}
+      <p class="status" data-testid="save-status">{saveStatus}</p>
+    {/if}
   </div>
 </div>
 

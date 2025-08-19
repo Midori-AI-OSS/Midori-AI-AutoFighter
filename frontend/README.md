@@ -17,7 +17,7 @@ backend and lets you add or remove allies with a single button. Portraits
 use four equal columns so each image scales to 25% of the roster width, and
 no confirm action is required. The **Run** icon posts the selected party to
 `/run/start` and reveals the generated floor map. The **Settings** icon opens a
-similar overlay with sliders for sound effects, music, and voice. An upcoming **Edit Player** panel will use
+similar overlay with sliders for sound effects, music, and voice that auto-save changes and briefly show a "Saved" status. An upcoming **Edit Player** panel will use
 `/player/editor` to save pronouns, starting damage type, and stat allocations,
 boosting HP, Attack, and Defense by 1% per point.
 The **Pulls** icon calls `/gacha/pull` so players can recruit 5★ or 6★ characters or
