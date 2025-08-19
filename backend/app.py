@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import json
+import time
+import copy
 import random
 import base64
 import hashlib
-import time
+import asyncio
 
 from uuid import uuid4
 from pathlib import Path
 from dataclasses import asdict
+from typing import Any
+from typing import Awaitable
+from typing import Callable
 
 from quart import Quart
 from quart import jsonify
@@ -22,10 +27,18 @@ from plugins import players as player_plugins
 from autofighter.cards import award_card
 from autofighter.relics import award_relic
 from autofighter.party import Party
-from autofighter.rooms import BattleRoom, BossRoom, ChatRoom, RestRoom, ShopRoom
+from autofighter.rooms import BattleRoom
+from autofighter.rooms import BossRoom
+from autofighter.rooms import ChatRoom
+from autofighter.rooms import RestRoom
+from autofighter.rooms import ShopRoom
+from autofighter.rooms import _choose_foe
+from autofighter.rooms import _scale_stats
+from autofighter.rooms import _serialize
 from autofighter.stats import apply_status_hooks
 from autofighter.gacha import GachaManager
-from autofighter.mapgen import MapGenerator, MapNode
+from autofighter.mapgen import MapGenerator
+from autofighter.mapgen import MapNode
 from plugins.players._base import PlayerBase
 from autofighter.save_manager import SaveManager
 
@@ -47,6 +60,9 @@ FERNET_KEY = base64.urlsafe_b64encode(
 FERNET = Fernet(FERNET_KEY)
 
 app = Quart(__name__)
+
+battle_tasks: dict[str, asyncio.Task] = {}
+battle_snapshots: dict[str, dict[str, Any]] = {}
 
 
 @app.get("/")
@@ -634,15 +650,65 @@ def save_party(run_id: str, party: Party) -> None:
         )
 
 
+async def _run_battle(
+    run_id: str,
+    room: BattleRoom,
+    party: Party,
+    data: dict[str, Any],
+    state: dict[str, Any],
+    rooms: list[MapNode],
+    progress: Callable[[dict[str, Any]], Awaitable[None]],
+) -> None:
+    try:
+        result = await room.resolve(party, data, progress)
+        state["battle"] = False
+        has_card_choices = bool(result.get("card_choices"))
+        has_relic_choices = bool(result.get("relic_choices"))
+        if has_card_choices or has_relic_choices:
+            state["awaiting_card"] = has_card_choices
+            state["awaiting_relic"] = has_relic_choices
+            state["awaiting_next"] = False
+            next_type = None
+        else:
+            state["awaiting_next"] = True
+            next_type = (
+                rooms[state["current"] + 1].room_type
+                if state["current"] + 1 < len(rooms)
+                else None
+            )
+        save_map(run_id, state)
+        save_party(run_id, party)
+        result.update(
+            {
+                "run_id": run_id,
+                "action": data.get("action", ""),
+                "next_room": next_type,
+                "current_room": rooms[state["current"]].room_type,
+                "current_index": state["current"],
+                "awaiting_card": state.get("awaiting_card", False),
+                "awaiting_relic": state.get("awaiting_relic", False),
+            }
+        )
+        battle_snapshots[run_id] = result
+    finally:
+        battle_tasks.pop(run_id, None)
+
+
 @app.post("/rooms/<run_id>/battle")
 async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     start = time.perf_counter()
     data = await request.get_json(silent=True) or {}
+    action = data.get("action", "")
     party = load_party(run_id)
     state, rooms = load_map(run_id)
     node = rooms[state["current"]]
     if node.room_type not in {"battle-weak", "battle-normal"}:
         return jsonify({"error": "invalid room"}), 400
+    if action == "snapshot":
+        snap = battle_snapshots.get(run_id)
+        if snap is None:
+            return jsonify({"error": "no battle"}), 404
+        return jsonify(snap)
     if state.get("awaiting_next"):
         return jsonify({"error": "awaiting next"}), 400
     # If player needs to choose a reward, don't start another battle.
@@ -659,55 +725,63 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             }
             for m in party.members
         ]
-        return jsonify({
-            "result": "battle",
-            "party": party_data,
-            "foes": [],
-            "gold": party.gold,
-            "relics": party.relics,
-            "cards": party.cards,
-            "card_choices": [],
-            "relic_choices": [],
-            "enrage": {"active": False, "stacks": 0},
-        })
+        return jsonify(
+            {
+                "result": "battle",
+                "party": party_data,
+                "foes": [],
+                "gold": party.gold,
+                "relics": party.relics,
+                "cards": party.cards,
+                "card_choices": [],
+                "relic_choices": [],
+                "enrage": {"active": False, "stacks": 0},
+            }
+        )
+    if run_id in battle_tasks:
+        snap = battle_snapshots.get(run_id, {"result": "battle"})
+        app.logger.info(
+            "battle_room action=%s %.1fms",
+            action,
+            (time.perf_counter() - start) * 1000,
+        )
+        return jsonify(snap)
     state["battle"] = True
     save_map(run_id, state)
     room = BattleRoom(node)
-    result = await room.resolve(party, data)
-    state["battle"] = False
-    has_card_choices = bool(result.get("card_choices"))
-    has_relic_choices = bool(result.get("relic_choices"))
-    if has_card_choices or has_relic_choices:
-        state["awaiting_card"] = has_card_choices
-        state["awaiting_relic"] = has_relic_choices
-        state["awaiting_next"] = False
-        next_type = None
-    else:
-        state["awaiting_next"] = True
-        next_type = (
-            rooms[state["current"] + 1].room_type
-            if state["current"] + 1 < len(rooms)
-            else None
-        )
-    save_map(run_id, state)
-    save_party(run_id, party)
-    result.update(
-        {
-            "run_id": run_id,
-            "action": data.get("action", ""),
-            "next_room": next_type,
-            "current_room": node.room_type,
-            "current_index": state["current"],
-            "awaiting_card": state.get("awaiting_card", False),
-            "awaiting_relic": state.get("awaiting_relic", False),
-        }
+    foe = _choose_foe(party)
+    _scale_stats(foe, node, room.strength)
+    combat_party = Party(
+        members=[copy.deepcopy(m) for m in party.members],
+        gold=party.gold,
+        relics=party.relics,
+        cards=party.cards,
     )
+    battle_snapshots[run_id] = {
+        "result": "battle",
+        "party": [_serialize(m) for m in combat_party.members],
+        "foes": [_serialize(foe)],
+        "gold": party.gold,
+        "relics": party.relics,
+        "cards": party.cards,
+        "card_choices": [],
+        "relic_choices": [],
+        "enrage": {"active": False, "stacks": 0},
+    }
+
+    async def progress(snapshot: dict[str, Any]) -> None:
+        battle_snapshots[run_id] = snapshot
+
+    task = asyncio.create_task(
+        _run_battle(run_id, room, party, data, state, rooms, progress)
+    )
+    battle_tasks[run_id] = task
     app.logger.info(
         "battle_room action=%s %.1fms",
-        data.get("action", ""),
+        action,
         (time.perf_counter() - start) * 1000,
     )
-    return jsonify(result)
+    return jsonify(battle_snapshots[run_id])
 
 
 @app.post("/rooms/<run_id>/shop")

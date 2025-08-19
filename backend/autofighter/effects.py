@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import random
+
+from dataclasses import dataclass
 from typing import List
 from typing import Optional
-from dataclasses import dataclass
+
+from rich.console import Console
 
 from autofighter.stats import Stats
 
@@ -53,6 +56,7 @@ class EffectManager:
         self.stats = stats
         self.dots: List[DamageOverTime] = []
         self.hots: List[HealingOverTime] = []
+        self._console = Console()
 
     def add_dot(self, effect: DamageOverTime, max_stacks: Optional[int] = None) -> None:
         """Attach a DoT instance to the tracked stats.
@@ -89,9 +93,16 @@ class EffectManager:
             self.add_dot(dot)
 
     async def tick(self, others: Optional[EffectManager] = None) -> None:
-        for collection, names in ((self.dots, self.stats.dots), (self.hots, self.stats.hots)):
+        for collection, names in (
+            (self.dots, self.stats.dots),
+            (self.hots, self.stats.hots),
+        ):
             expired: List[object] = []
             for eff in collection:
+                color = "green" if isinstance(eff, HealingOverTime) else "light_red"
+                self._console.log(
+                    f"[{color}]{self.stats.id} {eff.name} tick[/]"
+                )
                 if not await eff.tick(self.stats):
                     expired.append(eff)
             for eff in expired:
@@ -108,6 +119,7 @@ class EffectManager:
         for eff in list(self.dots) + list(self.hots):
             handler = getattr(eff, "on_action", None)
             if callable(handler):
+                self._console.log(f"{self.stats.id} {eff.name} action")
                 result = handler(self.stats)
                 if hasattr(result, "__await"):
                     await result

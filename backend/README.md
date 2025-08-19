@@ -17,7 +17,9 @@ The root endpoint returns a simple status payload. Additional routes support
 starting runs with a seeded 45-room map, updating the party, retrieving floor
 maps, listing available player characters, returning room background images,
 editing player pronouns and starting stats, and posting actions to battle, shop,
-rest, or floor boss rooms. Room endpoints no longer advance the map
+rest, or floor boss rooms. The battle endpoint runs in a background task and
+supports a `snapshot` action so the frontend can poll for the latest party and
+foe state while combat resolves. Room endpoints no longer advance the map
 automatically—after processing a room (and any card rewards) the frontend must
 call `POST /run/<run_id>/next` to move to the next node. `POST /run/start`
 accepts a JSON body with `party` (1–5 owned character IDs including `player`)

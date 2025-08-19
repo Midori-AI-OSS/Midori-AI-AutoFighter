@@ -1,11 +1,13 @@
 import importlib
 import random
 
+from dataclasses import dataclass
 from dataclasses import field
 from dataclasses import fields
-from dataclasses import dataclass
 from typing import Callable
 from typing import Optional
+
+from rich.console import Console
 
 from plugins.event_bus import EventBus
 from plugins.damage_types.generic import Generic
@@ -134,6 +136,28 @@ class Stats:
 StatusHook = Callable[["Stats"], None]
 STATUS_HOOKS: list[StatusHook] = []
 BUS = EventBus()
+
+console = Console()
+
+
+def _log_damage_taken(
+    target: "Stats", attacker: Optional["Stats"], amount: int
+) -> None:
+    attacker_id = getattr(attacker, "id", "unknown")
+    console.log(
+        f"[light_red]{target.id} takes {amount} from {attacker_id}[/]"
+    )
+
+
+def _log_heal_received(
+    target: "Stats", healer: Optional["Stats"], amount: int
+) -> None:
+    healer_id = getattr(healer, "id", "unknown")
+    console.log(f"[green]{target.id} heals {amount} from {healer_id}[/]")
+
+
+BUS.subscribe("damage_taken", _log_damage_taken)
+BUS.subscribe("heal_received", _log_heal_received)
 
 
 def add_status_hook(hook: StatusHook) -> None:
