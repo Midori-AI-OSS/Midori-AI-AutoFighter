@@ -45,6 +45,7 @@
   let gameAudio;
   let volumeTimer;
   let snapshotLoading = false;
+  $: if (battleActive) snapshotLoading = true;
 
   onMount(async () => {
     if (!background) {
@@ -398,7 +399,7 @@
             />
           </PopupWindow>
         {/if}
-        {#if roomData && roomData.result === 'battle'}
+        {#if roomData && roomData.result === 'battle' && !battleActive}
           <OverlaySurface>
             <RewardOverlay
               gold={roomData.loot?.gold || 0}

@@ -118,16 +118,49 @@
     setView('inventory');
   }
 
+  let battleTimer;
+
+  function stopBattlePoll() {
+    if (battleTimer) {
+      clearTimeout(battleTimer);
+      battleTimer = null;
+    }
+  }
+
+  async function pollBattle() {
+    if (!battleActive) return;
+    try {
+      const snap = await roomAction(runId, 'battle', 'snapshot');
+      if (snap?.loot) {
+        roomData = snap;
+        battleActive = false;
+        nextRoom = snap.next_room || nextRoom;
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    battleTimer = setTimeout(pollBattle, 1000 / 60);
+  }
+
   async function enterRoom() {
+    stopBattlePoll();
     if (!runId || !nextRoom) return;
     let endpoint = nextRoom;
     if (endpoint.includes('battle')) {
       endpoint = nextRoom.includes('boss') ? 'boss' : 'battle';
     }
+    if (endpoint === 'battle') {
+      battleActive = true;
+    }
     const data = await roomAction(runId, endpoint);
     roomData = data;
     nextRoom = data.next_room || '';
-    battleActive = false;
+    if (endpoint === 'battle') {
+      pollBattle();
+    } else {
+      battleActive = false;
+    }
   }
 
   async function handleRewardSelect(detail) {
