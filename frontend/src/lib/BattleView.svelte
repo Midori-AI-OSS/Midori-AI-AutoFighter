@@ -15,13 +15,23 @@
   let bg = getRandomBackground();
   $: flashDuration = reducedMotion ? 20 : 10;
 
+  function differs(a, b) {
+    return JSON.stringify(a) !== JSON.stringify(b);
+  }
+
+  function groupEffects(list) {
+    const counts = {};
+    for (const e of list || []) counts[e] = (counts[e] || 0) + 1;
+    return Object.entries(counts);
+  }
+
   async function fetchSnapshot() {
     const start = performance.now();
     dispatch('snapshot-start');
     try {
       const snap = await roomAction(runId, 'battle', 'snapshot');
-      if (snap.party) party = snap.party;
-      if (snap.foes) foes = snap.foes;
+      if (snap.party && differs(snap.party, party)) party = snap.party;
+      if (snap.foes && differs(snap.foes, foes)) foes = snap.foes;
     } catch (e) {
       /* ignore */
     } finally {
@@ -59,11 +69,15 @@
           </div>
           <img src={getCharacterImage(member.id, true)} alt="" class="portrait" />
           <div class="effects">
-            {#each member.hots || [] as h}
-              <span class="hot" title={h}></span>
+            {#each groupEffects(member.hots) as [name, count]}
+              <span class="hot" title={name}>
+                {#if count > 1}<span class="stack">{count}</span>{/if}
+              </span>
             {/each}
-            {#each member.dots || [] as d}
-              <span class="dot" title={d}></span>
+            {#each groupEffects(member.dots) as [name, count]}
+              <span class="dot" title={name}>
+                {#if count > 1}<span class="stack">{count}</span>{/if}
+              </span>
             {/each}
           </div>
         </div>
@@ -96,11 +110,15 @@
           </div>
           <img src={getCharacterImage(foe.id)} alt="" class="portrait" />
           <div class="effects">
-            {#each foe.hots || [] as h}
-              <span class="hot" title={h}></span>
+            {#each groupEffects(foe.hots) as [name, count]}
+              <span class="hot" title={name}>
+                {#if count > 1}<span class="stack">{count}</span>{/if}
+              </span>
             {/each}
-            {#each foe.dots || [] as d}
-              <span class="dot" title={d}></span>
+            {#each groupEffects(foe.dots) as [name, count]}
+              <span class="dot" title={name}>
+                {#if count > 1}<span class="stack">{count}</span>{/if}
+              </span>
             {/each}
           </div>
         </div>
@@ -188,6 +206,9 @@
     gap: 0.2rem;
     margin-top: 0.15rem;
   }
+  .effects span {
+    position: relative;
+  }
   .hot,
   .dot {
     width: 6px;
@@ -196,6 +217,12 @@
   }
   .hot { background: #0f0; }
   .dot { background: #f00; }
+  .stack {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    font-size: 0.5rem;
+  }
 
   @media (max-width: 600px) {
     .hp-bar {

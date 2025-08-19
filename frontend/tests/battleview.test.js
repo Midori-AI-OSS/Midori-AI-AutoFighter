@@ -29,4 +29,10 @@ describe('BattleView layout and polling', () => {
     expect(content).toContain('DEF {');
     expect(content).toContain('CRIT');
   });
+
+  test('groups duplicate effects with stack counts', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
+    expect(content).toContain('groupEffects');
+    expect(content).toContain('stack');
+  });
 });

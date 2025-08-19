@@ -28,7 +28,7 @@ for `/gacha/auto-craft`. A **Feedback** icon opens a pre-filled GitHub issue in 
 tions.
 After each battle, any returned `card_choices` trigger a reward overlay that
 loads art from `src/lib/assets` and lets the player pick one before
-continuing.
+continuing. During combat, party members appear in a left column and foes on the right, with HP, Attack, Defense, Mitigation, and Crit rate listed beside each portrait. HoT/DoT markers render below each portrait and collapse duplicate effects into a single icon with a small stack count in the bottom-right corner.
 
 Placeholder icons for items, relics, and cards live under `src/lib/assets/{items,relics,cards}`. Each damage type or star rank has its own folder with 24×24 colored placeholders so artists can replace them later.
 
