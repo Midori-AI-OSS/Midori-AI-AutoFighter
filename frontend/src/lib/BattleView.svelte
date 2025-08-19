@@ -38,7 +38,7 @@
       const duration = performance.now() - start;
       dispatch('snapshot-end', { duration });
       console.log(`snapshot ${duration.toFixed(1)}ms`);
-      timer = setTimeout(fetchSnapshot, Math.max(50, pollDelay - duration));
+      timer = setTimeout(fetchSnapshot, Math.max(0, pollDelay - duration));
     }
   }
 
@@ -134,6 +134,7 @@
     background-size: cover;
     background-position: center;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     padding: 0.5rem;
     overflow: hidden;
@@ -159,6 +160,14 @@
     flex-direction: column;
     justify-content: center;
     gap: 0.5rem;
+  }
+
+  .party-column {
+    order: 1;
+  }
+
+  .foe-column {
+    order: 2;
   }
   .combatant {
     display: flex;

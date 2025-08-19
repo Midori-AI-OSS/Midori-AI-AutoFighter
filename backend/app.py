@@ -676,8 +676,8 @@ async def _run_battle(
                 if state["current"] + 1 < len(rooms)
                 else None
             )
-        save_map(run_id, state)
-        save_party(run_id, party)
+        await asyncio.to_thread(save_map, run_id, state)
+        await asyncio.to_thread(save_party, run_id, party)
         result.update(
             {
                 "run_id": run_id,
@@ -699,8 +699,8 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     start = time.perf_counter()
     data = await request.get_json(silent=True) or {}
     action = data.get("action", "")
-    party = load_party(run_id)
-    state, rooms = load_map(run_id)
+    party = await asyncio.to_thread(load_party, run_id)
+    state, rooms = await asyncio.to_thread(load_map, run_id)
     node = rooms[state["current"]]
     if node.room_type not in {"battle-weak", "battle-normal"}:
         return jsonify({"error": "invalid room"}), 400
@@ -747,7 +747,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         )
         return jsonify(snap)
     state["battle"] = True
-    save_map(run_id, state)
+    await asyncio.to_thread(save_map, run_id, state)
     room = BattleRoom(node)
     foe = _choose_foe(party)
     _scale_stats(foe, node, room.strength)

@@ -1,0 +1,1 @@
+Inspected BattleView.svelte (lines 1-240), SettingsMenu.svelte (lines 100-109), GameViewport.svelte (lines 33-57), settingsStorage.js (lines 1-34), backend/app.py (lines 653-778), and documentation files in `.codex/implementation/battle-view.md` and `.codex/instructions/battle-room.md` to confirm current layout, polling logic, and async gaps.
