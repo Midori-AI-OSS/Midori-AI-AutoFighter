@@ -36,24 +36,19 @@ and reuse that element in future sessions.
 ## Foe Generation
 Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. To keep
 encounters from stalling, foes regain health at one hundredth the player rate.
-They are procedurally named by pairing an adjective from `themed_ajt` with a
-themed name from `themed_names` in `themedstuff.py`. After naming,
-`foe_passive_builder.build_foe_stats` applies stat modifiers:
+They are procedurally named by prefixing a randomly selected adjective plugin
+from `plugins/themedadj` to a player name. Adjective plugins are
+auto-discovered based on files in that directory, so adding a new adjective
+requires only dropping a file into the folder. Each adjective class applies its own
+stat changes derived from the legacy project—for example, **Atrocious** boosts
+max HP by 90% and attack by 10%.
 
-1. `_apply_high_level_lady` boosts high-level foes with *Lady* in their names,
-   scaling stats by variant (Light, Dark, Fire, or Ice).
-2. `_apply_themed_name_modifiers` adjusts stats based on the themed name
-   (e.g., "Luna" favors dodge and defense, while "Carly" gains massive
-   mitigation).
-3. `_apply_themed_adj_modifiers` tweaks stats depending on the adjective
-   (e.g., "Atrocious" increases attack).
-4. `player_stat_picker` selects a stat tier using the themed name, influencing
-   base stat scaling.
-
-Example: **Atrocious Luna** receives dodge and defense from the "Luna" portion
-and an attack boost from "Atrocious", producing a foe whose name directly
-translates into combat bonuses.
+Example: **Atrocious Luna** applies the adjective's stat bonuses to the base
+player stats and prefixes the foe's name, yielding a combatant whose title
+reflects its enhanced abilities.
 
 Development builds include a `Slime` foe plugin that reduces all baseline stats
 by 90% for simple battle testing. Standard battles may also spawn random player
-characters that are not currently in the party.
+characters that are not currently in the party. These player foes are wrapped in
+`FoeBase` at load time, granting them foe-specific behaviors such as periodic
+HP regeneration via `maybe_regain`.

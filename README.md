@@ -137,10 +137,15 @@ out encounters.
 ## Battle Room
 
 Start a run in a battle scene that renders placeholder models, triggers party
-passives, and runs event-driven stat-based attacks against a `Slime` scaled by
-floor, room, Pressure level, and loop count. Foes inherit from a dedicated
-`FoeBase` that mirrors player stats; the default `Slime` reduces them by 90%
-on spawn. The scene shows floating damage numbers and status icons and flashes
+passives, and runs event-driven stat-based attacks against a `Slime` or any
+non-party player character scaled by floor, room, Pressure level, and loop
+count. Foes are procedurally named by prefixing a themed adjective plugin to a
+player name. Adjective plugins are auto-discovered from files in
+`plugins/themedadj`, allowing new adjectives to be added without modifying
+package code. Foes inherit from a dedicated `FoeBase` that mirrors player stats;
+the default `Slime` reduces them by 90% on spawn, while player-derived foes gain
+`FoeBase` behaviors like turn-based regeneration. The scene shows floating
+damage numbers and status icons and flashes
 red and blue with an Enraged buff after 100 turns (500 for floor bosses). Each
 victory presents three unused cards of the appropriate star rank. Selecting one
 adds it to the party, and card and relic bonuses are applied at the start of the

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import copy
 import time
+import copy
 import random
 import asyncio
 
@@ -9,18 +9,19 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import fields
 from typing import Any
-from typing import Awaitable
 from typing import Callable
+from typing import Awaitable
 
 from rich.console import Console
 
 from .party import Party
 from .stats import Stats
 from .mapgen import MapNode
+from .passives import PassiveRegistry
+from plugins import foes as foe_plugins
+from plugins import players as player_plugins
 from plugins.foes._base import FoeBase
 from plugins.damage_types import get_damage_type
-from plugins import foes as foe_plugins
-from .passives import PassiveRegistry
 from autofighter.cards import apply_cards
 from autofighter.cards import card_choices
 from autofighter.relics import apply_relics
@@ -136,6 +137,13 @@ def _choose_foe(party: Party) -> FoeBase:
         for name in getattr(foe_plugins, "__all__", [])
         if getattr(foe_plugins, name).id not in party_ids
     ]
+    for name in getattr(player_plugins, "__all__", []):
+        player_cls = getattr(player_plugins, name)
+        if player_cls.id in party_ids:
+            continue
+        foe_cls = foe_plugins.PLAYER_FOES.get(player_cls.id)
+        if foe_cls and foe_cls not in candidates:
+            candidates.append(foe_cls)
     if not candidates:
         candidates = [foe_plugins.Slime]
     foe_cls = random.choice(candidates)
