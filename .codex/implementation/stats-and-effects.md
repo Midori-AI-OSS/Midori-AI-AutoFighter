@@ -46,3 +46,8 @@ adding the effect. The difference is clamped to zero and jittered by ±10%, and 
 - `on_action()` – triggers `on_action` hooks for effects that react when the target performs an action.
 
 Active effect names are mirrored in the `Stats` lists (`dots`, `hots`) for UI display. Plugins can extend base `DamageOverTime` and `HealingOverTime` classes to implement custom behavior or additional stat modifications.
+
+## Aftertaste
+The Aftertaste effect deals direct damage based on a small potency roll. Each hit
+calculates `25 * random(0.1, 1.5)` and cards or relics may request multiple hits
+by creating the plugin with a `hits` value. Every hit rolls independently.
