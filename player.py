@@ -572,10 +572,12 @@ class Player:
         int_mod = max(round(mod_fixed * (self.level / 100)), 1)
 
         while self.EXP >= self.exp_to_levelup():
+            # Calculate EXP needed for current level before incrementing
+            exp_needed = self.exp_to_levelup()
 
             self.level += 1
 
-            self.EXP = max(self.EXP - (self.exp_to_levelup()), 0)
+            self.EXP = max(self.EXP - exp_needed, 0)
             
             hp_up: int = random.randint(5, 10 * int_mod)
             def_up: int = random.randint(2, 5 * int_mod)
@@ -687,11 +689,8 @@ class Player:
                 else:
                     self.Items.append(ItemType())
 
-        self.EffectRES /= 4
-        self.EffectHitRate = 2
-
-        self.EffectRES += 0.002 * self.level
-        self.EffectHitRate += 0.0001 * self.level
+        self.EffectRES = 0.05 + (0.002 * self.level)
+        self.EffectHitRate = 1 + (0.0001 * self.level)
 
 
         self.check_stats()

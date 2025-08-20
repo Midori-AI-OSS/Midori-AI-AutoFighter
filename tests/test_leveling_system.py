@@ -35,9 +35,9 @@ def test_level_up_exp_calculation_with_excess():
     
     # Get the EXP required to level up from level 1
     exp_needed = player.exp_to_levelup()
-    excess_exp = 10
+    excess_exp = 0.5  # Use a smaller excess that won't trigger multiple level ups
     
-    # Give player more than enough EXP to level up
+    # Give player more than enough EXP to level up by a small amount
     player.EXP = exp_needed + excess_exp
     
     # Level up
@@ -47,7 +47,7 @@ def test_level_up_exp_calculation_with_excess():
     assert player.level == 2
     
     # Remaining EXP should be the excess
-    assert player.EXP == excess_exp
+    assert abs(player.EXP - excess_exp) < 0.001  # Allow for floating point precision
 
 
 def test_multiple_level_ups():
@@ -89,6 +89,29 @@ def test_exp_gain_consistency():
     
     # Should have gained some EXP
     assert player.EXP > initial_exp
+
+
+def test_set_level_effect_stats():
+    """Test that set_level properly calculates EffectRES and EffectHitRate."""
+    player = Player("Test")
+    
+    # Test at level 10
+    player.set_level(10)
+    assert player.level == 10
+    expected_effect_res = 0.05 + (0.002 * 10)  # 0.07
+    expected_effect_hit_rate = 1 + (0.0001 * 10)  # 1.001
+    
+    assert abs(player.EffectRES - expected_effect_res) < 0.001
+    assert abs(player.EffectHitRate - expected_effect_hit_rate) < 0.001
+    
+    # Test at level 100
+    player.set_level(100)
+    assert player.level == 100
+    expected_effect_res = 0.05 + (0.002 * 100)  # 0.25
+    expected_effect_hit_rate = 1 + (0.0001 * 100)  # 1.01
+    
+    assert abs(player.EffectRES - expected_effect_res) < 0.001
+    assert abs(player.EffectHitRate - expected_effect_hit_rate) < 0.001
 
 
 def test_set_level_vs_level_up_consistency():
