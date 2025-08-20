@@ -34,9 +34,10 @@ Characters marked as "random" roll one of the six elements when first loaded
 and reuse that element in future sessions.
 
 ## Foe Generation
-Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. They are
-procedurally named by pairing an adjective from `themed_ajt` with a themed name
-from `themed_names` in `themedstuff.py`. After naming,
+Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. To keep
+encounters from stalling, foes regain health at one hundredth the player rate.
+They are procedurally named by pairing an adjective from `themed_ajt` with a
+themed name from `themed_names` in `themedstuff.py`. After naming,
 `foe_passive_builder.build_foe_stats` applies stat modifiers:
 
 1. `_apply_high_level_lady` boosts high-level foes with *Lady* in their names,

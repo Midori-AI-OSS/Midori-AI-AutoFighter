@@ -52,3 +52,12 @@ class FoeBase(Stats):
 
     def __post_init__(self) -> None:
         self.damage_types = [getattr(self.base_damage_type, "id", str(self.base_damage_type))]
+
+    async def maybe_regain(self, turn: int) -> None:  # noqa: D401
+        """Regain a fraction of HP every other turn."""
+        if turn % 2 != 0:
+            return
+        bonus = max(self.regain - 100, 0) * 0.00005
+        percent = (0.01 + bonus) / 100
+        heal = int(self.max_hp * percent)
+        await self.apply_healing(heal)

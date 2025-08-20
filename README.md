@@ -131,7 +131,8 @@ DoT and HoT plugins manage ongoing damage or recovery. Supported DoTs include
 Bleed, Celestial Atrophy, Abyssal Corruption (spreads on death), Blazing
 Torment (extra tick on action), Cold Wound (five-stack cap), and Impact Echo
 (half of the last hit each turn). HoTs cover Regeneration, Player Echo, and
-Player Heal.
+Player Heal. Foes regenerate at one hundredth the player rate to prevent drawn
+out encounters.
 
 ## Battle Room
 
