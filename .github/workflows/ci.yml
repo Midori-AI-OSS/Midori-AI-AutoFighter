@@ -5,8 +5,9 @@ on:
   pull_request:
 
 jobs:
-  backend-tests:
-    name: Backend Tests
+  # Backend test jobs - one per test file
+  backend-test-aftertaste:
+    name: Backend Test - aftertaste
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,10 +17,732 @@ jobs:
       - name: Install backend dependencies
         working-directory: backend
         run: uv sync
-      - name: Run backend tests
+      - name: Run aftertaste test
         working-directory: backend
-        run: uv run pytest
+        run: uv run pytest tests/test_aftertaste.py
 
+  backend-test-app:
+    name: Backend Test - app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run app test
+        working-directory: backend
+        run: uv run pytest tests/test_app.py
+
+  backend-test-battle-timing:
+    name: Backend Test - battle timing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run battle timing test
+        working-directory: backend
+        run: uv run pytest tests/test_battle_timing.py
+
+  backend-test-card-rewards:
+    name: Backend Test - card rewards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run card rewards test
+        working-directory: backend
+        run: uv run pytest tests/test_card_rewards.py
+
+  backend-test-critical-boost:
+    name: Backend Test - critical boost
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run critical boost test
+        working-directory: backend
+        run: uv run pytest tests/test_critical_boost.py
+
+  backend-test-damage-type-persistence:
+    name: Backend Test - damage type persistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run damage type persistence test
+        working-directory: backend
+        run: uv run pytest tests/test_damage_type_persistence.py
+
+  backend-test-effects:
+    name: Backend Test - effects
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run effects test
+        working-directory: backend
+        run: uv run pytest tests/test_effects.py
+
+  backend-test-enrage-stacking:
+    name: Backend Test - enrage stacking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run enrage stacking test
+        working-directory: backend
+        run: uv run pytest tests/test_enrage_stacking.py
+
+  backend-test-event-bus:
+    name: Backend Test - event bus
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run event bus test
+        working-directory: backend
+        run: uv run pytest tests/test_event_bus.py
+
+  backend-test-exp-leveling:
+    name: Backend Test - exp leveling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run exp leveling test
+        working-directory: backend
+        run: uv run pytest tests/test_exp_leveling.py
+
+  backend-test-gacha:
+    name: Backend Test - gacha
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run gacha test
+        working-directory: backend
+        run: uv run pytest tests/test_gacha.py
+
+  backend-test-loot-summary:
+    name: Backend Test - loot summary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run loot summary test
+        working-directory: backend
+        run: uv run pytest tests/test_loot_summary.py
+
+  backend-test-mapgen:
+    name: Backend Test - mapgen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run mapgen test
+        working-directory: backend
+        run: uv run pytest tests/test_mapgen.py
+
+  backend-test-party-endpoint:
+    name: Backend Test - party endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run party endpoint test
+        working-directory: backend
+        run: uv run pytest tests/test_party_endpoint.py
+
+  backend-test-party-persistence:
+    name: Backend Test - party persistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run party persistence test
+        working-directory: backend
+        run: uv run pytest tests/test_party_persistence.py
+
+  backend-test-passives:
+    name: Backend Test - passives
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run passives test
+        working-directory: backend
+        run: uv run pytest tests/test_passives.py
+
+  backend-test-player-editor:
+    name: Backend Test - player editor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run player editor test
+        working-directory: backend
+        run: uv run pytest tests/test_player_editor.py
+
+  backend-test-player-plugins:
+    name: Backend Test - player plugins
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run player plugins test
+        working-directory: backend
+        run: uv run pytest tests/test_player_plugins.py
+
+  backend-test-player-stats:
+    name: Backend Test - player stats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run player stats test
+        working-directory: backend
+        run: uv run pytest tests/test_player_stats.py
+
+  backend-test-player-stats-persistence:
+    name: Backend Test - player stats persistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run player stats persistence test
+        working-directory: backend
+        run: uv run pytest tests/test_player_stats_persistence.py
+
+  backend-test-relic-rewards:
+    name: Backend Test - relic rewards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run relic rewards test
+        working-directory: backend
+        run: uv run pytest tests/test_relic_rewards.py
+
+  backend-test-relics:
+    name: Backend Test - relics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run relics test
+        working-directory: backend
+        run: uv run pytest tests/test_relics.py
+
+  backend-test-room-action:
+    name: Backend Test - room action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run room action test
+        working-directory: backend
+        run: uv run pytest tests/test_room_action.py
+
+  backend-test-save-management:
+    name: Backend Test - save management
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run save management test
+        working-directory: backend
+        run: uv run pytest tests/test_save_management.py
+
+  backend-test-save-manager:
+    name: Backend Test - save manager
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run save manager test
+        working-directory: backend
+        run: uv run pytest tests/test_save_manager.py
+
+  backend-test-shop-room:
+    name: Backend Test - shop room
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run shop room test
+        working-directory: backend
+        run: uv run pytest tests/test_shop_room.py
+
+  backend-test-vitality-effects:
+    name: Backend Test - vitality effects
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync
+      - name: Run vitality effects test
+        working-directory: backend
+        run: uv run pytest tests/test_vitality_effects.py
+
+  # Frontend test jobs - one per test file
+  frontend-test-api:
+    name: Frontend Test - api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run api test
+        working-directory: frontend
+        run: bun test api.test.js
+
+  frontend-test-assetloader:
+    name: Frontend Test - assetloader
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run assetloader test
+        working-directory: frontend
+        run: bun test assetloader.test.js
+
+  frontend-test-assets:
+    name: Frontend Test - assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run assets test
+        working-directory: frontend
+        run: bun test assets.test.js
+
+  frontend-test-battleview:
+    name: Frontend Test - battleview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run battleview test
+        working-directory: frontend
+        run: bun test battleview.test.js
+
+  frontend-test-craftingmenu:
+    name: Frontend Test - craftingmenu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run craftingmenu test
+        working-directory: frontend
+        run: bun test craftingmenu.test.js
+
+  frontend-test-feedback:
+    name: Frontend Test - feedback
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run feedback test
+        working-directory: frontend
+        run: bun test feedback.test.js
+
+  frontend-test-framerate-persistence:
+    name: Frontend Test - framerate persistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run framerate persistence test
+        working-directory: frontend
+        run: bun test frameratePersistence.test.js
+
+  frontend-test-gameviewport:
+    name: Frontend Test - gameviewport
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run gameviewport test
+        working-directory: frontend
+        run: bun test gameviewport.test.js
+
+  frontend-test-inventorypanel:
+    name: Frontend Test - inventorypanel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run inventorypanel test
+        working-directory: frontend
+        run: bun test inventorypanel.test.js
+
+  frontend-test-layout:
+    name: Frontend Test - layout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run layout test
+        working-directory: frontend
+        run: bun test layout.test.js
+
+  frontend-test-nonbattle:
+    name: Frontend Test - nonbattle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run nonbattle test
+        working-directory: frontend
+        run: bun test nonbattle.test.js
+
+  frontend-test-partypersistence:
+    name: Frontend Test - partypersistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run partypersistence test
+        working-directory: frontend
+        run: bun test partypersistence.test.js
+
+  frontend-test-partypicker:
+    name: Frontend Test - partypicker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run partypicker test
+        working-directory: frontend
+        run: bun test partypicker.test.js
+
+  frontend-test-playereditor:
+    name: Frontend Test - playereditor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run playereditor test
+        working-directory: frontend
+        run: bun test playereditor.test.js
+
+  frontend-test-pullsmenu:
+    name: Frontend Test - pullsmenu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run pullsmenu test
+        working-directory: frontend
+        run: bun test pullsmenu.test.js
+
+  frontend-test-restroom:
+    name: Frontend Test - restroom
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run restroom test
+        working-directory: frontend
+        run: bun test restroom.test.js
+
+  frontend-test-rewardloader:
+    name: Frontend Test - rewardloader
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run rewardloader test
+        working-directory: frontend
+        run: bun test rewardloader.test.js
+
+  frontend-test-rewardoverlay:
+    name: Frontend Test - rewardoverlay
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run rewardoverlay test
+        working-directory: frontend
+        run: bun test rewardoverlay.test.js
+
+  frontend-test-runpersistence:
+    name: Frontend Test - runpersistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run runpersistence test
+        working-directory: frontend
+        run: bun test runpersistence.test.js
+
+  frontend-test-settings-storage:
+    name: Frontend Test - settings storage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run settings storage test
+        working-directory: frontend
+        run: bun test settingsStorage.test.js
+
+  frontend-test-settingsmenu:
+    name: Frontend Test - settingsmenu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run settingsmenu test
+        working-directory: frontend
+        run: bun test settingsmenu.test.js
+
+  frontend-test-shopmenu:
+    name: Frontend Test - shopmenu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+      - name: Run shopmenu test
+        working-directory: frontend
+        run: bun test shopmenu.test.js
+
+  # Linting jobs (kept separate as requested)
   backend-lint:
     name: Backend Lint
     runs-on: ubuntu-latest
@@ -30,21 +753,6 @@ jobs:
           python-version: '3.12'
       - name: Run backend linting
         run: uvx ruff check backend
-
-  frontend-tests:
-    name: Frontend Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: bun install
-      - name: Run frontend tests
-        working-directory: frontend
-        run: bun test
 
   frontend-lint:
     name: Frontend Lint
