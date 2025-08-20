@@ -1,7 +1,7 @@
 <script>
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { roomAction } from './api.js';
-  import { getCharacterImage, getRandomBackground } from './assetLoader.js';
+  import { getCharacterImage, getRandomBackground, getElementColor, getElementIcon } from './assetLoader.js';
   export let runId = '';
   export let framerate = 60;
   export let party = [];
@@ -25,6 +25,53 @@
     return Object.entries(counts);
   }
 
+  function pctRatio(val) {
+    if (typeof val !== 'number' || !isFinite(val)) return '0%';
+    return `${Math.round(val * 100)}%`;
+  }
+
+  function pctOdds(val) {
+    if (typeof val !== 'number' || !isFinite(val)) return '0%';
+    return `${Math.round(val * 100)}%`;
+  }
+
+  function pctFromMultiplier(mult) {
+    if (typeof mult !== 'number' || !isFinite(mult)) return '0%';
+    return `${Math.round((mult - 1) * 100)}%`;
+  }
+
+  function formatMitigation(val) {
+    if (typeof val !== 'number' || !isFinite(val)) return '-';
+    // Rule: 100 = 1x (no mitigation). <100 means more damage taken, >100 reduces damage.
+    if (val >= 10) {
+      return `x${(val / 100).toFixed(2)}`;
+    }
+    // If value is already a small multiplier (e.g., 1.0), show directly.
+    return `x${val.toFixed(2)}`;
+  }
+
+  function guessElementFromId(id) {
+    const s = (id || '').toLowerCase();
+    if (s.includes('lightning')) return 'Lightning';
+    if (s.includes('light')) return 'Light';
+    if (s.includes('dark')) return 'Dark';
+    if (s.includes('fire')) return 'Fire';
+    if (s.includes('ice')) return 'Ice';
+    if (s.includes('wind')) return 'Wind';
+    return 'Generic';
+  }
+
+  function elementOf(obj) {
+    // Prefer explicit element alias if present
+    const elem = obj?.element;
+    if (typeof elem === 'string' && elem.length) return elem;
+    // Fallback to base_damage_type
+    const dt = obj?.base_damage_type;
+    if (!dt) return guessElementFromId(obj?.id);
+    if (typeof dt === 'string' && dt.length) return dt;
+    return dt.id || dt.name || guessElementFromId(obj?.id);
+  }
+
   async function fetchSnapshot() {
     const start = performance.now();
     dispatch('snapshot-start');
@@ -33,6 +80,40 @@
       if (snap.party && differs(snap.party, party)) party = snap.party;
       if (snap.foes && differs(snap.foes, foes)) foes = snap.foes;
       if (snap.enrage && differs(snap.enrage, enrage)) enrage = snap.enrage;
+      if (snap.party) {
+        const prevById = new Map((party || []).map(p => [p.id, p]));
+        const enriched = (snap.party || []).map(m => {
+          let elem = m.element || m.base_damage_type || '';
+          if (!elem || /generic/i.test(String(elem))) {
+            const prev = prevById.get(m.id);
+            if (prev && (prev.element || prev.base_damage_type)) {
+              elem = prev.element || prev.base_damage_type;
+            } else {
+              elem = guessElementFromId(m.id);
+            }
+          }
+          const resolved = typeof elem === 'string' ? elem : (elem?.id || elem?.name || 'Generic');
+          return { ...m, element: resolved };
+        });
+        if (differs(enriched, party)) party = enriched;
+      }
+      if (snap.foes) {
+        const prevById = new Map((foes || []).map(f => [f.id, f]));
+        const enrichedFoes = (snap.foes || []).map(f => {
+          let elem = f.element || f.base_damage_type || '';
+          if (!elem || /generic/i.test(String(elem))) {
+            const prev = prevById.get(f.id);
+            if (prev && (prev.element || prev.base_damage_type)) {
+              elem = prev.element || prev.base_damage_type;
+            } else {
+              elem = guessElementFromId(f.id);
+            }
+          }
+          const resolved = typeof elem === 'string' ? elem : (elem?.id || elem?.name || 'Generic');
+          return { ...f, element: resolved };
+        });
+        if (differs(enrichedFoes, foes)) foes = enrichedFoes;
+      }
     } catch (e) {
       /* ignore */
     } finally {
@@ -68,7 +149,21 @@
               style={`width: ${member.max_hp ? (100 * member.hp) / member.max_hp : 0}%`}
             ></div>
           </div>
-          <img src={getCharacterImage(member.id, true)} alt="" class="portrait" />
+          <div class="portrait-frame">
+            <img
+              src={getCharacterImage(member.id, true)}
+              alt=""
+              class="portrait"
+              style={`border-color: ${getElementColor(elementOf(member))}`}
+            />
+            <div class="element-chip">
+              <svelte:component
+                this={getElementIcon(elementOf(member))}
+                class="element-icon"
+                style={`color: ${getElementColor(elementOf(member))}`}
+                aria-hidden="true" />
+            </div>
+          </div>
           <div class="effects">
             {#each groupEffects(member.hots) as [name, count]}
               <span class="hot" title={name}>
@@ -83,11 +178,21 @@
           </div>
         </div>
         <div class="stats right">
-          <div>HP {member.hp}/{member.max_hp}</div>
-          <div>ATK {member.atk}</div>
-          <div>DEF {member.defense}</div>
-          <div>MIT {member.mitigation}</div>
-          <div>CRIT {(member.crit_rate * 100).toFixed(0)}%</div>
+          <div class="row"><span class="k">HP</span> <span class="v">{member.hp}/{member.max_hp}</span></div>
+          <div class="row"><span class="k">ATK</span> <span class="v">{member.atk}</span></div>
+          <div class="row"><span class="k">DEF</span> <span class="v">{member.defense}</span></div>
+          <div class="row"><span class="k">MIT</span> <span class="v">{formatMitigation(member.mitigation)}</span></div>
+          <div class="row"><span class="k">CRate</span> <span class="v">{pctOdds(member.crit_rate)}</span></div>
+          <div class="row"><span class="k">CDmg</span> <span class="v">{pctFromMultiplier(member.crit_damage)}</span></div>
+          <div class="row"><span class="k">E.Hit</span> <span class="v">{pctRatio(member.effect_hit_rate)}</span></div>
+          <div class="row"><span class="k">E.Res</span> <span class="v">{pctOdds(member.effect_resistance)}</span></div>
+          <div class="row small"><span class="k">AP</span> <span class="v">{member.action_points ?? 0}</span> <span class="k">/ APT</span> <span class="v">{member.actions_per_turn ?? 1}</span></div>
+          <details class="advanced">
+            <summary>Combat stats</summary>
+            <div class="row small"><span class="k">Dmg Dealt</span> <span class="v">{member.damage_dealt ?? 0}</span></div>
+            <div class="row small"><span class="k">Dmg Taken</span> <span class="v">{member.damage_taken ?? 0}</span></div>
+            <div class="row small"><span class="k">Kills</span> <span class="v">{member.kills ?? 0}</span></div>
+          </details>
         </div>
       </div>
     {/each}
@@ -96,11 +201,21 @@
     {#each foes as foe (foe.id)}
       <div class="combatant">
         <div class="stats left">
-          <div>HP {foe.hp}/{foe.max_hp}</div>
-          <div>ATK {foe.atk}</div>
-          <div>DEF {foe.defense}</div>
-          <div>MIT {foe.mitigation}</div>
-          <div>CRIT {(foe.crit_rate * 100).toFixed(0)}%</div>
+          <div class="row"><span class="k">HP</span> <span class="v">{foe.hp}/{foe.max_hp}</span></div>
+          <div class="row"><span class="k">ATK</span> <span class="v">{foe.atk}</span></div>
+          <div class="row"><span class="k">DEF</span> <span class="v">{foe.defense}</span></div>
+          <div class="row"><span class="k">MIT</span> <span class="v">{formatMitigation(foe.mitigation)}</span></div>
+          <div class="row"><span class="k">CRate</span> <span class="v">{pctOdds(foe.crit_rate)}</span></div>
+          <div class="row"><span class="k">CDmg</span> <span class="v">{pctFromMultiplier(foe.crit_damage)}</span></div>
+          <div class="row"><span class="k">E.Hit</span> <span class="v">{pctRatio(foe.effect_hit_rate)}</span></div>
+          <div class="row"><span class="k">E.Res</span> <span class="v">{pctOdds(foe.effect_resistance)}</span></div>
+          <div class="row small"><span class="k">AP</span> <span class="v">{foe.action_points ?? 0}</span> <span class="k">/ APT</span> <span class="v">{foe.actions_per_turn ?? 1}</span></div>
+        <details class="advanced">
+            <summary>Combat stats</summary>
+            <div class="row small"><span class="k">Dmg Dealt</span> <span class="v">{foe.damage_dealt ?? 0}</span></div>
+            <div class="row small"><span class="k">Dmg Taken</span> <span class="v">{foe.damage_taken ?? 0}</span></div>
+            <div class="row small"><span class="k">Kills</span> <span class="v">{foe.kills ?? 0}</span></div>
+          </details>
         </div>
         <div class="portrait-wrap">
           <div class="hp-bar">
@@ -109,7 +224,21 @@
               style={`width: ${foe.max_hp ? (100 * foe.hp) / foe.max_hp : 0}%`}
             ></div>
           </div>
-          <img src={getCharacterImage(foe.id)} alt="" class="portrait" />
+          <div class="portrait-frame">
+            <img
+              src={getCharacterImage(foe.id)}
+              alt=""
+              class="portrait"
+              style={`border-color: ${getElementColor(elementOf(foe))}`}
+            />
+            <div class="element-chip">
+              <svelte:component
+                this={getElementIcon(elementOf(foe))}
+                class="element-icon"
+                style={`color: ${getElementColor(elementOf(foe))}`}
+                aria-hidden="true" />
+            </div>
+          </div>
           <div class="effects">
             {#each groupEffects(foe.hots) as [name, count]}
               <span class="hot" title={name}>
@@ -193,16 +322,26 @@
     height: 100%;
     background: #0f0;
   }
+  .portrait-frame { position: relative; width: 6rem; height: 6rem; }
   .portrait {
-    width: 6rem;
-    height: 6rem;
+    width: 100%;
+    height: 100%;
     border: 2px solid #555;
     border-radius: 4px;
+    display: block;
   }
+  .element-chip { position: absolute; bottom: 2px; right: 2px; z-index: 2; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .element-icon { width: 16px; height: 16px; display: block; }
   .stats {
     font-size: 0.7rem;
     width: 6rem;
   }
+  .row { display: flex; justify-content: space-between; gap: 0.25rem; }
+  .row.small { font-size: 0.65rem; }
+  .k { opacity: 0.85; }
+  .v { font-variant-numeric: tabular-nums; }
+  .badge { display: none; }
+  details.advanced { margin-top: 0.15rem; }
   .stats.right {
     margin-left: 0.25rem;
     text-align: left;

@@ -18,6 +18,7 @@ from .party import Party
 from .stats import Stats
 from .mapgen import MapNode
 from plugins.foes._base import FoeBase
+from plugins.damage_types import get_damage_type
 from plugins import foes as foe_plugins
 from .passives import PassiveRegistry
 from autofighter.cards import apply_cards
@@ -41,8 +42,31 @@ def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
             setattr(obj, field.name, type(value)(value * mult))
 
 
+def _normalize_damage_type(dt: Any) -> str:
+    # Always return a simple string identifier for damage type
+    try:
+        if isinstance(dt, str):
+            return dt
+        # dataclass instance or mapping from dataclass
+        ident = getattr(dt, "id", None) or getattr(dt, "name", None)
+        if ident:
+            return str(ident)
+        # mapping-like
+        if isinstance(dt, dict):
+            return str(dt.get("id") or dt.get("name") or "Generic")
+    except Exception:
+        pass
+    return "Generic"
+
+
 def _serialize(obj: Stats) -> dict[str, Any]:
     data = asdict(obj)
+    # Normalize damage type to a flat string for frontend
+    if "base_damage_type" in data:
+        norm = _normalize_damage_type(data["base_damage_type"])
+        data["base_damage_type"] = norm
+        # Provide an alias commonly used on the frontend
+        data["element"] = norm
     data["id"] = obj.id
     if hasattr(obj, "name"):
         data["name"] = obj.name
@@ -104,7 +128,27 @@ def _choose_foe(party: Party) -> FoeBase:
     if not candidates:
         candidates = [foe_plugins.Slime]
     foe_cls = random.choice(candidates)
-    return foe_cls()
+    foe = foe_cls()
+    # Assign a non-generic damage type to foes unless explicitly Luna-flavored
+    try:
+        label = getattr(foe, "name", None) or getattr(foe, "id", "")
+        chosen = get_damage_type(str(label))
+        if "luna" in str(label).lower():
+            chosen = "Generic"
+        foe.base_damage_type = chosen
+        # Keep related views consistent
+        try:
+            foe.damage_types = [chosen]
+        except Exception:
+            pass
+        try:
+            setattr(foe, "element", chosen)
+        except Exception:
+            pass
+    except Exception:
+        # Best-effort; leave default if anything goes wrong
+        pass
+    return foe
 
 
 @dataclass
@@ -374,4 +418,3 @@ class ChatRoom(Room):
             "card": None,
             "foes": [],
         }
-

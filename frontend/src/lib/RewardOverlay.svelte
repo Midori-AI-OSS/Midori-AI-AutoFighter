@@ -76,23 +76,30 @@
     position: relative;
     width: 72px;
     height: 96px;
-    background-color: var(--star-color, #708090);
+    background: transparent;
+    overflow: hidden;
   }
   .art img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     filter: grayscale(1);
-    mix-blend-mode: multiply;
   }
   .label {
     position: absolute;
-    top: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5);
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
     font-size: 0.7rem;
     text-align: center;
+    padding: 1px 2px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .status {
     margin-top: 0.5rem;
@@ -130,9 +137,7 @@
             class="art"
             style={`--star-color: ${starColors[relic.stars] || starColors.fallback}`}
           >
-            {#if getRewardArt('relic', relic.id)}
-              <img src={getRewardArt('relic', relic.id)} alt={relic.name} />
-            {/if}
+            <img src={getRewardArt('relic', relic.id)} alt={relic.name} />
             <div class="label">{relic.name}</div>
           </div>
         </button>
@@ -145,9 +150,7 @@
       {#each items as item}
         <button class="choice" on:click={() => show('item', item)}>
           <div class="art" style="--star-color: #708090">
-            {#if getRewardArt('item', item.id)}
-              <img src={getRewardArt('item', item.id)} alt={item.name} />
-            {/if}
+            <img src={getRewardArt('item', item.id)} alt={item.name} />
             <div class="label">{item.name}</div>
           </div>
         </button>

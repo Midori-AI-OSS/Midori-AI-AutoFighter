@@ -334,7 +334,7 @@
             {/each}
           </div>
         {/if}
-        {#if runId && roomData}
+        {#if runId && roomData && !(roomData.result === 'battle' && !battleActive)}
           <RoomView result={roomData.result} foes={roomData.foes} party={roomData.party} />
         {:else if runId}
           <div class="placeholder">Awaiting next room...</div>
@@ -393,8 +393,8 @@
               {runId}
               on:save={(e) => {
                 ({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft, reducedMotion } = e.detail);
-                saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft, reducedMotion });
-                dispatch('back');
+                // Child component persists via saveSettings with debounced autosave.
+                // Keep local state in sync without closing the menu.
               }}
               on:endRun={() => dispatch('endRun')}
             />

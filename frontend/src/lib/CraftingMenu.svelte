@@ -13,7 +13,8 @@
   const iconModules = Object.fromEntries(
     Object.entries(rawIconModules).map(([path, src]) => [path, new URL(src, import.meta.url).href])
   );
-  const fallbackIcon = new URL('./assets/cards/fallback/placeholder.png', import.meta.url).href;
+  // Use a stable item placeholder instead of card placeholder
+  const fallbackIcon = new URL('./assets/items/generic/generic1.png', import.meta.url).href;
 
   const starColors = {
     1: '#808080',

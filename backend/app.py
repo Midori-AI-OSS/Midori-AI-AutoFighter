@@ -734,18 +734,9 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         return jsonify({"error": "awaiting next"}), 400
     # If player needs to choose a reward, don't start another battle.
     if state.get("awaiting_card") or state.get("awaiting_relic"):
-        party_data = [
-            {
-                "id": m.id,
-                "name": getattr(m, "name", m.id),
-                "hp": m.hp,
-                "max_hp": m.max_hp,
-                "atk": m.atk,
-                "hots": getattr(m, "hots", []),
-                "dots": getattr(m, "dots", []),
-            }
-            for m in party.members
-        ]
+        # Provide a richer snapshot using the common serializer so the frontend
+        # can access fields like base_damage_type for element coloring.
+        party_data = [_serialize(m) for m in party.members]
         return jsonify(
             {
                 "result": "battle",
