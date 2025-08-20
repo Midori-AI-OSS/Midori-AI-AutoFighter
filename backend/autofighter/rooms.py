@@ -201,11 +201,9 @@ class BattleRoom(Room):
         foe_effects = EffectManager(foe)
         party_effects = [EffectManager(m) for m in combat_party.members]
 
-        registry.trigger("room_enter", foe)
         registry.trigger("battle_start", foe)
         console.log(f"Battle start: {foe.id} vs {[m.id for m in combat_party.members]}")
         for member_effect, member in zip(party_effects, combat_party.members):
-            registry.trigger("room_enter", member)
             registry.trigger("battle_start", member)
 
         base_foe_atk = foe.atk
@@ -358,8 +356,8 @@ class BattleRoom(Room):
         for member in combat_party.members:
             registry.trigger("battle_end", member)
         for member, orig in zip(combat_party.members, party.members):
-            orig.hp = min(member.hp, orig.max_hp)
             orig.gain_exp(exp_reward)
+            orig.hp = min(member.hp, orig.max_hp)
             for f in fields(type(orig)):
                 setattr(member, f.name, getattr(orig, f.name))
 

@@ -73,6 +73,8 @@ class Stats:
         self.defense += 3 * self.level
 
     def gain_exp(self, amount: int) -> None:
+        if self.level < 1000:
+            amount *= 10
         self.exp += int(amount * self.exp_multiplier * self.vitality)
         while self.exp >= self.exp_to_level():
             needed = self.exp_to_level()

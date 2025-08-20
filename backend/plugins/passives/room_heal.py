@@ -6,7 +6,7 @@ class RoomHeal:
     plugin_type = "passive"
     id = "room_heal"
     name = "Room Heal"
-    trigger = "room_enter"
+    trigger = "battle_end"
     amount = 1
 
     def apply(self, target) -> None:

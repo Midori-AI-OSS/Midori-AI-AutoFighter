@@ -16,6 +16,11 @@ Characters with random base damage types store their first rolled element in the
 save database and reuse it on later loads so elements stay consistent across
 sessions.
 
+Experience feeds into `exp` and triggers a level-up when it meets or exceeds
+`exp_to_level`. Characters below level 1000 gain experience at ten times the
+normal rate to accelerate early progression. Level-ups increase core stats but
+no longer restore HP, preserving damage taken.
+
 `apply_damage()` and `apply_healing()` update `hp`, fire damage and healing hooks on the attacker and target damage types, and emit
 global `damage_taken`, `damage_dealt`, `heal_received`, and `heal` events on the repository-wide event bus.
 

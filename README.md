@@ -146,6 +146,10 @@ victory presents three unused cards of the appropriate star rank. Selecting one
 adds it to the party, and card and relic bonuses are applied at the start of the
 next battle.
 
+Defeated foes grant experience to every party member. Characters below level
+1000 receive a 10× boost to experience gained so early levels advance quickly.
+Level-ups apply immediately and sync back to the run along with remaining HP.
+
 ## Rest Room
 
 Pull for new characters, craft items, or rearrange the party before continuing a

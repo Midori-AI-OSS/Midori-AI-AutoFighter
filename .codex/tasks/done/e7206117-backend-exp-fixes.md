@@ -26,5 +26,7 @@ Investigate and address leveling and healing anomalies while updating docs to re
      - Document how battle resolution awards XP and levels to all party members.  
    - File: `.codex/implementation/stats-and-effects.md` line 5.  
      - Expand the Stats field overview with details on level-up behavior and the low-level XP multiplier.  
-   - File: `.codex/implementation/battle-room.md` line 11.  
+   - File: `.codex/implementation/battle-room.md` line 11.
      - Clarify that `BattleRoom` deep-copies the party for combat and syncs final stats (including XP) back to the run.
+
+Status: Need Review

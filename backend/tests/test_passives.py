@@ -28,5 +28,5 @@ def test_room_heal_trigger():
     player = Player()
     player.hp = 900
     player.passives = ["room_heal"] * 10
-    registry.trigger("room_enter", player)
+    registry.trigger("battle_end", player)
     assert player.hp == 910

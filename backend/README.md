@@ -29,6 +29,10 @@ names. Run state is stored through the `SaveManager` in `backend/save.db` by
 default; `compose.yaml` bind-mounts the `backend/` directory so the database is
 persisted on the host.
 
+Battle resolution awards experience to all party members. Characters below
+level 1000 receive a 10× boost to earned experience, and level-ups are synced
+back to the run along with updated stats.
+
 `GET /gacha` returns the current pity counter, element-based upgrade items,
 owned characters with their duplicate stacks, and whether auto-crafting is
 enabled. `POST /gacha/pull` performs 1, 5, or 10 pulls, awarding 5★ or 6★
