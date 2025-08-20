@@ -16,3 +16,5 @@
 - Shop leave flow remains functional.
 - All frontend tests pass (`bun test`).
 - Backend test suite (`uv run pytest`) is executed with best effort.
+
+Status: Need Review

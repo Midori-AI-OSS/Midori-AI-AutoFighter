@@ -16,3 +16,5 @@
 - Background animation activates once foes become enraged and stops when combat ends.
 - New test covers enrage background behavior.
 - `bun test` and `uv run pytest` executed.
+
+Status: Need Review

@@ -15,5 +15,10 @@ fixed interval and the polling delay honors 30/60/120 fps settings without a
 spinner while updates are in flight. Incoming party and foe arrays are compared
 to the previous snapshot to avoid unnecessary re-renders.
 
+If a snapshot reports `enrage.active`, the view updates its `enrage` state and
+adds an `enraged` class to the `.battle-field`, cycling a red/blue overlay to
+signal heightened foe power. The animation pace doubles when `reducedMotion` is
+enabled, slowing the pulse for accessibility.
+
 ## Testing
 - `bun test frontend/tests/battleview.test.js`

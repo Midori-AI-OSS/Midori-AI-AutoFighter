@@ -25,3 +25,5 @@ Wrapper around SQLCipher connections and database migrations.
 - `POST /run/start` clones the player's pronouns, damage type, and stat points
   into the run record so mid-run edits to the player editor do not change the
   active party.
+- `save_party` persists the player's current damage type and stat allocations so
+  customized values remain applied when loading subsequent rooms.

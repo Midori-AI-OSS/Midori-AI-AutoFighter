@@ -50,6 +50,7 @@
   async function handleEndRun() {
     if (runId) {
       await endRun(runId);
+      dispatch('endRun');
     }
   }
 

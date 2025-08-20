@@ -635,6 +635,26 @@ def save_map(run_id: str, state: dict) -> None:
 
 
 def save_party(run_id: str, party: Party) -> None:
+    snapshot: dict[str, Any] = {}
+    with SAVE_MANAGER.connection() as conn:
+        cur = conn.execute("SELECT party FROM runs WHERE id = ?", (run_id,))
+        row = cur.fetchone()
+    existing = json.loads(row[0]) if row else {}
+    snapshot = existing.get("player", {})
+    for member in party.members:
+        if member.id == "player":
+            base = player_plugins.player.Player()
+            stats = {
+                "hp": int(round((member.max_hp / base.max_hp - 1) * 100)),
+                "attack": int(round((member.atk / base.atk - 1) * 100)),
+                "defense": int(round((member.defense / base.defense - 1) * 100)),
+            }
+            snapshot = {
+                **snapshot,
+                "damage_type": getattr(member.base_damage_type, "id", member.base_damage_type),
+                "stats": stats,
+            }
+            break
     with SAVE_MANAGER.connection() as conn:
         data = {
             "members": [m.id for m in party.members],
@@ -643,6 +663,7 @@ def save_party(run_id: str, party: Party) -> None:
             "cards": party.cards,
             "exp": {m.id: m.exp for m in party.members},
             "level": {m.id: m.level for m in party.members},
+            "player": snapshot,
         }
         conn.execute(
             "UPDATE runs SET party = ? WHERE id = ?",

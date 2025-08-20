@@ -9,6 +9,12 @@ export async function startRun(party, damageType = '') {
   return res.json();
 }
 
+export async function getMap(runId) {
+  const res = await fetch(`${API_BASE}/map/${runId}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+  return res.json();
+}
+
 export async function updateParty(runId, party) {
   const res = await fetch(`${API_BASE}/party/${runId}`, {
     method: 'PUT',

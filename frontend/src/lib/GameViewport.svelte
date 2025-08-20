@@ -396,6 +396,7 @@
                 saveSettings({ sfxVolume, musicVolume, voiceVolume, framerate, autocraft, reducedMotion });
                 dispatch('back');
               }}
+              on:endRun={() => dispatch('endRun')}
             />
           </PopupWindow>
         {/if}

@@ -10,6 +10,7 @@
     MessageSquare
   } from 'lucide-svelte';
   import GameViewport from '$lib/GameViewport.svelte';
+  import { onMount } from 'svelte';
   import {
     startRun,
     getPlayerConfig,
@@ -17,7 +18,8 @@
     roomAction,
     chooseCard,
     chooseRelic,
-    advanceRoom
+    advanceRoom,
+    getMap
   } from '$lib/api.js';
   import { FEEDBACK_URL } from '$lib/constants.js';
 
@@ -28,6 +30,16 @@
   let viewMode = 'main';
   let viewStack = [];
   let nextRoom = '';
+
+  function saveRunState() {
+    if (runId) {
+      localStorage.setItem('runState', JSON.stringify({ runId, nextRoom }));
+    }
+  }
+
+  function clearRunState() {
+    localStorage.removeItem('runState');
+  }
 
   function setView(mode) {
     viewStack.push(viewMode);
@@ -45,6 +57,21 @@
   let editorState = { pronouns: '', damageType: 'Light', hp: 0, attack: 0, defense: 0 };
   let battleActive = false;
 
+  onMount(async () => {
+    const saved = localStorage.getItem('runState');
+    if (saved) {
+      try {
+        const { runId: storedId } = JSON.parse(saved);
+        const data = await getMap(storedId);
+        runId = storedId;
+        nextRoom = data.map.rooms[data.map.current].room_type;
+        await enterRoom();
+      } catch {
+        clearRunState();
+      }
+    }
+  });
+
   function openRun() {
     if (runId) {
       viewMode = 'main';
@@ -54,6 +81,14 @@
     } else {
       setView('party-start');
     }
+  }
+
+  function handleRunEnd() {
+    runId = '';
+    roomData = null;
+    nextRoom = '';
+    battleActive = false;
+    clearRunState();
   }
 
   async function handleStart() {
@@ -156,6 +191,7 @@
     const data = await roomAction(runId, endpoint);
     roomData = data;
     nextRoom = data.next_room || '';
+    saveRunState();
     if (endpoint === 'battle') {
       pollBattle();
     } else {
@@ -188,7 +224,10 @@
   async function handleShopLeave() {
     if (!runId) return;
     await roomAction(runId, 'shop', 'leave');
-    await advanceRoom(runId);
+    const res = await advanceRoom(runId);
+    if (res && res.next_room) {
+      nextRoom = res.next_room;
+    }
     await enterRoom();
   }
   async function handleRestPull() {
@@ -206,7 +245,10 @@
   async function handleRestLeave() {
     if (!runId) return;
     await roomAction(runId, 'rest', 'leave');
-    await advanceRoom(runId);
+    const res = await advanceRoom(runId);
+    if (res && res.next_room) {
+      nextRoom = res.next_room;
+    }
     await enterRoom();
   }
 
@@ -288,5 +330,6 @@
     on:restCraft={handleRestCraft}
     on:restLeave={handleRestLeave}
     on:nextRoom={handleNextRoom}
+    on:endRun={handleRunEnd}
   />
 </div>

@@ -15,3 +15,5 @@
 - Reloading the page during an active run resumes that run rather than creating a new one.
 - New test demonstrates run persistence.
 - `bun test` and `uv run pytest` executed.
+
+Status: Need Review

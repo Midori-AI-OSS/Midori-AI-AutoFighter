@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import BattleView from '../src/lib/BattleView.svelte';
 
 describe('BattleView enrage effect', () => {
   test('adds enraged class and animation', () => {
@@ -8,6 +9,13 @@ describe('BattleView enrage effect', () => {
     expect(content).toContain('class:enraged');
     expect(content).toContain('@keyframes enrage-bg');
     expect(content).toContain('--flash-duration');
+  });
+});
+
+describe('BattleView enrage state', () => {
+  test('updates enrage from snapshot', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
+    expect(content).toContain('snap.enrage && differs(snap.enrage, enrage)');
   });
 });
 

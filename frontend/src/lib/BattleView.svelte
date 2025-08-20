@@ -32,6 +32,7 @@
       const snap = await roomAction(runId, 'battle', 'snapshot');
       if (snap.party && differs(snap.party, party)) party = snap.party;
       if (snap.foes && differs(snap.foes, foes)) foes = snap.foes;
+      if (snap.enrage && differs(snap.enrage, enrage)) enrage = snap.enrage;
     } catch (e) {
       /* ignore */
     } finally {

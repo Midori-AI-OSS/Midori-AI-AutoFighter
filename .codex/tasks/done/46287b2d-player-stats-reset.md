@@ -16,3 +16,5 @@
 - Player stat allocations remain intact for the entire run.
 - New test verifies persistence across battles.
 - `uv run pytest` and `bun test` executed.
+
+Status: Need Review
