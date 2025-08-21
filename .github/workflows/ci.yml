@@ -10,6 +10,7 @@ jobs:
     name: Backend Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         test-file: ${{ fromJson(needs.discover-backend-tests.outputs.test-files) }}
     needs: discover-backend-tests
@@ -45,6 +46,7 @@ jobs:
     name: Frontend Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         test-file: ${{ fromJson(needs.discover-frontend-tests.outputs.test-files) }}
     needs: discover-frontend-tests
