@@ -28,7 +28,7 @@ those values success isn't guaranteed.
 
 The band determines the maximum star rank; the minimum starts at the lower
 value and rises with floor, loop count, and Pressure. Results are capped at 4★
-and use the foe's element at random. Each battle drops one item by default and
+and use the foe's element at random. Each battle drops at least one item by default and
 multiplies that quantity by the party's rare drop rate (`rdr`). Fractional results
 have a matching chance to award one extra item.
 

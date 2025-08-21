@@ -1,8 +1,10 @@
 import pytest
+
 import autofighter.rooms as rooms_module
-from autofighter.mapgen import MapNode
 from autofighter.party import Party
 from autofighter.stats import Stats
+from autofighter.mapgen import MapNode
+from plugins.damage_types import ALL_DAMAGE_TYPES
 
 
 @pytest.mark.asyncio
@@ -47,6 +49,24 @@ async def test_rdr_scales_items_and_tickets(monkeypatch):
     low_tickets = [i for i in result_low["loot"]["items"] if i["id"] == "ticket"]
     high_tickets = [i for i in result_high["loot"]["items"] if i["id"] == "ticket"]
     assert len(high_tickets) > len(low_tickets)
+
+
+@pytest.mark.asyncio
+async def test_low_rdr_still_drops_item(monkeypatch):
+    node = MapNode(room_id=1, room_type="battle-normal", floor=1, index=1, loop=1, pressure=0)
+    room = rooms_module.BattleRoom(node)
+    member = Stats()
+    member.id = "p1"
+    party = Party(members=[member], rdr=0.5)
+    monkeypatch.setattr(rooms_module, "card_choices", lambda *a, **k: [])
+    monkeypatch.setattr(rooms_module, "relic_choices", lambda *a, **k: [])
+    monkeypatch.setattr(rooms_module.random, "choice", lambda seq: seq[0])
+    monkeypatch.setattr(rooms_module.random, "random", lambda: 0.99)
+    result = await room.resolve(party, {})
+    upgrades = [i for i in result["loot"]["items"] if i["id"] != "ticket"]
+    assert len(upgrades) == 1
+    valid_ids = {e.lower() for e in ALL_DAMAGE_TYPES}
+    assert upgrades[0]["id"] in valid_ids
 
 
 @pytest.mark.asyncio

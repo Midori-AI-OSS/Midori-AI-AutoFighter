@@ -76,8 +76,16 @@ async def add_cors_headers(response):
     # Allow frontend dev server to call backend during development
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
     return response
+
+
+@app.before_request
+async def handle_cors_preflight():
+    # Ensure browsers can preflight DELETE/other methods successfully
+    if request.method == "OPTIONS":
+        # Empty 204 with CORS headers added in after_request
+        return "", 204
 
 
 # Expose static assets (e.g., backgrounds) for simple image serving
@@ -111,6 +119,29 @@ def _assign_damage_type(player: PlayerBase) -> None:
                 "INSERT INTO damage_types (id, type) VALUES (?, ?)",
                 (player.id, player.base_damage_type),
             )
+    # Keep the primary damage_types list consistent with base_damage_type
+    try:
+        ident = getattr(player.base_damage_type, "id", None) or getattr(
+            player.base_damage_type, "name", None
+        ) or str(player.base_damage_type)
+        player.damage_types = [str(ident)]
+    except Exception:
+        pass
+
+
+def _sync_damage_types(obj: PlayerBase) -> None:
+    """Ensure obj.damage_types[0] reflects obj.base_damage_type.
+
+    Frontend prioritizes `damage_types[0]` when rendering elements; this keeps
+    it in sync if `base_damage_type` is changed after initialization.
+    """
+    try:
+        ident = getattr(obj.base_damage_type, "id", None) or getattr(
+            obj.base_damage_type, "name", None
+        ) or str(obj.base_damage_type)
+        obj.damage_types = [str(ident)]
+    except Exception:
+        pass
 
 
 def _load_player_customization() -> tuple[str, dict[str, int]]:
@@ -273,6 +304,7 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
                 inst.exp = 0
                 inst.level = 1
                 _assign_damage_type(inst)
+                _sync_damage_types(inst)
                 party_info.append(
                     {
                         "id": inst.id,
@@ -343,8 +375,14 @@ async def end_run(run_id: str) -> tuple[str, int, dict[str, str]]:
     try:
         if task is not None and not task.done():
             task.cancel()
+            # Yield to the event loop so cancellation can propagate
+            try:
+                await asyncio.sleep(0)
+            except Exception:
+                pass
     except Exception:
         pass
+    # Clear any last snapshot/loot
     battle_snapshots.pop(run_id, None)
     with SAVE_MANAGER.connection() as conn:
         cur = conn.execute("DELETE FROM runs WHERE id = ?", (run_id,))
@@ -459,6 +497,7 @@ async def get_players() -> tuple[str, int, dict[str, str]]:
         cls = getattr(player_plugins, name)
         inst = cls()
         _assign_damage_type(inst)
+        _sync_damage_types(inst)
         if inst.id == "player":
             _apply_player_stats(inst)
         stats = asdict(inst)
@@ -635,9 +674,11 @@ def load_party(run_id: str) -> Party:
                         inst.base_damage_type = snapshot.get(
                             "damage_type", inst.base_damage_type
                         )
+                    _sync_damage_types(inst)
                     _apply_player_stats(inst, snapshot.get("stats", {}))
                 else:
                     _assign_damage_type(inst)
+                    _sync_damage_types(inst)
                 # Rebuild stats for current level so growth persists across loads
                 target_level = int(level_map.get(pid, 1) or 1)
                 if target_level > 1:
@@ -733,6 +774,31 @@ async def _run_battle(
     try:
         result = await room.resolve(party, data, progress, foe)
         state["battle"] = False
+        # If the party was defeated, immediately end the run and publish the final snapshot
+        if result.get("result") == "defeat":
+            try:
+                await asyncio.to_thread(save_map, run_id, state)
+                await asyncio.to_thread(save_party, run_id, party)
+                # include termination marker
+                result.update({
+                    "run_id": run_id,
+                    "current_room": rooms[state["current"]].room_type,
+                    "current_index": state["current"],
+                    "awaiting_card": False,
+                    "awaiting_relic": False,
+                    "awaiting_next": False,
+                    "next_room": None,
+                    "ended": True,
+                })
+                battle_snapshots[run_id] = result
+            finally:
+                # remove the run from the DB
+                try:
+                    with SAVE_MANAGER.connection() as conn:
+                        conn.execute("DELETE FROM runs WHERE id = ?", (run_id,))
+                except Exception:
+                    pass
+            return
         has_card_choices = bool(result.get("card_choices"))
         has_relic_choices = bool(result.get("relic_choices"))
         if has_card_choices or has_relic_choices:
@@ -770,6 +836,15 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     start = time.perf_counter()
     data = await request.get_json(silent=True) or {}
     action = data.get("action", "")
+    # If the client is only asking for a battle snapshot, return it immediately
+    # without touching the run/map state. This is important after a defeat,
+    # where the run may have been removed from the database but we still keep
+    # the final snapshot in-memory for the UI to consume.
+    if action == "snapshot":
+        snap = battle_snapshots.get(run_id)
+        if snap is None:
+            return jsonify({"error": "no battle"}), 404
+        return jsonify(snap)
     party = await asyncio.to_thread(load_party, run_id)
     # Ensure the player's damage type reflects the latest saved setting
     # even if the run snapshot is stale.
@@ -782,18 +857,22 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
             for m in party.members:
                 if m.id == "player":
                     m.base_damage_type = row[0]
+                    _sync_damage_types(m)
                     break
     except Exception:
         pass
     state, rooms = await asyncio.to_thread(load_map, run_id)
+    # Guard against out-of-range current index (e.g., if the run was ended
+    # concurrently after defeat). Prefer serving any existing snapshot.
+    if not rooms or not (0 <= int(state.get("current", 0)) < len(rooms)):
+        snap = battle_snapshots.get(run_id)
+        if snap is not None:
+            return jsonify(snap)
+        return jsonify({"error": "run ended or room out of range"}), 404
     node = rooms[state["current"]]
     if node.room_type not in {"battle-weak", "battle-normal"}:
         return jsonify({"error": "invalid room"}), 400
-    if action == "snapshot":
-        snap = battle_snapshots.get(run_id)
-        if snap is None:
-            return jsonify({"error": "no battle"}), 404
-        return jsonify(snap)
+    # snapshot is handled early above
     if state.get("awaiting_next"):
         return jsonify({"error": "awaiting next"}), 400
     # If player needs to choose a reward, don't start another battle.

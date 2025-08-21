@@ -15,6 +15,27 @@
   $: pollDelay = 1000 / framerate;
   let bg = getRandomBackground();
   $: flashDuration = reducedMotion ? 20 : 10;
+
+  // Dynamic sizing per side based on fighter counts
+  $: partyCount = Array.isArray(party) ? party.length : 0;
+  $: foeCount = Array.isArray(foes) ? foes.length : 0;
+  function sizeForParty(n) {
+    if (n <= 1) return 9.5; // bigger when solo
+    if (n <= 2) return 8.5;
+    if (n <= 3) return 8.0;
+    if (n <= 4) return 7.5;
+    return 7.0; // 5 max party, a bit bigger than old 6rem
+  }
+  function sizeForFoes(n) {
+    if (n <= 1) return 8.0;
+    if (n <= 2) return 7.5;
+    if (n <= 4) return 7.25;
+    if (n <= 6) return 6.75;
+    if (n <= 8) return 6.25;
+    return 6.0; // keep current size so 10 foes fit
+  }
+  $: partyPortraitSize = `${sizeForParty(partyCount)}rem`;
+  $: foePortraitSize = `${sizeForFoes(foeCount)}rem`;
   
   // Foe element defaults and slime randomization
   const FOE_DEFAULT_ELEMENT = 'Light';
@@ -228,7 +249,7 @@
   style={`background-image: url(${bg}); --flash-duration: ${flashDuration}s`}
   data-testid="battle-view"
 >
-  <div class="party-column">
+  <div class="party-column" style={`--portrait-size: ${partyPortraitSize}` }>
     {#each party as member (member.id)}
       <div class="combatant">
         <div class="portrait-wrap">
@@ -252,11 +273,16 @@
                 style={`color: ${getElementColor(elementOf(member))}`}
                 aria-hidden="true" />
             </div>
-          </div>
           <div class="effects">
             {#each groupEffects(member.hots) as [name, count]}
               <span class="hot" title={name}>
-                {#if count > 1}<span class="stack">{count}</span>{/if}
+                <img
+                  class="dot-img"
+                  src={getDotImage(name)}
+                  alt={name}
+                  style={`border-color: ${getElementColor(getDotElement(name))}`}
+                />
+                <span class="hot-plus">+</span>
               </span>
             {/each}
             {#each groupEffects(member.dots) as [name, count]}
@@ -267,9 +293,10 @@
                   alt={name}
                   style={`border-color: ${getElementColor(getDotElement(name))}`}
                 />
-                {#if count > 1}<span class="stack">{count}</span>{/if}
+                {#if count > 1}<span class="stack inside">{count}</span>{/if}
               </span>
             {/each}
+          </div>
           </div>
         </div>
         <div class="stats right stained-glass-panel">
@@ -294,7 +321,7 @@
       </div>
     {/each}
   </div>
-  <div class="foe-column">
+  <div class="foe-column" style={`--portrait-size: ${foePortraitSize}` }>
     {#each foes as foe (foe.id)}
       <div class="combatant">
         <div class="stats left stained-glass-panel">
@@ -337,11 +364,16 @@
                 style={`color: ${getElementColor(elementOf(foe))}`}
                 aria-hidden="true" />
             </div>
-          </div>
           <div class="effects">
             {#each groupEffects(foe.hots) as [name, count]}
               <span class="hot" title={name}>
-                {#if count > 1}<span class="stack">{count}</span>{/if}
+                <img
+                  class="dot-img"
+                  src={getDotImage(name)}
+                  alt={name}
+                  style={`border-color: ${getElementColor(getDotElement(name))}`}
+                />
+                <span class="hot-plus">+</span>
               </span>
             {/each}
             {#each groupEffects(foe.dots) as [name, count]}
@@ -352,9 +384,10 @@
                   alt={name}
                   style={`border-color: ${getElementColor(getDotElement(name))}`}
                 />
-                {#if count > 1}<span class="stack">{count}</span>{/if}
+                {#if count > 1}<span class="stack inside">{count}</span>{/if}
               </span>
             {/each}
+          </div>
           </div>
         </div>
       </div>
@@ -394,7 +427,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.8rem; /* add a bit more space so effects don't crowd */
   }
 
   .stained-glass-panel {
@@ -427,7 +460,7 @@
     align-items: center;
   }
   .hp-bar {
-    width: 6rem;
+    width: var(--portrait-size);
     height: 0.5rem;
     border: 1px solid #000;
     background: #333;
@@ -437,7 +470,7 @@
     height: 100%;
     background: #0f0;
   }
-  .portrait-frame { position: relative; width: 6rem; height: 6rem; }
+  .portrait-frame { position: relative; width: var(--portrait-size); height: var(--portrait-size); }
   .portrait {
     width: 100%;
     height: 100%;
@@ -449,8 +482,8 @@
   .element-icon { width: 16px; height: 16px; display: block; }
   .stats {
     font-size: 0.7rem;
-    width: 6rem;
-    flex: 0 0 6rem; /* prevent overlap/shrink under portrait */
+    width: var(--portrait-size);
+    flex: 0 0 var(--portrait-size); /* prevent overlap/shrink under portrait */
   }
   .stats .name {
     font-weight: 600;
@@ -468,18 +501,31 @@
   .stats.right { margin-left: 4px; text-align: left; }
   .stats.left { margin-right: 8px; text-align: right; }
   .effects {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    width: calc(var(--portrait-size) - 4px);
     display: flex;
     gap: 0.2rem;
-    margin-top: 0.3rem; /* nudge the row down a bit */
-    align-self: flex-start; /* start at left edge, not centered */
+    flex-wrap: wrap;
+    align-items: center;
+    pointer-events: none; /* avoid layout shift and pointer capture */
   }
-  .effects span { position: relative; }
-  /* HoTs keep simple green dots for now */
-  .hot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #0f0;
+  .effects span { position: relative; display: inline-block; }
+  /* HoTs use element-themed tile with a + overlay (no stacks) */
+  .hot .hot-plus {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    color: #fff;
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 2px;
+    border-radius: 2px;
+    background: rgba(0,0,0,0.55);
+    pointer-events: none;
   }
   /* DoTs use themed images from assets/dots */
   .dot { display: inline-block; }
@@ -492,11 +538,17 @@
     border: 2px solid #555; /* color overridden inline per element */
     box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
   }
-  .stack {
+  .stack.inside {
     position: absolute;
-    bottom: -2px;
-    right: -2px;
-    font-size: 0.5rem;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.6rem;
+    line-height: 1;
+    padding: 0 2px;
+    border-radius: 2px;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    pointer-events: none;
   }
 
   @media (max-width: 600px) {

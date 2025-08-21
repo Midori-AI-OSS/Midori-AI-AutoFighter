@@ -373,12 +373,28 @@ class BattleRoom(Room):
                         await asyncio.sleep(0.5 - elapsed)
                     continue
                 proceed = await member_effect.on_action()
-                if proceed:
-                    proceed = await member.base_damage_type.on_action(
+                if proceed is None:
+                    proceed = True
+                # Ensure damage type object is instantiated before calling on_action
+                try:
+                    dt = getattr(member, "base_damage_type", None)
+                    if isinstance(dt, str):
+                        import importlib
+                        module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
+                        member.base_damage_type = getattr(module, dt)()
+                        dt = member.base_damage_type
+                except Exception:
+                    dt = getattr(member, "base_damage_type", None)
+                if proceed and hasattr(dt, "on_action"):
+                    res = await dt.on_action(
                         member,
                         combat_party.members,
                         [foe],
                     )
+                    if res is None:
+                        proceed = True
+                    else:
+                        proceed = bool(res)
                 if not proceed:
                     registry.trigger("turn_end", member)
                     if progress is not None:
@@ -416,11 +432,11 @@ class BattleRoom(Room):
                         # Apply to each party member
                         for mgr in party_effects:
                             for _ in range(stacks_to_add):
-                                dmg_per_tick = int(max(mgr.stats.max_hp, 1) * 0.02)
+                                dmg_per_tick = int(max(mgr.stats.max_hp, 1) * 0.05)
                                 mgr.add_dot(DamageOverTime("Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"))
                         # Apply to the foe
                         for _ in range(stacks_to_add):
-                            dmg_per_tick = int(max(foe.max_hp, 1) * 0.02)
+                            dmg_per_tick = int(max(foe.max_hp, 1) * 0.05)
                             foe_effects.add_dot(DamageOverTime("Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"))
                         enrage_bleed_applies += 1
                 registry.trigger("turn_end", member)
@@ -483,12 +499,28 @@ class BattleRoom(Room):
                         await asyncio.sleep(0.5 - elapsed)
                     break
                 proceed = await foe_effects.on_action()
-                if proceed:
-                    proceed = await foe.base_damage_type.on_action(
+                if proceed is None:
+                    proceed = True
+                # Ensure foe damage type is instantiated before calling on_action
+                try:
+                    dt = getattr(foe, "base_damage_type", None)
+                    if isinstance(dt, str):
+                        import importlib
+                        module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
+                        foe.base_damage_type = getattr(module, dt)()
+                        dt = foe.base_damage_type
+                except Exception:
+                    dt = getattr(foe, "base_damage_type", None)
+                if proceed and hasattr(dt, "on_action"):
+                    res = await dt.on_action(
                         foe,
                         [foe],
                         combat_party.members,
                     )
+                    if res is None:
+                        proceed = True
+                    else:
+                        proceed = bool(res)
                 if not proceed:
                     registry.trigger("turn_end", foe)
                     if progress is not None:
@@ -532,13 +564,39 @@ class BattleRoom(Room):
             else:
                 continue
             break
-
-        BUS.emit("battle_end", foe)
+            
+        # Determine outcome before distributing rewards
+        party_alive = any(m.hp > 0 for m in combat_party.members)
+        foe_alive = foe.hp > 0
         registry.trigger("battle_end", foe)
         console.log("Battle end")
         for member in combat_party.members:
             BUS.emit("battle_end", member)
             registry.trigger("battle_end", member)
+        # On defeat, skip rewards and end the run cleanly after returning the snapshot
+        if not party_alive and foe_alive:
+            foes = [_serialize(foe)]
+            party_data = [_serialize(p) for p in combat_party.members]
+            # Ensure original party reflects current HP lost
+            for member, orig in zip(combat_party.members, party.members):
+                orig.hp = min(member.hp, orig.max_hp)
+            return {
+                "result": "defeat",
+                "party": party_data,
+                "gold": party.gold,
+                "relics": party.relics,
+                "cards": party.cards,
+                "card_choices": [],
+                "relic_choices": [],
+                # Provide an empty loot object so the frontend poll stops without showing RewardOverlay
+                "loot": {"gold": 0, "items": []},
+                "foes": foes,
+                "room_number": self.node.index,
+                "exp_reward": 0,
+                "enrage": {"active": enrage_active, "stacks": enrage_stacks},
+                "rdr": party.rdr,
+            }
+
         for member, orig in zip(combat_party.members, party.members):
             orig.gain_exp(exp_reward)
             orig.hp = min(member.hp, orig.max_hp)
@@ -573,8 +631,9 @@ class BattleRoom(Room):
         # Rare drop rate multiplies the number of element upgrade items but
         # never their star rank.
         item_base = 1 * party.rdr
-        item_count = int(item_base)
-        if random.random() < item_base - item_count:
+        base_int = int(item_base)
+        item_count = max(1, base_int)
+        if random.random() < item_base - base_int:
             item_count += 1
         items = [
             {"id": random.choice(ELEMENTS), "stars": _pick_item_stars(self)}
