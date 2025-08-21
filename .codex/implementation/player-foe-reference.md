@@ -34,8 +34,10 @@ Characters marked as "random" roll one of the six elements when first loaded
 and reuse that element in future sessions.
 
 ## Foe Generation
-Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats. To keep
-encounters from stalling, foes regain health at one hundredth the player rate.
+Foe plugins inherit from `FoeBase`, which mirrors `PlayerBase` stats but begins
+with minimal mitigation and vitality (0.001 each) that grow by 0.0001 on
+level-up. To keep encounters from stalling, foes regain health at one hundredth
+the player rate.
 They are procedurally named by prefixing a randomly selected adjective plugin
 from `plugins/themedadj` to a player name. Adjective plugins are
 auto-discovered based on files in that directory, so adding a new adjective

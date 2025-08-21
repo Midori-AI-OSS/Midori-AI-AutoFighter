@@ -177,7 +177,8 @@ non-party player character scaled by floor, room, Pressure level, and loop
 count. Foes are procedurally named by prefixing a themed adjective plugin to a
 player name. Adjective plugins are auto-discovered from files in
 `plugins/themedadj`, allowing new adjectives to be added without modifying
-package code. Foes inherit from a dedicated `FoeBase` that mirrors player stats;
+package code. Foes inherit from a dedicated `FoeBase` that mirrors player stats
+but starts with negligible mitigation and vitality;
 the default `Slime` reduces them by 90% on spawn, while player-derived foes gain
 `FoeBase` behaviors like turn-based regeneration. The scene shows floating
 damage numbers and status icons and flashes

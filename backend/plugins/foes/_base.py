@@ -32,12 +32,12 @@ class FoeBase(Stats):
     effect_hit_rate: float = 0.01
     base_damage_type: DamageTypeBase = field(default_factory=Generic)
 
-    mitigation: int = 100
+    mitigation: float = 0.001
     regain: int = 1
     dodge_odds: float = 0
     effect_resistance: float = 1.0
 
-    vitality: float = 1.0
+    vitality: float = 0.001
     action_points: int = 1
     damage_taken: int = 1
     damage_dealt: int = 1
@@ -61,3 +61,9 @@ class FoeBase(Stats):
         percent = (0.01 + bonus) / 100
         heal = int(self.max_hp * percent)
         await self.apply_healing(heal)
+
+    def _on_level_up(self) -> None:  # noqa: D401
+        """Apply base bonuses then boost mitigation and vitality."""
+        super()._on_level_up()
+        self.mitigation += 0.0001
+        self.vitality += 0.0001
