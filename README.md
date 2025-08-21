@@ -150,7 +150,8 @@ defense for the HP lost. HoTs cover Regeneration, Player Echo, and Player Heal.
 Light characters additionally apply a weak Radiant Regeneration HoT to all
 allies each action, and if an ally falls below a quarter of their health they
 prioritize a direct heal over attacking. Foes regenerate at one hundredth the
-player rate to prevent drawn-out encounters.
+player rate to prevent drawn-out encounters. Wind attackers strike every remaining foe after
+their first hit, repeating the damage and rolling Gale Erosion on each target.
 
 ## Battle Room
 

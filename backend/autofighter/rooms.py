@@ -28,7 +28,6 @@ from autofighter.relics import relic_choices
 from plugins import foes as foe_plugins
 from plugins import players as player_plugins
 from plugins.damage_types import ALL_DAMAGE_TYPES
-from plugins.damage_types import get_damage_type
 from plugins.foes._base import FoeBase
 
 ENRAGE_TURNS_NORMAL = 100
@@ -296,14 +295,17 @@ class BattleRoom(Room):
         party: Party,
         data: dict[str, Any],
         progress: Callable[[dict[str, Any]], Awaitable[None]] | None = None,
-        foe: Stats | None = None,
+        foe: Stats | list[Stats] | None = None,
     ) -> dict[str, Any]:
         registry = PassiveRegistry()
         start_gold = party.gold
         if foe is None:
             foe = _choose_foe(party)
+        foes = foe if isinstance(foe, list) else [foe]
+        for f in foes:
             # TODO: Extend to support battles with multiple foes and target selection.
-            _scale_stats(foe, self.node, self.strength)
+            _scale_stats(f, self.node, self.strength)
+        foe = foes[0]
         combat_party = Party(
             members=[copy.deepcopy(m) for m in party.members],
             gold=party.gold,
@@ -315,8 +317,11 @@ class BattleRoom(Room):
         apply_relics(combat_party)
         party.rdr = combat_party.rdr
 
-        foe_effects = EffectManager(foe)
-        foe.effect_manager = foe_effects
+        foe_effects = []
+        for f in foes:
+            mgr = EffectManager(f)
+            f.effect_manager = mgr
+            foe_effects.append(mgr)
 
         party_effects = []
         for member in combat_party.members:
@@ -324,9 +329,12 @@ class BattleRoom(Room):
             member.effect_manager = mgr
             party_effects.append(mgr)
 
-        BUS.emit("battle_start", foe)
-        registry.trigger("battle_start", foe)
-        console.log(f"Battle start: {foe.id} vs {[m.id for m in combat_party.members]}")
+        for f in foes:
+            BUS.emit("battle_start", f)
+            registry.trigger("battle_start", f)
+        console.log(
+            f"Battle start: {[f.id for f in foes]} vs {[m.id for m in combat_party.members]}"
+        )
         for member_effect, member in zip(party_effects, combat_party.members):
             BUS.emit("battle_start", member)
             registry.trigger("battle_start", member)
@@ -343,13 +351,14 @@ class BattleRoom(Room):
                 {
                     "result": "battle",
                     "party": [_serialize(m) for m in combat_party.members],
-                    "foes": [_serialize(foe)],
+                    "foes": [_serialize(f) for f in foes],
                     "enrage": {"active": False, "stacks": 0},
                     "rdr": party.rdr,
                 }
             )
-
-        while foe.hp > 0 and any(m.hp > 0 for m in combat_party.members):
+        while any(f.hp > 0 for f in foes) and any(
+            m.hp > 0 for m in combat_party.members
+        ):
             for member_effect, member in zip(party_effects, combat_party.members):
                 if member.hp <= 0:
                     continue
@@ -365,7 +374,11 @@ class BattleRoom(Room):
                 registry.trigger("turn_start", member)
                 console.log(f"{member.id} turn start")
                 await member.maybe_regain(turn)
-                await member_effect.tick(foe_effects)
+                alive_foe_idxs = [i for i, f in enumerate(foes) if f.hp > 0]
+                foe_idx = alive_foe_idxs[0]
+                foe = foes[foe_idx]
+                foe_mgr = foe_effects[foe_idx]
+                await member_effect.tick(foe_mgr)
                 if member.hp <= 0:
                     registry.trigger("turn_end", member)
                     elapsed = time.perf_counter() - turn_start
@@ -389,7 +402,7 @@ class BattleRoom(Room):
                     res = await dt.on_action(
                         member,
                         combat_party.members,
-                        [foe],
+                        foes,
                     )
                     if res is None:
                         proceed = True
@@ -402,9 +415,9 @@ class BattleRoom(Room):
                             {
                                 "result": "battle",
                                 "party": [
-                                    _serialize(m) for m in combat_party.members
+                                _serialize(m) for m in combat_party.members
                                 ],
-                                "foes": [_serialize(foe)],
+                                "foes": [_serialize(f) for f in foes],
                                 "enrage": {
                                     "active": enrage_active,
                                     "stacks": enrage_stacks,
@@ -420,7 +433,32 @@ class BattleRoom(Room):
                 console.log(
                     f"[light_red]{member.id} hits {foe.id} for {dmg}[/]"
                 )
-                foe_effects.maybe_inflict_dot(member, dmg)
+                foe_mgr.maybe_inflict_dot(member, dmg)
+                if getattr(member.base_damage_type, "id", "").lower() == "wind":
+                    for extra_idx, extra_foe in enumerate(foes):
+                        if extra_idx == foe_idx or extra_foe.hp <= 0:
+                            continue
+                        extra_dmg = await extra_foe.apply_damage(
+                            member.atk, attacker=member
+                        )
+                        console.log(
+                            f"[light_red]{member.id} hits {extra_foe.id} for {extra_dmg}[/]"
+                        )
+                        foe_effects[extra_idx].maybe_inflict_dot(member, extra_dmg)
+                        if extra_foe.hp <= 0:
+                            exp_reward += extra_foe.level * 12 + 5 * self.node.index
+                            try:
+                                label = (
+                                    getattr(extra_foe, "name", None)
+                                    or getattr(extra_foe, "id", "")
+                                ).lower()
+                                if "slime" in label:
+                                    for m in combat_party.members:
+                                        m.exp_multiplier += 0.025
+                                    for m in party.members:
+                                        m.exp_multiplier += 0.025
+                            except Exception:
+                                pass
                 # Apply escalating enrage bleed every 10 enrage turns: add (1 + n) stacks
                 # where n is the number of prior applications. Each stack lasts 10 turns.
                 if enrage_active:
@@ -437,7 +475,11 @@ class BattleRoom(Room):
                         # Apply to the foe
                         for _ in range(stacks_to_add):
                             dmg_per_tick = int(max(foe.max_hp, 1) * 0.05)
-                            foe_effects.add_dot(DamageOverTime("Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"))
+                            foe_mgr.add_dot(
+                                DamageOverTime(
+                                    "Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"
+                                )
+                            )
                         enrage_bleed_applies += 1
                 registry.trigger("turn_end", member)
                 if progress is not None:
@@ -445,7 +487,7 @@ class BattleRoom(Room):
                         {
                             "result": "battle",
                             "party": [_serialize(m) for m in combat_party.members],
-                            "foes": [_serialize(foe)],
+                            "foes": [_serialize(f) for f in foes],
                             "enrage": {"active": enrage_active, "stacks": enrage_stacks},
                             "rdr": party.rdr,
                         }
@@ -465,7 +507,9 @@ class BattleRoom(Room):
                     elapsed = time.perf_counter() - turn_start
                     if elapsed < 0.5:
                         await asyncio.sleep(0.5 - elapsed)
-                    break
+                    if all(f.hp <= 0 for f in foes):
+                        break
+                    continue
                 # Foe targets a living party member weighted by DEF and mitigation
                 alive = [
                     (idx, m)
@@ -480,7 +524,7 @@ class BattleRoom(Room):
                 registry.trigger("turn_start", foe)
                 console.log(f"{foe.id} turn start targeting {target.id}")
                 await foe.maybe_regain(turn)
-                await foe_effects.tick(target_effect)
+                await foe_mgr.tick(target_effect)
                 if foe.hp <= 0:
                     registry.trigger("turn_end", foe)
                     exp_reward += foe.level * 12 + 5 * self.node.index
@@ -498,7 +542,7 @@ class BattleRoom(Room):
                     if elapsed < 0.5:
                         await asyncio.sleep(0.5 - elapsed)
                     break
-                proceed = await foe_effects.on_action()
+                proceed = await foe_mgr.on_action()
                 if proceed is None:
                     proceed = True
                 # Ensure foe damage type is instantiated before calling on_action
@@ -514,7 +558,7 @@ class BattleRoom(Room):
                 if proceed and hasattr(dt, "on_action"):
                     res = await dt.on_action(
                         foe,
-                        [foe],
+                        foes,
                         combat_party.members,
                     )
                     if res is None:
@@ -530,7 +574,7 @@ class BattleRoom(Room):
                                 "party": [
                                     _serialize(m) for m in combat_party.members
                                 ],
-                                "foes": [_serialize(foe)],
+                                "foes": [_serialize(f) for f in foes],
                                 "enrage": {
                                     "active": enrage_active,
                                     "stacks": enrage_stacks,
@@ -547,13 +591,26 @@ class BattleRoom(Room):
                     f"[light_red]{foe.id} hits {target.id} for {dmg}[/]"
                 )
                 target_effect.maybe_inflict_dot(foe, dmg)
+                if getattr(foe.base_damage_type, "id", "").lower() == "wind":
+                    for extra_mgr, extra_member in zip(
+                        party_effects, combat_party.members
+                    ):
+                        if extra_member is target or extra_member.hp <= 0:
+                            continue
+                        extra_dmg = await extra_member.apply_damage(
+                            foe.atk, attacker=foe
+                        )
+                        console.log(
+                            f"[light_red]{foe.id} hits {extra_member.id} for {extra_dmg}[/]"
+                        )
+                        extra_mgr.maybe_inflict_dot(foe, extra_dmg)
                 registry.trigger("turn_end", foe)
                 if progress is not None:
                     await progress(
                         {
                             "result": "battle",
                             "party": [_serialize(m) for m in combat_party.members],
-                            "foes": [_serialize(foe)],
+                            "foes": [_serialize(f) for f in foes],
                             "enrage": {"active": enrage_active, "stacks": enrage_stacks},
                             "rdr": party.rdr,
                         }
@@ -567,15 +624,16 @@ class BattleRoom(Room):
             
         # Determine outcome before distributing rewards
         party_alive = any(m.hp > 0 for m in combat_party.members)
-        foe_alive = foe.hp > 0
-        registry.trigger("battle_end", foe)
+        foe_alive = any(f.hp > 0 for f in foes)
+        for f in foes:
+            registry.trigger("battle_end", f)
         console.log("Battle end")
         for member in combat_party.members:
             BUS.emit("battle_end", member)
             registry.trigger("battle_end", member)
         # On defeat, skip rewards and end the run cleanly after returning the snapshot
         if not party_alive and foe_alive:
-            foes = [_serialize(foe)]
+            foes_data = [_serialize(f) for f in foes]
             party_data = [_serialize(p) for p in combat_party.members]
             # Ensure original party reflects current HP lost
             for member, orig in zip(combat_party.members, party.members):
@@ -590,7 +648,7 @@ class BattleRoom(Room):
                 "relic_choices": [],
                 # Provide an empty loot object so the frontend poll stops without showing RewardOverlay
                 "loot": {"gold": 0, "items": []},
-                "foes": foes,
+                "foes": foes_data,
                 "room_number": self.node.index,
                 "exp_reward": 0,
                 "enrage": {"active": enrage_active, "stacks": enrage_stacks},
@@ -611,7 +669,7 @@ class BattleRoom(Room):
             rstars = _pick_relic_stars(self)
             rstars = _apply_rdr_to_stars(rstars, party.rdr)
             relic_opts = relic_choices(party, stars=rstars)
-        foes = [_serialize(foe)]
+        foes_data = [_serialize(f) for f in foes]
         party_data = [_serialize(p) for p in combat_party.members]
         choice_data = [
             {
@@ -657,7 +715,7 @@ class BattleRoom(Room):
             "card_choices": choice_data,
             "relic_choices": relic_choice_data,
             "loot": loot,
-            "foes": foes,
+            "foes": foes_data,
             "room_number": self.node.index,
             "exp_reward": exp_reward,
             "enrage": {"active": enrage_active, "stacks": enrage_stacks},

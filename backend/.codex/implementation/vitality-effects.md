@@ -9,3 +9,5 @@
   each action. The DoT has no turn limit and drains 5% of max HP per stack each
   tick. For every 1% of max HP drained, the Dark user gains matching attack and
   defense. All Shadow Siphon stacks are cleared when the battle ends.
+- Wind damage type users strike all remaining foes after their first hit,
+  repeating the damage and rolling their Gale Erosion DoT on each target.
