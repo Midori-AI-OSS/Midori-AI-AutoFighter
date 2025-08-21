@@ -35,6 +35,7 @@ from autofighter.rooms import ShopRoom
 from autofighter.rooms import _choose_foe
 from autofighter.rooms import _scale_stats
 from autofighter.rooms import _serialize
+from autofighter.stats import Stats
 from autofighter.stats import apply_status_hooks
 from autofighter.gacha import GachaManager
 from autofighter.mapgen import MapGenerator
@@ -722,6 +723,7 @@ def save_party(run_id: str, party: Party) -> None:
 async def _run_battle(
     run_id: str,
     room: BattleRoom,
+    foe: Stats,
     party: Party,
     data: dict[str, Any],
     state: dict[str, Any],
@@ -729,7 +731,7 @@ async def _run_battle(
     progress: Callable[[dict[str, Any]], Awaitable[None]],
 ) -> None:
     try:
-        result = await room.resolve(party, data, progress)
+        result = await room.resolve(party, data, progress, foe)
         state["battle"] = False
         has_card_choices = bool(result.get("card_choices"))
         has_relic_choices = bool(result.get("relic_choices"))
@@ -856,7 +858,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         battle_snapshots[run_id] = snapshot
 
     task = asyncio.create_task(
-        _run_battle(run_id, room, party, data, state, rooms, progress)
+        _run_battle(run_id, room, foe, party, data, state, rooms, progress)
     )
     battle_tasks[run_id] = task
     app.logger.info(

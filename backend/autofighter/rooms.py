@@ -275,12 +275,14 @@ class BattleRoom(Room):
         party: Party,
         data: dict[str, Any],
         progress: Callable[[dict[str, Any]], Awaitable[None]] | None = None,
+        foe: Stats | None = None,
     ) -> dict[str, Any]:
         registry = PassiveRegistry()
         start_gold = party.gold
-        foe = _choose_foe(party)
-        # TODO: Extend to support battles with multiple foes and target selection.
-        _scale_stats(foe, self.node, self.strength)
+        if foe is None:
+            foe = _choose_foe(party)
+            # TODO: Extend to support battles with multiple foes and target selection.
+            _scale_stats(foe, self.node, self.strength)
         combat_party = Party(
             members=[copy.deepcopy(m) for m in party.members],
             gold=party.gold,
