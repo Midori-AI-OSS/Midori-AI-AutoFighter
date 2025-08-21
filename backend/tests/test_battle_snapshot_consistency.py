@@ -46,16 +46,15 @@ async def test_foe_element_stable_across_snapshots(app_with_db, monkeypatch):
 
     import autofighter.rooms as rooms_module
 
-    monkeypatch.setattr(app_module, "_choose_foe", choose_foe)
     monkeypatch.setattr(rooms_module, "_choose_foe", choose_foe)
     monkeypatch.setattr(app_module, "_scale_stats", lambda *args, **kwargs: None)
     monkeypatch.setattr(rooms_module, "_scale_stats", lambda *args, **kwargs: None)
 
     original_run_battle = app_module._run_battle
 
-    async def delayed_run_battle(run_id, room, foe, party, data, state, rooms, progress):
+    async def delayed_run_battle(run_id, room, foes, party, data, state, rooms, progress):
         await asyncio.sleep(0)
-        return await original_run_battle(run_id, room, foe, party, data, state, rooms, progress)
+        return await original_run_battle(run_id, room, foes, party, data, state, rooms, progress)
 
     monkeypatch.setattr(app_module, "_run_battle", delayed_run_battle)
 

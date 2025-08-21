@@ -32,7 +32,7 @@ from autofighter.rooms import BossRoom
 from autofighter.rooms import ChatRoom
 from autofighter.rooms import RestRoom
 from autofighter.rooms import ShopRoom
-from autofighter.rooms import _choose_foe
+from autofighter.rooms import _build_foes
 from autofighter.rooms import _scale_stats
 from autofighter.rooms import _serialize
 from autofighter.stats import Stats
@@ -764,7 +764,7 @@ def save_party(run_id: str, party: Party) -> None:
 async def _run_battle(
     run_id: str,
     room: BattleRoom,
-    foe: Stats,
+    foes: Stats | list[Stats],
     party: Party,
     data: dict[str, Any],
     state: dict[str, Any],
@@ -772,7 +772,7 @@ async def _run_battle(
     progress: Callable[[dict[str, Any]], Awaitable[None]],
 ) -> None:
     try:
-        result = await room.resolve(party, data, progress, foe)
+        result = await room.resolve(party, data, progress, foes)
         state["battle"] = False
         # If the party was defeated, immediately end the run and publish the final snapshot
         if result.get("result") == "defeat":
@@ -909,8 +909,9 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     state["battle"] = True
     await asyncio.to_thread(save_map, run_id, state)
     room = BattleRoom(node)
-    foe = _choose_foe(party)
-    _scale_stats(foe, node, room.strength)
+    foes = _build_foes(node, party)
+    for f in foes:
+        _scale_stats(f, node, room.strength)
     combat_party = Party(
         members=[copy.deepcopy(m) for m in party.members],
         gold=party.gold,
@@ -921,7 +922,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
     battle_snapshots[run_id] = {
         "result": "battle",
         "party": [_serialize(m) for m in combat_party.members],
-        "foes": [_serialize(foe)],
+        "foes": [_serialize(f) for f in foes],
         "gold": party.gold,
         "relics": party.relics,
         "cards": party.cards,
@@ -937,7 +938,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         battle_snapshots[run_id] = snapshot
 
     task = asyncio.create_task(
-        _run_battle(run_id, room, foe, party, data, state, rooms, progress)
+        _run_battle(run_id, room, foes, party, data, state, rooms, progress)
     )
     battle_tasks[run_id] = task
     app.logger.info(

@@ -278,6 +278,11 @@ def _choose_foe(party: Party) -> FoeBase:
     return foe
 
 
+def _build_foes(node: MapNode, party: Party) -> list[FoeBase]:
+    count = min(10, 1 + node.pressure // 5)
+    return [_choose_foe(party) for _ in range(count)]
+
+
 @dataclass
 class Room:
     node: MapNode
@@ -300,11 +305,12 @@ class BattleRoom(Room):
         registry = PassiveRegistry()
         start_gold = party.gold
         if foe is None:
-            foe = _choose_foe(party)
-        foes = foe if isinstance(foe, list) else [foe]
+            foes = _build_foes(self.node, party)
+        else:
+            foes = foe if isinstance(foe, list) else [foe]
         for f in foes:
-            # TODO: Extend to support battles with multiple foes and target selection.
             _scale_stats(f, self.node, self.strength)
+        base_atks = [f.atk for f in foes]
         foe = foes[0]
         combat_party = Party(
             members=[copy.deepcopy(m) for m in party.members],
@@ -339,7 +345,6 @@ class BattleRoom(Room):
             BUS.emit("battle_start", member)
             registry.trigger("battle_start", member)
 
-        base_foe_atk = foe.atk
         enrage_active = False
         enrage_stacks = 0
         enrage_bleed_applies = 0  # how many times we've applied enrage bleed
@@ -366,16 +371,18 @@ class BattleRoom(Room):
                 if turn > threshold:
                     if not enrage_active:
                         enrage_active = True
-                        foe.passives.append("Enraged")
+                        for f in foes:
+                            f.passives.append("Enraged")
                         console.log("Enrage activated")
                     enrage_stacks = turn - threshold
-                    foe.atk = int(base_foe_atk * (1 + 0.4 * enrage_stacks))
+                    for i, f in enumerate(foes):
+                        f.atk = int(base_atks[i] * (1 + 0.4 * enrage_stacks))
                 turn_start = time.perf_counter()
                 registry.trigger("turn_start", member)
                 console.log(f"{member.id} turn start")
                 await member.maybe_regain(turn)
                 alive_foe_idxs = [i for i, f in enumerate(foes) if f.hp > 0]
-                foe_idx = alive_foe_idxs[0]
+                foe_idx = random.choice(alive_foe_idxs)
                 foe = foes[foe_idx]
                 foe_mgr = foe_effects[foe_idx]
                 await member_effect.tick(foe_mgr)
@@ -467,19 +474,18 @@ class BattleRoom(Room):
                     if turns_since_enrage >= next_trigger:
                         stacks_to_add = 1 + enrage_bleed_applies
                         from autofighter.effects import DamageOverTime
-                        # Apply to each party member
                         for mgr in party_effects:
                             for _ in range(stacks_to_add):
                                 dmg_per_tick = int(max(mgr.stats.max_hp, 1) * 0.05)
                                 mgr.add_dot(DamageOverTime("Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"))
-                        # Apply to the foe
-                        for _ in range(stacks_to_add):
-                            dmg_per_tick = int(max(foe.max_hp, 1) * 0.05)
-                            foe_mgr.add_dot(
-                                DamageOverTime(
-                                    "Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"
+                        for mgr, foe_obj in zip(foe_effects, foes):
+                            for _ in range(stacks_to_add):
+                                dmg_per_tick = int(max(foe_obj.max_hp, 1) * 0.05)
+                                mgr.add_dot(
+                                    DamageOverTime(
+                                        "Enrage Bleed", dmg_per_tick, 10, "enrage_bleed"
+                                    )
                                 )
-                            )
                         enrage_bleed_applies += 1
                 registry.trigger("turn_end", member)
                 if progress is not None:
