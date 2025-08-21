@@ -324,9 +324,11 @@ class BattleRoom(Room):
             member.effect_manager = mgr
             party_effects.append(mgr)
 
+        BUS.emit("battle_start", foe)
         registry.trigger("battle_start", foe)
         console.log(f"Battle start: {foe.id} vs {[m.id for m in combat_party.members]}")
         for member_effect, member in zip(party_effects, combat_party.members):
+            BUS.emit("battle_start", member)
             registry.trigger("battle_start", member)
 
         base_foe_atk = foe.atk
@@ -531,9 +533,11 @@ class BattleRoom(Room):
                 continue
             break
 
+        BUS.emit("battle_end", foe)
         registry.trigger("battle_end", foe)
         console.log("Battle end")
         for member in combat_party.members:
+            BUS.emit("battle_end", member)
             registry.trigger("battle_end", member)
         for member, orig in zip(combat_party.members, party.members):
             orig.gain_exp(exp_reward)

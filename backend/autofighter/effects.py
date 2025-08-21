@@ -23,8 +23,19 @@ class DamageOverTime:
 
     async def tick(self, target: Stats, *_: object) -> bool:
         attacker = self.source or target
-        dmg = target.base_damage_type.on_dot_damage_taken(self.damage, attacker, target)
-        dmg = target.base_damage_type.on_party_dot_damage_taken(dmg, attacker, target)
+        dmg = target.base_damage_type.on_dot_damage_taken(
+            self.damage,
+            attacker,
+            target,
+        )
+        dmg = target.base_damage_type.on_party_dot_damage_taken(
+            dmg,
+            attacker,
+            target,
+        )
+        source_type = getattr(attacker, "base_damage_type", None)
+        if source_type is not target.base_damage_type:
+            dmg = source_type.on_party_dot_damage_taken(dmg, attacker, target)
         await target.apply_damage(int(dmg), attacker=attacker)
         self.turns -= 1
         return self.turns > 0

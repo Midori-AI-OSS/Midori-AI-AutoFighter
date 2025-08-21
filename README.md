@@ -142,12 +142,15 @@ types.
 
 DoT and HoT plugins manage ongoing damage or recovery. Supported DoTs include
 Bleed, Celestial Atrophy, Abyssal Corruption (spreads on death), Blazing
-Torment (extra tick on action), Cold Wound (five-stack cap), and Impact Echo
-(half of the last hit each turn). HoTs cover Regeneration, Player Echo, and
-Player Heal. Light characters additionally apply a weak Radiant Regeneration
-HoT to all allies each action, and if an ally falls below a quarter of their
-health they prioritize a direct heal over attacking. Foes regenerate at one
-hundredth the player rate to prevent drawn-out encounters.
+Torment (extra tick on action), Cold Wound (five-stack cap), Impact Echo
+(half of the last hit each turn), and Shadow Siphon. Shadow Siphon is applied by
+Dark characters to every party member on each action; stacks never expire and
+drain 5% of max HP per tick while granting the caster matching attack and
+defense for the HP lost. HoTs cover Regeneration, Player Echo, and Player Heal.
+Light characters additionally apply a weak Radiant Regeneration HoT to all
+allies each action, and if an ally falls below a quarter of their health they
+prioritize a direct heal over attacking. Foes regenerate at one hundredth the
+player rate to prevent drawn-out encounters.
 
 ## Battle Room
 
