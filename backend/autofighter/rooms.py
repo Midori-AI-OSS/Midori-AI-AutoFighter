@@ -597,8 +597,9 @@ class BattleRoom(Room):
         # Rare drop rate multiplies the number of element upgrade items but
         # never their star rank.
         item_base = 1 * party.rdr
-        item_count = int(item_base)
-        if random.random() < item_base - item_count:
+        base_int = int(item_base)
+        item_count = max(1, base_int)
+        if random.random() < item_base - base_int:
             item_count += 1
         items = [
             {"id": random.choice(ELEMENTS), "stars": _pick_item_stars(self)}
