@@ -11,6 +11,7 @@ Combatants use the shared `Stats` dataclass from `autofighter/stats.py`. Integer
 
 Plugins under `plugins/dots/` and `plugins/hots/` subclass the base effect classes to implement specific behaviors.
 Lightning damage pops all active DoTs on hit, applying 25% of each effect's damage immediately without reducing remaining turns.
+Fire damage scales with missing HP, multiplying outgoing damage by `1 + (1 - hp/max_hp)` so attacks double at zero health.
 
 ## Supported DoTs
 - Bleed – deals 2% of Max HP each turn.
@@ -20,7 +21,7 @@ Lightning damage pops all active DoTs on hit, applying 25% of each effect's dama
 - Gale Erosion – strips Mitigation each tick.
 - Charged Decay – stuns on the final tick.
 - Frozen Wound – reduces Actions per Turn.
-- Blazing Torment – gains an extra tick whenever the target acts.
+- Blazing Torment – stackable and gains an extra tick whenever the target acts.
 - Cold Wound – stacks up to five times.
 - Twilight Decay – drains Vitality per tick.
 - Impact Echo – repeats 50% of the last damage taken for three turns.

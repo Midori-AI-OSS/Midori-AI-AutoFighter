@@ -23,7 +23,7 @@ normal rate to accelerate early progression. Level-ups increase core stats but
 no longer restore HP, preserving damage taken.
 
 `apply_damage()` and `apply_healing()` update `hp`, fire damage and healing hooks on the attacker and target damage types, and emit
-global `damage_taken`, `damage_dealt`, `heal_received`, and `heal` events on the repository-wide event bus.
+global `damage_taken`, `damage_dealt`, `heal_received`, and `heal` events on the repository-wide event bus. Fire's `on_damage` hook multiplies outgoing damage by `1 + (1 - hp/max_hp)`, doubling attacks at zero HP.
 
 ## Modifiers
 Stat changes may be applied in two ways:
@@ -37,7 +37,7 @@ Effects and passives mutate these fields directly. Percentage values are express
 `EffectManager` tracks `DamageOverTime` and `HealingOverTime` instances on a `Stats` object. Ticks call the target's damage type
 hooks so plugins can modify dot damage or hot healing globally. Damage types may also create new DoT effects when they land
 attacks via `maybe_inflict_dot`, which rolls the attacker's `effect_hit_rate` against the target's `effect_resistance` before
-adding the effect. The difference is clamped to zero and jittered by ±10%, and there is always at least a 1% chance to apply the status.
+adding the effect. The difference is clamped to zero and jittered by ±10%, and there is always at least a 1% chance to apply the status. Fire strikes apply the stackable Blazing Torment DoT, which gains an extra tick whenever the target acts.
 
 - `add_dot(effect, max_stacks=None)` – registers a DoT. Effects with the same
   ID stack independently, but a `max_stacks` cap can limit simultaneous copies.

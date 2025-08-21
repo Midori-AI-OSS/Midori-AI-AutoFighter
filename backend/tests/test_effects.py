@@ -1,11 +1,11 @@
-import autofighter.effects as effects
-
 import pytest
 
-from autofighter.stats import Stats
-from plugins.event_bus import EventBus
+import autofighter.effects as effects
+
 from autofighter.effects import EffectManager
+from autofighter.stats import Stats
 from plugins.damage_types.fire import Fire
+from plugins.event_bus import EventBus
 
 
 def test_dot_applies_with_hit_rate():
@@ -16,7 +16,13 @@ def test_dot_applies_with_hit_rate():
     assert target.dots
 
 
-import pytest
+def test_blazing_torment_stacks():
+    attacker = Stats(atk=50, effect_hit_rate=2.0, base_damage_type=Fire())
+    target = Stats(effect_resistance=0.0)
+    manager = EffectManager(target)
+    manager.maybe_inflict_dot(attacker, 50)
+    manager.maybe_inflict_dot(attacker, 50)
+    assert target.dots.count("fire_dot") == 2
 
 
 @pytest.mark.asyncio
@@ -49,3 +55,4 @@ def test_dot_has_minimum_chance(monkeypatch):
     monkeypatch.setattr(effects.random, "random", lambda: 0.0)
     manager.maybe_inflict_dot(attacker, 10)
     assert target.dots
+

@@ -140,9 +140,10 @@ types.
 
 ## Damage and Healing Effects
 
+Fire attacks grow stronger as the attacker loses HP, doubling at zero health.
 DoT and HoT plugins manage ongoing damage or recovery. Supported DoTs include
 Bleed, Celestial Atrophy, Abyssal Corruption (spreads on death), Blazing
-Torment (extra tick on action), Cold Wound (five-stack cap), Impact Echo
+Torment (stacking, extra tick on action), Cold Wound (five-stack cap), Impact Echo
 (half of the last hit each turn), and Shadow Siphon. Shadow Siphon is applied by
 Dark characters to every party member on each action; stacks never expire and
 drain 5% of max HP per tick while granting the caster matching attack and
