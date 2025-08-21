@@ -2,6 +2,7 @@ import asyncio
 from dataclasses import dataclass
 
 from autofighter.effects import DamageOverTime
+from plugins.dots.charged_decay import ChargedDecay
 from plugins.damage_types._base import DamageTypeBase
 
 
@@ -12,7 +13,9 @@ class Lightning(DamageTypeBase):
     color = (255, 255, 0)
 
     def create_dot(self, damage: float, source) -> DamageOverTime | None:
-        return DamageOverTime("Charged Decay", int(damage * 0.25), 3, "lightning_dot", source)
+        dot = ChargedDecay(int(damage * 0.25), 3)
+        dot.source = source
+        return dot
 
     def on_hit(self, attacker, target) -> None:
         mgr = getattr(target, "effect_manager", None)

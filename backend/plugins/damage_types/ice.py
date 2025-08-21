@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from autofighter.effects import DamageOverTime
+from plugins.dots.frozen_wound import FrozenWound
 from plugins.damage_types._base import DamageTypeBase
 
 
@@ -11,4 +12,6 @@ class Ice(DamageTypeBase):
     color = (0, 255, 255)
 
     def create_dot(self, damage: float, source) -> DamageOverTime | None:
-        return DamageOverTime("Frozen Wound", int(damage * 0.25), 3, "ice_dot", source)
+        dot = FrozenWound(int(damage * 0.25), 3)
+        dot.source = source
+        return dot

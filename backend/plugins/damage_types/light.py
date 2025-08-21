@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from autofighter.effects import DamageOverTime
+from plugins.dots.celestial_atrophy import CelestialAtrophy
 from plugins.damage_types._base import DamageTypeBase
 from plugins.hots.radiant_regeneration import RadiantRegeneration
 
@@ -12,7 +13,9 @@ class Light(DamageTypeBase):
     color = (255, 255, 255)
 
     def create_dot(self, damage: float, source) -> DamageOverTime | None:
-        return DamageOverTime("Celestial Atrophy", int(damage * 0.3), 3, "light_dot", source)
+        dot = CelestialAtrophy(int(damage * 0.3), 3)
+        dot.source = source
+        return dot
 
     async def on_action(self, actor, allies, enemies):
         for ally in allies:

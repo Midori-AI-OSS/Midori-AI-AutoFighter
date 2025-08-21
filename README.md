@@ -140,20 +140,34 @@ types.
 
 ## Damage and Healing Effects
 
-Fire attacks grow stronger as the attacker loses HP, doubling at zero health.
+Elemental damage types hook into attacks:
+
+- **[Fire](backend/plugins/damage_types/fire.py)** – Damage scales with missing HP and applies [Blazing Torment](backend/plugins/dots/blazing_torment.py), a stackable DoT that ticks again when the target acts.
+- **[Ice](backend/plugins/damage_types/ice.py)** – Inflicts [Frozen Wound](backend/plugins/dots/frozen_wound.py), which lowers the victim's actions per turn and adds a 1% miss chance per stack. Some skills use [Cold Wound](backend/plugins/dots/cold_wound.py) with a five-stack limit.
+- **[Lightning](backend/plugins/damage_types/lightning.py)** – Pops every active DoT on hit, dealing 25% of each effect's damage immediately, and applies [Charged Decay](backend/plugins/dots/charged_decay.py), which stuns on its final tick.
+- **[Wind](backend/plugins/damage_types/wind.py)** – After the first hit, repeats the strike on each remaining foe and rolls [Gale Erosion](backend/plugins/dots/gale_erosion.py) on every target, shaving Mitigation each tick.
+- **[Light](backend/plugins/damage_types/light.py)** – Creates [Celestial Atrophy](backend/plugins/dots/celestial_atrophy.py) and grants allies [Radiant Regeneration](backend/plugins/hots/radiant_regeneration.py) every action. If an ally falls below 25% HP, the attack is replaced with a direct heal.
+- **[Dark](backend/plugins/damage_types/dark.py)** – Spreads [Abyssal Corruption](backend/plugins/dots/abyssal_corruption.py) and adds a permanent [Shadow Siphon](backend/plugins/dots/shadow_siphon.py) to each party member every turn, draining 5% max HP per tick while feeding attack and defense back to the caster.
+
 DoT and HoT plugins manage ongoing damage or recovery. Supported DoTs include
-Bleed, Celestial Atrophy, Abyssal Corruption (spreads on death), Blazing
-Torment (stacking, extra tick on action), Cold Wound (five-stack cap), Frozen Wound
-(1% miss chance per stack), Impact Echo (half of the last hit each turn), and Shadow Siphon. Shadow Siphon is applied by
-Dark characters to every party member on each action; stacks never expire and
-drain 5% of max HP per tick while granting the caster matching attack and
-defense for the HP lost. HoTs cover Regeneration, Player Echo, and Player Heal.
-Light characters additionally apply a weak Radiant Regeneration HoT to all
-allies each action, and if an ally falls below a quarter of their health they
-prioritize a direct heal over attacking. Foes regenerate at one hundredth the
-player rate to prevent drawn-out encounters. Wind attackers strike every remaining foe after
-their first hit, repeating the damage and rolling Gale Erosion on each target.
-Lightning hits pop every DoT on the target, dealing 25% of each effect's damage immediately while leaving the stacks intact.
+[Bleed](backend/plugins/dots/bleed.py),
+[Poison](backend/plugins/dots/poison.py),
+[Celestial Atrophy](backend/plugins/dots/celestial_atrophy.py),
+[Abyssal Corruption](backend/plugins/dots/abyssal_corruption.py),
+[Abyssal Weakness](backend/plugins/dots/abyssal_weakness.py),
+[Gale Erosion](backend/plugins/dots/gale_erosion.py),
+[Charged Decay](backend/plugins/dots/charged_decay.py),
+[Frozen Wound](backend/plugins/dots/frozen_wound.py),
+[Blazing Torment](backend/plugins/dots/blazing_torment.py),
+[Cold Wound](backend/plugins/dots/cold_wound.py),
+[Twilight Decay](backend/plugins/dots/twilight_decay.py),
+[Impact Echo](backend/plugins/dots/impact_echo.py),
+and [Shadow Siphon](backend/plugins/dots/shadow_siphon.py).
+HoTs cover [Regeneration](backend/plugins/hots/regeneration.py),
+[Player Echo](backend/plugins/hots/player_echo.py),
+[Player Heal](backend/plugins/hots/player_heal.py),
+and [Radiant Regeneration](backend/plugins/hots/radiant_regeneration.py).
+Foes regenerate at one hundredth the player rate to prevent drawn-out encounters.
 
 ## Battle Room
 

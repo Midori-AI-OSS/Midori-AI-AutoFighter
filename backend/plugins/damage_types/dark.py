@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
-from autofighter.effects import DamageOverTime
 from autofighter.stats import BUS
+from autofighter.effects import DamageOverTime
 from plugins.dots.shadow_siphon import ShadowSiphon
+from plugins.dots.abyssal_corruption import AbyssalCorruption
 from plugins.damage_types._base import DamageTypeBase
 
 
@@ -49,10 +50,6 @@ class Dark(DamageTypeBase):
         return damage
 
     def create_dot(self, damage: float, source) -> DamageOverTime | None:
-        return DamageOverTime(
-            "Abyssal Corruption",
-            int(damage * 0.4),
-            3,
-            "dark_dot",
-            source,
-        )
+        dot = AbyssalCorruption(int(damage * 0.4), 3)
+        dot.source = source
+        return dot
