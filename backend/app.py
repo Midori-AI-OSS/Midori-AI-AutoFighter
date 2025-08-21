@@ -773,6 +773,19 @@ async def _run_battle(
 ) -> None:
     try:
         result = await room.resolve(party, data, progress, foes)
+        loot_items = result.get("loot", {}).get("items", [])
+        manager = GachaManager(SAVE_MANAGER)
+        items = manager._get_items()
+        for entry in loot_items:
+            if entry.get("id") == "ticket":
+                items["ticket"] = items.get("ticket", 0) + 1
+            else:
+                key = f"{entry['id']}_{entry['stars']}"
+                items[key] = items.get(key, 0) + 1
+        if manager._get_auto_craft():
+            manager._auto_craft(items)
+        manager._set_items(items)
+        result["items"] = items
         state["battle"] = False
         # If the party was defeated, immediately end the run and publish the final snapshot
         if result.get("result") == "defeat":
