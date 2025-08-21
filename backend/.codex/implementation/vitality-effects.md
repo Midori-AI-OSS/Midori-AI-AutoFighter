@@ -11,3 +11,5 @@
   defense. All Shadow Siphon stacks are cleared when the battle ends.
 - Wind damage type users strike all remaining foes after their first hit,
   repeating the damage and rolling their Gale Erosion DoT on each target.
+- Frozen Wound stacks reduce actions per turn and give the afflicted unit a
+  `1% × stacks` chance to miss their next action.

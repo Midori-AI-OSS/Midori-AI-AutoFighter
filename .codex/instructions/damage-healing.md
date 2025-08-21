@@ -20,7 +20,7 @@ Fire damage scales with missing HP, multiplying outgoing damage by `1 + (1 - hp/
 - Abyssal Weakness – lowers Defense while active.
 - Gale Erosion – strips Mitigation each tick.
 - Charged Decay – stuns on the final tick.
-- Frozen Wound – reduces Actions per Turn.
+- Frozen Wound – reduces Actions per Turn and adds a 1% miss chance per stack.
 - Blazing Torment – stackable and gains an extra tick whenever the target acts.
 - Cold Wound – stacks up to five times.
 - Twilight Decay – drains Vitality per tick.
