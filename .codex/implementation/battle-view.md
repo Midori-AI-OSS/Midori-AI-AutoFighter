@@ -8,6 +8,8 @@ beneath Pokémon-style HP bars that track current health.
 
 Each combatant lists HP, ATK, DEF, mitigation, and crit rate beside the portrait, mirroring the same order for party and foes. HoT/DoT markers appear beneath each portrait, collapsing duplicate effects into a single icon that shows a small stack count. Shared fallback art appears when portraits are missing, and the layout scales down on small screens so both the bars and numeric values remain readable.
 
+Foe portraits show the element reported by the backend. If a foe lacks both an `element` and `base_damage_type`, the view renders a neutral placeholder icon instead of guessing from the foe's ID.
+
 Snapshots from the backend are polled once per frame-rate tick rather than on a
 fixed interval and the polling delay honors 30/60/120 fps settings without a
 50 ms floor. Each request dispatches events with the round-trip time so

@@ -17,7 +17,7 @@ describe('PartyPicker component', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/PartyPicker.svelte'), 'utf8');
     expect(content).toContain('filter((p) => p.owned || p.is_player)');
     expect(content).toContain('selected = selected.filter((id) => roster.some((c) => c.id === id))');
-    expect(content).toContain("element: p.element?.name ?? p.element ?? 'Generic'");
+    expect(content).toContain('element: resolveElement(p)');
   });
 
   test('orders stats correctly', () => {

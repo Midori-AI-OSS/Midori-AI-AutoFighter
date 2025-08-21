@@ -49,14 +49,21 @@ describe('BattleView layout and polling', () => {
   test('shows hp bars and core stats', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
     expect(content).toContain('hp-bar');
-    expect(content).toContain('DEF {');
-    expect(content).toContain('CRIT');
+    expect(content).toContain('<span class="k">DEF</span>');
+    expect(content).toContain('CRate');
+    expect(content).toContain('CDmg');
   });
 
   test('groups duplicate effects with stack counts', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
     expect(content).toContain('groupEffects');
     expect(content).toContain('stack');
+  });
+
+  test('uses backend element for foe portrait', () => {
+    const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
+    expect(content).toContain('getElementIcon(foe.element)');
+    expect(content).toContain('getElementColor(foe.element)');
   });
 
   test('polling respects framerate settings', async () => {

@@ -130,13 +130,13 @@
       if (snap.foes) {
         const prevById = new Map((foes || []).map(f => [f.id, f]));
         const enrichedFoes = (snap.foes || []).map(f => {
-          // Prefer backend-provided element/base_damage_type, including 'Generic'.
+          // Prefer backend-provided element/base_damage_type.
           let elem = f.element || f.base_damage_type;
           let resolved = typeof elem === 'string' ? elem : (elem?.id || elem?.name);
           if (!resolved) {
-            // As a last resort, fall back to previous known element or guess by id.
+            // Fall back to previously known element if available; otherwise leave empty
             const prev = prevById.get(f.id);
-            resolved = prev?.element || prev?.base_damage_type || guessElementFromId(f.id);
+            resolved = prev?.element || prev?.base_damage_type || '';
           }
           return { ...f, element: resolved };
         });
@@ -261,13 +261,13 @@
               src={getCharacterImage(foe.id)}
               alt=""
               class="portrait"
-              style={`border-color: ${getElementColor(elementOf(foe))}`}
+              style={`border-color: ${getElementColor(foe.element)}`}
             />
             <div class="element-chip">
               <svelte:component
-                this={getElementIcon(elementOf(foe))}
+                this={getElementIcon(foe.element)}
                 class="element-icon"
-                style={`color: ${getElementColor(elementOf(foe))}`}
+                style={`color: ${getElementColor(foe.element)}`}
                 aria-hidden="true" />
             </div>
           </div>
