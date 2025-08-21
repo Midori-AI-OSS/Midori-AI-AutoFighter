@@ -295,7 +295,13 @@ class BattleRoom(Room):
         party.rdr = combat_party.rdr
 
         foe_effects = EffectManager(foe)
-        party_effects = [EffectManager(m) for m in combat_party.members]
+        foe.effect_manager = foe_effects
+
+        party_effects = []
+        for member in combat_party.members:
+            mgr = EffectManager(member)
+            member.effect_manager = mgr
+            party_effects.append(mgr)
 
         registry.trigger("battle_start", foe)
         console.log(f"Battle start: {foe.id} vs {[m.id for m in combat_party.members]}")
@@ -343,7 +349,34 @@ class BattleRoom(Room):
                     if elapsed < 0.5:
                         await asyncio.sleep(0.5 - elapsed)
                     continue
-                await member_effect.on_action()
+                proceed = await member_effect.on_action()
+                if proceed:
+                    proceed = await member.base_damage_type.on_action(
+                        member,
+                        combat_party.members,
+                        [foe],
+                    )
+                if not proceed:
+                    registry.trigger("turn_end", member)
+                    if progress is not None:
+                        await progress(
+                            {
+                                "result": "battle",
+                                "party": [
+                                    _serialize(m) for m in combat_party.members
+                                ],
+                                "foes": [_serialize(foe)],
+                                "enrage": {
+                                    "active": enrage_active,
+                                    "stacks": enrage_stacks,
+                                },
+                                "rdr": party.rdr,
+                            }
+                        )
+                    elapsed = time.perf_counter() - turn_start
+                    if elapsed < 0.5:
+                        await asyncio.sleep(0.5 - elapsed)
+                    continue
                 dmg = await foe.apply_damage(member.atk, attacker=member)
                 console.log(
                     f"[light_red]{member.id} hits {foe.id} for {dmg}[/]"
@@ -426,7 +459,34 @@ class BattleRoom(Room):
                     if elapsed < 0.5:
                         await asyncio.sleep(0.5 - elapsed)
                     break
-                await foe_effects.on_action()
+                proceed = await foe_effects.on_action()
+                if proceed:
+                    proceed = await foe.base_damage_type.on_action(
+                        foe,
+                        [foe],
+                        combat_party.members,
+                    )
+                if not proceed:
+                    registry.trigger("turn_end", foe)
+                    if progress is not None:
+                        await progress(
+                            {
+                                "result": "battle",
+                                "party": [
+                                    _serialize(m) for m in combat_party.members
+                                ],
+                                "foes": [_serialize(foe)],
+                                "enrage": {
+                                    "active": enrage_active,
+                                    "stacks": enrage_stacks,
+                                },
+                                "rdr": party.rdr,
+                            }
+                        )
+                    elapsed = time.perf_counter() - turn_start
+                    if elapsed < 0.5:
+                        await asyncio.sleep(0.5 - elapsed)
+                    continue
                 dmg = await target.apply_damage(foe.atk, attacker=foe)
                 console.log(
                     f"[light_red]{foe.id} hits {target.id} for {dmg}[/]"

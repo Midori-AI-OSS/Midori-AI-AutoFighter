@@ -32,6 +32,16 @@ class DamageTypeBase:
             return incoming_damage * 0.75
         return incoming_damage
 
+    async def on_action(
+        self, actor: "Stats", allies: list["Stats"], enemies: list["Stats"]
+    ) -> bool:
+        """Called before ``actor`` takes an action.
+
+        Return ``False`` to cancel the action.
+        """
+
+        return True
+
     # Event hooks -----------------------------------------------------------
 
     def on_hit(self, attacker: Stats, target: Stats) -> None:

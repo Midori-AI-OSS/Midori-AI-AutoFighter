@@ -115,11 +115,19 @@ class EffectManager:
                 if callable(on_death):
                     on_death(others)
 
-    async def on_action(self) -> None:
+    async def on_action(self) -> bool:
+        """Run any per-action hooks on attached effects.
+
+        Returns ``False`` if any effect cancels the action.
+        """
+
         for eff in list(self.dots) + list(self.hots):
             handler = getattr(eff, "on_action", None)
             if callable(handler):
                 self._console.log(f"{self.stats.id} {eff.name} action")
                 result = handler(self.stats)
                 if hasattr(result, "__await"):
-                    await result
+                    result = await result
+                if result is False:
+                    return False
+        return True
