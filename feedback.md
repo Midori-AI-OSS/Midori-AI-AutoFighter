@@ -48,6 +48,11 @@ Details
 - Symptom: The top-left snapshot panel reads `Updating...` while the battle snapshot is being fetched/updated.
 - Impact: The wording is inconsistent with other UI uses of "sync" and can be confusing; "Syncing..." better indicates the round-trip network synchronization in combat.
 - Suggested follow-up (actionable):
-		- Frontend change: Update `frontend/src/lib/GameViewport.svelte` — change the `<span>Updating...</span>` (snapshot panel) to `<span>Syncing...</span>` so the label matches expected terminology for battle snapshot sync.
-		- Also audit any other occurrences of `Updating...` in the UI and change to `Syncing...` where it refers to network synchronization rather than content being edited.
+                - Frontend change: Update `frontend/src/lib/GameViewport.svelte` — change the `<span>Updating...</span>` (snapshot panel) to `<span>Syncing...</span>` so the label matches expected terminology for battle snapshot sync.
+                - Also audit any other occurrences of `Updating...` in the UI and change to `Syncing...` where it refers to network synchronization rather than content being edited.
+
+### 6) Loot system follow-up (New issue)
+- Symptom: Rare drop rate now multiplies gold rewards, relic odds, upgrade item counts, ticket chances, and—at extreme levels—can roll to raise relic and card star ranks. Future features may not reference it consistently.
+- Impact: New rooms or relics could ignore `rdr`, leading to inconsistent loot expectations.
+- Suggested follow-up: Document `rdr` usage in future design notes and ensure new content hooks into the existing `gold_earned` event and item-generation helpers.
 

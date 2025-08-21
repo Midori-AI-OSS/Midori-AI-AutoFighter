@@ -10,6 +10,7 @@ The `Stats` dataclass stores core attributes for both players and foes:
 - **Defense:** `defense`, `mitigation`, `regain`, `dodge_odds`, `effect_resistance`
 - **Vitality & Advanced:** `vitality`, `action_points`, `damage_taken`, `damage_dealt`, `kills`
 - **Status Lists:** `passives`, `dots`, `hots`, `damage_types`, `relics`
+- **Party:** `gold`, `rdr` – run-wide currency and rare drop rate multiplier applied to gold, upgrade item counts, relic odds, pull ticket chances, and (at extreme values) can roll to raise relic and card star ranks
 
 `base_damage_type` is a `DamageType` plugin instance (default `Generic`) instead of a string, allowing damage hooks.
 Characters with random base damage types store their first rolled element in the

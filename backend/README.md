@@ -33,6 +33,17 @@ Battle resolution awards experience to all party members. Characters below
 level 1000 receive a 10× boost to earned experience, and level-ups are synced
 back to the run along with updated stats.
 
+Victories grant gold, relic choices, upgrade items, and a small chance at pull
+tickets. Gold equals a base value (5 for normal battles, 20 for bosses, 200 for
+floor bosses) multiplied by the loop, a random range, and the party's rare drop
+rate (`rdr`). Relic drops roll `10% × rdr` in normal fights or `50% × rdr` in
+boss and floor-boss rooms. Upgrade items use the foe's element at random, cap at
+4★, and their quantity scales with `rdr` with fractional amounts having a
+matching chance to yield an extra item. Each fight also rolls a `10% × rdr`
+chance to award a pull ticket. `rdr` boosts drop quantity and odds and, at
+extreme values, can roll to upgrade relic and card star ranks (3★→4★ at 1000%
+`rdr`, 4★→5★ at 1,000,000%) though success is never guaranteed.
+
 `GET /gacha` returns the current pity counter, element-based upgrade items,
 owned characters with their duplicate stacks, and whether auto-crafting is
 enabled. `POST /gacha/pull` performs 1, 5, or 10 pulls, awarding 5★ or 6★

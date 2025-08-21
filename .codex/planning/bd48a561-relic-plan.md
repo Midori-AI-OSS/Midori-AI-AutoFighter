@@ -31,7 +31,7 @@ Parent: [Web Game Plan](8a7d9c1e-web-game-plan.md)
  - [x] **Killer Instinct** – When an ally uses their Ultimate, they gain +75% ATK for that turn; if they kill a foe, they immediately take another turn.
 
 ## 3★ Relics
- - [ ] **Greed Engine** – All characters lose 1% HP per turn plus 0.5% per stack. Earn 50% more gold plus 25% per stack and increase rare drop rate by 0.005% plus 0.001% per stack.
+ - [ ] **Greed Engine** – All characters lose 1% HP per turn plus 0.5% per stack. Earn 50% more gold plus 25% per stack and increase rare drop rate by 0.5% plus 0.1% per additional stack.
  - [ ] **Stellar Compass** – Critical hits grant +1.5% ATK and +1.5% gold for the rest of combat, stacking without limit.
  - [ ] **Echoing Drum** – The first attack an ally uses each battle repeats at 25% power plus 25% per stack.
 

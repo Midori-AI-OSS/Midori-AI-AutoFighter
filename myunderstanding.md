@@ -10,6 +10,8 @@ To get the game playable, the map now mimics Slay the Spire with the boss at the
 
 After each battle the backend may return card choices; the viewport now opens a reward overlay with art from `src/lib/assets` so I can pick one before moving on.
 
+Loot now follows room-type tables. Gold uses a base value multiplied by loop, a random range, and the party's rare drop rate (`rdr`). Relics roll `10% × rdr` in normal battles or `50% × rdr` in boss rooms, upgrade items cap at 4★ and scale their quantity with `rdr`, and every fight rolls a `10% × rdr` chance for a pull ticket. `rdr` affects quantities and odds and, at astronomical values, can bump relic and card star ranks with lucky rolls (3★→4★ at 1000% `rdr`, 4★→5★ at 1,000,000%).
+
 This is my current understanding of how the game behaves. I'll update it as new pieces fall into place.
 
 The frontend now ships 24×24 placeholder icons for items, relics, and cards, organized by damage type or star rank so art can drop in later.

@@ -9,29 +9,33 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import fields
 from typing import Any
-from typing import Callable
 from typing import Awaitable
+from typing import Callable
 
 from rich.console import Console
 
-from .party import Party
-from .stats import Stats
 from .mapgen import MapNode
+from .party import Party
 from .passives import PassiveRegistry
-from plugins import foes as foe_plugins
-from plugins import players as player_plugins
-from plugins.foes._base import FoeBase
-from plugins.damage_types import get_damage_type
+from .stats import BUS
+from .stats import Stats
 from autofighter.cards import apply_cards
 from autofighter.cards import card_choices
+from autofighter.effects import EffectManager
 from autofighter.relics import apply_relics
 from autofighter.relics import relic_choices
-from autofighter.effects import EffectManager
+from plugins import foes as foe_plugins
+from plugins import players as player_plugins
+from plugins.damage_types import ALL_DAMAGE_TYPES
+from plugins.damage_types import get_damage_type
+from plugins.foes._base import FoeBase
 
 ENRAGE_TURNS_NORMAL = 100
 ENRAGE_TURNS_BOSS = 500
 
 console = Console()
+
+ELEMENTS = [e.lower() for e in ALL_DAMAGE_TYPES]
 
 
 def _scale_stats(obj: Stats, node: MapNode, strength: float = 1.0) -> None:
@@ -108,11 +112,45 @@ def _pick_card_stars(room: Room) -> int:
     return 1 if roll < 0.80 else 2
 
 
-def _roll_relic_drop(room: Room) -> bool:
+def _roll_relic_drop(room: Room, rdr: float) -> bool:
     roll = random.random()
-    if isinstance(room, BossRoom):
-        return roll < 0.5
-    return roll < 0.1
+    base = 0.5 if isinstance(room, BossRoom) else 0.1
+    return roll < min(base * rdr, 1.0)
+
+
+def _pick_item_stars(room: Room) -> int:
+    """Select an upgrade item star rank based on room difficulty.
+
+    Star ranges come from the room-type tables: normal battles yield 1–2★
+    items, bosses 1–3★, and floor bosses 3–4★. Floor, loop, and Pressure
+    gradually raise the minimum within each band but the result never exceeds
+    4★.
+    """
+
+    node = room.node
+    if node.room_type == "battle-boss-floor":
+        low, high = 3, 4
+    elif isinstance(room, BossRoom) or getattr(room, "strength", 1.0) > 1.0:
+        low, high = 1, 3
+    else:
+        low, high = 1, 2
+
+    base = low + (node.floor - 1) // 20 + (node.loop - 1) + node.pressure // 10
+    return min(base, high)
+
+
+def _calc_gold(room: Room, rdr: float) -> int:
+    node = room.node
+    if node.room_type == "battle-boss-floor":
+        base = 200
+        mult = random.uniform(2.05, 4.25)
+    elif isinstance(room, BossRoom) or getattr(room, "strength", 1.0) > 1.0:
+        base = 20
+        mult = random.uniform(1.53, 2.25)
+    else:
+        base = 5
+        mult = random.uniform(1.01, 1.25)
+    return int(base * node.loop * mult * rdr)
 
 
 def _pick_relic_stars(room: Room) -> int:
@@ -128,6 +166,26 @@ def _pick_relic_stars(room: Room) -> int:
     if roll < 0.9:
         return 2
     return 3
+
+
+def _apply_rdr_to_stars(stars: int, rdr: float) -> int:
+    """Chance to upgrade stars with extreme `rdr` values.
+
+    Each extra star requires 1000× more `rdr` than the last. When `rdr` is
+    at least 1000% (10×), a card or relic can roll to jump from 3★ to 4★. At
+    1,000,000% (10 000×), it can try for 5★. The odds scale with `rdr` but are
+    capped below certainty so lucky rolls are still required.
+    """
+
+    for threshold in (10.0, 10000.0):
+        if stars >= 5 or rdr < threshold:
+            break
+        chance = min(rdr / (threshold * 10.0), 0.99)
+        if random.random() < chance:
+            stars += 1
+        else:
+            break
+    return stars
 
 
 def _choose_foe(party: Party) -> FoeBase:
@@ -197,14 +255,18 @@ class BattleRoom(Room):
         foe = _choose_foe(party)
         # TODO: Extend to support battles with multiple foes and target selection.
         _scale_stats(foe, self.node, self.strength)
+        foe.hp = 1
+        foe.max_hp = 1
         combat_party = Party(
             members=[copy.deepcopy(m) for m in party.members],
             gold=party.gold,
             relics=party.relics,
             cards=party.cards,
+            rdr=party.rdr,
         )
         apply_cards(combat_party)
         apply_relics(combat_party)
+        party.rdr = combat_party.rdr
 
         foe_effects = EffectManager(foe)
         party_effects = [EffectManager(m) for m in combat_party.members]
@@ -228,6 +290,7 @@ class BattleRoom(Room):
                     "party": [_serialize(m) for m in combat_party.members],
                     "foes": [_serialize(foe)],
                     "enrage": {"active": False, "stacks": 0},
+                    "rdr": party.rdr,
                 }
             )
 
@@ -286,6 +349,7 @@ class BattleRoom(Room):
                             "party": [_serialize(m) for m in combat_party.members],
                             "foes": [_serialize(foe)],
                             "enrage": {"active": enrage_active, "stacks": enrage_stacks},
+                            "rdr": party.rdr,
                         }
                     )
                 if foe.hp <= 0:
@@ -350,6 +414,7 @@ class BattleRoom(Room):
                             "party": [_serialize(m) for m in combat_party.members],
                             "foes": [_serialize(foe)],
                             "enrage": {"active": enrage_active, "stacks": enrage_stacks},
+                            "rdr": party.rdr,
                         }
                     )
                 elapsed = time.perf_counter() - turn_start
@@ -369,10 +434,13 @@ class BattleRoom(Room):
             for f in fields(type(orig)):
                 setattr(member, f.name, getattr(orig, f.name))
 
-        options = card_choices(party, stars=_pick_card_stars(self))
+        card_stars = _pick_card_stars(self)
+        card_stars = _apply_rdr_to_stars(card_stars, party.rdr)
+        options = card_choices(party, stars=card_stars)
         relic_opts = []
-        if _roll_relic_drop(self):
+        if _roll_relic_drop(self, party.rdr):
             rstars = _pick_relic_stars(self)
+            rstars = _apply_rdr_to_stars(rstars, party.rdr)
             relic_opts = relic_choices(party, stars=rstars)
         foes = [_serialize(foe)]
         party_data = [_serialize(p) for p in combat_party.members]
@@ -388,11 +456,27 @@ class BattleRoom(Room):
         relic_choice_data = [
             {"id": r.id, "name": r.name, "stars": r.stars} for r in relic_opts
         ]
+        gold_reward = _calc_gold(self, party.rdr)
+        party.gold += gold_reward
+        BUS.emit("gold_earned", gold_reward)
+        # Rare drop rate multiplies the number of element upgrade items but
+        # never their star rank.
+        item_base = 1 * party.rdr
+        item_count = int(item_base)
+        if random.random() < item_base - item_count:
+            item_count += 1
+        items = [
+            {"id": random.choice(ELEMENTS), "stars": _pick_item_stars(self)}
+            for _ in range(item_count)
+        ]
+        ticket_chance = 0.1 * party.rdr
+        if random.random() < ticket_chance:
+            items.append({"id": "ticket", "stars": 0})
         loot = {
             "gold": party.gold - start_gold,
             "card_choices": choice_data,
             "relic_choices": relic_choice_data,
-            "items": [],
+            "items": items,
         }
         return {
             "result": "boss" if self.strength > 1.0 else "battle",
@@ -407,6 +491,7 @@ class BattleRoom(Room):
             "room_number": self.node.index,
             "exp_reward": exp_reward,
             "enrage": {"active": enrage_active, "stacks": enrage_stacks},
+            "rdr": party.rdr,
         }
 
 
@@ -436,6 +521,7 @@ class ShopRoom(Room):
             "gold": party.gold,
             "relics": party.relics,
             "cards": party.cards,
+            "rdr": party.rdr,
             "card": None,
             "foes": [],
         }
@@ -455,6 +541,7 @@ class RestRoom(Room):
             "gold": party.gold,
             "relics": party.relics,
             "cards": party.cards,
+            "rdr": party.rdr,
             "card": None,
             "foes": [],
         }
@@ -475,6 +562,7 @@ class ChatRoom(Room):
             "gold": party.gold,
             "relics": party.relics,
             "cards": party.cards,
+            "rdr": party.rdr,
             "card": None,
             "foes": [],
         }

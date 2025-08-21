@@ -103,6 +103,19 @@ cd backend
 uv run pytest
 ```
 
+## Loot and Rare Drop Rate
+
+Battles award gold, relic choices, upgrade items, and occasionally pull tickets.
+Gold equals a base value of 5/20/200 for normal, boss, and floor-boss rooms,
+multiplied by the loop, a random range, and the party's rare drop rate (`rdr`).
+Relics drop with `10% × rdr` odds in normal fights or `50% × rdr` in boss rooms.
+Upgrade items use the foe's element, cap at 4★, and their quantity scales with
+`rdr`—fractions have a matching chance to grant an extra item. Each battle also
+rolls a `10% × rdr` chance for a pull ticket. `rdr` improves drop quantity and
+odds and can even upgrade relic or card star ranks with lucky rolls at extreme
+values: climbing from 3★ to 4★ requires 1000% `rdr`, while 5★ demands a
+colossal 1,000,000%.
+
 ## Plugins
 
 The game auto-discovers classes under `plugins/` and `mods/` by `plugin_type`
@@ -150,6 +163,12 @@ red and blue with an Enraged buff after 100 turns (500 for floor bosses). Each
 victory presents three unused cards of the appropriate star rank. Selecting one
 adds it to the party, and card and relic bonuses are applied at the start of the
 next battle.
+
+Parties also track a rare drop rate (`rdr`) that boosts relic drops, gold
+rewards, upgrade item counts, and pull ticket chances. At extreme values it can
+roll to raise relic and card star ranks (3★→4★ at 1000% `rdr`, 4★→5★ at
+1,000,000%), but even huge `rdr` never guarantees success. The 3★ Greed Engine
+relic raises `rdr` while draining HP each turn.
 
 Defeated foes grant experience to every party member. Characters below level
 1000 receive a 10× boost to experience gained so early levels advance quickly.

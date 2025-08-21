@@ -255,6 +255,7 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
                         "cards": [],
                         "exp": {pid: 0 for pid in members},
                         "level": {pid: 1 for pid in members},
+                        "rdr": 1.0,
                         "player": snapshot,
                     }
                 ),
@@ -292,6 +293,7 @@ async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
     gold = data.get("gold", 0)
     relics = data.get("relics", [])
     cards = data.get("cards", [])
+    rdr = data.get("rdr", 1.0)
     if (
         "player" not in members
         or not 1 <= len(members) <= 5
@@ -311,6 +313,7 @@ async def update_party(run_id: str) -> tuple[str, int, dict[str, str]]:
         "cards": cards,
         "exp": {pid: 0 for pid in members},
         "level": {pid: 1 for pid in members},
+        "rdr": rdr,
     }
     with SAVE_MANAGER.connection() as conn:
         conn.execute(
@@ -645,6 +648,7 @@ def load_party(run_id: str) -> Party:
         gold=data.get("gold", 0),
         relics=data.get("relics", []),
         cards=data.get("cards", []),
+        rdr=data.get("rdr", 1.0),
     )
     return party
 
@@ -698,6 +702,7 @@ def save_party(run_id: str, party: Party) -> None:
             "exp": {m.id: m.exp for m in party.members},
             "level": {m.id: m.level for m in party.members},
             "exp_multiplier": {m.id: m.exp_multiplier for m in party.members},
+            "rdr": party.rdr,
             "player": snapshot,
         }
         conn.execute(
@@ -797,6 +802,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
                 "card_choices": [],
                 "relic_choices": [],
                 "enrage": {"active": False, "stacks": 0},
+                "rdr": party.rdr,
             }
         )
     if run_id in battle_tasks:
@@ -817,6 +823,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         gold=party.gold,
         relics=party.relics,
         cards=party.cards,
+        rdr=party.rdr,
     )
     battle_snapshots[run_id] = {
         "result": "battle",
@@ -828,7 +835,10 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         "card_choices": [],
         "relic_choices": [],
         "enrage": {"active": False, "stacks": 0},
+        "rdr": party.rdr,
     }
+    state["battle"] = False
+    await asyncio.to_thread(save_map, run_id, state)
 
     async def progress(snapshot: dict[str, Any]) -> None:
         battle_snapshots[run_id] = snapshot

@@ -104,8 +104,16 @@ class GachaManager:
             )
 
     def _auto_craft(self, items: dict[str, int]) -> None:
+        """Convert excess upgrade items into higher tiers or tickets.
+
+        Crafting never creates items above 4★. Any surplus 4★ items are
+        exchanged for gacha tickets rather than upgrading to a nonexistent 5★
+        tier. This keeps rare drop rate bonuses from indirectly raising star
+        level beyond the intended cap.
+        """
+
         for element in ELEMENTS:
-            for star in (1, 2, 3):
+            for star in range(1, 4):
                 lower = f"{element}_{star}"
                 higher = f"{element}_{star + 1}"
                 while items.get(lower, 0) >= 125:

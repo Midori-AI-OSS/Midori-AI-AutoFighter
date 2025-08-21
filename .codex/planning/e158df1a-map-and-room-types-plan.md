@@ -22,9 +22,10 @@
 8. Fights that exceed 100 turns (500 for floor bosses) trigger a slow red/blue flash on the room to warn of drawn-out battles.
    - Each turn after the flash begins grants foes a +40% Attack `Enraged` buff.
 9. Rewards:
-   - Normal fights: 5% chance to drop a relic (98% of which are 1★), grant gold = 5 × (loop number × random float 1.01–1.25), drop 1–2★ upgrade items scaled by floor/room/Pressure, and award a 1–2★ card.
-   - Bosses: 25% chance to drop a relic with 1–5★ ranks, grant extra gold = 20 × (loop number × random float 1.53–2.25), drop 1–3★ upgrade items scaled by difficulty, and award a 1–5★ card.
-   - Floor bosses: guaranteed relic drops (3★ at 98% odds), largest gold bonus = 200 × (loop number × random float 2.05–4.25), drop 3–4★ upgrade items scaled by difficulty, award 3–5★ cards, and grant pull tickets that scale with Pressure/loop up to 5 per floor boss.
+   - **Rare drop rate (`rdr`)** multiplies gold payouts, relic drop odds, upgrade item counts, and pull ticket chances. At extreme values it also boosts relic and card star ranks (3★→4★ at 1000% `rdr`, 4★→5★ at 1,000,000%).
+   - Normal fights: 10% × `rdr` chance to drop a relic (70% 1★, 20% 2★, 10% 3★), grant gold = 5 × loop × rand(1.01–1.25) × `rdr`, drop 1–2★ upgrade items based on floor/room/Pressure (capped at 4★) with quantity scaled by `rdr`, and award a 1–2★ card.
+   - Bosses: 50% × `rdr` chance to drop a relic (60% 3★, 30% 4★, 10% 5★), grant gold = 20 × loop × rand(1.53–2.25) × `rdr`, drop 1–3★ upgrade items scaled by difficulty (max 4★) with quantity scaled by `rdr`, and award a 1–5★ card.
+   - Floor bosses: guaranteed relic drop (60% 3★, 30% 4★, 10% 5★), largest gold bonus = 200 × loop × rand(2.05–4.25) × `rdr`, drop 3–4★ upgrade items scaled by difficulty (max 4★) with quantity scaled by `rdr`, award 3–5★ cards, and roll a 10% × `rdr` chance for one pull ticket.
    - Relics come in 1–5★ ranks using the shared star-color scheme; stacks have no cap and drop tables favor relics the player lacks.
    - Cards are unique collectibles with one copy each; design ~100 cards per combat theme (DoT, melee, etc.), with 1★ effects providing minor perks (e.g., heal 1% when dealing DoT) and 5★ effects offering major boons (e.g., temporary ally joins the party).
 10. Code structure:
