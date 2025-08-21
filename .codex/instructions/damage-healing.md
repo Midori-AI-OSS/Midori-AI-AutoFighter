@@ -10,6 +10,7 @@ Combatants use the shared `Stats` dataclass from `autofighter/stats.py`. Integer
 - Triggers `on_action` hooks when the target acts, letting effects like *Blazing Torment* respond immediately.
 
 Plugins under `plugins/dots/` and `plugins/hots/` subclass the base effect classes to implement specific behaviors.
+Lightning damage pops all active DoTs on hit, applying 25% of each effect's damage immediately without reducing remaining turns.
 
 ## Supported DoTs
 - Bleed – deals 2% of Max HP each turn.

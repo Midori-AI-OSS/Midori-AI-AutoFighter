@@ -48,6 +48,9 @@ adding the effect. The difference is clamped to zero and jittered by ±10%, and 
 
 Active effect names are mirrored in the `Stats` lists (`dots`, `hots`) for UI display. Plugins can extend base `DamageOverTime` and `HealingOverTime` classes to implement custom behavior or additional stat modifications.
 
+## Lightning Pop
+Lightning attacks trigger an extra pass over the target's active DoTs. Each effect deals 25% of its damage immediately while leaving remaining turns and stack counts untouched.
+
 ## Critical Boost
 Stackable effect granting +0.5% `crit_rate` and +5% `crit_damage` per stack. All stacks are removed when the affected unit takes damage.
 

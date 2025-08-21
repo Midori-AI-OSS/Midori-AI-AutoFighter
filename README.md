@@ -152,6 +152,7 @@ allies each action, and if an ally falls below a quarter of their health they
 prioritize a direct heal over attacking. Foes regenerate at one hundredth the
 player rate to prevent drawn-out encounters. Wind attackers strike every remaining foe after
 their first hit, repeating the damage and rolling Gale Erosion on each target.
+Lightning hits pop every DoT on the target, dealing 25% of each effect's damage immediately while leaving the stacks intact.
 
 ## Battle Room
 
