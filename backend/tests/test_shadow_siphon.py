@@ -8,7 +8,7 @@ import pytest
 @pytest.mark.asyncio
 async def test_shadow_siphon_persistence_and_stat_gain():
     dark = Dark()
-    actor = Stats(atk=100, defense=100, base_damage_type=dark)
+    actor = Stats(atk=100, defense=100, damage_type=dark)
     ally = Stats()
     actor.id = "actor"
     ally.id = "ally"
@@ -37,7 +37,7 @@ async def test_shadow_siphon_persistence_and_stat_gain():
 @pytest.mark.asyncio
 async def test_shadow_siphon_clears_on_battle_end():
     dark = Dark()
-    actor = Stats(base_damage_type=dark)
+    actor = Stats(damage_type=dark)
     ally = Stats()
     actor.id = "actor"
     ally.id = "ally"

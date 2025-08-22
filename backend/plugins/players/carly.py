@@ -9,5 +9,5 @@ class Carly(PlayerBase):
     name = "Carly"
     char_type = CharacterType.B
     gacha_rarity = 5
-    base_damage_type: str = "Light"
+    damage_type: str = "Light"
 

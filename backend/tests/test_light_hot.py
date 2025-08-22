@@ -8,7 +8,7 @@ from plugins.damage_types.light import Light
 @pytest.mark.asyncio
 async def test_radiant_regeneration_stacks():
     light = Light()
-    actor = Stats(base_damage_type=light)
+    actor = Stats(damage_type=light)
     ally = Stats()
     actor.effect_manager = EffectManager(actor)
     ally.effect_manager = EffectManager(ally)
@@ -21,7 +21,7 @@ async def test_radiant_regeneration_stacks():
 @pytest.mark.asyncio
 async def test_light_heals_low_hp_ally():
     light = Light()
-    actor = Stats(atk=50, base_damage_type=light)
+    actor = Stats(atk=50, damage_type=light)
     ally = Stats(hp=20, max_hp=100)
     actor.effect_manager = EffectManager(actor)
     ally.effect_manager = EffectManager(ally)

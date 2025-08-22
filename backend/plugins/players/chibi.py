@@ -11,4 +11,4 @@ class Chibi(PlayerBase):
     name = "Chibi"
     char_type = CharacterType.A
     gacha_rarity = 5
-    base_damage_type: str = field(default_factory=lambda: get_damage_type("Chibi"))
+    damage_type: str = field(default_factory=lambda: get_damage_type("Chibi"))

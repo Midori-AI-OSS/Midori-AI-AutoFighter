@@ -10,7 +10,7 @@ from plugins.damage_types.lightning import Lightning
 @pytest.mark.asyncio
 async def test_lightning_pop_damage_and_stacks():
     lightning = Lightning()
-    attacker = Stats(atk=0, base_damage_type=lightning)
+    attacker = Stats(atk=0, damage_type=lightning)
     attacker.id = "attacker"
     target = Stats(hp=100, max_hp=100, defense=1, mitigation=1.0, vitality=1.0)
     target.id = "target"

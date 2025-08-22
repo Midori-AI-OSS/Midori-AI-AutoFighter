@@ -40,7 +40,7 @@ class Dark(DamageTypeBase):
         # When a DoT ticks on a party member and the source is Dark, grant
         # an extremely small scaling bonus to the attacker.
         try:
-            if getattr(attacker, "base_damage_type", None) is self and ShadowSiphon.id in target.dots:
+            if getattr(attacker, "damage_type", None) is self and ShadowSiphon.id in target.dots:
                 percent = max(float(damage) / max(float(target.max_hp), 1.0), 0.0)
                 scale = 1.0 + percent * 0.05  # 0.05% per percent of max HP
                 attacker.atk = int(attacker.atk * scale) if hasattr(attacker, "atk") else attacker.atk

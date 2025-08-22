@@ -26,7 +26,7 @@ class Stats:
     crit_rate: float = 0.05
     crit_damage: float = 2.0
     effect_hit_rate: float = 1.0
-    base_damage_type: DamageTypeBase = field(default_factory=Generic)
+    damage_type: DamageTypeBase = field(default_factory=Generic)
 
     defense: int = 200
     mitigation: float = 1.0
@@ -45,7 +45,14 @@ class Stats:
     passives: list[str] = field(default_factory=list)
     dots: list[str] = field(default_factory=list)
     hots: list[str] = field(default_factory=list)
-    damage_types: list[str] = field(default_factory=list)
+
+    @property
+    def element_id(self) -> str:
+        dt = getattr(self, "damage_type", Generic())
+        if isinstance(dt, str):
+            return dt
+        ident = getattr(dt, "id", None) or getattr(dt, "name", None)
+        return str(ident or dt)
 
     def exp_to_level(self) -> int:
         return (2 ** self.level) * 50
@@ -84,11 +91,13 @@ class Stats:
 
     async def apply_damage(self, amount: int, attacker: Optional["Stats"] = None) -> int:
         def _ensure(obj: "Stats") -> DamageTypeBase:
-            dt = getattr(obj, "base_damage_type", Generic())
+            dt = getattr(obj, "damage_type", Generic())
             if isinstance(dt, str):
-                module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
+                module = importlib.import_module(
+                    f"plugins.damage_types.{dt.lower()}"
+                )
                 dt = getattr(module, dt)()
-                obj.base_damage_type = dt
+                obj.damage_type = dt
             return dt
 
         if attacker is not None:
@@ -113,11 +122,13 @@ class Stats:
 
     async def apply_healing(self, amount: int, healer: Optional["Stats"] = None) -> int:
         def _ensure(obj: "Stats") -> DamageTypeBase:
-            dt = getattr(obj, "base_damage_type", Generic())
+            dt = getattr(obj, "damage_type", Generic())
             if isinstance(dt, str):
-                module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
+                module = importlib.import_module(
+                    f"plugins.damage_types.{dt.lower()}"
+                )
                 dt = getattr(module, dt)()
-                obj.base_damage_type = dt
+                obj.damage_type = dt
             return dt
 
         if healer is not None:

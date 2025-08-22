@@ -10,4 +10,4 @@ class LadyOfFire(PlayerBase):
     id = "lady_of_fire"
     name = "LadyOfFire"
     char_type = CharacterType.B
-    base_damage_type: str = field(default_factory=lambda: get_damage_type("LadyOfFire"))
+    damage_type: str = field(default_factory=lambda: get_damage_type("LadyOfFire"))

@@ -113,35 +113,12 @@ def _assign_damage_type(player: PlayerBase) -> None:
         cur = conn.execute("SELECT type FROM damage_types WHERE id = ?", (player.id,))
         row = cur.fetchone()
         if row:
-            player.base_damage_type = row[0]
+            player.damage_type = row[0]
         else:
             conn.execute(
                 "INSERT INTO damage_types (id, type) VALUES (?, ?)",
-                (player.id, player.base_damage_type),
+                (player.id, player.element_id),
             )
-    # Keep the primary damage_types list consistent with base_damage_type
-    try:
-        ident = getattr(player.base_damage_type, "id", None) or getattr(
-            player.base_damage_type, "name", None
-        ) or str(player.base_damage_type)
-        player.damage_types = [str(ident)]
-    except Exception:
-        pass
-
-
-def _sync_damage_types(obj: PlayerBase) -> None:
-    """Ensure obj.damage_types[0] reflects obj.base_damage_type.
-
-    Frontend prioritizes `damage_types[0]` when rendering elements; this keeps
-    it in sync if `base_damage_type` is changed after initialization.
-    """
-    try:
-        ident = getattr(obj.base_damage_type, "id", None) or getattr(
-            obj.base_damage_type, "name", None
-        ) or str(obj.base_damage_type)
-        obj.damage_types = [str(ident)]
-    except Exception:
-        pass
 
 
 def _load_player_customization() -> tuple[str, dict[str, int]]:
@@ -268,7 +245,7 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
             ("player",),
         )
         row = cur.fetchone()
-    player_type = row[0] if row else player_plugins.player.Player().base_damage_type
+    player_type = row[0] if row else player_plugins.player.Player().damage_type
     snapshot = {
         "pronouns": pronouns,
         "damage_type": player_type,
@@ -304,7 +281,6 @@ async def start_run() -> tuple[str, int, dict[str, object]]:
                 inst.exp = 0
                 inst.level = 1
                 _assign_damage_type(inst)
-                _sync_damage_types(inst)
                 party_info.append(
                     {
                         "id": inst.id,
@@ -497,18 +473,18 @@ async def get_players() -> tuple[str, int, dict[str, str]]:
         cls = getattr(player_plugins, name)
         inst = cls()
         _assign_damage_type(inst)
-        _sync_damage_types(inst)
         if inst.id == "player":
             _apply_player_stats(inst)
         stats = asdict(inst)
         stats["char_type"] = inst.char_type.name
+        stats["damage_type"] = inst.element_id
         roster.append(
             {
                 "id": inst.id,
                 "name": inst.name,
                 "owned": inst.id in owned,
                 "is_player": inst.id == "player",
-                "element": inst.base_damage_type,
+                "element": inst.element_id,
                 "stats": stats,
             }
         )
@@ -552,9 +528,7 @@ async def player_stats() -> tuple[str, int, dict[str, object]]:
             "crit_rate": player.crit_rate,
             "crit_damage": player.crit_damage,
             "effect_hit_rate": player.effect_hit_rate,
-            "base_damage_type": getattr(
-                player.base_damage_type, "name", str(player.base_damage_type)
-            ),
+            "damage_type": player.element_id,
         },
         "defense": {
             "defense": player.defense,
@@ -574,7 +548,6 @@ async def player_stats() -> tuple[str, int, dict[str, object]]:
             "passives": player.passives,
             "dots": player.dots,
             "hots": player.hots,
-            "damage_types": player.damage_types,
         },
     }
     return jsonify({"stats": stats, "refresh_rate": refresh})
@@ -588,9 +561,7 @@ async def get_player_editor() -> tuple[str, int, dict[str, object]]:
     return jsonify(
         {
             "pronouns": pronouns,
-            "damage_type": getattr(
-                player.base_damage_type, "name", player.base_damage_type
-            ),
+            "damage_type": player.element_id,
             "hp": stats.get("hp", 0),
             "attack": stats.get("attack", 0),
             "defense": stats.get("defense", 0),
@@ -669,16 +640,14 @@ def load_party(run_id: str) -> Party:
                             "SELECT type FROM damage_types WHERE id = ?", ("player",)
                         ).fetchone()
                     if row and row[0]:
-                        inst.base_damage_type = row[0]
+                        inst.damage_type = row[0]
                     else:
-                        inst.base_damage_type = snapshot.get(
-                            "damage_type", inst.base_damage_type
+                        inst.damage_type = snapshot.get(
+                            "damage_type", inst.damage_type
                         )
-                    _sync_damage_types(inst)
                     _apply_player_stats(inst, snapshot.get("stats", {}))
                 else:
                     _assign_damage_type(inst)
-                    _sync_damage_types(inst)
                 # Rebuild stats for current level so growth persists across loads
                 target_level = int(level_map.get(pid, 1) or 1)
                 if target_level > 1:
@@ -739,7 +708,7 @@ def save_party(run_id: str, party: Party) -> None:
             }
             snapshot = {
                 **snapshot,
-                "damage_type": getattr(member.base_damage_type, "id", member.base_damage_type),
+                "damage_type": member.element_id,
                 "stats": stats,
             }
             break
@@ -869,8 +838,7 @@ async def battle_room(run_id: str) -> tuple[str, int, dict[str, str]]:
         if row and row[0]:
             for m in party.members:
                 if m.id == "player":
-                    m.base_damage_type = row[0]
-                    _sync_damage_types(m)
+                    m.damage_type = row[0]
                     break
     except Exception:
         pass

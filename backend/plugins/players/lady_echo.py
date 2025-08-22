@@ -9,5 +9,5 @@ class LadyEcho(PlayerBase):
     name = "LadyEcho"
     char_type = CharacterType.B
     gacha_rarity = 5
-    base_damage_type: str = "Lightning"
+    damage_type: str = "Lightning"
 

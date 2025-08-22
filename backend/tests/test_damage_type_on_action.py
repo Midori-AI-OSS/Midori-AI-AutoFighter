@@ -30,7 +30,7 @@ async def test_player_damage_type_cancels_attack():
         max_hp=10,
         defense=0,
         atk=5,
-        base_damage_type=CancelDamage(),
+        damage_type=CancelDamage(),
     )
     player.id = "p1"
     foe = Stats(hp=10, max_hp=10, atk=1000, defense=0)
@@ -53,7 +53,7 @@ async def test_foe_damage_type_cancels_attack():
     room = BattleRoom(node)
     player = Stats(atk=1000, defense=0)
     player.id = "p1"
-    foe = Stats(hp=10, max_hp=10, atk=5, defense=0, base_damage_type=CancelDamage())
+    foe = Stats(hp=10, max_hp=10, atk=5, defense=0, damage_type=CancelDamage())
     foe.id = "f1"
     party = Party(members=[player])
     await room.resolve(party, {}, foe=foe)

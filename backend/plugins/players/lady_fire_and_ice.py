@@ -11,4 +11,4 @@ class LadyFireAndIce(PlayerBase):
     name = "LadyFireAndIce"
     char_type = CharacterType.B
     gacha_rarity = 6
-    base_damage_type: str = field(default_factory=lambda: get_damage_type("LadyFireAndIce"))
+    damage_type: str = field(default_factory=lambda: get_damage_type("LadyFireAndIce"))

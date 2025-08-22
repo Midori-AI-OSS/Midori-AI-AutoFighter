@@ -6,16 +6,17 @@ Defines shared combat statistics and the manager that applies damage and healing
 The `Stats` dataclass stores core attributes for both players and foes:
 
 - **Core:** `hp`, `max_hp`, `exp`, `level`, `exp_multiplier`, `actions_per_turn`
-- **Offense:** `atk`, `crit_rate`, `crit_damage`, `effect_hit_rate`, `base_damage_type`
+- **Offense:** `atk`, `crit_rate`, `crit_damage`, `effect_hit_rate`, `damage_type`
 - **Defense:** `defense`, `mitigation`, `regain`, `dodge_odds`, `effect_resistance`
 - **Vitality & Advanced:** `vitality`, `action_points`, `damage_taken`, `damage_dealt`, `kills`
-- **Status Lists:** `passives`, `dots`, `hots`, `damage_types`, `relics`
+- **Status Lists:** `passives`, `dots`, `hots`, `relics`
 - **Party:** `gold`, `rdr` – run-wide currency and rare drop rate multiplier applied to gold, upgrade item counts, relic odds, pull ticket chances, and (at extreme values) can roll to raise relic and card star ranks
 
-`base_damage_type` is a `DamageType` plugin instance (default `Generic`) instead of a string, allowing damage hooks.
-Characters with random base damage types store their first rolled element in the
-save database and reuse it on later loads so elements stay consistent across
-sessions.
+`damage_type` is a `DamageType` plugin instance (default `Generic`). The helper
+property `element_id` exposes the damage type's string identifier for
+serialization and UI rendering. Characters with random damage types store their
+first rolled element in the save database and reuse it on later loads so
+elements stay consistent across sessions.
 
 Experience feeds into `exp` and triggers a level-up when it meets or exceeds
 `exp_to_level`. Characters below level 1000 gain experience at ten times the

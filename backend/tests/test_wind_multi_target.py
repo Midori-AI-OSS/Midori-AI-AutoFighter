@@ -30,7 +30,7 @@ async def test_wind_player_hits_all_foes(monkeypatch):
         pressure=0,
     )
     room = BattleRoom(node)
-    player = Stats(atk=1000, effect_hit_rate=2.0, base_damage_type=Wind())
+    player = Stats(atk=1000, effect_hit_rate=2.0, damage_type=Wind())
     player.id = "p1"
     foe1 = Stats(hp=3, max_hp=3, defense=0)
     foe1.id = "f1"
@@ -87,7 +87,7 @@ async def test_wind_foe_hits_all_party_members(monkeypatch):
         max_hp=3,
         atk=5,
         defense=0,
-        base_damage_type=Wind(),
+        damage_type=Wind(),
         effect_hit_rate=2.0,
     )
     foe.id = "f1"

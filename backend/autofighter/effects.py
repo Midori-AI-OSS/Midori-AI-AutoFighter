@@ -23,18 +23,18 @@ class DamageOverTime:
 
     async def tick(self, target: Stats, *_: object) -> bool:
         attacker = self.source or target
-        dmg = target.base_damage_type.on_dot_damage_taken(
+        dmg = target.damage_type.on_dot_damage_taken(
             self.damage,
             attacker,
             target,
         )
-        dmg = target.base_damage_type.on_party_dot_damage_taken(
+        dmg = target.damage_type.on_party_dot_damage_taken(
             dmg,
             attacker,
             target,
         )
-        source_type = getattr(attacker, "base_damage_type", None)
-        if source_type is not target.base_damage_type:
+        source_type = getattr(attacker, "damage_type", None)
+        if source_type is not target.damage_type:
             dmg = source_type.on_party_dot_damage_taken(dmg, attacker, target)
         await target.apply_damage(int(dmg), attacker=attacker)
         self.turns -= 1
@@ -53,8 +53,8 @@ class HealingOverTime:
 
     async def tick(self, target: Stats, *_: object) -> bool:
         healer = self.source or target
-        heal = target.base_damage_type.on_hot_heal_received(self.healing, healer, target)
-        heal = target.base_damage_type.on_party_hot_heal_received(heal, healer, target)
+        heal = target.damage_type.on_hot_heal_received(self.healing, healer, target)
+        heal = target.damage_type.on_party_hot_heal_received(heal, healer, target)
         await target.apply_healing(int(heal), healer=healer)
         self.turns -= 1
         return self.turns > 0
@@ -95,7 +95,7 @@ class EffectManager:
         self.stats.hots.append(effect.id)
 
     def maybe_inflict_dot(self, attacker: Stats, damage: int) -> None:
-        dot = attacker.base_damage_type.create_dot(damage, attacker)
+        dot = attacker.damage_type.create_dot(damage, attacker)
         if dot is None:
             return
         rate = max(attacker.effect_hit_rate - self.stats.effect_resistance, 0.0)

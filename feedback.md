@@ -25,16 +25,16 @@ Details
 - Findings (from backend): backend exposes a detailed `player/stats` payload and battle snapshots.
 	- Backend source: `backend/app.py` — function `player_stats()` constructs the stats object. Fields to surface in the battle UI include:
 		- core: `hp`, `max_hp`, `exp`, `level`, `exp_multiplier`, `actions_per_turn`
-		- offense: `atk`, `crit_rate`, `crit_damage`, `effect_hit_rate`, `base_damage_type`
+                - offense: `atk`, `crit_rate`, `crit_damage`, `effect_hit_rate`, `damage_type`
 		- defense: `defense`, `mitigation`, `regain`, `dodge_odds`, `effect_resistance`
 		- vitality: `vitality`
 		- advanced: `action_points`, `damage_taken`, `damage_dealt`, `kills`
-		- status: `passives`, `dots`, `hots`, `damage_types`
+                - status: `passives`, `dots`, `hots`
 	- Battle snapshots returned by `/rooms/<run_id>/battle` and the saved `battle_snapshots` are assembled via `_serialize` and the room resolver; confirm `_serialize` includes the above fields for both `party` members and `foes`.
 - Suggested follow-up (actionable):
 		- Frontend: Update `BattleView.svelte` (or the component rendering the party/foe stat blocks) to display all backend fields. For each stat, add a concise visual:
 			- HP / Max HP: progress bar with numeric tooltip (e.g., "48 / 120").
-			- ATK: numeric value and small weapon/damage-type icon. Show `base_damage_type` as a colored badge.
+                        - ATK: numeric value and small weapon/damage-type icon. Show `damage_type` as a colored badge.
 			- DEF & Mitigation: show `defense` and a percent-style `mitigation` (e.g., "Mitigation: 24%").
 			- Crit Rate / Crit Damage: show as percents ("Crit Rate: 12%", "Crit Damage: +50%") with hover explanation.
 			- Regain, Dodge Odds, Effect Resist: show small labeled values (toggleable advanced view to avoid overcrowding).

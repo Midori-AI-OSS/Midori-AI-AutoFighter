@@ -40,7 +40,7 @@ async def test_foe_element_stable_across_snapshots(app_with_db, monkeypatch):
 
     def choose_foe(_party):
         foe = DummyFoe()
-        foe.base_damage_type = elements.pop(0)
+        foe.damage_type = elements.pop(0)
         foe.hp = foe.max_hp = 1
         return foe
 

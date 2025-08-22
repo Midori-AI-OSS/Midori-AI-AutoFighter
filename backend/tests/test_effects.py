@@ -9,7 +9,7 @@ from plugins.event_bus import EventBus
 
 
 def test_dot_applies_with_hit_rate():
-    attacker = Stats(atk=50, effect_hit_rate=2.0, base_damage_type=Fire())
+    attacker = Stats(atk=50, effect_hit_rate=2.0, damage_type=Fire())
     target = Stats(effect_resistance=0.0)
     manager = EffectManager(target)
     manager.maybe_inflict_dot(attacker, 50)
@@ -17,7 +17,7 @@ def test_dot_applies_with_hit_rate():
 
 
 def test_blazing_torment_stacks():
-    attacker = Stats(atk=50, effect_hit_rate=2.0, base_damage_type=Fire())
+    attacker = Stats(atk=50, effect_hit_rate=2.0, damage_type=Fire())
     target = Stats(effect_resistance=0.0)
     manager = EffectManager(target)
     manager.maybe_inflict_dot(attacker, 50)
@@ -38,7 +38,7 @@ async def test_damage_and_heal_events():
 
     bus.subscribe("damage_taken", _dmg)
     bus.subscribe("heal_received", _heal)
-    attacker = Stats(atk=10, base_damage_type=Fire())
+    attacker = Stats(atk=10, damage_type=Fire())
     target = Stats(hp=50, max_hp=100)
     await target.apply_damage(10, attacker=attacker)
     await target.apply_healing(5, healer=attacker)
@@ -73,7 +73,7 @@ async def test_hot_ticks_before_dot():
 
 
 def test_dot_has_minimum_chance(monkeypatch):
-    attacker = Stats(effect_hit_rate=0.0, base_damage_type=Fire())
+    attacker = Stats(effect_hit_rate=0.0, damage_type=Fire())
     target = Stats(effect_resistance=5.0)
     manager = EffectManager(target)
     monkeypatch.setattr(effects.random, "uniform", lambda a, b: 1.0)

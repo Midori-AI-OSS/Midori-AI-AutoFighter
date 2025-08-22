@@ -5,8 +5,6 @@ from dataclasses import field
 
 from autofighter.stats import Stats
 from autofighter.character import CharacterType
-from plugins.damage_types.generic import Generic
-from plugins.damage_types._base import DamageTypeBase
 
 
 @dataclass
@@ -30,7 +28,6 @@ class FoeBase(Stats):
     crit_rate: float = 0.05
     crit_damage: float = 2
     effect_hit_rate: float = 0.01
-    base_damage_type: DamageTypeBase = field(default_factory=Generic)
 
     mitigation: float = 0.001
     regain: int = 1
@@ -48,10 +45,6 @@ class FoeBase(Stats):
     passives: list[str] = field(default_factory=list)
     dots: list[str] = field(default_factory=list)
     hots: list[str] = field(default_factory=list)
-    damage_types: list[str] = field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        self.damage_types = [getattr(self.base_damage_type, "id", str(self.base_damage_type))]
 
     async def maybe_regain(self, turn: int) -> None:  # noqa: D401
         """Regain a fraction of HP every other turn."""

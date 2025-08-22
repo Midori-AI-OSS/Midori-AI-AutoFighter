@@ -151,12 +151,9 @@ def _normalize_damage_type(dt: Any) -> str:
 
 def _serialize(obj: Stats) -> dict[str, Any]:
     data = asdict(obj)
-    # Normalize damage type to a flat string for frontend
-    if "base_damage_type" in data:
-        norm = _normalize_damage_type(data["base_damage_type"])
-        data["base_damage_type"] = norm
-        # Provide an alias commonly used on the frontend
-        data["element"] = norm
+    norm = _normalize_damage_type(getattr(obj, "damage_type", None))
+    data["damage_type"] = norm
+    data["element"] = norm
     data["id"] = obj.id
     if hasattr(obj, "name"):
         data["name"] = obj.name
@@ -298,7 +295,7 @@ def _choose_foe(party: Party) -> FoeBase:
                 pass
             return "Generic"
 
-        current = _as_str(getattr(foe, "base_damage_type", "Generic"))
+        current = _as_str(getattr(foe, "damage_type", "Generic"))
         chosen: str | None = None
         low = label.lower()
         if "luna" in low:
@@ -307,11 +304,7 @@ def _choose_foe(party: Party) -> FoeBase:
             chosen = random.choice(ALL_DAMAGE_TYPES)
         # apply selection or normalize existing
         final = chosen or current
-        foe.base_damage_type = final
-        try:
-            foe.damage_types = [final]
-        except Exception:
-            pass
+        foe.damage_type = final
         try:
             setattr(foe, "element", final)
         except Exception:
@@ -441,14 +434,16 @@ class BattleRoom(Room):
                     proceed = True
                 # Ensure damage type object is instantiated before calling on_action
                 try:
-                    dt = getattr(member, "base_damage_type", None)
+                    dt = getattr(member, "damage_type", None)
                     if isinstance(dt, str):
                         import importlib
-                        module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
-                        member.base_damage_type = getattr(module, dt)()
-                        dt = member.base_damage_type
+                        module = importlib.import_module(
+                            f"plugins.damage_types.{dt.lower()}"
+                        )
+                        member.damage_type = getattr(module, dt)()
+                        dt = member.damage_type
                 except Exception:
-                    dt = getattr(member, "base_damage_type", None)
+                    dt = getattr(member, "damage_type", None)
                 if proceed and hasattr(dt, "on_action"):
                     res = await dt.on_action(
                         member,
@@ -485,7 +480,7 @@ class BattleRoom(Room):
                     f"[light_red]{member.id} hits {foe.id} for {dmg}[/]"
                 )
                 foe_mgr.maybe_inflict_dot(member, dmg)
-                if getattr(member.base_damage_type, "id", "").lower() == "wind":
+                if getattr(member.damage_type, "id", "").lower() == "wind":
                     for extra_idx, extra_foe in enumerate(foes):
                         if extra_idx == foe_idx or extra_foe.hp <= 0:
                             continue
@@ -597,14 +592,16 @@ class BattleRoom(Room):
                     proceed = True
                 # Ensure foe damage type is instantiated before calling on_action
                 try:
-                    dt = getattr(foe, "base_damage_type", None)
+                    dt = getattr(foe, "damage_type", None)
                     if isinstance(dt, str):
                         import importlib
-                        module = importlib.import_module(f"plugins.damage_types.{dt.lower()}")
-                        foe.base_damage_type = getattr(module, dt)()
-                        dt = foe.base_damage_type
+                        module = importlib.import_module(
+                            f"plugins.damage_types.{dt.lower()}"
+                        )
+                        foe.damage_type = getattr(module, dt)()
+                        dt = foe.damage_type
                 except Exception:
-                    dt = getattr(foe, "base_damage_type", None)
+                    dt = getattr(foe, "damage_type", None)
                 if proceed and hasattr(dt, "on_action"):
                     res = await dt.on_action(
                         foe,
@@ -641,7 +638,7 @@ class BattleRoom(Room):
                     f"[light_red]{foe.id} hits {target.id} for {dmg}[/]"
                 )
                 target_effect.maybe_inflict_dot(foe, dmg)
-                if getattr(foe.base_damage_type, "id", "").lower() == "wind":
+                if getattr(foe.damage_type, "id", "").lower() == "wind":
                     for extra_mgr, extra_member in zip(
                         party_effects, combat_party.members
                     ):

@@ -41,7 +41,7 @@ Example:
       "crit_rate": 0.05,
       "crit_damage": 2,
       "effect_hit_rate": 0.01,
-      "base_damage_type": "Fire",
+      "damage_type": "Fire",
       "defense": 50,
       "mitigation": 100,
       "regain": 1,
@@ -55,8 +55,7 @@ Example:
       "last_damage_taken": 10,
       "passives": [],
       "dots": [],
-      "hots": [],
-      "damage_types": ["Fire"]
+      "hots": []
     }
   ],
   "gold": 0,
@@ -93,7 +92,7 @@ Example:
       "crit_rate": 0.005,
       "crit_damage": 0,
       "effect_hit_rate": 0.001,
-      "base_damage_type": "Ice",
+      "damage_type": "Ice",
       "defense": 5,
       "mitigation": 10,
       "regain": 0,
@@ -108,7 +107,6 @@ Example:
       "passives": [],
       "dots": [],
       "hots": [],
-      "damage_types": ["Ice"],
       "gold": 0
     }
   ]
