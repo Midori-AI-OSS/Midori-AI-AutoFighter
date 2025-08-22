@@ -21,4 +21,4 @@ export {
   roomAction,
   chooseCard,
   chooseRelic
-} from './api.js';
+} from './runApi.js';

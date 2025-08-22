@@ -3,14 +3,15 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 describe('Run persistence', () => {
-  const content = readFileSync(join(import.meta.dir, '../src/routes/+page.svelte'), 'utf8');
+  const page = readFileSync(join(import.meta.dir, '../src/routes/+page.svelte'), 'utf8');
+  const state = readFileSync(join(import.meta.dir, '../src/lib/runState.js'), 'utf8');
 
-  test('restores saved run on load', () => {
-    expect(content).toContain("localStorage.getItem('runState')");
-    expect(content).toContain('getMap');
+  test('page uses runState helpers', () => {
+    expect(page).toContain("from '$lib/runState.js'");
   });
 
-  test('saves run state after room entry', () => {
-    expect(content).toContain("localStorage.setItem('runState'");
+  test('helpers touch localStorage', () => {
+    expect(state).toContain('localStorage.getItem');
+    expect(state).toContain('localStorage.setItem');
   });
 });

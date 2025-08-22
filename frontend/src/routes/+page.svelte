@@ -1,28 +1,20 @@
 <script>
-  import {
-    Play,
-    Users,
-    User,
-    Settings,
-    Package,
-    PackageOpen,
-    Hammer,
-    MessageSquare
-  } from 'lucide-svelte';
   import GameViewport from '$lib/GameViewport.svelte';
   import { onMount } from 'svelte';
   import {
     startRun,
-    getPlayerConfig,
-    savePlayerConfig,
     roomAction,
     chooseCard,
     chooseRelic,
     advanceRoom,
     getMap,
     updateParty
-  } from '$lib/api.js';
+  } from '$lib/runApi.js';
+  import { getPlayerConfig, savePlayerConfig } from '$lib/api.js';
+  import { loadRunState, saveRunState, clearRunState } from '$lib/runState.js';
   import { FEEDBACK_URL } from '$lib/constants.js';
+  import MainMenu from '$lib/MainMenu.svelte';
+  import RunButtons from '$lib/RunButtons.svelte';
 
   let runId = '';
   let selectedParty = ['sample_player'];
@@ -35,16 +27,6 @@
   let viewMode = 'main';
   let viewStack = [];
   let nextRoom = '';
-
-  function saveRunState() {
-    if (runId) {
-      localStorage.setItem('runState', JSON.stringify({ runId, nextRoom }));
-    }
-  }
-
-  function clearRunState() {
-    localStorage.removeItem('runState');
-  }
 
   function setView(mode) {
     viewStack.push(viewMode);
@@ -63,10 +45,10 @@
   let battleActive = false;
 
   onMount(async () => {
-    const saved = localStorage.getItem('runState');
+    const saved = loadRunState();
     if (saved) {
       try {
-        const { runId: storedId } = JSON.parse(saved);
+        const { runId: storedId } = saved;
         const data = await getMap(storedId);
         runId = storedId;
         selectedParty = data.party || selectedParty;
@@ -219,7 +201,7 @@
     if (typeof data.current_index === 'number') currentIndex = data.current_index;
     if (data.current_room) currentRoomType = data.current_room;
     nextRoom = data.next_room || '';
-    saveRunState();
+    saveRunState(runId, nextRoom);
     if (endpoint === 'battle') {
       const hasRewards = Boolean(data?.loot) || (data?.card_choices?.length > 0) || (data?.relic_choices?.length > 0);
       if (hasRewards) {
@@ -310,21 +292,6 @@
     await enterRoom();
   }
   let items = [];
-  $: items = [
-    { icon: Play, label: 'Run', action: openRun, disabled: false },
-    { icon: Users, label: 'Party', action: handleParty, disabled: battleActive },
-    { icon: User, label: 'Edit', action: openEditor, disabled: battleActive },
-    { icon: PackageOpen, label: 'Pulls', action: openPulls, disabled: battleActive },
-    { icon: Hammer, label: 'Craft', action: openCraft, disabled: battleActive },
-    {
-      icon: Settings,
-      label: 'Settings',
-      action: () => setView('settings'),
-      disabled: false
-    },
-    { icon: MessageSquare, label: 'Feedback', action: openFeedback, disabled: false },
-    { icon: Package, label: 'Inventory', action: openInventory, disabled: battleActive }
-  ];
 
 </script>
 
@@ -365,6 +332,19 @@
   }
 </style>
 
+<MainMenu
+  bind:items
+  run={openRun}
+  party={handleParty}
+  edit={openEditor}
+  pulls={openPulls}
+  craft={openCraft}
+  settings={() => setView('settings')}
+  feedback={openFeedback}
+  inventory={openInventory}
+  {battleActive}
+/>
+
 <div class="viewport-wrap">
   <GameViewport
     runId={runId}
@@ -397,4 +377,5 @@
     on:endRun={handleRunEnd}
     on:saveParty={handlePartySave}
   />
+  <RunButtons visible={runId && !battleActive} on:next={handleNextRoom} on:end={handleRunEnd} />
 </div>

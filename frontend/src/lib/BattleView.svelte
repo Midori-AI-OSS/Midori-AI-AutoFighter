@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { roomAction } from './api.js';
+  import { roomAction } from './runApi.js';
   import { getCharacterImage, getRandomBackground, getElementColor, getElementIcon, getDotImage, getDotElement } from './assetLoader.js';
   export let runId = '';
   export let framerate = 60;
