@@ -15,6 +15,7 @@
   export let relics = [];
   export let items = [];
   export let gold = 0;
+  export let partyStats = [];
 
   const dispatch = createEventDispatcher();
   const artMap = new Map();
@@ -56,8 +57,14 @@
 </script>
 
 <style>
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr minmax(180px, 220px);
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
   .reward {
-    margin: auto;
     width: fit-content;
     height: fit-content;
   }
@@ -109,67 +116,120 @@
     margin-top: 0.5rem;
     text-align: center;
   }
+
+  .stats {
+    background: var(--glass-bg);
+    box-shadow: var(--glass-shadow);
+    border: var(--glass-border);
+    backdrop-filter: var(--glass-filter);
+    padding: 0.5rem;
+    color: #fff;
+    font-size: 0.85rem;
+  }
+
+  .stats table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .stats th,
+  .stats td {
+    padding: 0.25rem 0.5rem;
+    text-align: left;
+  }
+
+  .stats th {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .stats td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
 </style>
 
-<div class="reward">
-  {#if cards.length}
-    <h3>Choose a Card</h3>
-    <div class="choices">
-      {#each cards as card}
-        <button
-          class="choice"
-          on:click={() => show('card', card)}
-        >
-          <div
-            class="art"
-            style={`--star-color: ${starColors[card.stars] || starColors.fallback}`}
+<div class="layout">
+  <div class="reward">
+    {#if cards.length}
+      <h3>Choose a Card</h3>
+      <div class="choices">
+        {#each cards as card}
+          <button
+            class="choice"
+            on:click={() => show('card', card)}
           >
-            <img src={artFor(card)} alt={card.name} />
-            <div class="label">{card.name}</div>
-          </div>
-        </button>
-      {/each}
-    </div>
-  {/if}
-  {#if relics.length}
-    <h3>Choose a Relic</h3>
-    <div class="choices">
-      {#each relics as relic}
-        <button class="choice" on:click={() => show('relic', relic)}>
-          <div
-            class="art"
-            style={`--star-color: ${starColors[relic.stars] || starColors.fallback}`}
-          >
-            <img src={getRewardArt('relic', relic.id)} alt={relic.name} />
-            <div class="label">{relic.name}</div>
-          </div>
-        </button>
-      {/each}
-    </div>
-  {/if}
-  {#if items.length}
-    <h3>Drops</h3>
-    <div class="status">
-      <ul>
-        {#each items as item}
-          <li>{titleForItem(item)}</li>
+            <div
+              class="art"
+              style={`--star-color: ${starColors[card.stars] || starColors.fallback}`}
+            >
+              <img src={artFor(card)} alt={card.name} />
+              <div class="label">{card.name}</div>
+            </div>
+          </button>
         {/each}
-      </ul>
-    </div>
-  {/if}
-  {#if selected}
+      </div>
+    {/if}
+    {#if relics.length}
+      <h3>Choose a Relic</h3>
+      <div class="choices">
+        {#each relics as relic}
+          <button class="choice" on:click={() => show('relic', relic)}>
+            <div
+              class="art"
+              style={`--star-color: ${starColors[relic.stars] || starColors.fallback}`}
+            >
+              <img src={getRewardArt('relic', relic.id)} alt={relic.name} />
+              <div class="label">{relic.name}</div>
+            </div>
+          </button>
+        {/each}
+      </div>
+    {/if}
+    {#if items.length}
+      <h3>Drops</h3>
+      <div class="status">
+        <ul>
+          {#each items as item}
+            <li>{titleForItem(item)}</li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
+    {#if selected}
+      <div class="status">
+        <strong>{selected.data.name}</strong>
+        {#if selected.type === 'card'}
+          <p>{selected.data.about}</p>
+        {/if}
+        <button on:click={confirm}>Confirm</button>
+      </div>
+    {/if}
+    {#if gold}
+      <div class="status">Gold +{gold}</div>
+    {/if}
     <div class="status">
-      <strong>{selected.data.name}</strong>
-      {#if selected.type === 'card'}
-        <p>{selected.data.about}</p>
-      {/if}
-      <button on:click={confirm}>Confirm</button>
+      <button on:click={() => dispatch('next')} disabled={remaining > 0}>Next Room</button>
     </div>
-  {/if}
-  {#if gold}
-    <div class="status">Gold +{gold}</div>
-  {/if}
-  <div class="status">
-    <button on:click={() => dispatch('next')} disabled={remaining > 0}>Next Room</button>
+  </div>
+  <div class="stats">
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Dmg Dealt</th>
+          <th>Dmg Taken</th>
+          <th>Healing</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each partyStats as member}
+          <tr>
+            <td>{member.name}</td>
+            <td>{member.damage_dealt ?? 0}</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </div>

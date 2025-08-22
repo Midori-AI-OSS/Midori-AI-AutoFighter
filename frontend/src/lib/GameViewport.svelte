@@ -412,6 +412,7 @@
                 cards={roomData.card_choices || []}
                 relics={roomData.relic_choices || []}
                 items={roomData.loot?.items || []}
+                partyStats={roomData.party || []}
                 on:select={(e) => dispatch('rewardSelect', e.detail)}
                 on:next={() => { roomData = null; dispatch('nextRoom'); }}
               />
