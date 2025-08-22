@@ -105,8 +105,8 @@ class EffectManager:
 
     async def tick(self, others: Optional[EffectManager] = None) -> None:
         for collection, names in (
-            (self.dots, self.stats.dots),
             (self.hots, self.stats.hots),
+            (self.dots, self.stats.dots),
         ):
             expired: List[object] = []
             for eff in collection:

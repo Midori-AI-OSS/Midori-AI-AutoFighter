@@ -22,7 +22,7 @@ def test_blazing_torment_stacks():
     manager = EffectManager(target)
     manager.maybe_inflict_dot(attacker, 50)
     manager.maybe_inflict_dot(attacker, 50)
-    assert target.dots.count("fire_dot") == 2
+    assert target.dots.count("blazing_torment") == 2
 
 
 @pytest.mark.asyncio
@@ -45,6 +45,31 @@ async def test_damage_and_heal_events():
     bus.unsubscribe("damage_taken", _dmg)
     bus.unsubscribe("heal_received", _heal)
     assert ("dmg", 1) in events and ("heal", 5) in events
+
+
+@pytest.mark.asyncio
+async def test_hot_ticks_before_dot():
+    bus = EventBus()
+    events = []
+
+    def _dmg(target, attacker, amount):
+        events.append(("dmg", amount))
+
+    def _heal(target, healer, amount):
+        events.append(("heal", amount))
+
+    bus.subscribe("damage_taken", _dmg)
+    bus.subscribe("heal_received", _heal)
+    target = Stats(hp=95, max_hp=100, defense=0)
+    target.id = "t"
+    manager = EffectManager(target)
+    manager.add_hot(effects.HealingOverTime("regen", 10, 1, "h"))
+    manager.add_dot(effects.DamageOverTime("burn", 1, 1, "d"))
+    await manager.tick()
+    bus.unsubscribe("damage_taken", _dmg)
+    bus.unsubscribe("heal_received", _heal)
+    assert events == [("heal", 10), ("dmg", 1)]
+    assert target.hp == 99
 
 
 def test_dot_has_minimum_chance(monkeypatch):
