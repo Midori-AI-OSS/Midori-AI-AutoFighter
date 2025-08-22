@@ -96,12 +96,16 @@ required.
 
 ## Testing
 
-Run the test suite before submitting changes:
+Run the test suites before submitting changes with the helper script:
 
 ```bash
-cd backend
-uv run pytest
+./run-tests.sh
 ```
+
+The script runs each backend `pytest` module via `uv` and then executes the
+frontend `bun test` files. Each test is given a 15-second timeout, and all tests
+are run regardless of failures. The script prints a summary of any failing or
+timed-out tests and exits with the first non-zero status code encountered.
 
 ## Loot and Rare Drop Rate
 
