@@ -7,6 +7,7 @@
   export let party = [];
   export let enrage = { active: false, stacks: 0 };
   export let reducedMotion = false;
+  export let active = true;
   let foes = [];
   let timer;
   let initialLogged = false;
@@ -15,6 +16,7 @@
   $: pollDelay = 1000 / framerate;
   let bg = getRandomBackground();
   $: flashDuration = reducedMotion ? 20 : 10;
+  $: if (!active) clearTimeout(timer);
 
   // Dynamic sizing per side based on fighter counts
   $: partyCount = Array.isArray(party) ? party.length : 0;
@@ -183,6 +185,7 @@
   }
 
   async function fetchSnapshot() {
+    if (!active) return;
     const start = performance.now();
     dispatch('snapshot-start');
     try {
@@ -228,13 +231,15 @@
     } finally {
       const duration = performance.now() - start;
       dispatch('snapshot-end', { duration });
-      timer = setTimeout(fetchSnapshot, Math.max(0, pollDelay - duration));
+      if (active) {
+        timer = setTimeout(fetchSnapshot, Math.max(0, pollDelay - duration));
+      }
     }
   }
 
   onMount(() => {
     window.addEventListener('keydown', onKeydown);
-    fetchSnapshot();
+    if (active) fetchSnapshot();
   });
 
   onDestroy(() => {

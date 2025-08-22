@@ -62,8 +62,8 @@ describe('BattleView layout and polling', () => {
 
   test('uses backend element for foe portrait', () => {
     const content = readFileSync(join(import.meta.dir, '../src/lib/BattleView.svelte'), 'utf8');
-    expect(content).toContain('getElementIcon(foe.element)');
-    expect(content).toContain('getElementColor(foe.element)');
+    expect(content).toContain('getElementIcon(elementOf(foe))');
+    expect(content).toContain('getElementColor(elementOf(foe))');
   });
 
   test('polling respects framerate settings', async () => {

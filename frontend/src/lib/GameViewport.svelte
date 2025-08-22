@@ -40,12 +40,14 @@
   export let selected = [];
   export let items = [];
   let selectedParty = [];
+  let rewardOpen = false;
   const dispatch = createEventDispatcher();
 
   let gameAudio;
   let volumeTimer;
   let snapshotLoading = false;
   $: if (battleActive) snapshotLoading = true;
+  $: rewardOpen = !!(roomData && roomData.result === 'battle' && !battleActive);
 
   onMount(async () => {
     if (!background) {
@@ -402,16 +404,18 @@
             />
           </PopupWindow>
         {/if}
-        {#if roomData && roomData.result === 'battle' && !battleActive}
+        {#if rewardOpen}
           <OverlaySurface>
-            <RewardOverlay
-              gold={roomData.loot?.gold || 0}
-              cards={roomData.card_choices || []}
-              relics={roomData.relic_choices || []}
-              items={roomData.loot?.items || []}
-              on:select={(e) => dispatch('rewardSelect', e.detail)}
-              on:next={() => dispatch('nextRoom')}
-            />
+            <PopupWindow title="Battle Rewards" on:close={() => { roomData = null; dispatch('nextRoom'); }}>
+              <RewardOverlay
+                gold={roomData.loot?.gold || 0}
+                cards={roomData.card_choices || []}
+                relics={roomData.relic_choices || []}
+                items={roomData.loot?.items || []}
+                on:select={(e) => dispatch('rewardSelect', e.detail)}
+                on:next={() => { roomData = null; dispatch('nextRoom'); }}
+              />
+            </PopupWindow>
           </OverlaySurface>
         {/if}
         {#if roomData && roomData.result === 'shop'}
@@ -438,7 +442,7 @@
             />
           </OverlaySurface>
         {/if}
-        {#if battleActive && viewMode === 'main'}
+        {#if roomData && roomData.result === 'battle' && (battleActive || rewardOpen) && viewMode === 'main'}
           <div class="overlay-inset">
             <BattleView
               runId={runId}
@@ -446,6 +450,7 @@
               party={selectedParty}
               enrage={roomData?.enrage}
               reducedMotion={reducedMotion}
+              active={battleActive}
               on:snapshot-start={() => (snapshotLoading = true)}
               on:snapshot-end={e => {
                 snapshotLoading = false;

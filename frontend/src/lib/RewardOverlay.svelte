@@ -1,7 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { cardArt, getRewardArt, randomCardArt } from './rewardLoader.js';
-  import MenuPanel from './MenuPanel.svelte';
 
   const starColors = {
     1: '#808080',
@@ -63,11 +62,6 @@
     height: fit-content;
   }
 
-  .reward :global(.panel) {
-    width: fit-content;
-    height: fit-content;
-  }
-
   .choices {
     display: grid;
     grid-template-columns: repeat(3, 72px);
@@ -118,7 +112,6 @@
 </style>
 
 <div class="reward">
-<MenuPanel>
   {#if cards.length}
     <h3>Choose a Card</h3>
     <div class="choices">
@@ -179,5 +172,4 @@
   <div class="status">
     <button on:click={() => dispatch('next')} disabled={remaining > 0}>Next Room</button>
   </div>
-</MenuPanel>
 </div>
