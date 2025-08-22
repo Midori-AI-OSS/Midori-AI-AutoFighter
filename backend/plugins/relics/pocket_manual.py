@@ -13,6 +13,7 @@ class PocketManual(RelicBase):
     name: str = "Pocket Manual"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"atk": 0.03})
+    about: str = "+3% damage; every 10th hit deals +3% Aftertaste damage."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -26,3 +27,7 @@ class PocketManual(RelicBase):
                 target.hp -= int(amount * 0.03)
 
         BUS.subscribe("hit_landed", _hit)
+
+    def describe(self, stacks: int) -> str:
+        dmg = 3 * stacks
+        return f"+{dmg}% damage; every 10th hit deals +3% Aftertaste damage."

@@ -14,6 +14,7 @@ class LuckyButton(RelicBase):
     name: str = "Lucky Button"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"crit_rate": 0.03})
+    about: str = "+3% Crit Rate; missed crits add +3% Crit Rate next turn."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -42,3 +43,7 @@ class LuckyButton(RelicBase):
         BUS.subscribe("crit_missed", _crit_missed)
         BUS.subscribe("turn_start", lambda: _turn_start())
         BUS.subscribe("turn_end", lambda: _turn_end())
+
+    def describe(self, stacks: int) -> str:
+        rate = 3 * stacks
+        return f"+{rate}% Crit Rate; missed crits add +{rate}% Crit Rate next turn."

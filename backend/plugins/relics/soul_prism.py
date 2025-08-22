@@ -13,6 +13,7 @@ class SoulPrism(RelicBase):
     name: str = "Soul Prism"
     stars: int = 5
     effects: dict[str, float] = field(default_factory=lambda: {"defense": 0.05, "mitigation": 0.05})
+    about: str = "Revives fallen allies at 1% HP with heavy Max HP penalty and small buffs."
 
     def apply(self, party) -> None:
         """Revive fallen allies after battles with reduced Max HP."""
@@ -39,3 +40,11 @@ class SoulPrism(RelicBase):
                 member.mitigation *= 1 + buff
 
         BUS.subscribe("battle_end", _battle_end)
+
+    def describe(self, stacks: int) -> str:
+        penalty = 75 - 5 * (stacks - 1)
+        buff = 5 + 2 * (stacks - 1)
+        return (
+            "Revives fallen allies at 1% HP after battles. "
+            f"Reduces Max HP by {penalty}% and grants +{buff}% DEF and mitigation."
+        )

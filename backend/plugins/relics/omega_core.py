@@ -9,12 +9,15 @@ from plugins.relics._base import RelicBase
 
 @dataclass
 class OmegaCore(RelicBase):
-    """Massive stat boost for 10 turns, then escalating HP drain."""
+    """Huge stat surge for a short time, then escalating HP drain."""
 
     id: str = "omega_core"
     name: str = "Omega Core"
     stars: int = 5
     effects: dict[str, float] = field(default_factory=lambda: {"atk": 5.0, "defense": 5.0})
+    about: str = (
+        "Multiplies all stats for a short time before draining ally health."
+    )
 
     def apply(self, party) -> None:
         """Burst of power followed by increasing HP drain."""
@@ -22,7 +25,7 @@ class OmegaCore(RelicBase):
 
         stacks = party.relics.count(self.id)
         delay = 10 + 2 * (stacks - 1)
-        mult = 6.0
+        mult = 6.0 + (stacks - 1)
         state = {"bases": {}, "turn": 0}
 
         def _battle_start(entity) -> None:
@@ -88,3 +91,11 @@ class OmegaCore(RelicBase):
         BUS.subscribe("battle_start", _battle_start)
         BUS.subscribe("turn_start", _turn_start)
         BUS.subscribe("battle_end", _battle_end)
+
+    def describe(self, stacks: int) -> str:
+        delay = 10 + 2 * (stacks - 1)
+        mult = 6 + (stacks - 1)
+        return (
+            f"Boosts all ally stats by {mult}x for the entire fight. "
+            f"After {delay} turns, allies lose an extra 1% of Max HP each turn."
+        )

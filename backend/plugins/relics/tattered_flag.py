@@ -13,6 +13,7 @@ class TatteredFlag(RelicBase):
     name: str = "Tattered Flag"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"max_hp": 0.03})
+    about: str = "+3% party Max HP; ally deaths grant survivors +3% ATK."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -25,3 +26,7 @@ class TatteredFlag(RelicBase):
                     member.atk = int(member.atk * 1.03)
 
         BUS.subscribe("damage_taken", _fallen)
+
+    def describe(self, stacks: int) -> str:
+        hp = 3 * stacks
+        return f"+{hp}% party Max HP; ally deaths grant survivors +3% ATK."

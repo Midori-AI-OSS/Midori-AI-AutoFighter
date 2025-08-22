@@ -14,6 +14,7 @@ class WoodenIdol(RelicBase):
     name: str = "Wooden Idol"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"effect_resistance": 0.03})
+    about: str = "+3% Effect Res; resisting a debuff grants +1% Effect Res next turn."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -42,3 +43,9 @@ class WoodenIdol(RelicBase):
         BUS.subscribe("debuff_resisted", _resisted)
         BUS.subscribe("turn_start", lambda: _turn_start())
         BUS.subscribe("turn_end", lambda: _turn_end())
+
+    def describe(self, stacks: int) -> str:
+        res = 3 * stacks
+        return (
+            f"+{res}% Effect Res; resisting a debuff grants +1% Effect Res next turn."
+        )

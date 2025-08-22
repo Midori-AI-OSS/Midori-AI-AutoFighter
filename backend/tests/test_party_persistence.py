@@ -1,9 +1,6 @@
-import json
-from pathlib import Path
-
 import pytest
 
-from test_app import app_with_db  # reuse fixture
+from test_app import app_with_db as _app_with_db  # reuse fixture  # noqa: F401
 
 
 @pytest.mark.asyncio

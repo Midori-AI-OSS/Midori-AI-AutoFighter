@@ -17,6 +17,8 @@ describe('reward overlay assets', () => {
     expect(content).toContain('selected = { type');
     expect(content).toContain('filter: grayscale(1)');
     expect(content).toContain('--star-color');
+    expect(content).toContain("selected.type === 'card' || selected.type === 'relic'");
+    expect(content).toContain('selected.data.about');
   });
 
   test('1x3 grid dimensions', () => {

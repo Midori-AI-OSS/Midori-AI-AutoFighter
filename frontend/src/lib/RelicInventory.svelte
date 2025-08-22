@@ -10,7 +10,7 @@
   {:else}
     <ul class="relics">
       {#each relics as relic}
-        <li class="relic">{relic.name}</li>
+        <li class="relic" title={relic.about}>{relic.name} x{relic.stacks}</li>
       {/each}
     </ul>
   {/if}

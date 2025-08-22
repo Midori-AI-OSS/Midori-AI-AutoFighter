@@ -1,8 +1,12 @@
-from dataclasses import dataclass
+import random
+import asyncio
+
 from dataclasses import field
+from dataclasses import dataclass
 
 from autofighter.stats import BUS
 from plugins.relics._base import RelicBase
+from plugins.effects.aftertaste import Aftertaste
 
 
 @dataclass
@@ -13,6 +17,9 @@ class RustyBuckle(RelicBase):
     name: str = "Rusty Buckle"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {})
+    about: str = (
+        "Bleeds the weakest ally and unleashes growing Aftertaste blasts as they suffer."
+    )
 
     def apply(self, party) -> None:
         """Bleed weakest ally and ping foes as their HP drops."""
@@ -48,8 +55,18 @@ class RustyBuckle(RelicBase):
                 total_lost = max_hp * 0.1 * triggers
                 dmg = int(total_lost * 0.005)
                 hits = 5 + 3 * (stacks - 1)
-                for foe in state["foes"]:
-                    foe.hp = max(foe.hp - dmg * hits, 0)
+                for _ in range(hits):
+                    if state["foes"]:
+                        foe = random.choice(state["foes"])
+                        asyncio.create_task(Aftertaste(base_pot=dmg).apply(ally, foe))
 
         BUS.subscribe("battle_start", _battle_start)
         BUS.subscribe("damage_taken", _damage)
+
+    def describe(self, stacks: int) -> str:
+        bleed = 1 * stacks
+        hits = 5 + 3 * (stacks - 1)
+        return (
+            f"Lowest-HP ally bleeds for {bleed}% Max HP at start. "
+            f"Each 10% HP lost triggers {hits} Aftertaste hits at random foes."
+        )

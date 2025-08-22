@@ -14,6 +14,7 @@ class KillerInstinct(RelicBase):
     name: str = "Killer Instinct"
     stars: int = 2
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "Ultimates grant +75% ATK for the turn; kills grant another turn."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -37,3 +38,7 @@ class KillerInstinct(RelicBase):
         BUS.subscribe("ultimate_used", _ultimate)
         BUS.subscribe("damage_taken", _damage)
         BUS.subscribe("turn_end", lambda: _turn_end())
+
+    def describe(self, stacks: int) -> str:
+        pct = 75 * stacks
+        return f"Ultimates grant +{pct}% ATK for the turn; kills grant another turn."

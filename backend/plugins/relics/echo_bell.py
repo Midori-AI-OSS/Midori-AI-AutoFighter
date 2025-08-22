@@ -13,6 +13,7 @@ class EchoBell(RelicBase):
     name: str = "Echo Bell"
     stars: int = 2
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "First action each battle repeats at 15% power per stack."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -31,3 +32,7 @@ class EchoBell(RelicBase):
 
         BUS.subscribe("battle_start", lambda: _battle_start())
         BUS.subscribe("action_used", _action)
+
+    def describe(self, stacks: int) -> str:
+        pct = 15 * stacks
+        return f"First action each battle repeats at {pct}% power."

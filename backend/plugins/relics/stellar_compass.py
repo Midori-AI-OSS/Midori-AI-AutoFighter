@@ -13,6 +13,7 @@ class StellarCompass(RelicBase):
     name: str = "Stellar Compass"
     stars: int = 3
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "Critical hits grant permanent +1.5% ATK and gold rate."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -35,3 +36,9 @@ class StellarCompass(RelicBase):
 
             BUS.subscribe("crit_hit", _crit)
             BUS.subscribe("gold_earned", _gold)
+
+    def describe(self, stacks: int) -> str:
+        bonus = 1.5 * stacks
+        return (
+            f"Critical hits grant permanent +{bonus:.1f}% ATK and gold gain."
+        )

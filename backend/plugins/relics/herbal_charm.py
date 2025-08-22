@@ -13,6 +13,7 @@ class HerbalCharm(RelicBase):
     name: str = "Herbal Charm"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {})
+    about: str = "Heals all allies for 0.5% Max HP at the start of each turn per stack."
 
     def apply(self, party) -> None:
         def _heal(*_) -> None:
@@ -21,3 +22,7 @@ class HerbalCharm(RelicBase):
                 member.hp = min(member.hp + heal, member.max_hp)
 
         BUS.subscribe("turn_start", _heal)
+
+    def describe(self, stacks: int) -> str:
+        pct = 0.5 * stacks
+        return f"Heals all allies for {pct}% Max HP at the start of each turn."

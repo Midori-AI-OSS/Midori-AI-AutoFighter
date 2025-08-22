@@ -728,7 +728,14 @@ class BattleRoom(Room):
             for c in options
         ]
         relic_choice_data = [
-            {"id": r.id, "name": r.name, "stars": r.stars} for r in relic_opts
+            {
+                "id": r.id,
+                "name": r.name,
+                "stars": r.stars,
+                "about": r.describe(party.relics.count(r.id) + 1),
+                "stacks": party.relics.count(r.id),
+            }
+            for r in relic_opts
         ]
         gold_reward = _calc_gold(self, party.rdr)
         party.gold += gold_reward

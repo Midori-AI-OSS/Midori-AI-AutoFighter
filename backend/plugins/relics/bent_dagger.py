@@ -13,6 +13,7 @@ class BentDagger(RelicBase):
     name: str = "Bent Dagger"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=lambda: {"atk": 0.03})
+    about: str = "+3% ATK; killing a foe grants +1% ATK for the rest of combat."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -24,3 +25,7 @@ class BentDagger(RelicBase):
                 member.atk = int(member.atk * 1.01)
 
         BUS.subscribe("damage_taken", _on_death)
+
+    def describe(self, stacks: int) -> str:
+        atk = 3 * stacks
+        return f"+{atk}% ATK; killing a foe grants +1% ATK for the rest of combat."

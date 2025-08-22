@@ -6,5 +6,8 @@ After a battle resolves, the backend returns a `loot` object summarizing gold an
 
 Selecting a card posts to `/cards/<run_id>` via the `chooseCard` API helper once the player confirms, clearing `card_choices`. The "Next Room" button remains disabled until all selections are resolved. Clicking it dismisses the popup, unmounts `BattleView`, and calls `/run/<id>/next` to advance the map.
 
+When a relic reward is selected, the overlay shows its `about` text so players
+see the effect with the next stack applied.
+
 ## Testing
 - `bun test frontend/tests/rewardoverlay.test.js`

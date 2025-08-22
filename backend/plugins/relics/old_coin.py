@@ -13,6 +13,7 @@ class OldCoin(RelicBase):
     name: str = "Old Coin"
     stars: int = 1
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "+3% gold earned; first shop purchase refunded 3% of cost."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -30,3 +31,7 @@ class OldCoin(RelicBase):
 
         BUS.subscribe("gold_earned", _gold)
         BUS.subscribe("shop_purchase", _purchase)
+
+    def describe(self, stacks: int) -> str:
+        rate = 3 * stacks
+        return f"+{rate}% gold earned; first shop purchase refunded {rate}% of cost."

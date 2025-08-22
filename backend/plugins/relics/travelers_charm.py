@@ -14,6 +14,7 @@ class TravelersCharm(RelicBase):
     name: str = "Traveler's Charm"
     stars: int = 4
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "When hit, gain +25% DEF and +10% mitigation next turn per stack."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -49,3 +50,8 @@ class TravelersCharm(RelicBase):
         BUS.subscribe("damage_taken", _hit)
         BUS.subscribe("turn_start", lambda: _turn_start())
         BUS.subscribe("turn_end", lambda: _turn_end())
+
+    def describe(self, stacks: int) -> str:
+        d = 25 * stacks
+        m = 10 * stacks
+        return f"When hit, gain +{d}% DEF and +{m}% mitigation next turn."

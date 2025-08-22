@@ -13,6 +13,7 @@ class NullLantern(RelicBase):
     name: str = "Null Lantern"
     stars: int = 4
     effects: dict[str, float] = field(default_factory=lambda: {})
+    about: str = "Shops and rest rooms vanish; each fight grants extra pulls."
 
     def apply(self, party) -> None:
         """Disable shops/rests, buff foes, and award pull tokens."""
@@ -45,3 +46,10 @@ class NullLantern(RelicBase):
 
         BUS.subscribe("battle_start", _battle_start)
         BUS.subscribe("battle_end", _battle_end)
+
+    def describe(self, stacks: int) -> str:
+        pulls = 1 + (stacks - 1)
+        return (
+            "Shops and rest rooms vanish. Foes grow stronger each fight; "
+            f"each clear grants {pulls} pull{'s' if pulls != 1 else ''}."
+        )

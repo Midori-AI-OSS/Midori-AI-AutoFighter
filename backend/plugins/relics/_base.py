@@ -12,6 +12,7 @@ class RelicBase:
     name: str = ""
     stars: int = 1
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = ""
 
     def apply(self, party: Party) -> None:
         for member in party.members:
@@ -21,3 +22,6 @@ class RelicBase:
                     continue
                 new_value = type(value)(value * (1 + pct))
                 setattr(member, attr, new_value)
+
+    def describe(self, stacks: int) -> str:
+        return self.about

@@ -13,6 +13,7 @@ class EchoingDrum(RelicBase):
     name: str = "Echoing Drum"
     stars: int = 3
     effects: dict[str, float] = field(default_factory=lambda: {})
+    about: str = "First attack each battle repeats at 25% power per stack."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -31,3 +32,7 @@ class EchoingDrum(RelicBase):
 
         BUS.subscribe("battle_start", lambda: _battle_start())
         BUS.subscribe("attack_used", _attack)
+
+    def describe(self, stacks: int) -> str:
+        pct = 25 * stacks
+        return f"First attack each battle repeats at {pct}% power."

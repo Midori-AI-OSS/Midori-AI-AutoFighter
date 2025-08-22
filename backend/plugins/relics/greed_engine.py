@@ -13,6 +13,7 @@ class GreedEngine(RelicBase):
     name: str = "Greed Engine"
     stars: int = 3
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "Lose HP each turn but gain extra gold and rare drops."
 
     def apply(self, party) -> None:
         super().apply(party)
@@ -43,3 +44,12 @@ class GreedEngine(RelicBase):
             state["loss"] = hp_loss
             state["rdr"] = rdr_bonus
             party.rdr += state["rdr"]
+
+    def describe(self, stacks: int) -> str:
+        gold = 50 + 25 * (stacks - 1)
+        hp = 1 + 0.5 * (stacks - 1)
+        rdr = 0.5 + 0.1 * (stacks - 1)
+        return (
+            f"Party loses {hp:.1f}% HP each turn, gains {gold:.0f}% more gold, "
+            f"and increases rare drop rate by {rdr:.1f}%."
+        )

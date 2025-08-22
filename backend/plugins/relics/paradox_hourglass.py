@@ -10,12 +10,15 @@ from plugins.relics._base import RelicBase
 
 @dataclass
 class ParadoxHourglass(RelicBase):
-    """May kill a random ally then greatly boost survivors and weaken foes."""
+    """Can sacrifice allies at battle start to supercharge survivors and debuff foes."""
 
     id: str = "paradox_hourglass"
     name: str = "Paradox Hourglass"
     stars: int = 5
     effects: dict[str, float] = field(default_factory=lambda: {"atk": 2.0, "defense": 2.0})
+    about: str = (
+        "At battle start may sacrifice allies to supercharge survivors and shred foe defense."
+    )
 
     def apply(self, party) -> None:
         """On battle start possibly sacrifices allies for massive buffs."""
@@ -44,7 +47,7 @@ class ParadoxHourglass(RelicBase):
             chance = 0.6 * (len(alive) - 1) / len(alive)
             if random.random() >= chance:
                 return
-            kill_count = min(stacks, len(alive) - 1)
+            kill_count = min(stacks, 4, len(alive) - 1)
             to_kill = random.sample(alive, kill_count)
             for m in to_kill:
                 m.hp = 0
@@ -101,3 +104,12 @@ class ParadoxHourglass(RelicBase):
 
         BUS.subscribe("battle_start", _battle_start)
         BUS.subscribe("battle_end", _battle_end)
+
+    def describe(self, stacks: int) -> str:
+        div = 4 + (stacks - 1)
+        mult = 3 + (stacks - 1)
+        kill = min(stacks, 4)
+        return (
+            f"60% chance to sacrifice up to {kill} random allies (max 4). "
+            f"Survivors gain {mult}x stats and foes' DEF is divided by {div}."
+        )

@@ -197,7 +197,7 @@
     {#if selected}
       <div class="status">
         <strong>{selected.data.name}</strong>
-        {#if selected.type === 'card'}
+        {#if selected.type === 'card' || selected.type === 'relic'}
           <p>{selected.data.about}</p>
         {/if}
         <button on:click={confirm}>Confirm</button>

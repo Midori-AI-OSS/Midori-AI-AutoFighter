@@ -1,7 +1,5 @@
 import pytest
 
-import pytest
-
 from autofighter.stats import Stats
 from autofighter.effects import DamageOverTime
 

@@ -14,6 +14,7 @@ class TimekeepersHourglass(RelicBase):
     name: str = "Timekeeper's Hourglass"
     stars: int = 4
     effects: dict[str, float] = field(default_factory=dict)
+    about: str = "Each turn, 10% +1% per stack chance for allies to gain an extra turn."
 
     def apply(self, party) -> None:
         if getattr(party, "_t_hourglass_applied", False):
@@ -30,3 +31,7 @@ class TimekeepersHourglass(RelicBase):
                     BUS.emit("extra_turn", member)
 
         BUS.subscribe("turn_start", _turn_start)
+
+    def describe(self, stacks: int) -> str:
+        pct = 10 + 1 * (stacks - 1)
+        return f"Each turn, {pct}% chance for allies to gain an extra turn."
