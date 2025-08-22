@@ -123,6 +123,11 @@
       const id = primary?.id || primary?.name;
       if (id) return id;
     }
+    // Fallback to singular damage_type when array is absent
+    const single = obj?.damage_type;
+    if (typeof single === 'string' && single.length) return single;
+    const singleId = single?.id || single?.name;
+    if (singleId) return singleId;
     // Next prefer explicit element alias if present
     const elem = obj?.element;
     if (typeof elem === 'string' && elem.length) return elem;
@@ -197,11 +202,16 @@
       if (snap.party) {
         const prevById = new Map((party || []).map(p => [p.id, p]));
         const enriched = (snap.party || []).map(m => {
-          let elem = (Array.isArray(m.damage_types) && m.damage_types[0]) || m.element || m.base_damage_type || '';
+          let elem =
+            (Array.isArray(m.damage_types) && m.damage_types[0]) ||
+            m.damage_type ||
+            m.element ||
+            m.base_damage_type ||
+            '';
           if (!elem || /generic/i.test(String(elem))) {
             const prev = prevById.get(m.id);
-            if (prev && (prev.element || prev.base_damage_type)) {
-              elem = prev.element || prev.base_damage_type;
+            if (prev && (prev.element || prev.base_damage_type || prev.damage_type)) {
+              elem = prev.element || prev.base_damage_type || prev.damage_type;
             } else {
               elem = guessElementFromId(m.id);
             }
@@ -214,13 +224,17 @@
       if (snap.foes) {
         const prevById = new Map((foes || []).map(f => [f.id, f]));
         const enrichedFoes = (snap.foes || []).map(f => {
-          // Prefer primary from damage_types; then backend element/base_damage_type.
-          let elem = (Array.isArray(f.damage_types) && f.damage_types[0]) || f.element || f.base_damage_type;
+          // Prefer primary from damage_types; then singular damage_type, element, or base_damage_type.
+          let elem =
+            (Array.isArray(f.damage_types) && f.damage_types[0]) ||
+            f.damage_type ||
+            f.element ||
+            f.base_damage_type;
           let resolved = typeof elem === 'string' ? elem : (elem?.id || elem?.name);
           if (!resolved) {
             // Fall back to previously known element if available; otherwise leave empty
             const prev = prevById.get(f.id);
-            resolved = prev?.element || prev?.base_damage_type || '';
+            resolved = prev?.element || prev?.base_damage_type || prev?.damage_type || '';
           }
           return { ...f, element: resolved };
         });
@@ -269,13 +283,13 @@
               src={getCharacterImage(member.id, true)}
               alt=""
               class="portrait"
-              style={`border-color: ${getElementColor(elementOf(member))}`}
+              style={`border-color: ${getElementColor(member.element)}`}
             />
             <div class="element-chip">
               <svelte:component
-                this={getElementIcon(elementOf(member))}
+                this={getElementIcon(member.element)}
                 class="element-icon"
-                style={`color: ${getElementColor(elementOf(member))}`}
+                style={`color: ${getElementColor(member.element)}`}
                 aria-hidden="true" />
             </div>
           <div class="effects">
@@ -360,13 +374,13 @@
               src={getCharacterImage(foe.id)}
               alt=""
               class="portrait"
-              style={`border-color: ${getElementColor(elementOf(foe))}`}
+              style={`border-color: ${getElementColor(foe.element)}`}
             />
             <div class="element-chip">
               <svelte:component
-                this={getElementIcon(elementOf(foe))}
+                this={getElementIcon(foe.element)}
                 class="element-icon"
-                style={`color: ${getElementColor(elementOf(foe))}`}
+                style={`color: ${getElementColor(foe.element)}`}
                 aria-hidden="true" />
             </div>
           <div class="effects">
