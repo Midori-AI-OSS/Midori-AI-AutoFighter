@@ -45,8 +45,7 @@ players can anticipate the upcoming repeat action without confusing it for the
 currently active fighter.  After the bonus turn resolves, the queue resumes
 normal sequencing without advancing other gauges.
 
-[Action Animation Timers task](../tasks/cbd1caee-action-animation-timers.md)
-tracks upcoming work on per-action delays and animation hooks.
+Track per-action delay and animation hook behavior in this document as timing logic evolves.
 
 ### Timing and Animation
 
