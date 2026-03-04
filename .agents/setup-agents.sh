@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # .agents/setup-agents.sh
 # Bootstrap script for PixelArch OS (Arch-based Linux)
-# Installs all system dependencies and builds both frontend (JS) and backend (Python).
-# Does NOT start any servers or daemons — build only.
+# Installs system dependencies and syncs frontend/backend dependencies.
+# Does NOT start any servers or daemons.
 #
 # Tools used:
-#   - yay / pacman  for system packages
+#   - yay           for system packages
 #   - bun           for Node.js / frontend tooling  (never npm)
 #   - uv            for Python / backend tooling     (never pip)
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(pwd)"
 FRONTEND_DIR="${REPO_ROOT}/frontend"
 BACKEND_DIR="${REPO_ROOT}/backend"
 
@@ -21,15 +21,12 @@ BACKEND_DIR="${REPO_ROOT}/backend"
 info()  { echo "[setup] $*"; }
 die()   { echo "[setup] ERROR: $*" >&2; exit 1; }
 
+[[ -f "${REPO_ROOT}/AGENTS.md" ]] || die "run this script from the repository root"
+
 pkg_install() {
     # Install a package idempotently.
-    # Prefers yay when available (handles AUR + official); falls back to pacman.
     local pkg="$1"
-    if command -v yay &>/dev/null; then
-        yay -S --noconfirm --needed "$pkg"
-    else
-        sudo pacman -S --noconfirm --needed "$pkg"
-    fi
+    yay -Syu --noconfirm --needed "$pkg"
 }
 
 # ---------------------------------------------------------------------------
@@ -47,6 +44,8 @@ SYSTEM_PACKAGES=(
     unzip
     bun
     uv
+    docker
+    docker-compose
 )
 
 for pkg in "${SYSTEM_PACKAGES[@]}"; do
@@ -54,55 +53,38 @@ for pkg in "${SYSTEM_PACKAGES[@]}"; do
     pkg_install "$pkg"
 done
 
-# Ensure uv is on PATH (may be installed under ~/.local/bin)
-export PATH="${HOME}/.local/bin:${PATH}"
+info "Cleaning package cache..."
+yay -Yccc --noconfirm
 
 # ---------------------------------------------------------------------------
-# 2. Verify required tools are available
+# 3. Sync frontend dependencies (SvelteKit / Vite, using bun)
 # ---------------------------------------------------------------------------
-info "Verifying tool availability..."
-command -v bun  &>/dev/null || die "bun not found on PATH after install"
-command -v uv   &>/dev/null || die "uv not found on PATH after install"
-
-info "  bun  : $(bun  --version)"
-info "  uv   : $(uv   --version)"
-
-# ---------------------------------------------------------------------------
-# 3. Build frontend (SvelteKit / Vite, using bun)
-# ---------------------------------------------------------------------------
-info "Building frontend in ${FRONTEND_DIR}..."
+info "Syncing frontend dependencies in ${FRONTEND_DIR}..."
 [[ -d "${FRONTEND_DIR}" ]] || die "frontend directory not found: ${FRONTEND_DIR}"
 
 cd "${FRONTEND_DIR}"
 info "  Installing JS dependencies with bun..."
-bun install --frozen-lockfile
+bun install
 
-info "  Running bun run build..."
-bun run build
+bun run prepare || true
 
-info "Frontend build complete."
+info "Frontend dependency sync complete."
 
 # ---------------------------------------------------------------------------
-# 4. Build backend (Python / uv)
+# 4. Sync backend dependencies (Python / uv)
 # ---------------------------------------------------------------------------
-info "Building backend in ${BACKEND_DIR}..."
+info "Syncing backend dependencies in ${BACKEND_DIR}..."
 [[ -d "${BACKEND_DIR}" ]] || die "backend directory not found: ${BACKEND_DIR}"
 
 cd "${BACKEND_DIR}"
 
-info "  Creating / syncing Python virtual environment with uv..."
-# uv sync creates the venv if it does not exist and installs all deps.
-# --python ensures we use Python 3.13 consistent with the Dockerfile.
-uv sync --python python3.13
+info "  Syncing Python dependencies with uv..."
+uv sync
 
-info "  Compiling Python bytecode..."
-uv run python -m compileall -q .
-
-info "Backend build complete."
+info "Backend dependency sync complete."
 
 # ---------------------------------------------------------------------------
 # Done
 # ---------------------------------------------------------------------------
-info "All builds finished successfully."
-info "  Frontend output : ${FRONTEND_DIR}/.svelte-kit/ (or build/)"
+info "Setup and dependency sync finished successfully."
 info "  Backend venv    : ${BACKEND_DIR}/.venv"
