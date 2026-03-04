@@ -4,14 +4,12 @@ The settings overlay uses a tabbed layout with icon-only buttons for each catego
 
 - **Audio**: `Volume2` icon.
 - **System**: `Cog` icon.
-- **LLM**: `Brain` icon, shown only when language model controls are available.
 - **Gameplay**: `Gamepad` icon.
 
 Each tab's content lives in its own component:
 
 - `AudioSettings.svelte`
 - `SystemSettings.svelte`
-- `LLMSettings.svelte`
 - `GameplaySettings.svelte`
 
 All tabs share a two-column grid defined in `settings-shared.css`. Labels and Lucide icons occupy the left column while interactive controls sit on the right, and rows fade on hover. The stylesheet also provides tooltip styling consumed by `Tooltip.svelte`.
@@ -58,7 +56,7 @@ Audio volume controls use the `DotSelector` component to render ten selectable l
 
 Settings are stored in `localStorage` with schema versioning for backward compatibility. The system automatically migrates from the old flat `reducedMotion` boolean to the new hierarchical motion settings structure while preserving existing player preferences.
 
-`SettingsMenu.svelte` handles tab selection, LRM configuration, and dispatches `save` and `endRun` events. `SettingsMenu.svelte` receives `backendFlavor` from the page and checks it for `"llm"` to decide whether the LLM tab should appear. When the flavor string omits `"llm"`, the component skips `getLrmConfig()` and hides the model selector and test button.
+`SettingsMenu.svelte` handles tab selection and dispatches `save` and `endRun` events.
 
 The Gameplay tab's **End Run** button now attempts to end the current run by ID and falls back to clearing all runs when the ID is missing or the targeted request fails. When the cleanup completes successfully the root page opens a "Run Ended" confirmation overlay so players get positive feedback that their manual termination succeeded.
 

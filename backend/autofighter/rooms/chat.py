@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from services import lrm_service
+
 from ..party import Party
 from ..passives import PassiveRegistry
 from . import Room
@@ -11,7 +13,7 @@ from .utils import _serialize
 
 @dataclass
 class ChatRoom(Room):
-    """Chat rooms echo input while LRM integration is disabled."""
+    """Chat rooms return one-shot replies when the LRM provider is enabled."""
 
     async def resolve(self, party: Party, data: dict[str, Any]) -> dict[str, Any]:
         registry = PassiveRegistry()
@@ -19,7 +21,7 @@ class ChatRoom(Room):
             await registry.trigger("room_enter", member)
         message = data.get("message", "")
         party_data = [_serialize(p) for p in party.members]
-        reply = ""
+        reply = await lrm_service.generate_chat_reply(str(message), party_data)
         return {
             "result": "chat",
             "message": message,

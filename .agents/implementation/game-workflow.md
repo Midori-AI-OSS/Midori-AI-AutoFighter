@@ -51,7 +51,7 @@ Source code lives under the backend:
 - Shop Rooms sell upgrade items and cards with gold pricing, star ratings, floor-based inventory scaling, and reroll costs. Purchases add items to inventory, and class-level tracking ensures at least one appears per floor.
 - Upgrade items convert into upgrade points via the `UpgradePanel`, letting any character spend points on stats through `/players/<id>/upgrade` and `/players/<id>/upgrade-stat`.
 - Event Rooms present text prompts with selectable options that deterministically modify stats or inventory using seeded randomness. They may occur after battles without consuming the floor's room count.
- - Chat Rooms let players send a single message to an LLM character. Usage is limited to six chats per floor, and rooms should not spawn once the limit is reached.
+- Chat Rooms are currently backend-gated by LRM provider settings and always fail-safe to empty responses when disabled or unavailable.
 
 ## Wave preparation
 - Before a wave begins, fighters level up and their updated state is written back to `lives/`.

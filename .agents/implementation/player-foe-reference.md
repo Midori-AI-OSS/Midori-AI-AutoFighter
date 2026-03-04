@@ -9,27 +9,9 @@ When a character does not define a damage type the base classes assign one
 randomly. Battle generation respects this element so characters remain consistent
 between runs.
 
-Each instance initializes LangChain-backed memory storage tied to the current
-run. Use `send_lrm_message` to interact with the memory system and
-`receive_lrm_message` to log responses. Conversations remain isolated per
-combatant and reset for new runs. Both bases also accept optional `voice_sample`
-and `voice_gender` metadata. When dialogue is generated the TTS pipeline writes
-audio assets to `assets/voices/<id>.wav` using those hints.
-
-## LLM Integration
-
-All characters support LLM interactions through their `lrm_memory` system:
-
-- **Memory System**: ChromaDB vector storage with HuggingFace embeddings when
-  dependencies are available, otherwise a lightweight in-memory history.
-- **Async Loading**: `send_lrm_message()` uses `asyncio.to_thread()` so model
-  initialization never blocks the event loop.
-- **Torch Detection**: The centralized torch checker gracefully handles missing
-  GPU dependencies.
-- **Fallback Behavior**: When dependencies are unavailable, calls resolve to
-  empty responses instead of raising errors.
-
-The LLM stack remains optional—the combat loop operates normally without it.
+Both bases accept optional `voice_sample` and `voice_gender` metadata. When
+dialogue audio is generated the TTS pipeline writes assets to
+`assets/voices/<id>.wav` using those hints.
 
 ## Character Roster
 

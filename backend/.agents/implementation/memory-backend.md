@@ -1,11 +1,13 @@
-# LRM Memory Backend
+# LRM Memory Notes
 
-The player and foe base classes use a lightweight memory layer to track chat history and, when available, a vector store for retrieval.
+The previous LangChain/Chroma memory stack is not part of the active backend
+runtime path.
 
-- Default: an internal in-process conversation memory that stores `(input, output)` pairs and serializes them into a simple "Human/AI" transcript. This avoids LangChain's deprecated memory APIs and emits no deprecation warnings.
-- Vector store: if `langchain-community`, `langchain-chroma`, and `sentence-transformers` are installed (via `uv sync --extra llm-{cpu|cuda|amd}`), the memory upgrades to a `VectorStoreRetrieverMemory` backed by `Chroma` from the `langchain-chroma` package and `HuggingFaceEmbeddings`.
+Current foundation behavior is intentionally minimal:
 
-Notes
-- The Chroma integration now imports `Chroma` from `langchain_chroma` (previously from `langchain_community.vectorstores`), aligning with LangChain 0.2+ guidance.
-- If the vector store initialization fails at runtime, the code gracefully falls back to the internal memory without raising.
+- Chat replies are one-shot requests through the configured LRM provider.
+- No persistent vector-memory layer is required for the current backend flow.
+- On provider failure or disabled mode, responses degrade to empty text.
 
+If long-term conversation memory is reintroduced later, document the storage
+model and failure semantics alongside the runtime implementation.

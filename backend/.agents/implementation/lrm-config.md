@@ -1,15 +1,21 @@
 # LRM Configuration
 
-The configuration routes expose and persist language reasoning model choices.
+Backend LRM configuration is managed through runtime endpoints backed by persisted `options` values.
 
 ## Endpoints
-- `GET /config/lrm` returns the current model and the list of available `ModelName` values.
-- `POST /config/lrm` persists the selected model string in the `options` table.
-- `POST /config/lrm/test` runs the stored model on a provided prompt without memory and returns the raw reply.
 
-The import of `load_llm` is deferred inside the `/config/lrm/test` endpoint so
-the other configuration routes remain operational even when optional LLM
-dependencies are missing.
+- `GET /config/lrm`
+  - Returns provider status, model, reasoning settings, defaults, and provider list.
+- `POST /config/lrm`
+  - Validates and persists provider/model/reasoning/summary settings.
+- `POST /config/lrm/test`
+  - Runs a one-shot prompt through Codex CLI and returns structured diagnostics.
 
-## Chat Rooms
-`ChatRoom.resolve()` reads the persisted model via `options.get_option`, loads it with `load_llm`, and sends the user's message and serialized party context to the model. The LRM's reply is returned as `response` alongside existing room data.
+## Chat Room Integration
+
+`ChatRoom.resolve()` reads effective LRM settings and:
+
+- Calls Codex CLI when provider is `codex_cli`.
+- Returns empty response when provider is `disabled` or execution fails.
+
+This behavior keeps room payload shape stable while making LRM usage explicitly opt-in.

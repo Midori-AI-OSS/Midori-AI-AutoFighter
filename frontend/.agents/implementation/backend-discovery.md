@@ -1,7 +1,7 @@
 # Backend discovery
 
 The development server now resolves the backend URL when it starts. A Vite
-plugin probes known container hostnames (`backend`, `backend-llm-*`) and
+plugin probes known container hostnames (`backend`) and
 `localhost:59002`. The first reachable target becomes the API base and is
 exposed via the `VITE_API_BASE` environment variable and an `/api-base` endpoint
 served by the dev server.

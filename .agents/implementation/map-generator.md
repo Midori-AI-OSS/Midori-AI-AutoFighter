@@ -18,9 +18,7 @@ Rooms are stored as `MapNode` entries with fields:
   bonuses from the active run modifier context
 
 Run IDs seed generation so repeated runs produce identical layouts, but a seed
-may not be reused for another run. Chat rooms may appear after battles only when
-LLM extras are installed and never more than six times per floor. These rooms do
-not consume room slots. The Quart backend serializes nodes to JSON and advances a
+may not be reused for another run. The Quart backend serializes nodes to JSON and advances a
 `current` pointer as endpoints resolve rooms.
 
 Stats and rewards scale by multiplying base values with

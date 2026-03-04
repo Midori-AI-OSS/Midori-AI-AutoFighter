@@ -34,8 +34,8 @@ mode expectations are not followed.
 **Important:** The legacy runtime LRM integration path has been removed from active backend flows.
 
 - Do not reintroduce old LRM framework wiring or compatibility shims.
-- Keep current behavior stable while new LRM integration work is defined.
-- If framework-based LRM support is reintroduced later, document it explicitly in `backend/README.md` and the relevant `.agents/implementation/` notes.
+- Keep Codex-based LRM support opt-in (`disabled` by default) and fail-safe.
+- Document endpoint or provider changes in `backend/README.md` and the relevant `.agents/implementation/` notes.
 
 ## Coordination Notes
 - Major adjustments to data models, migrations, or background workers must be

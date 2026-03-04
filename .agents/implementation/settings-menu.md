@@ -3,8 +3,7 @@
 `SettingsMenu.svelte` now follows the options spec. It includes Lucide icons,
 labels, and tooltips for **SFX Volume**, **Music Volume**, **Voice Volume**,
 **Framerate**, and an **Autocraft** toggle. Controls are grouped under
-**Audio**, **UI**, **System**, and **Gameplay** headings, with the optional
-**LLM** tab appearing when a language-model backend is detected.
+**Audio**, **UI**, **System**, and **Gameplay** headings.
 
 `UISettings.svelte` contains all theme and motion controls, including palette
 selection, static/custom background pickers, custom accent color selection,

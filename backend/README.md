@@ -24,8 +24,16 @@ exported backup after a restart if they want to pick up a suspended run.
 
 ## LRM Status
 
-The legacy LRM integration has been removed from runtime endpoints and gameplay
-flows. A new Codex-driven integration will be added in a follow-up phase.
+Legacy framework-based LRM wiring has been removed.
+
+Current foundation support is backend-only and disabled by default:
+
+- `GET /config/lrm` returns effective provider/model settings.
+- `POST /config/lrm` updates persisted settings.
+- `POST /config/lrm/test` runs one-shot Codex CLI probes.
+
+Chat rooms only attempt Codex execution when provider is set to `codex_cli`.
+When disabled or unavailable, chat responses degrade safely to empty output.
 
 ## Text-to-Speech
 
@@ -33,7 +41,7 @@ flows. A new Codex-driven integration will be added in a follow-up phase.
 `generate_voice(text, audio_prompt_path=None)`. Player and foe plugins may
 define a `voice_sample` pointing to a reference clip. `voice_gender` defaults to
 "male", "female", or "neutral" based on the character's `char_type` but can be
-overridden if needed. When dialogue is produced (e.g. in chat rooms or LLM
+overridden if needed. When dialogue is produced (e.g. in chat rooms or LRM
 messages) the backend saves the generated voice to `assets/voices/<id>.wav` and
 returns the relative URL in API responses.
 

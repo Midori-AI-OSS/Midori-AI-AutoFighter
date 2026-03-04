@@ -39,7 +39,10 @@ async def test_non_llm_endpoints_work_without_deps(app_without_llm):
     assert status_resp.status_code == 200
 
     config_resp = await client.get("/config/lrm")
-    assert config_resp.status_code == 404
+    assert config_resp.status_code == 200
+    config_data = await config_resp.get_json()
+    assert config_data["provider"] == "disabled"
+    assert config_data["enabled"] is False
 
     players_resp = await client.get("/players")
     assert players_resp.status_code == 200

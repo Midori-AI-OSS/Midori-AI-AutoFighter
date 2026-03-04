@@ -1,32 +1,22 @@
 # Agent Configuration
 
-AutoFighter uses the Midori AI Agent Framework's config file system.
+## Status
 
-## Config File Location
+The legacy framework-based LRM config path has been retired.
 
-The config file `config.toml` should be placed in the `backend/` directory.
+Current runtime LRM settings are stored in the backend `options` table and are managed through the `/config/lrm` endpoints.
 
-## Config Format
+## Runtime Configuration Source
 
-See `backend/config.toml` for a complete example.
+- `GET /config/lrm` returns the effective provider/model/reasoning settings.
+- `POST /config/lrm` validates and persists configuration updates.
+- `POST /config/lrm/test` runs a one-shot Codex CLI probe for diagnostics.
 
-## Environment Variable Substitution
+## Provider Model
 
-The config supports environment variable substitution using `${VAR_NAME}` syntax:
-- `api_key = "${OPENAI_API_KEY}"` - Reads from environment
-- `base_url = "${OPENAI_API_URL}"` - Reads from environment
+- `disabled` (default): chat rooms return empty responses.
+- `codex_cli`: chat rooms attempt one-shot Codex-generated replies.
 
-## Backend Selection
+## Legacy Templates
 
-Three backends are supported:
-1. `openai` - OpenAI Agents SDK (for OpenAI API, Ollama, etc.)
-2. `huggingface` - Local inference with HuggingFace models
-3. `langchain` - Langchain backend
-
-## Config Priority
-
-1. Function arguments (highest)
-2. Backend-specific config section
-3. Base config section
-4. Environment variables
-5. Built-in defaults (lowest)
+`backend/config.toml` and `backend/config.toml.example` are reference templates only and are not auto-loaded by runtime.
