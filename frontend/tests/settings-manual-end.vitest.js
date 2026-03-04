@@ -8,9 +8,6 @@ vi.mock('../src/lib/systems/api.js', () => ({
   wipeData: vi.fn(() => Promise.resolve()),
   exportSave: vi.fn(() => Promise.resolve()),
   importSave: vi.fn(() => Promise.resolve()),
-  getLrmConfig: vi.fn(() => Promise.resolve({ available_models: [], current_model: '' })),
-  setLrmModel: vi.fn(() => Promise.resolve()),
-  testLrmModel: vi.fn(() => Promise.resolve({ response: '' })),
   getBackendHealth: vi.fn(() => Promise.resolve({ status: 'ok', ping_ms: 42 })),
   getTurnPacing: vi.fn(() => Promise.resolve({ default: 0.5, turn_pacing: 0.5 })),
   setTurnPacing: vi.fn(() => Promise.resolve({ default: 0.5, turn_pacing: 0.5 }))
@@ -46,9 +43,7 @@ describe('SettingsMenu manual run ending', () => {
         fullIdleMode: false,
         skipBattleReview: false,
         animationSpeed: 1,
-        lrmModel: '',
-        runId: 'run-123',
-        backendFlavor: 'default'
+        runId: 'run-123'
       }
     });
 

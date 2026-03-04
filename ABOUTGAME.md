@@ -1,17 +1,17 @@
-# About Midori AI AutoFighter
+# About Stained Glass Odyssey: Endless
 
-Midori AI AutoFighter is a web-based auto-battler game featuring strategic party management, elemental combat, and progressive character development. This document provides detailed information about the game's mechanics, features, and technical implementation.
+Stained Glass Odyssey: Endless is a web-based auto-battler game featuring strategic party management, elemental combat, and progressive character development. This document provides detailed information about the game's mechanics, features, and technical implementation.
 
-## What is Midori AI AutoFighter?
+## What is Stained Glass Odyssey: Endless?
 
-Midori AI AutoFighter is being rebuilt as a web application with a Svelte frontend communicating with a Python Quart backend. The game features turn-based combat, character collection, equipment management, and optional AI-powered interactions.
+Stained Glass Odyssey: Endless is being rebuilt as a web application with a Svelte frontend communicating with a Python Quart backend. The game features turn-based combat, character collection, equipment management, and planned LRM-powered interactions.
 
 ## Directory Structure
 
 ```
 frontend/   # Svelte frontend
 backend/    # Quart backend and game logic
-.codex/     # Documentation and contributor guides
+.agents/     # Documentation and contributor guides
 ```
 
 ## Game Screenshots and Walkthrough
@@ -19,27 +19,27 @@ backend/    # Quart backend and game logic
 The following screenshots demonstrate the game's user interface and progression system with comprehensive testing of the fully functional combat system:
 
 ### Main Menu - Character Selection
-![Main Menu](.codex/screenshots/a87d7423.png)
+![Main Menu](.agents/screenshots/a87d7423.png)
 
 The main menu features a beautiful anime-style character with a mystical halo set against a stunning nighttime city skyline. The interface provides clear navigation options arranged in a modern 2x3 grid layout with options for Run, Party, Warp, Inventory, Guidebook, Settings, and Feedback. The left panel displays game information and player statistics, while the atmospheric lighting and detailed character design showcase the game's high-quality visual presentation with an Arknights-inspired aesthetic.
 
 ### Party Selection - Character Customization
-![Party Selection](.codex/screenshots/3af616fb.png)
+![Party Selection](.agents/screenshots/3af616fb.png)
 
 The party selection interface demonstrates comprehensive character customization with a stunning fantasy landscape background featuring floating islands, crystalline formations, and a vibrant sunset sky. Players can manage character rosters (Player with Fire element, LadyDarkness with Dark element shown in the roster), configure damage types, distribute stat points using intuitive sliders for HP/Attack/Defense/Crit Rate/Crit Damage, and manage character progression. The interface includes full character stats display and upgrade point management (100 points available) with an elegant layout that maintains visual consistency with the main menu design.
 
 ### Settings Interface - Audio Controls
-![Settings Screen](.codex/screenshots/cde0fb0d.png)
+![Settings Screen](.agents/screenshots/cde0fb0d.png)
 
 The settings overlay provides comprehensive audio management with dedicated controls for SFX Volume, Music Volume, and Voice Volume. The interface features a clean, modern design with tabbed navigation (Audio, System, Gameplay) while maintaining the beautiful character backdrop from the main menu. The overlay demonstrates proper UI layering and accessibility with clear visual feedback for all interactive elements, including percentage-based volume controls and mute options.
 
 ### Card Reward Selection - Battle Completion
-![Card Rewards](.codex/screenshots/b11a85b2.png)
+![Card Rewards](.agents/screenshots/b11a85b2.png)
 
 The card reward interface appears after successful battle completion, showcasing three beautifully illustrated reward cards against the medieval town backdrop. Players can choose from **Thick Skin** (+3% bleed resist), **Honed Point** (+4% atk), or **Mindful Tassel** (+3% effect hit rate). Each card features detailed artwork and clear statistical benefits, demonstrating the working reward progression system after combat victories.
 
 ### Inventory Management 
-![Inventory](.codex/screenshots/171ed5c8.png)
+![Inventory](.agents/screenshots/171ed5c8.png)
 
 The inventory interface provides access to collected items, cards, and character progression tracking with a clean tabbed layout (Upgrades, Cards, Relics). This screen becomes available during active runs and allows players to manage their collected resources and review battle rewards. The interface maintains the consistent visual design with the character backdrop and includes a reload button for refreshing inventory data.
 
@@ -80,16 +80,9 @@ The Svelte frontend targets three breakpoints:
 
 The interface adapts automatically based on viewport width.
 
-### Optional LLM Dependencies
+### Planned LRM Features
 
-When LLM dependencies are installed, the application provides:
-
-- **Model Testing**: Test LLM models through the settings menu (async-friendly to prevent backend lockup)
-- **Chat Rooms**: LLM-powered chat interactions with party members
-- **Player/Foe Memory**: Persistent conversation memory using ChromaDB vector storage
-- **Centralized Management**: Single torch availability check on startup with consistent error handling
-
-All LLM operations are asynchronous and won't block the game interface. Models are loaded in background threads and configured with proper generation parameters to minimize warnings.
+Chat-focused LRM features are planned for a follow-up phase.
 
 ### Loot and Rare Drop Rate
 
@@ -99,7 +92,7 @@ Each foe defeated during a battle temporarily grants +55% `rdr` for that room, r
 
 ### Plugins
 
-The game auto-discovers classes under `plugins/` and `mods/` by `plugin_type` and wires them to a shared event bus. The bus yields 0.002 s after each emission to keep the async loop responsive. See `.codex/implementation/plugin-system.md` for loader details and examples. Player and foe plugins also expose `prompt` and `about` strings with placeholder text for future character customization.
+The game auto-discovers classes under `plugins/` and `mods/` by `plugin_type` and wires them to a shared event bus. The bus yields 0.002 s after each emission to keep the async loop responsive. See `.agents/implementation/plugin-system.md` for loader details and examples. Player and foe plugins also expose `prompt` and `about` strings with placeholder text for future character customization.
 
 Luna's foe form is weighted to appear more frequently and may even show up as a boss when she isn't in the player's party.
 
@@ -148,21 +141,17 @@ Pull for new characters, craft items, or rearrange the party before continuing a
 
 ### Shop Room
 
-Entering a shop heals the party by 5% of its combined max HP. Buy upgrade items or cards with star ratings. Inventory scales by floor, purchases add items to your inventory and disable the button, class-level tracking guarantees at least two shops per floor, and gold can reroll the current stock. Gold prices per star rank, pressure-based cost scaling, and reroll rules are documented in [`./.codex/implementation/shop-room.md`](.codex/implementation/shop-room.md).
+Entering a shop heals the party by 5% of its combined max HP. Buy upgrade items or cards with star ratings. Inventory scales by floor, purchases add items to your inventory and disable the button, class-level tracking guarantees at least two shops per floor, and gold can reroll the current stock. Gold prices per star rank, pressure-based cost scaling, and reroll rules are documented in [`./.agents/implementation/shop-room.md`](.agents/implementation/shop-room.md).
 
 ### Battle Review and Chat
 
-Chat interactions with party members are planned to be moved to rest rooms with a limit of approximately 6 messages per visit. When LLM dependencies are installed, players can engage in AI-powered conversations with characters to enhance the narrative experience.
-
-### Per-instance Memory
-
-Each player and foe instance now maintains its own LangChain ChromaDB memory. Use `send_lrm_message` to converse with the LRM and `receive_lrm_message` to record incoming replies. Histories are scoped to the current run so dialogs stay isolated between combatants.
+Battle review summarizes combat outcomes and rewards after each room.
 
 ## Map and Progression
 
 ### Map Generation
 
-New runs begin by selecting up to four owned allies in a party picker before the map appears. Runs now progress through 100-room floors built by a seeded `MapGenerator`. Each floor opens with a `start` node, follows with 98 procedurally curated encounters that weave in shops, rests, primes, and glitched battles, and ends in a `battle-boss-floor`. Chat scenes may appear after battles only when the LLM profiles are installed and do not affect room count. The frontend shows these nodes as stained-glass buttons with `lucide-svelte` icons for battles, shops, rests, and bosses, and the extended floor length keeps scrolling smooth while preserving the guaranteed support room cadence.
+New runs begin by selecting up to four owned allies in a party picker before the map appears. Runs now progress through 100-room floors built by a seeded `MapGenerator`. Each floor opens with a `start` node, follows with 98 procedurally curated encounters that weave in shops, rests, primes, and glitched battles, and ends in a `battle-boss-floor`. The frontend shows these nodes as stained-glass buttons with `lucide-svelte` icons for battles, shops, rests, and bosses, and the extended floor length keeps scrolling smooth while preserving the guaranteed support room cadence.
 
 Across the broader interface, aim for a stained-glass aesthetic. Bar graphs and other visual meters should use vibrant, glass-like colors that mirror the element palette defined in `getElementBarColor` in `frontend/src/lib/BattleReview.svelte`.
 
@@ -206,16 +195,16 @@ The rotating 6★ headliner banners now spotlight Lady Fire and Ice, Lady Storm,
 The repository supports building standalone game executables for Linux and macOS. See [BUILD.md](BUILD.md) for complete documentation.
 
 #### Available Builds
-- **Linux** (4 variants): non-llm, llm-cpu, llm-cuda, llm-amd
-- **macOS** (4 variants): non-llm, llm-cpu, llm-cuda, llm-amd
+- **Linux**: standard profile
+- **macOS**: standard profile
 
 #### Quick Local Build
 ```bash
 # Build for current platform
 ./build.sh
 
-# Build specific variant
-./build.sh llm-cpu
+# Build specific platform
+./build.sh linux
 ```
 
 Builds can be manually created with the build script. Download the latest builds from the [Releases page](../../releases) if available.
@@ -237,7 +226,7 @@ Install prebuilt packages when available:
 - **Debian/Ubuntu**
 
   ```bash
-  sudo apt install ./autofighter.deb
+  sudo apt install ./stained-glass-odyssey-endless.deb
   ```
 
 ### Testing
@@ -261,4 +250,4 @@ For development setup, contribution guidelines, and technical documentation, see
 - [DEVELOPMENT.md](DEVELOPMENT.md) - Development environment setup
 - [BUILD.md](BUILD.md) - Building and packaging
 - [AGENTS.md](AGENTS.md) - Contributor guidelines
-- [.codex/](.codex/) - Detailed technical documentation
+- [.agents/](.agents/) - Detailed technical documentation

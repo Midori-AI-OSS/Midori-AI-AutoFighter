@@ -67,8 +67,7 @@ const baseOverlayHostProps = Object.freeze({
   advanceBusy: false,
   animationSpeed: 1,
   selectedParty: [],
-  battleActive: false,
-  backendFlavor: ''
+  battleActive: false
 });
 
 beforeAll(async () => {

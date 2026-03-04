@@ -71,7 +71,6 @@ export {
 export {
   getPlayerConfig,
   savePlayerConfig,
-  getBackendFlavor,
   endAllRuns
 } from './systems/api.js';
 

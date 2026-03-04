@@ -47,7 +47,7 @@ The stress test uses a dedicated `compose.stress-test.yaml` file with the follow
 - `restart: "no"` - Prevents automatic restart on failure (test should run once)
 - `-s` flag - Shows test output immediately (no capture)
 - `--log-cli-level=INFO` - Displays INFO level logs during test execution
-- External network - Uses the existing `autofighter-network`
+- External network - Uses the existing `stained-glass-odyssey-endless-network`
 
 The test provides real-time feedback with:
 - 🔍 Plugin discovery progress
@@ -59,7 +59,7 @@ The test provides real-time feedback with:
 To run the test, ensure the main application network exists:
 ```bash
 # Create network if it doesn't exist
-docker network create autofighter-network
+docker network create stained-glass-odyssey-endless-network
 
 # Run stress test
 docker compose -f compose.stress-test.yaml run stress-test

@@ -43,7 +43,6 @@
   export let editorState = {};
   export let battleActive = false;
   export let selected = [];
-  export let backendFlavor = '';
   export let fullIdleMode = false;
   export let animationSpeed = 1;
   export let shopProcessing = false;
@@ -433,7 +432,6 @@
         bind:animationSpeed
         {selectedParty}
         {battleActive}
-        {backendFlavor}
         on:saveParty={() => dispatch('saveParty')}
       on:startRun={(e) => dispatch('startRun', e.detail)}
         on:back={() => dispatch('back')}

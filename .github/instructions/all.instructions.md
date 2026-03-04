@@ -14,10 +14,10 @@ applyTo: '**'
 2.  **Execution Rules (Environment-Gated):**
     - **Ubuntu container:** You may run whatever shell commands you need (git/rg/find/uv/bun/cargo/etc.) to inspect, build, lint, test, and iterate. You do not need to provide cleanup instructions (the container is ephemeral), but do not leave long-lived servers/daemons running during the task—stop them when you are done with that step.
     - **Arch-like host (PixelArch / Arch-flavored):** Act like you are in a devcontainer: do not start/stop servers or run long-lived processes. Prefer preparing commands for the user to run and request their feedback. If you must run commands, keep them read-only and low-risk (listing files, reading logs, grepping, etc.).
-3.  **Local Rules Discovery (Required):** Before editing any file, check for `AGENTS.md` files that apply to that path (repo root + any in the directory tree). Follow the most specific instructions first, then service `.codex/instructions/`, then repo-wide guidance.
+3.  **Local Rules Discovery (Required):** Before editing any file, check for `AGENTS.md` files that apply to that path (repo root + any in the directory tree). Follow the most specific instructions first, then service `.agents/instructions/`, then repo-wide guidance.
 4.  **Tooling + Network:** Use repository-approved tooling (`uv` for Python, `bun` for Node, `cargo` for Rust). Dependency installs are OK to run; only ask first when a command requires explicit network access approval in your environment.
 5.  **Change Documentation Protocol:** Upon completing a modification or task, generate a concise commit message in a markdown code block describing what changed.
-6.  **Planning Review Protocol:** At the start, mid, and end of any task, review `.codex/requests` for planning items and `.codex/implementation` for technical notes. Update these files only when necessary to keep plans current.
+6.  **Planning Review Protocol:** At the start, mid, and end of any task, review `.agents/requests` for planning items and `.agents/implementation` for technical notes. Update these files only when necessary to keep plans current.
 7.  **Compliance Reporting Protocol:** End every response with a short **Compliance** section that lists directives **1–7** and states how you complied with each (use `N/A` + a brief reason when a directive does not apply to that exchange).
 
 ---

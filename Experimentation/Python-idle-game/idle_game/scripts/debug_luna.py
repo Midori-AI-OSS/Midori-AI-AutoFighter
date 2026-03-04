@@ -1,6 +1,6 @@
 from pathlib import Path
 
-path = Path("/tmp/Midori-AI-AutoFighter/frontend/src/lib/assets/characters/luna")
+path = Path("/tmp/Stained-Glass-Odyssey-Endless/frontend/src/lib/assets/characters/luna")
 print(f"Checking {path}")
 if path.exists():
     print("Path exists")

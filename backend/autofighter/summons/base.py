@@ -1,5 +1,5 @@
 """
-Unified summons system for the Midori AI AutoFighter game.
+Unified summons system for the Stained Glass Odyssey: Endless game.
 
 Provides a consistent framework for creating and managing summons across
 characters, passives, cards, and relics.

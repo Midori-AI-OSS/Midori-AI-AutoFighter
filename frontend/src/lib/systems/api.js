@@ -1,16 +1,4 @@
-import { openOverlay } from './OverlayController.js';
 import { httpRequest, httpGet, httpPost, httpPut, httpBlob } from './httpClient.js';
-
-export async function getBackendFlavor() {
-  try {
-    const data = await httpGet('/', { cache: 'no-store' }, true); // suppress overlay for this check
-    return data.flavor;
-  } catch (e) {
-    // Show a dedicated overlay when the backend isn't reachable/ready
-    openOverlay('backend-not-ready', { message: e?.message || 'Backend unavailable' });
-    throw e;
-  }
-}
 
 // Health check for the backend performance endpoint
 export async function getBackendHealth() {
@@ -82,18 +70,6 @@ export async function importSave(file) {
     body: await file.arrayBuffer(),
     headers: {} // Remove default Content-Type for binary upload
   });
-}
-
-export async function getLrmConfig() {
-  return httpGet('/config/lrm', { cache: 'no-store' });
-}
-
-export async function setLrmModel(model) {
-  return httpPost('/config/lrm', { model });
-}
-
-export async function testLrmModel(prompt) {
-  return httpPost('/config/lrm/test', { prompt });
 }
 
 async function fetchTurnPacing(url, options = {}, suppressOverlay = false) {

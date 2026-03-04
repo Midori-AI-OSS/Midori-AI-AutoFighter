@@ -1,4 +1,4 @@
-# Midori AI AutoFighter Development Instructions
+# Stained Glass Odyssey: Endless Development Instructions
 
 **ALWAYS follow these instructions first**. Only search for additional information or run exploration commands if the information here is incomplete or contradicted by actual behavior.
 
@@ -8,13 +8,13 @@
 
 ## Repository Overview
 
-Midori AI AutoFighter is a web-based auto-battler game with a Svelte frontend and Python Quart backend. The repository supports local builds for Linux and macOS with optional LLM (Language Model) support.
+Stained Glass Odyssey: Endless is a web-based auto-battler game with a Svelte frontend and Python Quart backend. The repository supports local builds for Linux and macOS.
 
 ### Directory Structure
-- `backend/` - Python Quart backend with game logic and AI features
+- `backend/` - Python Quart backend with game logic and services
 - `frontend/` - Svelte frontend with responsive design  
 - `legacy/` - Previous Pygame version (read-only, do not modify)
-- `.codex/` - Documentation and contributor guides
+- `.agents/` - Documentation and contributor guides
 
 ## Required Tools Installation
 
@@ -39,30 +39,19 @@ Tools are now autoinstalled into your dev env.
 
 ### 2. Building the Application
 
-#### Quick Build (Non-LLM)
+#### Quick Build
 ```bash
-# Build non-llm variant - takes ~1 minute. NEVER CANCEL.
-./build.sh non-llm
+# Build standard profile - takes ~1 minute. NEVER CANCEL.
+./build.sh
 
 # Build for specific platform
-./build.sh non-llm linux
+./build.sh linux
 ```
 
-**Timeout Warning**: Set timeout to 120+ seconds for non-LLM builds.
-
-#### LLM Builds (WARNING: VERY SLOW)
-```bash
-# LLM builds - takes 10+ minutes. NEVER CANCEL.
-./build.sh llm-cpu    # CPU-only LLM support
-./build.sh llm-cuda   # NVIDIA GPU support  
-./build.sh llm-amd    # AMD GPU support
-```
-
-**CRITICAL TIMEOUT WARNING**: LLM builds take 10-15 minutes or longer due to PyTorch and transformer dependencies. Set timeout to 1200+ seconds (20+ minutes). DO NOT cancel these builds.
+**Timeout Warning**: Set timeout to 120+ seconds for builds.
 
 **Expected Output**: 
-- Non-LLM build: ~549MB executable in `backend/dist/midori-autofighter-non-llm-linux`
-- LLM builds: Much larger executables (1GB+) due to PyTorch dependencies
+- Standard build: executable in `backend/dist/stained-glass-odyssey-endless-standard-<platform>`
 - Build artifacts also created in `backend/build/` directory
 
 ### 3. Running the Application
@@ -73,7 +62,7 @@ cd backend
 uv run app.py
 ```
 
-**Expected**: Server starts on `http://localhost:59002`. You should see "Torch and LLM dependencies are not available" unless LLM extras are installed.
+**Expected**: Server starts on `http://localhost:59002`.
 
 #### Frontend Development
 ```bash
@@ -155,9 +144,9 @@ curl http://localhost:59002/
 
 ### 2. Build Validation
 ```bash
-# Test non-LLM build works
-./build.sh non-llm
-ls -la backend/dist/midori-autofighter-non-llm-linux
+# Test standard Linux build works
+./build.sh linux
+ls -la backend/dist/stained-glass-odyssey-endless-standard-linux
 # Expected: ~549MB executable file
 ```
 
@@ -172,14 +161,11 @@ ls -la build/
 ## Build Variants and Platforms
 
 ### Available Variants
-- **non-llm**: Base game without AI features (~549MB)
-- **llm-cpu**: CPU-based language models (1GB+)
-- **llm-cuda**: NVIDIA GPU acceleration (1GB+)  
-- **llm-amd**: AMD GPU acceleration (1GB+)
+- **standard**: base profile
 
 ### Supported Platforms
-- **Linux**: All variants supported
-- **macOS**: All variants supported
+- **Linux**: supported
+- **macOS**: supported
 
 ## Known Issues and Limitations
 
@@ -189,17 +175,14 @@ Built executables may fail with plugin discovery errors. This is a known issue i
 ### 2. Docker Compose Networking
 Docker builds currently fail due to DNS resolution problems. Use direct execution instead.
 
-### 3. LLM Dependencies
-LLM variants require significant additional dependencies and build time. Only use when specifically needed for AI features.
-
-### 4. Test Failures
+### 3. Test Failures
 Some tests may fail in active development. Only fix test failures related to your specific changes.
 
 ## CI/CD Integration
 
 ### GitHub Actions
-- **Build workflows**: Automatically build all variants on push/PR
-- **Test workflows**: Run complete test suite with matrix strategy
+- **Build workflows**: Automatically build on push/PR
+- **Test workflows**: Run complete test suite
 - **Linting**: Separate jobs for backend (`uvx ruff check`) and frontend (`bunx eslint`)
 
 ### Required Checks
@@ -253,4 +236,4 @@ cd frontend && bun run lint:fix
 2. Clear caches: `uv cache clean`
 3. Restart development servers
 
-Remember: Follow the AGENTS.md contributor guidelines and use the appropriate contributor mode documentation in `.codex/modes/` for your role.
+Remember: Follow the AGENTS.md contributor guidelines and use the appropriate contributor mode documentation in `.agents/modes/` for your role.

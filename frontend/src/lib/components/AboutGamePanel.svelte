@@ -26,7 +26,7 @@
     <h3 class="section-title">About the Game</h3>
     <div class="about-content">
       <p class="game-description">
-        Midori AI AutoFighter is an innovative auto-battler where strategy meets automation. 
+        Stained Glass Odyssey: Endless is an innovative auto-battler where strategy meets automation. 
         Build your team, collect powerful relics, and watch epic battles unfold as your characters 
         fight autonomously through procedurally generated dungeons.
       </p>

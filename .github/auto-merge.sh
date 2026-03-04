@@ -24,7 +24,7 @@ if ! command -v jq >/dev/null 2>&1; then
   yay -Syu --noconfirm jq
 fi
 
-git config --global --add safe.directory /__w/Midori-AI-AutoFighter/Midori-AI-AutoFighter
+git config --global --add safe.directory /__w/Stained-Glass-Odyssey-Endless/Stained-Glass-Odyssey-Endless
 
 REPO_NAME_WITH_OWNER="${GITHUB_REPOSITORY:-}"
 if [[ -z "$REPO_NAME_WITH_OWNER" ]]; then

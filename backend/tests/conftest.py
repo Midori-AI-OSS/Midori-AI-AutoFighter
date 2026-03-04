@@ -180,8 +180,8 @@ def _ensure_options_stub() -> None:
             return str.__new__(cls, value)
 
 
-    OptionKey.LRM_MODEL = OptionKey("lrm_model")
     OptionKey.TURN_PACING = OptionKey("turn_pacing")
+    OptionKey.CONCISE_DESCRIPTIONS = OptionKey("concise_descriptions")
 
     _store: dict[str, str] = {}
 
@@ -192,9 +192,17 @@ def _ensure_options_stub() -> None:
         _store[str(key)] = value
         return None
 
+    def get_option_sync(key, default=None):  # noqa: ANN001, D401 - simple stub
+        return get_option(key, default)
+
+    def set_option_sync(key, value):  # noqa: ANN001, D401 - simple stub
+        return set_option(key, value)
+
     options.OptionKey = OptionKey  # type: ignore[attr-defined]
     options.get_option = get_option  # type: ignore[attr-defined]
     options.set_option = set_option  # type: ignore[attr-defined]
+    options.get_option_sync = get_option_sync  # type: ignore[attr-defined]
+    options.set_option_sync = set_option_sync  # type: ignore[attr-defined]
     sys.modules["options"] = options
 
 

@@ -5,7 +5,6 @@
   import {
     getPlayerConfig,
     savePlayerConfig,
-    getBackendFlavor,
     endAllRuns,
     startRun,
     roomAction,
@@ -121,7 +120,6 @@
     runState.setParty(selectedParty);
   }
 
-  let backendFlavor = '';
   let viewportBg = '';
 
   let editorConfigs = {};
@@ -384,11 +382,8 @@
       }
     }
     
-    // Try to get backend flavor and sync with backend
+    // Try to sync with backend
     try {
-      backendFlavor = await getBackendFlavor();
-      window.backendFlavor = backendFlavor;
-      
       // Check for previous crash errors before UI state sync
       await checkPreviousCrash();
       
@@ -409,7 +404,7 @@
       if (saved?.runId) {
         runState.setRunId(saved.runId);
       }
-      // Dedicated overlay opened in getBackendFlavor; user can retry when backend is ready
+      // Backend not ready yet; user can retry once services recover
     }
   });
 
@@ -1804,7 +1799,6 @@
     items={items}
     editorState={editorState}
     battleActive={battleActive}
-    backendFlavor={backendFlavor}
     bind:animationSpeed
     bind:fullIdleMode
     on:startRun={handleStart}

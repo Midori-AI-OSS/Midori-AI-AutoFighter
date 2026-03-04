@@ -135,18 +135,15 @@ def _serialize(obj: Stats) -> dict[str, Any]:
     try:
         data: dict[str, Any] = {}
         for f in fields(type(obj)):
-            name = f.name
-            if name == "lrm_memory":
-                continue
-            value = getattr(obj, name, None)
+            value = getattr(obj, f.name, None)
             if isinstance(value, (int, float, bool, str)) or value is None:
-                data[name] = value
+                data[f.name] = value
             elif isinstance(value, list):
-                data[name] = list(value)
+                data[f.name] = list(value)
             elif isinstance(value, dict):
-                data[name] = dict(value)
+                data[f.name] = dict(value)
             else:
-                data[name] = str(value)
+                data[f.name] = str(value)
     except Exception:
         # Non-dataclass object or serialization issue: build a minimal view
         norm = _normalize_damage_type(getattr(obj, "damage_type", None))
@@ -179,8 +176,6 @@ def _serialize(obj: Stats) -> dict[str, Any]:
             "ultimate_max": _resolve_ultimate_maximum(obj),
         }
 
-    # Remove non-serializable fields introduced by plugins (e.g., runtime memory)
-    data.pop("lrm_memory", None)
     norm = _normalize_damage_type(getattr(obj, "damage_type", None))
     data["damage_type"] = norm
     data["element"] = norm

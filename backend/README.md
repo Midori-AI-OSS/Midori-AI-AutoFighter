@@ -22,65 +22,18 @@ logs remain on disk, and telemetry records each removed run as an "aborted"
 outcome so analytics timelines stay consistent. Operators must restore an
 exported backup after a restart if they want to pick up a suspended run.
 
-## Agent Configuration
+## LRM Status
 
-AutoFighter uses the [Midori AI Agent Framework](https://github.com/Midori-AI-OSS/agents-packages) for LLM/LRM management. Configuration is supported via `config.toml` file or environment variables.
+Legacy framework-based LRM wiring has been removed.
 
-### Configuration
+Current foundation support is backend-only and disabled by default:
 
-1. Edit `config.toml` with your settings (optional, defaults provided):
-   ```toml
-   [midori_ai_agent_base]
-   backend = "openai"
-   model = "gpt-oss:20b"
-   api_key = "${OPENAI_API_KEY}"
-   base_url = "${OPENAI_API_URL}"
-   ```
+- `GET /config/lrm` returns effective provider/model settings.
+- `POST /config/lrm` updates persisted settings.
+- `POST /config/lrm/test` runs one-shot Codex CLI probes.
 
-2. Set any referenced environment variables:
-   ```bash
-   export OPENAI_API_URL="http://localhost:11434/v1"
-   export OPENAI_API_KEY="not-needed"
-   ```
-
-3. Validate your config:
-   ```bash
-   uv run python scripts/validate_config.py
-   ```
-
-### Supported Backends
-
-1. **OpenAI** - For OpenAI API, Ollama, LocalAI, and compatible services
-2. **HuggingFace** - For local inference with HuggingFace models (requires `llm-cpu` extras)
-3. **Langchain** - For Langchain-based providers
-
-### Installing LLM Dependencies
-
-```bash
-# For CPU-based local inference
-uv sync --extra llm-cpu
-
-# For CUDA (NVIDIA GPU) inference
-uv sync --extra llm-cuda
-
-# For AMD GPU inference
-uv sync --extra llm-amd
-```
-
-### Configuration Priority
-
-Settings are resolved in this order (highest to lowest priority):
-1. Function arguments in code
-2. Config file backend-specific section
-3. Config file base section
-4. Environment variables
-5. Built-in defaults
-
-For complete configuration documentation, see [.codex/implementation/agent-config.md](../.codex/implementation/agent-config.md).
-
-## LLM Loader
-
-`backend/llms/loader.py` provides a LangChain-based loader for local models. This is the current implementation and will be migrated to use the agent framework in a future update.
+Chat rooms only attempt Codex execution when provider is set to `codex_cli`.
+When disabled or unavailable, chat responses degrade safely to empty output.
 
 ## Text-to-Speech
 
@@ -88,13 +41,9 @@ For complete configuration documentation, see [.codex/implementation/agent-confi
 `generate_voice(text, audio_prompt_path=None)`. Player and foe plugins may
 define a `voice_sample` pointing to a reference clip. `voice_gender` defaults to
 "male", "female", or "neutral" based on the character's `char_type` but can be
-overridden if needed. When dialogue is produced (e.g. in chat rooms or LLM
+overridden if needed. When dialogue is produced (e.g. in chat rooms or LRM
 messages) the backend saves the generated voice to `assets/voices/<id>.wav` and
 returns the relative URL in API responses.
-
-## LRM Configuration
-
-`GET /config/lrm` returns the current model and available `ModelName` values. `POST /config/lrm` saves a new choice in the `options` table, and `POST /config/lrm/test` runs the stored model on a stateless prompt and returns its raw reply. Chat rooms load the persisted model and forward the party context and user message, returning the LRM's response alongside existing room fields.
 
 ## Logging
 
@@ -120,7 +69,8 @@ await request_shutdown()
 
 `GET /performance/metrics` exposes the sizes of the in-memory battle tracking structures (`battle_tasks`, `battle_snapshots`, and `battle_locks`) along with current process memory usage (via `psutil` if installed or `tracemalloc` otherwise). Operators can trigger manual cleanup of completed battles with `POST /performance/gc`, which purges stale state and runs garbage collection.
 
-The root endpoint returns a simple status payload including the configured flavor. Set `UV_EXTRA` (default `"default"`) to label this instance. Additional routes support
+The root endpoint returns a simple status payload including a flavor label.
+Additional routes support
 starting runs with a seeded 100-room map, updating the party, retrieving floor
 maps, listing available player characters, returning room background images,
 editing player pronouns and starting stats, and posting actions to battle, shop,
@@ -138,7 +88,7 @@ persisted on the host.
 
 Room advancement is blocked until all post-battle rewards are resolved
 (`awaiting_card`, `awaiting_relic`, and `awaiting_loot`, which is rarely set
-because loot auto-collects). See `.codex/implementation/reward-progression.md`
+because loot auto-collects). See `.agents/implementation/reward-progression.md`
 for details.
 
 Player and foe base classes assign a random damage type when none is
@@ -199,8 +149,8 @@ returns a JSON mapping of room types to background image URLs under `/assets/...
 
 ## Docker
 
-`Dockerfile.python` installs uv, Docker, and Docker Compose in separate steps and prepares the `/.venv` directory with individual RUN commands. It exposes a `UV_EXTRA` build argument for optional extras.
+`Dockerfile.python` installs uv, Docker, and Docker Compose in separate steps and prepares the `/.venv` directory with individual RUN commands.
 
 ```bash
-docker build -f Dockerfile.python --build-arg UV_EXTRA="llm-cpu" -t autofighter-backend .
+docker build -f Dockerfile.python -t stained-glass-odyssey-endless-backend .
 ```

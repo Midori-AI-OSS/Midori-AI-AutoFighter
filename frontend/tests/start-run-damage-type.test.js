@@ -129,7 +129,6 @@ function createTestContext() {
     startBattlePoll: () => {},
     acknowledgeLoot: async () => {},
     updateParty: async () => {},
-    getBackendFlavor: async () => 'test',
     sendAction: async () => {},
     getMap: async () => null,
     roomAction: async () => ({}),

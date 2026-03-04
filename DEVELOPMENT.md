@@ -38,25 +38,25 @@ All backend-only commands (linting, targeted tests) should be executed through
 
 ### Character Plugin Boundaries
 - Read the plugin boundary reminder in
-  [`.codex/instructions/plugin-system.md`](.codex/instructions/plugin-system.md)
+  [`.agents/instructions/plugin-system.md`](.agents/instructions/plugin-system.md)
   before touching combat helpers. All spawn weighting, boss behaviours, and
   passive effects must live in the relevant plugin modules so shared battle
   utilities remain character-agnostic.
 
 ### Building the Application
 ```bash
-./build.sh [variant] [platform]
+./build.sh [platform]
 ```
 
 Example:
 ```bash
-./build.sh non-llm linux
-./build.sh llm-cpu windows
+./build.sh linux
+./build.sh darwin
 ```
 
 ### Running End-to-End Tests
 
-The repository includes Playwright-based end-to-end tests that verify the complete game flow across all variants.
+The repository includes Playwright-based end-to-end tests that verify the complete game flow.
 
 #### Local E2E Testing
 ```bash
@@ -85,7 +85,7 @@ The repository includes two GitHub Actions workflows for E2E testing:
 - `.github/workflows/e2e-test-1.yml` - First sub-agent workflow
 - `.github/workflows/e2e-test-2.yml` - Second sub-agent workflow
 
-Each workflow tests 3 game variants in parallel (non-llm, llm-cpu, llm-cuda) using a matrix strategy. Each variant is tested as an independent "sub-agent" that:
+Each workflow runs the standard backend profile and tests the same user flow end to end:
 1. Sets up the environment with appropriate dependencies
 2. Builds the frontend
 3. Starts the backend server
@@ -118,7 +118,7 @@ The GitHub Actions CI workflow uses modern tools:
 3. **e2e-test-1.yml** - End-to-end tests with Playwright (sub-agent 1)
 4. **e2e-test-2.yml** - End-to-end tests with Playwright (sub-agent 2)
 
-The E2E test workflows use a matrix strategy to test 3 game variants (non-llm, llm-cpu, llm-cuda) in parallel, with each variant running as an independent job.
+The E2E test workflows run the standard backend profile in matrix-driven jobs.
 
 Local development scripts automatically adapt to available tools, ensuring compatibility across different environments.
 

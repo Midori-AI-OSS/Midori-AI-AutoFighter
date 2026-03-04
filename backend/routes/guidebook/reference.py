@@ -333,4 +333,3 @@ async def effects() -> tuple[str, int, dict[str, Any]]:
         }
     }), 200
 
-

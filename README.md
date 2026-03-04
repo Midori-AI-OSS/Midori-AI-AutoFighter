@@ -4,7 +4,7 @@ A web-based auto-battler game featuring strategic party management, elemental co
 
 ## Quick Start with Docker Compose (Recommended)
 
-The easiest way to run Midori AI AutoFighter is with Docker Compose. Choose one of the four variants below:
+The easiest way to run Stained Glass Odyssey: Endless is with Docker Compose. Choose one of the four variants below:
 
 ### Prerequisites
 

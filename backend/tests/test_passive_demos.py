@@ -208,7 +208,7 @@ async def demo_multiple_passives():
 
 async def main():
     """Run all passive demos."""
-    print("🎮 Character Passives Demo - Midori AI AutoFighter")
+    print("🎮 Character Passives Demo - Stained Glass Odyssey: Endless")
     print("=" * 60)
     print()
 

@@ -37,34 +37,30 @@ def _serialize_stats(obj) -> dict:
     # Build a dict without triggering dataclasses.asdict deep-copy, which
     # chokes on complex objects (e.g., langchain/pydantic bindings).
     for f in fields(obj):
-        name = f.name
-        if name == "lrm_memory":
-            # Non-serializable, runtime-only memory object
-            continue
-        value = getattr(obj, name)
-        if name == "char_type":
+        value = getattr(obj, f.name)
+        if f.name == "char_type":
             # Enum-like object; surface the name/string
             try:
-                data[name] = value.name
+                data[f.name] = value.name
             except Exception:
-                data[name] = str(value)
+                data[f.name] = str(value)
             continue
-        if name == "damage_type":
+        if f.name == "damage_type":
             # Surface damage type as element id string
             try:
-                data[name] = obj.element_id
+                data[f.name] = obj.element_id
             except Exception:
-                data[name] = str(value)
+                data[f.name] = str(value)
             continue
         # Keep primitives as-is, shallow-copy containers, stringify others
         if isinstance(value, (int, float, bool, str)) or value is None:
-            data[name] = value
+            data[f.name] = value
         elif isinstance(value, list):
-            data[name] = list(value)
+            data[f.name] = list(value)
         elif isinstance(value, dict):
-            data[name] = dict(value)
+            data[f.name] = dict(value)
         else:
-            data[name] = str(value)
+            data[f.name] = str(value)
 
     try:
         raw_cap = getattr(obj, "ultimate_charge_max")

@@ -6,8 +6,6 @@ import os
 
 from error_context import format_exception_with_context
 
-# Import torch checker early to perform the one-time check
-from llms.torch_checker import is_torch_available
 from logging_config import configure_logging
 from models.errors import ErrorSeverity
 from models.errors import create_error_response
@@ -53,9 +51,6 @@ from autofighter.rooms import _scale_stats  # noqa: F401
 configure_logging()
 
 log = logging.getLogger(__name__)
-
-# Log torch availability status on startup
-log.info("Torch availability check: %s", "available" if is_torch_available() else "not available")
 
 app = Quart(__name__)
 app.register_blueprint(assets_bp)
@@ -219,54 +214,6 @@ async def prune_runs_before_serving() -> None:
     Removes incomplete or expired run data before accepting requests.
     """
     await prune_runs_on_startup()
-
-
-@app.before_serving
-async def validate_lrm_on_startup() -> None:
-    """Validate the configured LRM on startup to ensure it's ready and capable of reasoning."""
-    try:
-        # Check if torch is available for local models
-        torch_available = is_torch_available()
-
-        # Check if remote OpenAI is configured
-        openai_url = os.getenv("OPENAI_API_URL", "unset")
-
-        # Skip validation if neither remote nor local LRM is available
-        # Only log if we're actually skipping because nothing is configured
-        if openai_url == "unset" and not torch_available:
-            # No LRM configured at all - skip silently to avoid log spam
-            return
-
-        # Import here to avoid circular dependencies
-        from llms import load_agent
-        from llms import validate_agent
-        from options import OptionKey
-        from options import get_option
-
-        # Get configured model or use default
-        model = await get_option(OptionKey.LRM_MODEL, "openai/gpt-oss-20b")
-
-        # Log which type of LRM we're testing
-        if openai_url != "unset":
-            # Sanitize openai_url to prevent log injection
-            sanitized_openai_url = openai_url.replace('\n', '').replace('\r', '')
-            log.info("Remote LRM configured (OPENAI_API_URL=%s). Testing connection...", sanitized_openai_url)
-        elif torch_available:
-            log.info("Local LRM configured (torch available). Testing model: %s...", model)
-
-        # Load and validate the agent (load_agent is already async)
-        agent = await load_agent(model=model, validate=False)
-        is_valid = await validate_agent(agent)
-
-        if is_valid:
-            log.info("✓ LRM validation passed - model is ready for reasoning tasks")
-        else:
-            log.warning("✗ LRM validation failed - model may not support reasoning properly")
-    except Exception as e:
-        log.warning("LRM validation failed with error: %s", e)
-        log.info("Server will continue starting. LRM may not be available.")
-
-
 
 @app.before_serving
 async def initialize_action_plugins() -> None:

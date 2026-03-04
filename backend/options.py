@@ -11,12 +11,12 @@ OptionValue = TypeVar("OptionValue")
 
 
 class OptionKey(StrEnum):
-    LRM_MODEL = "lrm_model"
-    LRM_BACKEND = "lrm_backend"
-    LRM_API_URL = "lrm_api_url"
-    LRM_API_KEY = "lrm_api_key"
     TURN_PACING = "turn_pacing"
     CONCISE_DESCRIPTIONS = "concise_descriptions"
+    LRM_PROVIDER = "lrm_provider"
+    LRM_MODEL = "lrm_model"
+    LRM_REASONING_EFFORT = "lrm_reasoning_effort"
+    LRM_SUMMARY = "lrm_summary"
 
 
 async def get_option(key: OptionKey | str, default: OptionValue | None = None) -> str | OptionValue | None:

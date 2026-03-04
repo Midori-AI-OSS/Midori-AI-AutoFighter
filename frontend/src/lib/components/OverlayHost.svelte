@@ -62,7 +62,6 @@
   export let animationSpeed = 1;
   export let selectedParty = [];
   export let battleActive = false;
-  export let backendFlavor = '';
 
   // Svelte 5 callback props for events
   export let onnextRoom = undefined;
@@ -483,7 +482,6 @@
       {skipBattleReviewLocked}
       bind:animationSpeed
       {runId}
-      {backendFlavor}
       on:save={(e) => dispatch('saveSettings', e.detail)}
       on:endRun={(e) => dispatch('endRun', e.detail)}
     />
