@@ -4,7 +4,7 @@ Midori AI AutoFighter is a web-based auto-battler game featuring strategic party
 
 ## What is Midori AI AutoFighter?
 
-Midori AI AutoFighter is being rebuilt as a web application with a Svelte frontend communicating with a Python Quart backend. The game features turn-based combat, character collection, equipment management, and optional AI-powered interactions.
+Midori AI AutoFighter is being rebuilt as a web application with a Svelte frontend communicating with a Python Quart backend. The game features turn-based combat, character collection, equipment management, and planned LRM-powered interactions.
 
 ## Directory Structure
 
@@ -80,16 +80,9 @@ The Svelte frontend targets three breakpoints:
 
 The interface adapts automatically based on viewport width.
 
-### Optional LLM Dependencies
+### Planned LRM Features
 
-When LLM dependencies are installed, the application provides:
-
-- **Model Testing**: Test LLM models through the settings menu (async-friendly to prevent backend lockup)
-- **Chat Rooms**: LLM-powered chat interactions with party members
-- **Player/Foe Memory**: Persistent conversation memory using ChromaDB vector storage
-- **Centralized Management**: Single torch availability check on startup with consistent error handling
-
-All LLM operations are asynchronous and won't block the game interface. Models are loaded in background threads and configured with proper generation parameters to minimize warnings.
+Chat-focused LRM features are planned for a follow-up phase.
 
 ### Loot and Rare Drop Rate
 
@@ -152,17 +145,13 @@ Entering a shop heals the party by 5% of its combined max HP. Buy upgrade items 
 
 ### Battle Review and Chat
 
-Chat interactions with party members are planned to be moved to rest rooms with a limit of approximately 6 messages per visit. When LLM dependencies are installed, players can engage in AI-powered conversations with characters to enhance the narrative experience.
-
-### Per-instance Memory
-
-Each player and foe instance now maintains its own LangChain ChromaDB memory. Use `send_lrm_message` to converse with the LRM and `receive_lrm_message` to record incoming replies. Histories are scoped to the current run so dialogs stay isolated between combatants.
+Battle review summarizes combat outcomes and rewards after each room.
 
 ## Map and Progression
 
 ### Map Generation
 
-New runs begin by selecting up to four owned allies in a party picker before the map appears. Runs now progress through 100-room floors built by a seeded `MapGenerator`. Each floor opens with a `start` node, follows with 98 procedurally curated encounters that weave in shops, rests, primes, and glitched battles, and ends in a `battle-boss-floor`. Chat scenes may appear after battles only when the LLM profiles are installed and do not affect room count. The frontend shows these nodes as stained-glass buttons with `lucide-svelte` icons for battles, shops, rests, and bosses, and the extended floor length keeps scrolling smooth while preserving the guaranteed support room cadence.
+New runs begin by selecting up to four owned allies in a party picker before the map appears. Runs now progress through 100-room floors built by a seeded `MapGenerator`. Each floor opens with a `start` node, follows with 98 procedurally curated encounters that weave in shops, rests, primes, and glitched battles, and ends in a `battle-boss-floor`. The frontend shows these nodes as stained-glass buttons with `lucide-svelte` icons for battles, shops, rests, and bosses, and the extended floor length keeps scrolling smooth while preserving the guaranteed support room cadence.
 
 Across the broader interface, aim for a stained-glass aesthetic. Bar graphs and other visual meters should use vibrant, glass-like colors that mirror the element palette defined in `getElementBarColor` in `frontend/src/lib/BattleReview.svelte`.
 
@@ -206,16 +195,16 @@ The rotating 6★ headliner banners now spotlight Lady Fire and Ice, Lady Storm,
 The repository supports building standalone game executables for Linux and macOS. See [BUILD.md](BUILD.md) for complete documentation.
 
 #### Available Builds
-- **Linux** (4 variants): non-llm, llm-cpu, llm-cuda, llm-amd
-- **macOS** (4 variants): non-llm, llm-cpu, llm-cuda, llm-amd
+- **Linux**: standard profile
+- **macOS**: standard profile
 
 #### Quick Local Build
 ```bash
 # Build for current platform
 ./build.sh
 
-# Build specific variant
-./build.sh llm-cpu
+# Build specific platform
+./build.sh linux
 ```
 
 Builds can be manually created with the build script. Download the latest builds from the [Releases page](../../releases) if available.
