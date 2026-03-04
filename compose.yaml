@@ -8,7 +8,7 @@ services:
     volumes:
       - ./frontend:/app
     networks:
-      - autofighter-network
+      - stained-glass-odyssey-endless-network
   backend: &backend-base
     build:
       context: ./backend
@@ -22,60 +22,8 @@ services:
       - ./backend:/app
       - ${HOME}/.cache:/.cache
     networks:
-      - autofighter-network
-  backend-llm-cuda:
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    <<: *backend-base
-    build:
-      context: ./backend
-      dockerfile: ../Dockerfile.python
-      args:
-        UV_EXTRA: llm-cuda
-    ports:
-      - "59002:59002" # conflicts with default backend
-    environment:
-      - UV_EXTRA=llm-cuda
-    networks:
-      - autofighter-network
-    profiles:
-      - llm-cuda
-  backend-llm-amd:
-    <<: *backend-base
-    build:
-      context: ./backend
-      dockerfile: ../Dockerfile.python
-      args:
-        UV_EXTRA: llm-amd
-    ports:
-      - "59002:59002" # conflicts with default backend
-    environment:
-      - UV_EXTRA=llm-amd
-    networks:
-      - autofighter-network
-    profiles:
-      - llm-amd
-  backend-llm-cpu:
-    <<: *backend-base
-    build:
-      context: ./backend
-      dockerfile: ../Dockerfile.python
-      args:
-        UV_EXTRA: llm-cpu
-    ports:
-      - "59002:59002" # conflicts with default backend
-    environment:
-      - UV_EXTRA=llm-cpu
-    networks:
-      - autofighter-network
-    profiles:
-      - llm-cpu
+      - stained-glass-odyssey-endless-network
 
 networks:
-  autofighter-network:
+  stained-glass-odyssey-endless-network:
     driver: bridge

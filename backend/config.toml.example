@@ -1,6 +1,7 @@
-# Midori AI AutoFighter - Agent Configuration
+# Stained Glass Odyssey: Endless - Agent Configuration
 # Copy this file to config.toml and customize for your setup
 # DO NOT commit config.toml with real API keys!
+# Legacy reference template: current runtime paths do not actively load this configuration.
 
 [midori_ai_agent_base]
 # Backend selection: "openai", "huggingface", or "langchain"
@@ -118,5 +119,5 @@ load_in_4bit = false
 # 
 # For more information, see:
 # - Backend README: backend/README.md
-# - Implementation docs: .codex/implementation/agent-config.md
+# - Implementation docs: .agents/implementation/agent-config.md
 # - Agent framework docs: https://github.com/Midori-AI-OSS/agents-packages

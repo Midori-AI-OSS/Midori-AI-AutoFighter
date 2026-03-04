@@ -11,7 +11,7 @@
   const dispatch = createEventDispatcher();
 
   $: githubIssueUrl = `${FEEDBACK_URL}?title=${encodeURIComponent(`Backend shutdown (${status})`)}&body=${encodeURIComponent(`### What happened?\nThe backend shut down after returning status ${status}.\n\n### Error message\n${message}\n\n### Traceback\n\n\`\`\`\n${traceback}\n\`\`\`\n\n### Logs\nPlease attach the JSON logs from ${BACKEND_LOGS_PATH_HINT}.`)}`;
-  $: mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Midori AI AutoFighter backend shutdown')}&body=${encodeURIComponent(`The backend shut down after returning status ${status}.\n\nError message: ${message}\n\nTraceback:\n${traceback}\n\nLogs: (please attach JSON files from ${BACKEND_LOGS_PATH_HINT})`)}`;
+  $: mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Stained Glass Odyssey: Endless backend shutdown')}&body=${encodeURIComponent(`The backend shut down after returning status ${status}.\n\nError message: ${message}\n\nTraceback:\n${traceback}\n\nLogs: (please attach JSON files from ${BACKEND_LOGS_PATH_HINT})`)}`;
 
   function openIssue() {
     window.open(githubIssueUrl, '_blank', 'noopener');

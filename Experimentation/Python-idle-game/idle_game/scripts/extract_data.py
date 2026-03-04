@@ -7,12 +7,12 @@ from typing import Any, Dict, List, Optional
 import shutil
 
 # Constants
-PLUGIN_DIR = Path("/tmp/Midori-AI-AutoFighter/backend/plugins/characters")
+PLUGIN_DIR = Path("/tmp/Stained-Glass-Odyssey-Endless/backend/plugins/characters")
 OUTPUT_FILE = Path("idle_game/data/characters.json")
 # ASSET source still needs to be capable of handling the temp dir if we re-cloned?
 # The user said "Clone down... to a tmp folder".
-# So assets are now at /tmp/Midori-AI-AutoFighter/frontend/src/lib/assets/characters
-ASSET_BASE_DIR = Path("/tmp/Midori-AI-AutoFighter/frontend/src/lib/assets/characters")
+# So assets are now at /tmp/Stained-Glass-Odyssey-Endless/frontend/src/lib/assets/characters
+ASSET_BASE_DIR = Path("/tmp/Stained-Glass-Odyssey-Endless/frontend/src/lib/assets/characters")
 LOCAL_ASSET_DIR = Path("idle_game/assets/characters")
 
 

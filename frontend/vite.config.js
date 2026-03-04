@@ -5,9 +5,6 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 async function discoverBackend(logger) {
   const services = [
     'http://backend:59002',
-    'http://backend-llm-cuda:59002',
-    'http://backend-llm-amd:59002',
-    'http://backend-llm-cpu:59002',
     'http://localhost:59002'
   ];
 

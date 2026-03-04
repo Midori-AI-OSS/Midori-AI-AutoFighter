@@ -2,105 +2,73 @@
 
 This document describes how to build the Midori AutoFighter game locally for supported platforms.
 
-## Build Variants
-
 ### Platforms
 - **Linux** (x64)
 - **macOS** (x64/ARM64)
-
-### Configurations
-- **non-llm**: Base game without LLM support
-- **llm-cpu**: Game with CPU-based LLM support
-- **llm-cuda**: Game with NVIDIA GPU LLM support (CUDA)
-- **llm-amd**: Game with AMD GPU LLM support (ROCm)
 
 ## Local Development
 
 ### Prerequisites
 - [uv](https://github.com/astral-sh/uv) for Python dependency management
+- [bun](https://bun.sh/) for frontend tooling
 - Python 3.12+
 
 ### Quick Build
 Use the provided build script:
 
 ```bash
-# Build non-llm variant for current platform
+# Build for current platform
 ./build.sh
 
-# Build specific variant
-./build.sh llm-cpu
-
 # Build for specific platform
-./build.sh non-llm linux
+./build.sh linux
 ```
 
 ### Manual Build Process
 
 1. **Setup environment:**
    ```bash
-   cd legacy
+   cd backend
    uv sync
    ```
 
-2. **Install variant dependencies (if needed):**
+2. **Build frontend assets:**
    ```bash
-   # For LLM variants:
-   uv sync --extra llm-cpu     # CPU LLM support
-   uv sync --extra llm-cuda    # NVIDIA GPU LLM support
-   uv sync --extra llm-amd     # AMD GPU LLM support
+   cd ../frontend
+   bun install
+   bun run build
    ```
 
 3. **Install PyInstaller:**
    ```bash
+   cd ../backend
    uv add --dev pyinstaller
    ```
 
-4. **Create asset directories:**
+4. **Build executable:**
    ```bash
-   mkdir -p photos music
+   uv run pyinstaller --onefile --add-data ../frontend/build:frontend --clean --name stained-glass-odyssey-endless-standard app.py
    ```
-
-5. **Build executable:**
-   ```bash
-   # Linux/macOS
-   uv run pyinstaller --onefile --add-data photos:photos --add-data music:music --clean --name midori-autofighter main.py
-   ```
-
-### Dependencies by Variant
-
-#### Base Dependencies (all variants)
-- colorama >= 0.4.6
-- halo >= 0.0.31
-- pygame >= 2.6.1
-- snakeviz >= 2.2.2
-
-#### LLM Dependencies
-- **llm-cpu**: torch, transformers, accelerate
-- **llm-cuda**: torch, transformers, accelerate, nvidia-ml-py
-- **llm-amd**: torch, transformers, accelerate (with ROCm support)
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Missing Assets**: If photos/music directories don't exist, they're created automatically as empty directories.
-
-2. **Large Build Size**: LLM variants will be significantly larger (100MB+) due to PyTorch and model dependencies.
+1. **Missing Tooling**: Install `uv` and `bun` first.
+2. **Frontend Build Errors**: Run `bun install` before `bun run build`.
 
 ### Build Optimization
 
 To reduce build size:
 - Use `--onefile` flag (already included)
 - Consider excluding unused dependencies with `--exclude-module`
-- For LLM variants, consider using smaller model variants
 
 ## Contributing
 
 When adding new dependencies:
 1. Add base dependencies to the main `dependencies` list in `pyproject.toml`
-2. Add variant-specific dependencies to appropriate `optional-dependencies` sections
-3. Update this README if new build requirements are introduced
-4. Test builds locally before pushing
+2. Keep `build.sh` aligned with the current dependency model
+3. Test builds locally before pushing
 
 ## Architecture
 

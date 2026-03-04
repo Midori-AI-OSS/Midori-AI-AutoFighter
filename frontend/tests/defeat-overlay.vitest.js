@@ -22,8 +22,7 @@ const baseProps = {
   skipBattleReview: false,
   animationSpeed: 1,
   selectedParty: [],
-  battleActive: false,
-  backendFlavor: ''
+  battleActive: false
 };
 
 describe('defeat overlay', () => {

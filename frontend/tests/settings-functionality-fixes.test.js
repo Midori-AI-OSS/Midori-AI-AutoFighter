@@ -7,7 +7,7 @@ describe('Settings functionality fixes', () => {
   const overlayHostFile = join(import.meta.dir, '../src/lib/components/OverlayHost.svelte');
   const uiSettingsFile = join(import.meta.dir, '../src/lib/components/UISettings.svelte');
   const settingsMenuFile = join(import.meta.dir, '../src/lib/components/SettingsMenu.svelte');
-  const settingsMenuDocFile = join(import.meta.dir, '../.codex/implementation/settings-menu.md');
+  const settingsMenuDocFile = join(import.meta.dir, '../.agents/implementation/settings-menu.md');
 
   test('BattleEventFloaters prevents rendering when disabled', () => {
     const content = readFileSync(battleEventFloatersFile, 'utf8');

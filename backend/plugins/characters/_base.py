@@ -21,33 +21,7 @@ from autofighter.stats import Stats
 from plugins.damage_types import random_damage_type
 from plugins.damage_types._base import DamageTypeBase
 
-# Module-level cache to avoid repeatedly loading SentenceTransformer
-_EMBEDDINGS: object | None = None
-
 log = logging.getLogger(__name__)
-
-
-class SimpleConversationMemory:
-    """Lightweight, dependency-free memory used as a safe default.
-
-    Provides the minimal interface expected by PlayerBase methods without
-    bringing in external dependencies that can break deepcopy/pickling.
-    """
-
-    def __init__(self) -> None:
-        self._history: list[tuple[str, str]] = []
-
-    def save_context(self, inputs: dict[str, str], outputs: dict[str, str]) -> None:
-        self._history.append((inputs.get("input", ""), outputs.get("output", "")))
-
-    def load_memory_variables(self, _: dict[str, str]) -> dict[str, str]:
-        lines: list[str] = []
-        for human, ai in self._history:
-            if human:
-                lines.append(f"Human: {human}")
-            if ai:
-                lines.append(f"AI: {ai}")
-        return {"history": "\n".join(lines)}
 
 
 if TYPE_CHECKING:
@@ -94,7 +68,6 @@ class PlayerBase(Stats):
 
     stat_gain_map: dict[str, str] = field(default_factory=dict)
     stat_loss_map: dict[str, str] = field(default_factory=dict)
-    lrm_memory: object | None = field(default=None, init=False, repr=False)
     ui_flags: ClassVar[Iterable[str] | str | None] = None
     ui_non_selectable: ClassVar[bool] = False
     ui_portrait_pool: ClassVar[str | None] = None
@@ -346,64 +319,14 @@ class PlayerBase(Stats):
         # Call parent post_init
         super().__post_init__()
 
-        # Use centralized torch checker instead of individual import attempts
-        from llms.torch_checker import is_torch_available
-
-        if not is_torch_available():
-            # Fall back to simple in-process memory without dependencies
-            self.lrm_memory = SimpleConversationMemory()
-            return
-
-        try:
-            from langchain.memory import VectorStoreRetrieverMemory
-            from langchain_chroma import Chroma
-            from langchain_huggingface import HuggingFaceEmbeddings
-        except (ImportError, ModuleNotFoundError):
-            # Fallback if imports still fail despite torch being available
-            self.lrm_memory = SimpleConversationMemory()
-            return
-
-        run = getattr(self, "run_id", "run")
-        ident = getattr(self, "id", type(self).__name__)
-        collection = f"{run}-{ident}"
-        global _EMBEDDINGS
-        if _EMBEDDINGS is None:
-            _EMBEDDINGS = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2",
-            )
-        embeddings = _EMBEDDINGS
-        try:
-            store = Chroma(
-                collection_name=collection,
-                embedding_function=embeddings,
-            )
-        except Exception:
-            # If vector store init fails, use simple memory
-            self.lrm_memory = SimpleConversationMemory()
-            return
-
-        self.lrm_memory = VectorStoreRetrieverMemory(
-            retriever=store.as_retriever()
-        )
-
     def __deepcopy__(self, memo):  # type: ignore[override]
-        """Custom deepcopy that skips copying non-serializable memory bindings.
-
-        - Deep-copies all dataclass fields except `lrm_memory`.
-        - Replaces `lrm_memory` with a fresh SimpleConversationMemory instance.
-        This avoids pydantic/langchain binding errors during deepcopy while
-        ensuring lists/dicts are independently copied for battle simulation.
-        """
+        """Custom deepcopy preserving mutable dataclass field isolation."""
         cls = type(self)
         result = cls.__new__(cls)  # Do not call __init__/__post_init__
         memo[id(self)] = result
         for f in fields(cls):
-            name = f.name
-            if name == "lrm_memory":
-                setattr(result, name, SimpleConversationMemory())
-                continue
-            val = getattr(self, name)
-            setattr(result, name, copy.deepcopy(val, memo))
+            val = getattr(self, f.name)
+            setattr(result, f.name, copy.deepcopy(val, memo))
         return result
 
     def prepare_for_battle(
@@ -424,71 +347,3 @@ class PlayerBase(Stats):
         self.ultimate_ready = False
         await BUS.emit_async("ultimate_used", self)
         return True
-
-
-    async def send_lrm_message(self, message: str) -> dict[str, object]:
-        import asyncio
-        from pathlib import Path
-
-        from llms.torch_checker import is_torch_available
-        from tts import generate_voice
-
-        if not is_torch_available():
-            response = ""
-            self.lrm_memory.save_context({"input": message}, {"output": response})
-            return {"text": response, "voice": None}
-
-        try:
-            from llms import load_agent
-            from midori_ai_agent_base import AgentPayload
-
-            agent = await load_agent()
-        except Exception:
-            # Fallback if agent framework not available
-            class _Agent:
-                async def stream(self, payload):
-                    yield ""
-
-            agent = _Agent()
-
-        context = self.lrm_memory.load_memory_variables({}).get("history", "")
-        prompt_text = f"{context}\n{message}".strip()
-
-        # Create agent payload
-        try:
-            from midori_ai_agent_base import AgentPayload
-
-            payload = AgentPayload(
-                user_message=prompt_text,
-                thinking_blob="",
-                system_context="You are a character in the AutoFighter game.",
-                user_profile={},
-                tools_available=[],
-                session_id=f"character_{getattr(self, 'id', type(self).__name__)}",
-            )
-        except ImportError:
-            # If AgentPayload not available, use fallback
-            payload = None
-
-        chunks: list[str] = []
-        if payload:
-            async for chunk in agent.stream(payload):
-                chunks.append(chunk)
-        response = "".join(chunks)
-
-        voice_path: str | None = None
-        audio = await asyncio.to_thread(
-            generate_voice, response, self.voice_sample
-        )
-        if audio:
-            voices = Path("assets/voices")
-            voices.mkdir(parents=True, exist_ok=True)
-            fname = f"{getattr(self, 'id', type(self).__name__)}.wav"
-            (voices / fname).write_bytes(audio)
-            voice_path = f"/assets/voices/{fname}"
-
-        self.lrm_memory.save_context({"input": message}, {"output": response})
-        return {"text": response, "voice": voice_path}
-
-    async def receive_lrm_message(self, message: str) -> None:
-        self.lrm_memory.save_context({"input": ""}, {"output": message})

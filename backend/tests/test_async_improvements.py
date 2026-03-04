@@ -14,7 +14,7 @@ import time
 
 import pytest
 
-sys.path.insert(0, '/home/runner/work/Midori-AI-AutoFighter/Midori-AI-AutoFighter/backend')
+sys.path.insert(0, '/home/runner/work/Stained-Glass-Odyssey-Endless/Stained-Glass-Odyssey-Endless/backend')
 
 from autofighter.save_manager import SaveManager
 

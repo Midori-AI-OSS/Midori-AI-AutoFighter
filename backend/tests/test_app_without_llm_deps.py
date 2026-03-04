@@ -39,9 +39,7 @@ async def test_non_llm_endpoints_work_without_deps(app_without_llm):
     assert status_resp.status_code == 200
 
     config_resp = await client.get("/config/lrm")
-    assert config_resp.status_code == 200
-    data = await config_resp.get_json()
-    assert "available_models" in data
+    assert config_resp.status_code == 404
 
     players_resp = await client.get("/players")
     assert players_resp.status_code == 200

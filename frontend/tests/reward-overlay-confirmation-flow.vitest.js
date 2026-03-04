@@ -108,8 +108,7 @@ describe('Reward overlay confirmation flow', () => {
         flashEnrageCounter: true,
         fullIdleMode: false,
         skipBattleReview: false,
-        animationSpeed: 1,
-        backendFlavor: ''
+        animationSpeed: 1
       }
     });
 
@@ -219,8 +218,7 @@ describe('Reward overlay confirmation flow', () => {
         flashEnrageCounter: true,
         fullIdleMode: false,
         skipBattleReview: false,
-        animationSpeed: 1,
-        backendFlavor: ''
+        animationSpeed: 1
       }
     });
 

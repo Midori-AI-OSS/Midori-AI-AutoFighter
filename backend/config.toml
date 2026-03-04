@@ -1,5 +1,6 @@
-# Midori AI AutoFighter - Agent Configuration
-# This file is used to configure the Agent Framework backend and models.
+# Stained Glass Odyssey: Endless - Agent Configuration
+# Legacy reference template for framework-based LRM configuration.
+# Note: current runtime paths do not actively load this configuration.
 
 [midori_ai_agent_base]
 # Backend selection: "openai", "huggingface", or "langchain"

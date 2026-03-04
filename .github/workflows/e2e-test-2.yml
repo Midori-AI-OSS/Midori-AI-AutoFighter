@@ -39,21 +39,6 @@ jobs:
         run: |
           uv sync
       
-      - name: Install backend variant dependencies
-        working-directory: backend
-        run: |
-          case "${{ matrix.variant }}" in
-            "llm-cpu")
-              uv sync --extra llm-cpu
-              ;;
-            "llm-cuda")
-              uv sync --extra llm-cuda
-              ;;
-            "llm-amd")
-              uv sync --extra llm-amd
-              ;;
-          esac
-      
       - name: Install frontend dependencies
         working-directory: frontend
         run: |

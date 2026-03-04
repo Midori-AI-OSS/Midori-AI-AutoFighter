@@ -59,7 +59,6 @@ function getDefaultSettings() {
     // Legacy settings for backward compatibility
     framerate: 60,
     reducedMotion: prefersReducedMotion,
-    lrmModel: '',
     showActionValues: false,
     showTurnCounter: true,
     flashEnrageCounter: true,
@@ -140,7 +139,6 @@ export function loadSettings() {
     // Type coercion for legacy numeric/boolean fields
     if (data.framerate !== undefined) data.framerate = Number(data.framerate);
     if (data.reducedMotion !== undefined) data.reducedMotion = Boolean(data.reducedMotion);
-    if (data.lrmModel !== undefined) data.lrmModel = String(data.lrmModel);
     if (data.showActionValues !== undefined) data.showActionValues = Boolean(data.showActionValues);
     if (data.showTurnCounter !== undefined) data.showTurnCounter = Boolean(data.showTurnCounter);
     if (data.flashEnrageCounter !== undefined) data.flashEnrageCounter = Boolean(data.flashEnrageCounter);

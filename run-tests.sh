@@ -161,8 +161,8 @@ if [ "${USE_DOCKER:-0}" != "0" ] && command -v docker >/dev/null 2>&1; then
       can_remove=1
     fi
     if [ $can_remove -eq 1 ]; then
-      echo "+ docker image rm \"${DOCKER_IMAGE:-endless-autofighter/backend-tests:local}\" || true"
-      docker image rm "${DOCKER_IMAGE:-endless-autofighter/backend-tests:local}" || true
+      echo "+ docker image rm \"${DOCKER_IMAGE:-stained-glass-odyssey-endless/backend-tests:local}\" || true"
+      docker image rm "${DOCKER_IMAGE:-stained-glass-odyssey-endless/backend-tests:local}" || true
     else
       echo "[docker] Skipping image removal (pulled image and DOCKER_CLEANUP_FORCE!=1)"
     fi

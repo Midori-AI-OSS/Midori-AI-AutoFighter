@@ -1,6 +1,6 @@
 # End-to-End Tests
 
-This directory contains Playwright-based end-to-end tests for the Midori AI AutoFighter game.
+This directory contains Playwright-based end-to-end tests for the Stained Glass Odyssey: Endless game.
 
 ## Test Files
 
@@ -69,15 +69,12 @@ These tests are automatically run by GitHub Actions workflows:
 - `.github/workflows/e2e-test-1.yml` - First sub-agent workflow
 - `.github/workflows/e2e-test-2.yml` - Second sub-agent workflow
 
-Each workflow tests 3 game variants in parallel:
-- `non-llm` - Base game without LLM features
-- `llm-cpu` - CPU-based LLM support
-- `llm-cuda` - NVIDIA GPU LLM support
+Each workflow runs the standard backend profile.
 
 The workflows automatically:
 1. Set up the environment with appropriate dependencies
 2. Build the frontend
-3. Start the backend server for each variant
+3. Start the backend server
 4. Start the frontend dev server
 5. Run Playwright tests
 6. Upload test artifacts (reports, videos, screenshots) on failure

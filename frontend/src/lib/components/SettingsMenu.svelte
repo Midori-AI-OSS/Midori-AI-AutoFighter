@@ -1,15 +1,12 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { Volume2, Palette, Cog, Brain, Gamepad } from 'lucide-svelte';
+  import { Volume2, Palette, Cog, Gamepad } from 'lucide-svelte';
   import {
     endRun,
     endAllRuns,
     wipeData,
     exportSave,
     importSave,
-    getLrmConfig,
-    setLrmModel,
-    testLrmModel,
     getBackendHealth,
     getTurnPacing,
     setTurnPacing
@@ -17,7 +14,6 @@
   import AudioSettings from './AudioSettings.svelte';
   import UISettings from './UISettings.svelte';
   import SystemSettings from './SystemSettings.svelte';
-  import LLMSettings from './LLMSettings.svelte';
   import GameplaySettings from './GameplaySettings.svelte';
   import { saveSettings, clearSettings, clearAllClientData } from '../systems/settingsStorage.js';
   import { setManualSyncHalt } from '../systems/overlayState.js';
@@ -40,18 +36,11 @@
   export let skipBattleReviewPreference = false;
   export let skipBattleReviewLocked = false;
   export let animationSpeed = 1;
-  export let lrmModel = '';
   export let runId = '';
-  export let backendFlavor = typeof window !== 'undefined' ? window.backendFlavor || '' : '';
-
-  let showLrm = false;
-  $: showLrm = (backendFlavor || '').toLowerCase().includes('llm');
 
   let saveStatus = '';
   let saveTimeout;
   let resetTimeout;
-  let lrmOptions = [];
-  let testReply = '';
   let activeTab = 'audio';
   let baseTurnPacing = DEFAULT_TURN_PACING;
   let lastFullIdleMode = Boolean(fullIdleMode);
@@ -143,16 +132,6 @@
   }
 
   onMount(async () => {
-    if (showLrm) {
-      try {
-        const cfg = await getLrmConfig();
-        lrmOptions = cfg?.available_models || [];
-        lrmModel = cfg?.current_model || lrmModel;
-        saveSettings({ lrmModel });
-      } catch {
-        /* ignore */
-      }
-    }
     await loadTurnPacing();
     // Preload health once so System tab has data quickly
     refreshHealth(true);
@@ -214,22 +193,6 @@
   function scheduleSave() {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(save, 300);
-  }
-
-  function handleModelChange() {
-    saveSettings({ lrmModel });
-    dispatch('save', { lrmModel });
-    setLrmModel(lrmModel).catch(() => {});
-  }
-
-  async function handleTestModel() {
-    testReply = '';
-    try {
-      const res = await testLrmModel('Say hello');
-      testReply = res?.response || '';
-    } catch {
-      testReply = 'Error';
-    }
   }
   async function handleEndRun() {
     endingRun = true;
@@ -326,11 +289,6 @@
     <button class:active={activeTab === 'system'} on:click={() => (activeTab = 'system')} title="System">
       <Cog />
     </button>
-    {#if showLrm}
-      <button class:active={activeTab === 'llm'} on:click={() => (activeTab = 'llm')} title="LLM">
-        <Brain />
-      </button>
-    {/if}
     <button class:active={activeTab === 'gameplay'} on:click={() => (activeTab = 'gameplay')} title="Gameplay">
       <Gamepad />
     </button>
@@ -360,14 +318,6 @@
       {healthStatus}
       {healthPing}
       {refreshHealth}
-    />
-  {:else if activeTab === 'llm' && showLrm}
-    <LLMSettings
-      bind:lrmModel
-      {lrmOptions}
-      {handleModelChange}
-      {handleTestModel}
-      {testReply}
     />
   {:else if activeTab === 'gameplay'}
     <GameplaySettings

@@ -6,19 +6,8 @@ documentation:
 - changed-files:
   - any-glob-to-any-file:
     - docs/**
-    - .codex/**
+    - .agents/**
     - guides/**
-
-auditable:
-- changed-files:
-  - any-glob-to-any-file:
-    - .codex/tasks/review/**
-    - .codex/tasks/taskmaster/**
-
-tasks:
-- changed-files:
-  - any-glob-to-any-file:
-    - .codex/tasks/wip/**
 
 frontend:
 - all:
