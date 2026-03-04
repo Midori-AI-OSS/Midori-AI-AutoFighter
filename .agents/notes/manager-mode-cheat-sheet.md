@@ -3,25 +3,19 @@
 Quick reference for contributors maintaining repository instructions and coordination.
 
 ## Daily Flow
-
-- Check `.feedback/`, planning docs, and recent commits for process requests.
-- Review repository and service `AGENTS.md` files for stale/conflicting guidance.
-- Coordinate with the Lead Developer on instruction decisions.
-- Share updates through the communication method defined in `AGENTS.md`.
+- Read preflight docs before work.
+- Review root/service `AGENTS.md` files for drift.
+- Coordinate high-impact instruction changes with the Lead Developer.
+- Keep run-log entries current in `/tmp/agents-artifacts/agent-output.md`.
 
 ## Weekly / As Needed
-
 - Audit mode guides and cheat sheets for consistency.
-- Capture rationale for major instruction changes in `.agents/instructions/` notes.
-- Track unresolved documentation gaps and follow them through PR/issue threads.
-- Maintain a running list of contributor pain points for discussion.
+- Track unresolved instruction gaps through PR/issue context.
+- Keep active mode list and role boundaries consistent across docs.
 
 ## Escalation Checklist
-
-- Reject or revise requests that break security, quality, or compliance policy.
-- Loop in Auditors or Reviewers when repeated issues indicate instruction drift.
+- Reject or revise requests that break security, quality, or compliance.
 - Confirm high-impact policy changes with the Lead Developer before publishing.
 
 ## Useful Links
-
 - Full mode guidance: [`MANAGER.md`](../modes/MANAGER.md)

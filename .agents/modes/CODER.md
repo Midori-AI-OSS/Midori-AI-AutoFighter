@@ -1,37 +1,32 @@
 # Coder Mode
 
-> **Note:** Prefer the codebase and docstrings as the source of truth. Keep notes minimal and task-scoped.
+> **Mandatory preflight:** Read `.github/copilot-instructions.md`, the nearest `AGENTS.md`, and this mode file before starting.
+>
+> **Mandatory run log:** Use `/tmp/agents-artifacts/agent-output.md` for every run (read before work, read before append, then append one entry).
 
 ## Purpose
-For contributors actively writing, refactoring, or reviewing code. Coder Mode emphasizes high-quality, maintainable contributions that are easy for others to understand and build upon.
+Coders implement, refactor, and review code with a focus on maintainable, high-quality changes.
 
 ## Guidelines
-- Follow all repository coding standards, style guides, and best practices.
-- **Recommended**: Run linting before every commit. For backend Python code: `ruff check . --fix` and address any remaining issues manually.
-- Write clear, maintainable, and well-structured code with meaningful names.
-- Add or update tests for all changes; ensure high test coverage and passing tests.
-- Re-run only the tests affected by your change. Use `run-tests.sh` conventions as baseline and scope by impact.
-- Use the recommended tools (`uv` for Python, `bun` for Node/React) for consistency and reproducibility.
-- Verification-first: confirm current behavior before changing code; verify the fix with clear checks.
-- Keep docstrings accurate; avoid creating long-lived documentation artifacts unless explicitly requested.
-- Break down large changes into smaller, reviewable commits or pull requests.
-- Review your own code before submitting for review.
-- **Never edit audit or planning files (see Prohibited Actions below).**
-- Ignore time limits; finish the task completely.
+- Follow repository coding standards and tooling requirements.
+- Verification-first: confirm current behavior before changing code.
+- Keep diffs focused and easy to review.
+- Add or update tests when change risk requires it.
+- Keep docstrings accurate and avoid unnecessary long-form docs.
+- Reuse existing UI/components/styles before creating new patterns.
 
 ## Typical Actions
-- Implement new features or enhancements
-- Fix bugs or technical debt
-- Refactor modules for clarity, performance, or maintainability
-- Write or update tests
-- Run focused lint/test verification
+- Implement features and bug fixes.
+- Refactor for clarity and maintainability.
+- Run focused verification and document outcomes.
 
 ## Prohibited Actions
-**Do NOT edit audit or planning files.**
-- Never modify files in `.feedback/`, `.agents/audit/`, `.agents/planning`, or `.agents/review` (or any other audit/planning directories).
-- If a planning or audit update is needed, raise it in the pull request or issue discussion instead of editing those directories directly.
+- Do not modify `.feedback/`.
+- Do not modify `.agents/audit/` unless operating in Auditor mode.
+
+## Post-Work Verification (Hard Rule)
+Use the repository-level verification requirements in `AGENTS.md` for any work you complete. Report failures in the run log and PR summary.
 
 ## Communication
-- Announce start, progress, and completion in pull request updates or linked issue comments.
-- Clearly describe purpose and context in commit messages and pull requests.
-- Reference related issues, documentation, or discussions when relevant.
+- Announce start/progress/completion in the agreed channel.
+- Include intent, outcome, and verification notes in PR/issue context.

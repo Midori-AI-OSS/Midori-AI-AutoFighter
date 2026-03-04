@@ -4,90 +4,119 @@ This document summarizes common development practices for all services in this r
 
 ---
 
-
 ## Where to Look for Guidance (Per-Service Layout)
-- **`.feedback/`**: Task lists and priorities. *Read only*—never edit directly. The old `feedback.md` file has been removed in favor of this directory.
-- **`.agents/`** (inside each service directory, e.g., `WebUI/.agents/`, `Rest-Servers/.agents/`):
-  - Use it for contributor coordination (modes, notes, implementation docs). Prefer reading code and docstrings as the source of truth; keep notes minimal and task-scoped.
+- **`.feedback/`**: Task lists and priorities. *Read only*.
+- **`.agents/`** (inside each service directory, for example `WebUI/.agents/`, `Rest-Servers/.agents/`):
+  - Use for contributor coordination (modes, notes, implementation docs).
+  - Prefer code and docstrings as the source of truth.
 - **Never edit files in `.agents/audit/` unless you are in Auditor mode.**
 - **`.github/`**: Workflow guidelines and UX standards.
-- When entering any folder, check for a `AGENTS.md` file in that folder and read it before starting any work there.
+- When entering any folder, check for an `AGENTS.md` file in that folder and read it before starting work there.
 
 ---
 
+## Required Preflight (Hard Rule)
+Before starting work, contributors must read:
+1. `.github/copilot-instructions.md`
+2. The nearest applicable `AGENTS.md`
+3. Their mode guide in `.agents/modes/`
+
+Skipping preflight is a process violation.
+
+## Agent Run Log (Hard Rule)
+All contributor modes must use `/tmp/agents-artifacts/agent-output.md`.
+
+Required behavior:
+- Read `/tmp/agents-artifacts/agent-output.md` before starting work.
+- Read it again immediately before appending your entry.
+- Append one entry per run.
+- Create the file if it does not exist.
+
+Each entry must include:
+- timestamp
+- role/mode
+- scope/files
+- intent
+- actions taken
+- results
+- blockers/next step
+
+The run log is mandatory and does not replace normal PR/issue communication.
+
 ## Development Basics
-- Use [`uv`](https://github.com/astral-sh/uv) for Python environments and running code. Avoid `python` or `pip` directly.
-- Use [`bun`](https://bun.sh/) for Node/React tooling instead of `npm` or `yarn`.
-- Verification-first: confirm current behavior in the codebase before changing code; reproduce/confirm the issue (or missing behavior); verify the fix with clear checks.
-- No broad fallbacks: do not add “fallback behavior everywhere”; only add a narrow fallback when the task explicitly requires it, and justify it.
-- No backward compatibility shims by default: do not preserve old code paths “just in case”; only add compatibility layers when the task explicitly requires it.
-- Minimal documentation, minimal logging: prefer reading code and docstrings; do not add docs/logs unless required to diagnose a specific issue or prevent a crash.
+- Use [`uv`](https://github.com/astral-sh/uv) for Python environments and commands. Do not use `python` or `pip` directly.
+- Use [`bun`](https://bun.sh/) for Node/React tooling. Do not use `npm` or `yarn`.
+- Verification-first: confirm current behavior before changing code; then verify the result with clear checks.
+- No broad fallbacks: add narrow fallbacks only when explicitly required by the task.
+- No compatibility shims by default.
+- Minimal docs/logging: prefer code and docstrings over long-form documentation.
 - Do not update `README.md`.
-- Split large modules into smaller ones when practical.
-- If a build retry occurs, the workflow may produce a commit titled `"Applying previous commit."` when reapplying a patch.
-  This is normal and does not replace the need for your own clear `[TYPE]` commit messages.
-- If coding in Python, ensure code is asynchronous-friendly: avoid blocking the event loop, use async/await for I/O and long-running tasks, and keep work off the main loop (e.g., use background tasks or thread/executor for CPU-bound work).
-- Any test running longer than 15 seconds is automatically aborted (or force them please...) in local development (using `run-tests.sh`). GitHub Actions CI has no timeout limits.
-- For Python style:
-   - Place each import on its own line.
-   - Sort imports within each group (standard library, third-party, project modules) from shortest to longest.
-   - Insert a blank line between each import grouping (standard library, third-party, project modules).
-   - Avoid inline imports.
-   - For `from ... import ...` statements, group them after all `import ...` statements, and format each on its own line, sorted shortest to longest, with a blank line before the group. Example:
+- Split large modules when practical.
+- If coding in Python, keep async behavior safe (avoid blocking the event loop; use async/await for I/O).
+- Python style:
+  - One import per line.
+  - Sort imports shortest-to-longest within each group.
+  - Group order: standard library, third-party, project modules.
+  - Insert one blank line between groups.
+  - Avoid inline imports.
 
-     ```python
-     import os
-     import time
-     import logging
-     import threading
+## Post-Work Verification (Hard Rule)
+After completing work, run and report all of the following:
 
-     from datetime import datetime
-     from rich.console import Console
-     from langchain_text_splitters import RecursiveCharacterTextSplitter
-     ```
+```bash
+uv tool run ruff check backend
+cd frontend && bun run lint
+uvx basedpyright backend
+cd backend && uv run pytest tests --collect-only -q
+cd backend && uv run python -m compileall .
+```
 
-## File Size and Readability (Repository-wide Rule)
-- Aim for ~300 lines or fewer per file.
-- Split monolithic modules into smaller units when they grow beyond this threshold.
-- Keep code well commented and organized for readability.
+Rules:
+- Running the checks is mandatory.
+- Passing every check is preferred but not required to report completion.
+- Any failures must be reported clearly in the run log and PR summary.
+
+## UI / UX Standards (Hard Rules)
+- Preserve the established product visual language and interaction patterns unless the Lead Developer explicitly approves a visual-system change.
+- Reuse shared primitives before creating new local UI styles or components.
+- Before adding new UI patterns, search for an existing reusable component/style/token and use it when possible.
+- Accessibility requirements are mandatory (keyboard flow, semantic labels, focus visibility).
+- Reduced-motion behavior is mandatory when motion exists.
+- Avoid drive-by visual redesigns in unrelated tasks.
+
+## File Size and Readability
+- Aim for about 300 lines or fewer per file.
+- Split monolithic files when practical.
+- Keep code organized and readable.
 
 ---
 
 ## Commit and Pull Request Workflow
 Follow this checklist whenever you are ready to publish work:
 
-1. Stage and review your changes locally (`git status`, `git diff`) before committing.
-2. Create a descriptive commit that begins with the appropriate `[TYPE]` prefix.
-3. Verify the working tree is clean after committing—`git status` must show **no pending changes**.
-4. Immediately call the `make_pr` tool to draft the pull request summary and title once the commit is created.
-5. Never call `make_pr` before your changes are committed, and never finish a task without creating a pull request for committed work.
-6. If you did not modify the repository, do **not** commit or call `make_pr`.
+1. Stage and review your changes locally (`git status`, `git diff`).
+2. Create a descriptive commit with a `[TYPE]` prefix.
+3. Verify the working tree is clean after committing (`git status`).
+4. If you did not modify the repository, do not commit.
 
-These steps apply to **all** contributor modes. Managers should remind their teams of this workflow whenever new instructions are published.
+These steps apply to all contributor modes.
 
 ---
 
 ## Contributor Modes
-The repository supports several contributor modes to clarify expectations and best practices for different types of contributions:
+The repository supports these contributor modes:
 
-> **MANDATORY: All contributors must read their mode's documentation in `.agents/modes/` before starting any work. Failure to do so may result in removal from the repository.**
->
-> Recent incidents (e.g., a coder updating audit files 3 times without following mode guidelines) have shown that skipping these docs leads to wasted effort and rework. This is not optional—review your mode doc every time you contribute.
-
-**Mode selection rule:** When a request begins with the name of a mode (e.g., "Manager", "Coder", "Reviewer"), treat that as the required mode for the task unless explicitly told otherwise. Switch to that mode's instructions before continuing.
-
-**All contributors should regularly review and keep their mode cheat sheet in `.agents/notes/` up to date.**
-Refer to your mode's cheat sheet for quick reminders and update it as needed.
+> **MANDATORY:** All contributors must read their mode documentation in `.agents/modes/` before starting work.
 
 - **Manager Mode** (`.agents/modes/MANAGER.md`)
-- **Swarm Manager Mode** (`.agents/modes/SWARMMANAGER.md`)
 - **Coder Mode** (`.agents/modes/CODER.md`)
 - **Reviewer Mode** (`.agents/modes/REVIEWER.md`)
 - **Auditor Mode** (`.agents/modes/AUDITOR.md`)
+- **QA Mode** (`.agents/modes/QA.md`)
 - **Storyteller Mode** (`.agents/modes/STORYTELLER.md`)
 - **Unknown Mode** (no file)
 
-You must refer to the relevant mode guide in `.agents/modes/` before starting work. For service-specific details, read the service's own `AGENTS.md` and follow existing in-repo guidance.
+All contributors should keep their mode cheat sheet in `.agents/notes/` current.
 
-### Documentation sync
+### Documentation Sync
 Prefer code and docstrings as the canonical source; keep notes minimal and task-scoped.

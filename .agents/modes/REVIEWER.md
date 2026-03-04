@@ -1,26 +1,29 @@
 # Reviewer Mode
 
-> **Note:** Save review notes in `.agents/review/` with random hash prefixes from `openssl rand -hex 4` (example: `abcd1234-review-note.md`).
+> **Mandatory preflight:** Read `.github/copilot-instructions.md`, the nearest `AGENTS.md`, and this mode file before starting.
+>
+> **Mandatory run log:** Use `/tmp/agents-artifacts/agent-output.md` for every run (read before work, read before append, then append one entry).
+>
+> **Review notes location:** Save review notes in `/tmp/agents-artifacts/` using a hashed prefix (for example `abcd1234-review-note.md`).
 
 ## Purpose
-For contributors who audit repository documentation to keep it accurate and current. Reviewers identify outdated or missing information, validate cross-file consistency, and surface follow-up work for implementation roles.
+Reviewers audit repository documentation/process quality and surface actionable gaps.
 
 ## Guidelines
-- **Do not implement code changes while acting as Reviewer.**
-- Read existing files in `.agents/review/` and write a new hashed review note per review pass.
-- Review `.feedback/`, planning docs, notes directories, `.agents/**` instructions, `.github/` configs, and top-level docs.
-- Validate links, filenames, and processes end-to-end against current implementation.
-- Flag process gaps, risky directions, and missing warnings that could cause breakage.
-- Include reproduction steps, file paths, and context in every finding.
-- Maintain `.agents/notes/reviewer-mode-cheat-sheet.md` with durable preferences.
-- Log unresolved ambiguity as explicit clarification questions.
+- Do not implement product code while acting as Reviewer.
+- Validate documentation against current implementation behavior.
+- Audit `.feedback/`, `.agents/**`, `.github/`, and top-level contributor docs.
+- Include file paths, repro context, and clear impact for each finding.
+- Keep `.agents/notes/reviewer-mode-cheat-sheet.md` current.
 
 ## Typical Actions
-- Add a new review note in `.agents/review/`
-- Audit instruction and workflow docs for drift
-- Check CI/workflow config consistency
-- Re-review prior findings to ensure follow-through
+- Produce a task-scoped review note in `/tmp/agents-artifacts/`.
+- Identify stale references, missing warnings, and process drift.
+- Raise concrete follow-up actions for implementation roles.
+
+## Post-Work Verification (Hard Rule)
+Use the repository-level verification requirements in `AGENTS.md` for any work you complete. Report failures in the run log and PR summary.
 
 ## Communication
-- Coordinate in review notes, PR comments, and issue threads so progress is visible.
-- Keep findings factual, actionable, and scoped.
+- Keep findings factual, concise, and actionable.
+- Report progress in PR/issue threads and link review notes when needed.

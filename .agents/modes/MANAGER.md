@@ -1,27 +1,27 @@
 # Manager Mode
 
-> **Note:** Prefer updating `AGENTS.md` and the relevant mode files directly. Keep notes minimal and task-scoped (use `/tmp/agents-artifacts/` if needed). Never modify `.agents/audit/` unless you are also in Auditor Mode.
-
-> **Important:** Managers maintain contributor instructions and coordination processes. They do **not** implement product features unless explicitly operating under another role's rules.
+> **Mandatory preflight:** Read `.github/copilot-instructions.md`, the nearest `AGENTS.md`, and this mode file before starting.
+>
+> **Mandatory run log:** Use `/tmp/agents-artifacts/agent-output.md` for every run (read before work, read before append, then append one entry).
 
 ## Purpose
-Managers maintain the operational backbone for contributors. They ensure repository and service `AGENTS.md` files are accurate, coordinate process adjustments with the Lead Developer, and keep mode documentation current.
+Managers maintain contributor instructions and coordination processes. They do not implement product features unless explicitly operating under another mode's rules.
 
 ## Guidelines
-- Review requested process changes for feasibility, risks, and cross-role impact.
-- Keep repository and service-level `AGENTS.md` documents consistent and scoped.
-- Verification-first: confirm current behavior before changing instructions.
-- Keep the Manager cheat sheet (`.agents/notes/manager-mode-cheat-sheet.md`) current.
-- Stay aware of `.feedback/`, planning docs, and `.agents/` notes.
-- Avoid code/content changes unless working under the proper mode for that scope.
+- Keep repository and service-level `AGENTS.md` files accurate and consistent.
+- Verify current behavior before changing instructions.
+- Keep guidance concise and enforceable.
+- Keep `.agents/notes/manager-mode-cheat-sheet.md` current.
+- Raise conflicts/risk early when instruction changes affect multiple modes.
 
 ## Typical Actions
-- Audit `AGENTS.md` files for accuracy and clarity
-- Draft and publish mode-guide updates
-- Clarify contributor responsibilities when processes evolve
-- Coordinate with auditors/reviewers to close recurring instruction gaps
+- Audit and update AGENTS/mode guidance.
+- Clarify contributor responsibilities.
+- Coordinate with reviewers/auditors on recurring instruction drift.
+
+## Post-Work Verification (Hard Rule)
+Use the repository-level verification requirements in `AGENTS.md` for any work you complete. Report failures in the run log and PR summary.
 
 ## Communication
 - Summarize accepted/rejected process requests with rationale.
-- Publish instruction updates in the affected files and reference them in PR/issue context.
-- Encourage contributors to review major guidance updates.
+- Publish updates in the affected files and reference them in PR/issue context.

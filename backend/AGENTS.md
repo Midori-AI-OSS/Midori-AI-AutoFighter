@@ -1,44 +1,53 @@
 # Backend Contributor Guide
 
-> **MANDATORY:** Before touching any file under `backend/`, open your mode
-document in `.agents/modes/` and review it in full. This applies to everyone,
-including reviewers performing drive-by checks. Work may be rejected if your
-mode expectations are not followed.
+> **MANDATORY:** Before touching files under `backend/`, read `.github/copilot-instructions.md`, the repository `AGENTS.md`, and your mode document in `.agents/modes/`.
 
 ---
 
 ## Quick Orientation
-- The backend is a [Quart](https://quart.palletsprojects.com/) ASGI
-  application defined in `backend/app.py` with supporting blueprints under
-  `backend/routes/`. Keep new endpoints asynchronous and compatible with the
-  existing background task patterns described in `backend/.agents/implementation`.
-- Python tooling is standardized on [`uv`](https://github.com/astral-sh/uv).
-  Use `uv sync` to install dependencies and `uv run` (or `uvx`) for commands.
-  Do **not** rely on `pip`, `python -m venv`, or system interpreters.
-- Read `backend/README.md` before making structural changes. It documents
-  deployment expectations, telemetry flows, and services (LLM, TTS, logging,
-  metrics) that new code must respect.
+- Backend is a [Quart](https://quart.palletsprojects.com/) ASGI app rooted at `backend/app.py`.
+- Blueprints live under `backend/routes/`.
+- Keep endpoints async-friendly and aligned with current background task patterns.
+- Use [`uv`](https://github.com/astral-sh/uv) for Python tooling.
 
-## Testing and Verification
-- Prefer the curated helpers in `run-tests.sh` when running checks from the
-  repository root. The script wires up environment variables and selects the
-  right test suites for typical scenarios.
-- Backend unit tests live in `backend/tests/`. Use `uv run pytest backend/tests`
-  for targeted runs when you need to focus on this service. Avoid running the
-  entire repo's test matrix unless your change requires it.
-- If you add or modify battle logic, consult the docs in
-  `backend/.agents/implementation/` to keep design notes up to date.
+## Agent Run Log (Hard Rule)
+Use `/tmp/agents-artifacts/agent-output.md` for every run.
 
-## LRM Integration Status
+Required behavior:
+- Read the log before work.
+- Read it again before appending.
+- Append one entry per run.
+- Create the file if missing.
 
-**Important:** The legacy runtime LRM integration path has been removed from active backend flows.
+Required fields:
+- timestamp
+- role/mode
+- scope/files
+- intent
+- actions taken
+- results
+- blockers/next step
 
-- Do not reintroduce old LRM framework wiring or compatibility shims.
-- Keep Codex-based LRM support opt-in (`disabled` by default) and fail-safe.
-- Document endpoint or provider changes in `backend/README.md` and the relevant `.agents/implementation/` notes.
+## Development and Verification
+- Confirm current backend behavior before modifying code.
+- Keep runtime changes async-safe.
+- Prefer focused backend tests for iterative work (`uv run pytest backend/tests/...`).
+- If backend payloads or state contracts change, verify frontend assumptions and sync related `.agents/implementation/` notes.
+
+## Post-Work Verification (Hard Rule)
+Run and report all checks:
+
+```bash
+uv tool run ruff check .
+uvx basedpyright .
+uv run pytest tests --collect-only -q
+uv run python -m compileall .
+```
+
+Rules:
+- Running these commands is mandatory.
+- Failing checks do not block reporting completion, but failures must be reported in the run log and PR summary.
 
 ## Coordination Notes
-- Major adjustments to data models, migrations, or background workers must be
-  coordinated with the Lead Developer before merging.
-- When updating documentation or operational playbooks, keep the relevant files
-  in `.agents/implementation/` synchronized with the code changes.
+- Major model, migration, worker, or lifecycle changes require Lead Developer coordination.
+- Backend changes that alter frontend-visible behavior must include UI contract review notes.

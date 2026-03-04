@@ -3,24 +3,17 @@
 Quick reference for contributors auditing documentation quality.
 
 ## Key Responsibilities
+- Read preflight docs before work.
+- Save review notes in `/tmp/agents-artifacts/` with hashed prefixes.
+- Audit `.feedback/`, `.agents/**`, `.github/`, and top-level contributor docs.
+- Include clear file paths, impact, and reproduction context.
+- Keep findings actionable and scoped.
 
-- Read existing review notes in `.agents/review/` and add a new hashed note.
-- Audit `.feedback/`, planning docs, notes directories, `.agents/**` instructions, `.github/` configs, and top-level docs.
-- Record findings in a new review note with a random hash filename:
-
+## Note Naming
 ```bash
 openssl rand -hex 4  # e.g., abcd1234
+# save as /tmp/agents-artifacts/abcd1234-review-note.md
 ```
 
-- Do not modify code while acting in Reviewer mode.
-- Maintain this cheat sheet with durable preferences gathered during audits.
-
-## Finding Conventions
-
-- Write clear issue titles and actionable descriptions.
-- Include reproduction context, file paths, and expected behavior.
-- Capture unresolved questions explicitly for follow-up.
-
 ## Useful Links
-
 - Full mode guidance: [`REVIEWER.md`](../modes/REVIEWER.md)
