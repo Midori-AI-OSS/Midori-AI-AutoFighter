@@ -5,7 +5,6 @@ import logging
 import os
 
 from error_context import format_exception_with_context
-
 from logging_config import configure_logging
 from models.errors import ErrorSeverity
 from models.errors import create_error_response
