@@ -97,9 +97,7 @@ Follow this checklist whenever you are ready to publish work:
 1. Stage and review your changes locally (`git status`, `git diff`).
 2. Create a descriptive commit with a `[TYPE]` prefix.
 3. Verify the working tree is clean after committing (`git status`).
-4. Immediately call the `make_pr` tool to draft PR title/summary after the commit.
-5. Never call `make_pr` before committing, and do not finish committed work without a PR draft.
-6. If you did not modify the repository, do not commit and do not call `make_pr`.
+4. If you did not modify the repository, do not commit.
 
 These steps apply to all contributor modes.
 
