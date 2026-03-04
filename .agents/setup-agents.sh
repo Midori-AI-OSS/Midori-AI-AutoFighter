@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(pwd)"
 FRONTEND_DIR="${REPO_ROOT}/frontend"
 BACKEND_DIR="${REPO_ROOT}/backend"
 
@@ -20,6 +20,8 @@ BACKEND_DIR="${REPO_ROOT}/backend"
 # ---------------------------------------------------------------------------
 info()  { echo "[setup] $*"; }
 die()   { echo "[setup] ERROR: $*" >&2; exit 1; }
+
+[[ -f "${REPO_ROOT}/AGENTS.md" ]] || die "run this script from the repository root"
 
 pkg_install() {
     # Install a package idempotently.
