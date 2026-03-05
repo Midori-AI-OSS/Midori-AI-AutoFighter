@@ -63,5 +63,7 @@ async def radio_art_image():
         headers={
             "Content-Type": image.content_type,
             "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
         },
     )

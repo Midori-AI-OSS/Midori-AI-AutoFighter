@@ -10,9 +10,12 @@ describe('RadioPlayerStrip layout and behavior wiring', () => {
     expect(content).toContain('const COLLAPSE_DELAY_MS = 3000;');
     expect(content).toContain('class:collapsed={!expanded}');
     expect(content).toContain('left: 0.75rem;');
+    expect(content).toContain('width: calc(100vw - 1.5rem);');
     expect(content).toContain('width: 56px;');
+    expect(content).toContain('transform-origin: bottom left;');
     expect(content).toContain('on:pointerenter={handlePointerEnter}');
     expect(content).toContain('on:pointerleave={handlePointerLeave}');
+    expect(content).toContain('border-radius: 0;');
     expect(content).not.toContain('{#if expanded}');
   });
 

@@ -92,6 +92,9 @@ async def test_radio_art_image_success(app_with_db):
 
     assert response.status_code == 200
     assert response.headers["Content-Type"].startswith("image/jpeg")
+    assert response.headers["Cache-Control"] == "no-store, no-cache, must-revalidate"
+    assert response.headers["Pragma"] == "no-cache"
+    assert response.headers["Expires"] == "0"
     assert await response.get_data() == b"img"
 
 

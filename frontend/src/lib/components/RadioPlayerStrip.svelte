@@ -344,27 +344,28 @@
     position: fixed;
     left: 0.75rem;
     bottom: 0.75rem;
-    width: min(1100px, calc(100vw - 1.5rem));
+    width: calc(100vw - 1.5rem);
     height: 82px;
     z-index: 9800;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
     transition:
-      width 0.24s ease,
-      height 0.24s ease,
+      width 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+      height 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
       border-radius 0.24s ease,
       box-shadow 0.24s ease,
       border-color 0.24s ease,
       transform 0.24s ease;
     touch-action: pan-y;
     border-radius: 0;
+    transform-origin: bottom left;
   }
 
   .radio-strip.collapsed {
     width: 56px;
     height: 56px;
-    border-radius: 14px;
+    border-radius: 0;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
     border-color: rgba(255, 255, 255, 0.25);
   }
@@ -410,10 +411,16 @@
     display: grid;
     grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
     gap: 0.75rem;
+    align-content: center;
     align-items: center;
     height: 100%;
-    padding: 0.52rem 0.8rem 0.62rem;
+    min-height: 100%;
+    padding: 0 0.8rem;
     transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+
+  .content > * {
+    align-self: center;
   }
 
   .radio-strip.collapsed .content {
@@ -445,6 +452,7 @@
     width: 56px;
     height: 56px;
     border: none;
+    border-radius: 0;
   }
 
   .mini-shell {
@@ -466,11 +474,15 @@
 
   .meta-copy {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .title {
     font-size: 0.86rem;
     font-weight: 700;
+    line-height: 1.18;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -480,6 +492,7 @@
     margin-top: 0.16rem;
     opacity: 0.86;
     font-size: 0.74rem;
+    line-height: 1.16;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -530,11 +543,17 @@
     gap: 0.48rem;
   }
 
+  .selectors label {
+    display: inline-flex;
+    align-items: center;
+  }
+
   .selectors select {
     appearance: none;
     border: 1px solid rgba(255, 255, 255, 0.25);
     background: rgba(12, 18, 30, 0.62);
     color: inherit;
+    height: 33px;
     min-height: 33px;
     padding: 0 0.5rem;
     max-width: 10rem;
@@ -547,6 +566,7 @@
     border: 1px solid rgba(255, 255, 255, 0.25);
     background: rgba(12, 18, 30, 0.62);
     padding: 0 0.36rem;
+    height: 33px;
     min-height: 33px;
   }
 

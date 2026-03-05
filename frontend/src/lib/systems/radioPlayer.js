@@ -418,6 +418,7 @@ async function refreshMetadata({ boundaryFollowup = false } = {}) {
     const artData = art?.data || null;
     const trackId = String(currentData?.track_id || '').trim();
     const trackTitle = String(currentData?.title || '').trim();
+    const artTrackId = String(artData?.track_id || '').trim();
 
     const boundaryDetected = Boolean(
       (lastTrackId && trackId && lastTrackId !== trackId) ||
@@ -427,7 +428,8 @@ async function refreshMetadata({ boundaryFollowup = false } = {}) {
     if (trackId) lastTrackId = trackId;
     if (trackTitle) lastTrackTitle = trackTitle;
 
-    const artUrl = resolveRadioArtUrl(artData?.art_url, channel);
+    const artCacheKey = trackId || artTrackId || trackTitle;
+    const artUrl = resolveRadioArtUrl(artData?.art_url, channel, artCacheKey);
 
     updateState({
       currentTrack: currentData,

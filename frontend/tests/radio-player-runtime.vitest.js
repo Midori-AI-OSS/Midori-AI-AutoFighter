@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getRadioChannels, getRadioCurrent, getRadioArt, resolveRadioArtUrl } = vi.hoisted(() => ({
+const { appendTrackCacheKey, getRadioChannels, getRadioCurrent, getRadioArt, resolveRadioArtUrl } = vi.hoisted(() => ({
+  appendTrackCacheKey: vi.fn(),
   getRadioChannels: vi.fn(),
   getRadioCurrent: vi.fn(),
   getRadioArt: vi.fn(),
@@ -8,6 +9,7 @@ const { getRadioChannels, getRadioCurrent, getRadioArt, resolveRadioArtUrl } = v
 }));
 
 vi.mock('../src/lib/systems/radioApi.js', () => ({
+  appendTrackCacheKey,
   buildRadioStreamUrl: ({ channel = 'all', quality = 'medium' } = {}) => `https://radio.midori-ai.xyz/radio/v1/stream?channel=${channel}&q=${quality}`,
   getRadioChannels,
   getRadioCurrent,
@@ -80,7 +82,18 @@ describe('radioPlayer runtime guards', () => {
     getRadioChannels.mockReset().mockResolvedValue({ data: { channels: [{ name: 'all' }, { name: 'jazz' }] } });
     getRadioCurrent.mockReset().mockResolvedValue({ data: { title: 'Track One', track_id: 'track-1' } });
     getRadioArt.mockReset().mockResolvedValue({ data: { art_url: '/art-1' } });
-    resolveRadioArtUrl.mockReset().mockImplementation((raw) => String(raw || ''));
+    appendTrackCacheKey.mockReset().mockImplementation((url, trackKey) => {
+      const base = String(url || '').trim();
+      const key = String(trackKey || '').trim();
+      if (!key) return base;
+      const params = new URLSearchParams();
+      params.set('midoriai_track', key);
+      if (!base.includes('?')) {
+        return `${base}?${params.toString()}`;
+      }
+      return `${base}&${params.toString()}`;
+    });
+    resolveRadioArtUrl.mockReset().mockImplementation((raw, _channel, trackKey) => appendTrackCacheKey(raw, trackKey));
   });
 
   afterEach(() => {
@@ -142,18 +155,18 @@ describe('radioPlayer runtime guards', () => {
     await flush();
 
     secondCurrent.resolve({ data: { title: 'Newest Track', track_id: 'track-new' } });
-    secondArt.resolve({ data: { art_url: '/new-art' } });
+    secondArt.resolve({ data: { art_url: '/same-art' } });
     await flush();
     await flush();
 
     firstCurrent.resolve({ data: { title: 'Old Track', track_id: 'track-old' } });
-    firstArt.resolve({ data: { art_url: '/old-art' } });
+    firstArt.resolve({ data: { art_url: '/same-art' } });
     await flush();
     await flush();
 
     const snapshot = getRadioRuntimeSnapshot();
     expect(snapshot.currentTrack?.title).toBe('Newest Track');
     expect(snapshot.currentTrack?.track_id).toBe('track-new');
-    expect(snapshot.artUrl).toBe('/new-art');
+    expect(snapshot.artUrl).toBe('/same-art?midoriai_track=track-new');
   });
 });

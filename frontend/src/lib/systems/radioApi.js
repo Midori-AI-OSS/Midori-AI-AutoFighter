@@ -53,13 +53,38 @@ export function getRadioArtImageUrl(channel = 'all') {
   return `/api/radio/art/image?channel=${encodeURIComponent(selected)}`;
 }
 
-export function resolveRadioArtUrl(rawUrl, channel = 'all') {
+export function appendTrackCacheKey(url, trackKey) {
+  const normalizedUrl = String(url || '').trim();
+  if (!normalizedUrl) return normalizedUrl;
+
+  const normalizedTrackKey = String(trackKey || '').trim();
+  if (!normalizedTrackKey) return normalizedUrl;
+
+  const hashIndex = normalizedUrl.indexOf('#');
+  const basePart = hashIndex === -1 ? normalizedUrl : normalizedUrl.slice(0, hashIndex);
+  const hashPart = hashIndex === -1 ? '' : normalizedUrl.slice(hashIndex);
+
+  const queryIndex = basePart.indexOf('?');
+  const pathPart = queryIndex === -1 ? basePart : basePart.slice(0, queryIndex);
+  const queryPart = queryIndex === -1 ? '' : basePart.slice(queryIndex + 1);
+
+  const params = new URLSearchParams(queryPart);
+  params.set('midoriai_track', normalizedTrackKey);
+
+  const nextQuery = params.toString();
+  if (!nextQuery) {
+    return `${pathPart}${hashPart}`;
+  }
+  return `${pathPart}?${nextQuery}${hashPart}`;
+}
+
+export function resolveRadioArtUrl(rawUrl, channel = 'all', trackKey = '') {
   const fallback = getRadioArtImageUrl(channel);
   const normalized = String(rawUrl || '').trim();
-  if (!normalized) return fallback;
-  if (/^https?:\/\//i.test(normalized)) return normalized;
-  if (normalized.startsWith('/api/')) return normalized;
-  if (normalized.startsWith('/radio/')) return `/api${normalized}`;
-  if (normalized.startsWith('/')) return normalized;
-  return normalized;
+  if (!normalized) return appendTrackCacheKey(fallback, trackKey);
+  if (/^https?:\/\//i.test(normalized)) return appendTrackCacheKey(normalized, trackKey);
+  if (normalized.startsWith('/api/')) return appendTrackCacheKey(normalized, trackKey);
+  if (normalized.startsWith('/radio/')) return appendTrackCacheKey(`/api${normalized}`, trackKey);
+  if (normalized.startsWith('/')) return appendTrackCacheKey(normalized, trackKey);
+  return appendTrackCacheKey(normalized, trackKey);
 }
