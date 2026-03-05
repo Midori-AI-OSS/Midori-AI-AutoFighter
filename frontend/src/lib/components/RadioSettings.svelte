@@ -1,8 +1,9 @@
 <script>
-  import { Music, Power } from 'lucide-svelte';
+  import { Music, Pin, Power } from 'lucide-svelte';
 
   export let radioEnabled = false;
   export let radioAutostart = false;
+  export let radioStayOpen = false;
   export let scheduleSave;
 </script>
 
@@ -41,6 +42,25 @@
           }}
         />
         <span>Auto</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="control" title="Keep the radio widget expanded instead of collapsing after hover timeout.">
+    <div class="control-left">
+      <span class="label"><Pin /> Stay Open</span>
+    </div>
+    <div class="control-right">
+      <label class="toggle">
+        <input
+          type="checkbox"
+          bind:checked={radioStayOpen}
+          on:change={() => {
+            radioStayOpen = Boolean(radioStayOpen);
+            scheduleSave();
+          }}
+        />
+        <span>Pinned</span>
       </label>
     </div>
   </div>

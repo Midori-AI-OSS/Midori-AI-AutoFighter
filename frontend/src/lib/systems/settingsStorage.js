@@ -116,6 +116,7 @@ function getDefaultSettings() {
     musicSource: 'game',
     radioEnabled: false,
     radioAutostart: false,
+    radioStayOpen: false,
     radioChannel: 'all',
     radioQuality: 'medium',
     radioVolume: 70
@@ -215,6 +216,7 @@ export function loadSettings() {
     if (data.musicSource !== undefined) data.musicSource = normalizeMusicSource(data.musicSource);
     if (data.radioEnabled !== undefined) data.radioEnabled = Boolean(data.radioEnabled);
     if (data.radioAutostart !== undefined) data.radioAutostart = Boolean(data.radioAutostart);
+    if (data.radioStayOpen !== undefined) data.radioStayOpen = Boolean(data.radioStayOpen);
     if (data.radioChannel !== undefined) data.radioChannel = normalizeRadioChannelSetting(data.radioChannel);
     if (data.radioQuality !== undefined) data.radioQuality = normalizeRadioQualitySetting(data.radioQuality);
     if (data.radioVolume !== undefined) data.radioVolume = clampRadioVolume(data.radioVolume);
@@ -258,6 +260,9 @@ export function loadSettings() {
     }
     if (data.radioAutostart === undefined) {
       data.radioAutostart = defaults.radioAutostart;
+    }
+    if (data.radioStayOpen === undefined) {
+      data.radioStayOpen = defaults.radioStayOpen;
     }
     if (data.radioChannel === undefined) {
       data.radioChannel = defaults.radioChannel;
@@ -338,6 +343,7 @@ export function saveSettings(settings) {
     merged.musicSource = normalizeMusicSource(merged.musicSource);
     merged.radioEnabled = Boolean(merged.radioEnabled);
     merged.radioAutostart = Boolean(merged.radioAutostart);
+    merged.radioStayOpen = Boolean(merged.radioStayOpen);
     merged.radioChannel = normalizeRadioChannelSetting(merged.radioChannel);
     merged.radioQuality = normalizeRadioQualitySetting(merged.radioQuality);
     if (!radioVolumeProvided || musicVolumeProvided) {

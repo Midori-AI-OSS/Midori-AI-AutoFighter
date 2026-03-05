@@ -11,19 +11,21 @@ describe('Radio settings wiring', () => {
     expect(content).toContain("musicSource: 'game'");
     expect(content).toContain('radioEnabled: false');
     expect(content).toContain('radioAutostart: false');
+    expect(content).toContain('radioStayOpen: false');
     expect(content).toContain("radioChannel: 'all'");
     expect(content).toContain("radioQuality: 'medium'");
     expect(content).toContain('radioVolume: 70');
     expect(content).toContain('normalizeMusicVolumeSetting');
   });
 
-  test('settings menu payload only saves radio toggles', () => {
+  test('settings menu payload saves radio toggles including stay-open', () => {
     const settingsMenuFile = join(import.meta.dir, '../src/lib/components/SettingsMenu.svelte');
     const content = readFileSync(settingsMenuFile, 'utf8');
 
     expect(content).toContain('musicSource,');
     expect(content).toContain('radioEnabled,');
-    expect(content).toContain('radioAutostart');
+    expect(content).toContain('radioAutostart,');
+    expect(content).toContain('radioStayOpen');
     expect(content).not.toContain('radioChannel,');
     expect(content).not.toContain('radioQuality,');
     expect(content).not.toContain('radioVolume');

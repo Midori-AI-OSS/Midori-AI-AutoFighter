@@ -63,6 +63,7 @@
   export let musicSource = 'game';
   export let radioEnabled = false;
   export let radioAutostart = false;
+  export let radioStayOpen = false;
   export let radioChannel = 'all';
   export let radioQuality = 'medium';
   export let radioVolume = 70;
@@ -489,6 +490,7 @@
       {musicSource}
       {radioEnabled}
       {radioAutostart}
+      {radioStayOpen}
       bind:animationSpeed
       {runId}
       on:save={(e) => dispatch('saveSettings', e.detail)}

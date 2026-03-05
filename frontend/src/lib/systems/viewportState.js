@@ -118,6 +118,7 @@ export async function loadInitialState() {
     musicSource: saved.musicSource ?? 'game',
     radioEnabled: saved.radioEnabled ?? false,
     radioAutostart: saved.radioAutostart ?? false,
+    radioStayOpen: saved.radioStayOpen ?? false,
     radioChannel: saved.radioChannel ?? 'all',
     radioQuality: saved.radioQuality ?? 'medium',
     radioVolume: normalizeMusicVolumeSetting(saved.radioVolume, { fallback: 70, allowLegacyScale: false }),

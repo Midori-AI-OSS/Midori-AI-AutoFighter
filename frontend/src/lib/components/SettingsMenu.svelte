@@ -40,6 +40,7 @@
   export let musicSource = 'game';
   export let radioEnabled = false;
   export let radioAutostart = false;
+  export let radioStayOpen = false;
   export let runId = '';
 
   let saveStatus = '';
@@ -185,7 +186,8 @@
       animationSpeed: sanitizedSpeed,
       musicSource,
       radioEnabled,
-      radioAutostart
+      radioAutostart,
+      radioStayOpen
     };
     saveSettings(payload);
     dispatch('save', payload);
@@ -266,6 +268,7 @@
       musicSource = 'game';
       radioEnabled = false;
       radioAutostart = false;
+      radioStayOpen = false;
       runId = '';
       wipeStatus = ok ? 'Save data wiped. Reloading…' : 'Backend wipe failed; cleared local data. Reloading…';
       setTimeout(() => {
@@ -325,6 +328,7 @@
     <RadioSettings
       bind:radioEnabled
       bind:radioAutostart
+      bind:radioStayOpen
       {scheduleSave}
     />
   {:else if activeTab === 'ui'}

@@ -16,6 +16,7 @@
     artUrl: '',
     lastError: null,
   };
+  export let stayOpen = false;
 
   const dispatch = createEventDispatcher();
 
@@ -48,8 +49,12 @@
 
   function scheduleCollapse() {
     clearCollapseTimer();
+    if (stayOpen) {
+      expanded = true;
+      return;
+    }
     collapseTimer = setTimeout(() => {
-      if (!hovered) {
+      if (!hovered && !stayOpen) {
         expanded = false;
       }
     }, COLLAPSE_DELAY_MS);
@@ -63,6 +68,11 @@
 
   function handlePointerLeave() {
     hovered = false;
+    if (stayOpen) {
+      clearCollapseTimer();
+      expanded = true;
+      return;
+    }
     scheduleCollapse();
   }
 
@@ -236,6 +246,10 @@
   $: subtitle = `Midori AI Radio: ${clampChannelLabel(runtime.channel)}`;
   $: backdropStyle = runtime.artUrl ? `background-image: url('${runtime.artUrl}');` : '';
   $: paletteStyle = `--radio-primary: ${activePalette.primary}; --radio-secondary: ${activePalette.secondary}; --radio-glow: ${activePalette.glow}; --radio-dim: ${activePalette.dim};`;
+  $: if (stayOpen) {
+    clearCollapseTimer();
+    expanded = true;
+  }
 
   $: {
     const currentUrl = String(runtime.artUrl || '').trim();
@@ -457,19 +471,23 @@
 
   .mini-shell {
     position: absolute;
-    inset: 0;
+    left: 0;
+    bottom: 0;
+    width: 56px;
+    height: 56px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-start;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.16s ease;
+    transition: opacity 0.18s ease, visibility 0s linear 0.18s;
   }
 
   .radio-strip.collapsed .mini-shell {
     opacity: 1;
     visibility: visible;
+    transition-delay: 0s;
   }
 
   .meta-copy {

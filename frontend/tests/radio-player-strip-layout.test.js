@@ -8,13 +8,18 @@ describe('RadioPlayerStrip layout and behavior wiring', () => {
     const content = readFileSync(stripFile, 'utf8');
 
     expect(content).toContain('const COLLAPSE_DELAY_MS = 3000;');
+    expect(content).toContain('export let stayOpen = false;');
     expect(content).toContain('class:collapsed={!expanded}');
     expect(content).toContain('left: 0.75rem;');
     expect(content).toContain('width: calc(100vw - 1.5rem);');
     expect(content).toContain('width: 56px;');
     expect(content).toContain('transform-origin: bottom left;');
+    expect(content).toContain('if (stayOpen) {');
     expect(content).toContain('on:pointerenter={handlePointerEnter}');
     expect(content).toContain('on:pointerleave={handlePointerLeave}');
+    expect(content).toContain('justify-content: flex-start;');
+    expect(content).toContain('align-items: flex-end;');
+    expect(content).toContain('transition: opacity 0.18s ease, visibility 0s linear 0.18s;');
     expect(content).toContain('border-radius: 0;');
     expect(content).not.toContain('{#if expanded}');
   });

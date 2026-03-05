@@ -80,6 +80,7 @@
   let musicSource = 'game';
   let radioEnabled = false;
   let radioAutostart = false;
+  let radioStayOpen = false;
   let radioChannel = 'all';
   let radioQuality = 'medium';
   let radioVolume = 70;
@@ -97,6 +98,7 @@
       musicSource,
       radioEnabled,
       radioAutostart,
+      radioStayOpen,
       radioChannel,
       radioQuality,
       radioVolume: musicVolume,
@@ -150,6 +152,7 @@
     musicSource = normalizeMusicSource(next.musicSource ?? musicSource);
     radioEnabled = next.radioEnabled !== undefined ? Boolean(next.radioEnabled) : radioEnabled;
     radioAutostart = next.radioAutostart !== undefined ? Boolean(next.radioAutostart) : radioAutostart;
+    radioStayOpen = next.radioStayOpen !== undefined ? Boolean(next.radioStayOpen) : radioStayOpen;
     if (next.radioChannel !== undefined) {
       radioChannel = String(next.radioChannel || 'all');
     }
@@ -179,6 +182,7 @@
     musicSource = initialSettings.musicSource === 'midoriai_radio' ? 'midoriai_radio' : 'game';
     radioEnabled = Boolean(initialSettings.radioEnabled ?? false);
     radioAutostart = Boolean(initialSettings.radioAutostart ?? false);
+    radioStayOpen = Boolean(initialSettings.radioStayOpen ?? false);
     radioChannel = String(initialSettings.radioChannel ?? 'all');
     radioQuality = String(initialSettings.radioQuality ?? 'medium');
     radioVolume = musicVolume;
@@ -586,6 +590,7 @@
         {musicSource}
         {radioEnabled}
         {radioAutostart}
+        {radioStayOpen}
         {radioChannel}
         {radioQuality}
         {radioVolume}
@@ -617,6 +622,7 @@
     {#if musicSource === 'midoriai_radio'}
       <RadioPlayerStrip
         runtime={$radioRuntimeStore}
+        stayOpen={radioStayOpen}
         on:previousChannel={() => {
           radioChannel = stepRadioChannel(-1);
           persistRadioSettings({ radioChannel });
