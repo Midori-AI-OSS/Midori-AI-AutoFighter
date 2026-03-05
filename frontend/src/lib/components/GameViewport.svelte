@@ -291,11 +291,7 @@
     return p;
   })();
   $: viewportStyle = `--bg: url(${backgroundFromTheme}); --accent: ${accentColor}; --level-progress: ${levelProgress}`;
-  $: {
-    if (musicSource !== 'game') {
-      return;
-    }
-
+  $: if (musicSource === 'game') {
     // Change music per room type and battle index (new fights) and
     // rerun when party/foe combatants change to trigger character themes.
     const typeKey = String(currentRoomType || roomData?.current_room || '');
