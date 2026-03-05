@@ -542,10 +542,6 @@
     transform: translateY(-1px);
   }
 
-  .icon-control.play {
-    color: rgba(var(--radio-glow), 1);
-  }
-
   .icon-control.quality {
     color: rgba(214, 224, 243, 0.7);
   }
