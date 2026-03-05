@@ -192,6 +192,7 @@ async def check_previous_crash() -> None:
 
 
 @app.get("/api/previous-errors")
+@app.get("/previous-errors")
 async def api_get_previous_errors() -> Response:
     """Return errors from previous crash for display."""
     errors = get_previous_errors()
@@ -202,6 +203,7 @@ async def api_get_previous_errors() -> Response:
 
 
 @app.post("/api/acknowledge-errors")
+@app.post("/acknowledge-errors")
 async def api_acknowledge_errors() -> Response:
     """Clear persisted errors after user acknowledges."""
     clear_errors()

@@ -7,7 +7,9 @@ import {
   pullGacha,
   getUpgrade,
   upgradeStat,
-  wipeData
+  wipeData,
+  getPreviousErrors,
+  acknowledgePreviousErrors
 } from '../src/lib/systems/api.js';
 import {
   startRun,
@@ -185,5 +187,37 @@ describe('api calls', () => {
       totalMaterials: 12
     });
     expect(result).toEqual({ stat_upgraded: 'atk', materials_spent: 5, completed_upgrades: 3 });
+  });
+
+  test('getPreviousErrors retries without /api prefix on 404', async () => {
+    const fetchMock = mock(async (url) => {
+      if (url === 'http://backend.test/api/previous-errors') {
+        return { ok: false, status: 404, text: async () => '' };
+      }
+      if (url === 'http://backend.test/previous-errors') {
+        return { ok: true, status: 200, json: async () => ({ has_errors: false, errors: [] }) };
+      }
+      throw new Error(`unexpected url ${url}`);
+    });
+    global.fetch = fetchMock;
+    const result = await getPreviousErrors();
+    expect(result).toEqual({ has_errors: false, errors: [] });
+    expect(fetchMock.mock.calls.length).toBe(2);
+  });
+
+  test('acknowledgePreviousErrors retries without /api prefix on 404', async () => {
+    const fetchMock = mock(async (url) => {
+      if (url === 'http://backend.test/api/acknowledge-errors') {
+        return { ok: false, status: 404, text: async () => '' };
+      }
+      if (url === 'http://backend.test/acknowledge-errors') {
+        return { ok: true, status: 200, json: async () => ({ status: 'ok' }) };
+      }
+      throw new Error(`unexpected url ${url}`);
+    });
+    global.fetch = fetchMock;
+    const result = await acknowledgePreviousErrors();
+    expect(result).toEqual({ status: 'ok' });
+    expect(fetchMock.mock.calls.length).toBe(2);
   });
 });

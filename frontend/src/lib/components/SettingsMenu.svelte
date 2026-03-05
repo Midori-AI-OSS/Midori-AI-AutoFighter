@@ -297,6 +297,11 @@
     <button class:active={activeTab === 'audio'} on:click={() => (activeTab = 'audio')} title="Audio">
       <Volume2 />
     </button>
+    {#if musicSource === 'midoriai_radio'}
+      <button class:active={activeTab === 'radio'} on:click={() => (activeTab = 'radio')} title="Radio">
+        <Radio />
+      </button>
+    {/if}
     <button class:active={activeTab === 'ui'} on:click={() => (activeTab = 'ui')} title="UI">
       <Palette />
     </button>
@@ -306,11 +311,6 @@
     <button class:active={activeTab === 'gameplay'} on:click={() => (activeTab = 'gameplay')} title="Gameplay">
       <Gamepad />
     </button>
-    {#if musicSource === 'midoriai_radio'}
-      <button class:active={activeTab === 'radio'} on:click={() => (activeTab = 'radio')} title="Radio">
-        <Radio />
-      </button>
-    {/if}
   </div>
 
   {#if activeTab === 'audio'}

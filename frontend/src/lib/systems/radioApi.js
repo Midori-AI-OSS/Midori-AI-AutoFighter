@@ -30,14 +30,22 @@ export async function getRadioChannels() {
   return httpGet('/radio/channels', { cache: 'no-store' }, true);
 }
 
-export async function getRadioCurrent(channel = 'all') {
+export async function getRadioCurrent(channel = 'all', options = {}) {
   const selected = normalizeRadioChannel(channel);
-  return httpGet(`/radio/current?channel=${encodeURIComponent(selected)}`, { cache: 'no-store' }, true);
+  return httpGet(
+    `/radio/current?channel=${encodeURIComponent(selected)}`,
+    { cache: 'no-store', signal: options?.signal },
+    true
+  );
 }
 
-export async function getRadioArt(channel = 'all') {
+export async function getRadioArt(channel = 'all', options = {}) {
   const selected = normalizeRadioChannel(channel);
-  return httpGet(`/radio/art?channel=${encodeURIComponent(selected)}`, { cache: 'no-store' }, true);
+  return httpGet(
+    `/radio/art?channel=${encodeURIComponent(selected)}`,
+    { cache: 'no-store', signal: options?.signal },
+    true
+  );
 }
 
 export function getRadioArtImageUrl(channel = 'all') {

@@ -13,6 +13,7 @@ describe('RadioPlayerStrip layout and behavior wiring', () => {
     expect(content).toContain('width: 56px;');
     expect(content).toContain('on:pointerenter={handlePointerEnter}');
     expect(content).toContain('on:pointerleave={handlePointerLeave}');
+    expect(content).not.toContain('{#if expanded}');
   });
 
   test('keeps center icon-only controls and right-side channel+volume utilities', () => {
@@ -23,13 +24,12 @@ describe('RadioPlayerStrip layout and behavior wiring', () => {
     expect(content).toContain('<Play');
     expect(content).toContain('<Pause');
     expect(content).toContain('<SkipForward');
-    expect(content).toContain('<AudioLines');
+    expect(content).toContain('<SignalHigh');
     expect(content).toContain('class=\"selectors\"');
-    expect(content).toContain('select value={runtime.channel}');
+    expect(content).toContain('value={runtime.channel} on:change');
     expect(content).toContain('type=\"range\"');
     expect(content).not.toContain('qualityLabel');
-    expect(content).not.toContain('HQ');
-    expect(content).not.toContain('MQ');
+    expect(content).not.toContain('<AudioLines');
   });
 
   test('includes dynamic art palette extraction and dim overlay layers', () => {

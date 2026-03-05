@@ -51,6 +51,14 @@ describe('Radio settings wiring', () => {
     expect(content).toContain("musicSource === 'midoriai_radio'");
     expect(content).toContain("activeTab === 'radio'");
     expect(content).toContain('<RadioSettings');
+    const audioTab = content.indexOf('title=\"Audio\"');
+    const radioTab = content.indexOf('title=\"Radio\"');
+    const uiTab = content.indexOf('title=\"UI\"');
+    expect(audioTab).toBeGreaterThan(-1);
+    expect(radioTab).toBeGreaterThan(-1);
+    expect(uiTab).toBeGreaterThan(-1);
+    expect(audioTab).toBeLessThan(radioTab);
+    expect(radioTab).toBeLessThan(uiTab);
   });
 
   test('viewport renders radio strip and hides exp bar while radio is active', () => {

@@ -15,6 +15,7 @@ const PLAYING_METADATA_POLL_MS = 5000;
 const IDLE_METADATA_POLL_MS = 20000;
 const CHANNEL_REFRESH_MS = 60000;
 const CHANNEL_FADE_MS = 220;
+const PLAY_INTERRUPTED_PATTERN = /play\(\) request was interrupted by a call to pause\(\)/i;
 
 const DEFAULT_STATE = {
   sourceActive: false,
@@ -47,6 +48,10 @@ let reconnectAttempt = 0;
 let lastTrackId = '';
 let lastTrackTitle = '';
 let started = false;
+let playbackIntentId = 0;
+let playbackQueue = Promise.resolve();
+let metadataRequestId = 0;
+let metadataAbortController = null;
 
 function hasAudio() {
   return typeof Audio !== 'undefined';
@@ -66,6 +71,28 @@ function clampVolume(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return 70;
   return Math.max(0, Math.min(100, Math.round(numeric)));
+}
+
+function isPlaybackAbortError(error) {
+  if (!error) return false;
+  if (error instanceof DOMException && error.name === 'AbortError') return true;
+  const name = String(error?.name || '');
+  if (name === 'AbortError') return true;
+  const message = String(error?.message || error || '');
+  return PLAY_INTERRUPTED_PATTERN.test(message);
+}
+
+function isRequestAbortError(error) {
+  if (!error) return false;
+  if (error instanceof DOMException && error.name === 'AbortError') return true;
+  return String(error?.name || '') === 'AbortError';
+}
+
+function runPlaybackJob(job) {
+  const execute = async () => job();
+  const scheduled = playbackQueue.then(execute, execute);
+  playbackQueue = scheduled.catch(() => undefined);
+  return scheduled;
 }
 
 function clearReconnectTimer() {
@@ -174,12 +201,15 @@ function queueReconnect(reason, { immediate = false } = {}) {
 
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
-    void startPlayback({ reasonText: 'Reconnecting…' });
+    void requestStartPlayback({ reasonText: 'Reconnecting…' });
   }, delayMs);
 }
 
-function stopPlayback({ preserveDesired = false, rescheduleMetadata = true } = {}) {
+function stopPlayback({ preserveDesired = false, rescheduleMetadata = true, invalidateIntent = true } = {}) {
   clearReconnectTimer();
+  if (invalidateIntent) {
+    playbackIntentId += 1;
+  }
   if (!preserveDesired) {
     updateState({ playbackDesired: false });
   }
@@ -238,9 +268,12 @@ async function fadeAudioVolume(target, durationMs) {
   });
 }
 
-async function startPlayback({ reasonText = 'Connecting…' } = {}) {
+async function startPlaybackInternal({ reasonText = 'Connecting…', intentId = playbackIntentId } = {}) {
+  if (intentId !== playbackIntentId) {
+    return false;
+  }
   if (!state.sourceActive || !state.enabled) {
-    stopPlayback();
+    stopPlayback({ invalidateIntent: false });
     return false;
   }
 
@@ -278,6 +311,16 @@ async function startPlayback({ reasonText = 'Connecting…' } = {}) {
     audio.src = streamUrl;
     audio.load();
     await audio.play();
+
+    if (intentId !== playbackIntentId) {
+      try {
+        audio.pause();
+      } catch {
+        // ignore stale playback stop failures
+      }
+      return false;
+    }
+
     scheduleMetadataPoll();
     return true;
   } catch (error) {
@@ -293,10 +336,32 @@ async function startPlayback({ reasonText = 'Connecting…' } = {}) {
       return false;
     }
 
+    if (isPlaybackAbortError(error)) {
+      if (intentId === playbackIntentId) {
+        updateState({
+          isPlaying: false,
+          connectionState: state.playbackDesired ? 'connecting' : 'idle',
+          statusText: state.playbackDesired ? reasonText : 'Stopped',
+          lastError: null,
+        });
+      }
+      scheduleMetadataPoll();
+      return false;
+    }
+
+    if (intentId !== playbackIntentId) {
+      return false;
+    }
+
     queueReconnect(error instanceof Error ? error.message : 'Playback failed');
     scheduleMetadataPoll();
     return false;
   }
+}
+
+function requestStartPlayback({ reasonText = 'Connecting…' } = {}) {
+  const intentId = ++playbackIntentId;
+  return runPlaybackJob(() => startPlaybackInternal({ reasonText, intentId }));
 }
 
 async function refreshChannels() {
@@ -327,11 +392,27 @@ async function refreshMetadata({ boundaryFollowup = false } = {}) {
   }
 
   const channel = normalizeRadioChannel(state.channel);
+  const requestId = ++metadataRequestId;
+  if (metadataAbortController) {
+    try {
+      metadataAbortController.abort();
+    } catch {
+      // ignore abort failures
+    }
+  }
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  metadataAbortController = controller;
+  const signal = controller?.signal;
+
   try {
     const [current, art] = await Promise.all([
-      getRadioCurrent(channel),
-      getRadioArt(channel),
+      getRadioCurrent(channel, { signal }),
+      getRadioArt(channel, { signal }),
     ]);
+
+    if (requestId !== metadataRequestId) {
+      return;
+    }
 
     const currentData = current?.data || null;
     const artData = art?.data || null;
@@ -358,7 +439,7 @@ async function refreshMetadata({ boundaryFollowup = false } = {}) {
 
     if (boundaryDetected) {
       if (state.pendingQuality && state.playbackDesired) {
-        await startPlayback({ reasonText: 'Applying quality…' });
+        await requestStartPlayback({ reasonText: 'Applying quality…' });
       }
       if (!boundaryFollowup) {
         setTimeout(() => {
@@ -367,9 +448,16 @@ async function refreshMetadata({ boundaryFollowup = false } = {}) {
       }
     }
   } catch (error) {
+    if (isRequestAbortError(error) || requestId !== metadataRequestId) {
+      return;
+    }
     updateState({
       lastError: error instanceof Error ? error.message : 'Metadata refresh failed',
     });
+  } finally {
+    if (metadataAbortController === controller) {
+      metadataAbortController = null;
+    }
   }
 }
 
@@ -416,7 +504,7 @@ function ensureVisibilityBinding() {
 function maybeAutostart() {
   if (!state.sourceActive || !state.enabled || !state.autostart) return;
   if (state.playbackDesired || state.isPlaying) return;
-  void startPlayback();
+  void requestStartPlayback();
 }
 
 export function initializeRadioPlayer(config = {}) {
@@ -477,7 +565,7 @@ export function updateRadioSettings(config = {}) {
   if (!nextEnabled) {
     stopPlayback();
   } else if (enabledChanged && state.sourceActive && state.autostart) {
-    void startPlayback();
+    void requestStartPlayback();
   }
 
   if (channelChanged) {
@@ -492,17 +580,33 @@ export function updateRadioSettings(config = {}) {
 }
 
 async function switchChannelWithFade(channel) {
-  if (!radioAudio || !state.playbackDesired) {
-    await startPlayback({ reasonText: 'Switching channel…' });
-    return;
-  }
+  const intentId = ++playbackIntentId;
+  return runPlaybackJob(async () => {
+    if (intentId !== playbackIntentId) {
+      return false;
+    }
 
-  updateState({ connectionState: 'connecting', statusText: `Switching channel to ${channel}…` });
-  await fadeAudioVolume(0, CHANNEL_FADE_MS);
-  await startPlayback({ reasonText: 'Switching channel…' });
-  applyVolume();
-  await fadeAudioVolume(clampVolume(state.volume) / 100, CHANNEL_FADE_MS);
-  void refreshMetadata();
+    if (!radioAudio || !state.playbackDesired) {
+      return startPlaybackInternal({ reasonText: 'Switching channel…', intentId });
+    }
+
+    updateState({ connectionState: 'connecting', statusText: `Switching channel to ${channel}…` });
+    await fadeAudioVolume(0, CHANNEL_FADE_MS);
+
+    if (intentId !== playbackIntentId) {
+      return false;
+    }
+
+    const startedPlayback = await startPlaybackInternal({ reasonText: 'Switching channel…', intentId });
+    if (!startedPlayback) {
+      return false;
+    }
+
+    applyVolume();
+    await fadeAudioVolume(clampVolume(state.volume) / 100, CHANNEL_FADE_MS);
+    void refreshMetadata();
+    return true;
+  });
 }
 
 export function setRadioSourceActive(active) {
@@ -527,14 +631,14 @@ export async function toggleRadioPlayback() {
     stopPlayback();
     return false;
   }
-  return startPlayback();
+  return requestStartPlayback();
 }
 
 export function resumeRadioPlayback() {
   if (!state.playbackDesired) return;
   if (!state.sourceActive || !state.enabled) return;
   if (state.isPlaying) return;
-  void startPlayback({ reasonText: 'Resuming…' });
+  void requestStartPlayback({ reasonText: 'Resuming…' });
 }
 
 export function stepRadioChannel(direction) {
@@ -593,6 +697,14 @@ export function destroyRadioPlayer() {
   clearReconnectTimer();
   clearMetadataTimer();
   clearChannelTimer();
+  if (metadataAbortController) {
+    try {
+      metadataAbortController.abort();
+    } catch {
+      // ignore abort failures
+    }
+    metadataAbortController = null;
+  }
   stopPlayback({ rescheduleMetadata: false });
 
   if (visibilityBound && typeof document !== 'undefined') {
@@ -614,6 +726,9 @@ export function destroyRadioPlayer() {
   reconnectAttempt = 0;
   lastTrackId = '';
   lastTrackTitle = '';
+  playbackIntentId = 0;
+  playbackQueue = Promise.resolve();
+  metadataRequestId = 0;
   started = false;
   state = { ...DEFAULT_STATE };
   runtimeStore.set(state);

@@ -85,6 +85,7 @@
   let radioVolume = 70;
   let radioInitialized = false;
   let previousMusicSource = null;
+  let sourceSwitchToken = 0;
   let selectedParty = [];
   let snapshotLoading = false;
 
@@ -110,6 +111,22 @@
 
   function normalizeMusicSource(value) {
     return value === 'midoriai_radio' ? 'midoriai_radio' : 'game';
+  }
+
+  async function applyMusicSourceSwitch(nextSource, token) {
+    const radioSourceActive = nextSource === 'midoriai_radio';
+    if (radioSourceActive) {
+      await stopGameMusic();
+      if (token !== sourceSwitchToken) return;
+      setRadioSourceActive(true);
+      return;
+    }
+
+    setRadioSourceActive(false);
+    if (token !== sourceSwitchToken) return;
+    lastMusicKey = '';
+    lastBattleId = '';
+    lastPlaylistSignature = '';
   }
 
   function applySavedSettings(detail = {}) {
@@ -236,16 +253,10 @@
     radioVolume = musicVolume;
   }
   $: if (radioInitialized && musicSource !== previousMusicSource) {
-    const radioSourceActive = musicSource === 'midoriai_radio';
-    setRadioSourceActive(radioSourceActive);
-    if (radioSourceActive) {
-      stopGameMusic();
-    } else {
-      lastMusicKey = '';
-      lastBattleId = '';
-      lastPlaylistSignature = '';
-    }
-    previousMusicSource = musicSource;
+    const nextSource = musicSource;
+    previousMusicSource = nextSource;
+    const token = ++sourceSwitchToken;
+    void applyMusicSourceSwitch(nextSource, token);
   }
 
   let lastMusicKey = '';
@@ -398,6 +409,9 @@
     overflow: hidden;
     position: relative;
   }
+  .viewport.radio-active {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+  }
   /* Progress outline driven by global user level EXP */
   .viewport::before {
     content: '';
@@ -437,6 +451,7 @@
   }
   @media (max-width: 599px) {
     .viewport { aspect-ratio: auto; min-height: 240px; }
+    .viewport.radio-active { padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
   }
   .top-center-header {
     position: absolute;
@@ -510,7 +525,7 @@
 </style>
 
 <div class="viewport-wrap">
-  <div class="viewport" style={viewportStyle}>
+  <div class="viewport" class:radio-active={musicSource === 'midoriai_radio'} style={viewportStyle}>
     <NavBar
       {battleActive}
       viewMode={$overlayView}

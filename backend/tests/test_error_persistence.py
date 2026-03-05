@@ -403,6 +403,12 @@ class TestAppErrorHandler:
         assert len(data["errors"]) == 1
         assert data["errors"][0]["message"] == "Test error for persistence"
 
+        alias_response = await client.get("/previous-errors")
+        assert alias_response.status_code == 200
+        alias_data = await alias_response.get_json()
+        assert alias_data["has_errors"] is True
+        assert len(alias_data["errors"]) == 1
+
     @pytest.mark.asyncio
     async def test_acknowledge_errors_endpoint(self, app_client):
         """Test POST /api/acknowledge-errors endpoint."""
@@ -427,6 +433,25 @@ class TestAppErrorHandler:
         data = await response.get_json()
         assert data["has_errors"] is False
         assert data["errors"] == []
+
+    @pytest.mark.asyncio
+    async def test_acknowledge_errors_endpoint_alias(self, app_client):
+        """Test POST /acknowledge-errors alias endpoint."""
+        client, _, error_file = app_client
+
+        await client.get("/test-error")
+        assert error_file.exists()
+
+        response = await client.post("/acknowledge-errors")
+        assert response.status_code == 200
+        data = await response.get_json()
+        assert data["status"] == "ok"
+
+        response = await client.get("/previous-errors")
+        assert response.status_code == 200
+        payload = await response.get_json()
+        assert payload["has_errors"] is False
+        assert payload["errors"] == []
 
     @pytest.mark.asyncio
     async def test_http_exception_not_persisted(self, app_client):

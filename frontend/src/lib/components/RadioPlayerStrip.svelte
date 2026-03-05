@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { AudioLines, Pause, Play, SkipBack, SkipForward, Volume2 } from 'lucide-svelte';
+  import { Pause, Play, SignalHigh, SkipBack, SkipForward, Volume2 } from 'lucide-svelte';
 
   export let runtime = {
     channels: ['all'],
@@ -267,113 +267,106 @@
   <div class="bg-glow"></div>
   <div class="bg-dim"></div>
 
-  {#if expanded}
-    <div class="content">
-      <div class="meta">
-        <div class="art-box" style={backdropStyle}></div>
-        <div class="meta-copy">
-          <div class="title" title={title}>{title}</div>
-          <div class="subtitle" title={subtitle}>{subtitle}</div>
-        </div>
-      </div>
-
-      <div class="controls" role="group" aria-label="Radio controls">
-        <button class="icon-control" aria-label="Previous channel" data-no-swipe on:click={() => dispatch('previousChannel')}>
-          <SkipBack size={18} />
-        </button>
-        <button
-          class="icon-control play"
-          aria-label={runtime.isPlaying ? 'Pause playback' : 'Start playback'}
-          data-no-swipe
-          on:click={() => dispatch('togglePlayback')}
-        >
-          {#if runtime.isPlaying || runtime.playbackDesired}
-            <Pause size={21} />
-          {:else}
-            <Play size={21} />
-          {/if}
-        </button>
-        <button class="icon-control" aria-label="Next channel" data-no-swipe on:click={() => dispatch('nextChannel')}>
-          <SkipForward size={18} />
-        </button>
-        <button
-          class="icon-control quality"
-          class:quality-high={isQualityHigh}
-          aria-label={qualityAriaLabel}
-          aria-pressed={isQualityHigh}
-          data-no-swipe
-          on:click={() => dispatch('toggleQuality')}
-        >
-          <AudioLines size={18} />
-        </button>
-      </div>
-
-      <div class="selectors">
-        <label>
-          <span class="sr-only">Channel</span>
-          <select value={runtime.channel} on:change={(event) => dispatch('setChannel', event.currentTarget.value)}>
-            {#each (runtime.channels?.length ? runtime.channels : ['all']) as channelName}
-              <option value={channelName}>{channelName}</option>
-            {/each}
-          </select>
-        </label>
-        <label class="volume-wrap">
-          <Volume2 size={14} />
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="1"
-            value={runtime.volume}
-            aria-label="Music volume"
-            on:input={(event) => dispatch('setVolume', Number(event.currentTarget.value))}
-          />
-        </label>
+  <div class="content" aria-hidden={!expanded}>
+    <div class="meta">
+      <div class="art-box" style={backdropStyle}></div>
+      <div class="meta-copy">
+        <div class="title" title={title}>{title}</div>
+        <div class="subtitle" title={subtitle}>{subtitle}</div>
       </div>
     </div>
-  {:else}
-    <div class="mini-art" style={backdropStyle} aria-hidden="true"></div>
-  {/if}
+
+    <div class="controls" role="group" aria-label="Radio controls">
+      <button class="icon-control" aria-label="Previous channel" tabindex={expanded ? 0 : -1} data-no-swipe on:click={() => dispatch('previousChannel')}>
+        <SkipBack size={18} />
+      </button>
+      <button
+        class="icon-control play"
+        aria-label={runtime.isPlaying ? 'Pause playback' : 'Start playback'}
+        tabindex={expanded ? 0 : -1}
+        data-no-swipe
+        on:click={() => dispatch('togglePlayback')}
+      >
+        {#if runtime.isPlaying || runtime.playbackDesired}
+          <Pause size={21} />
+        {:else}
+          <Play size={21} />
+        {/if}
+      </button>
+      <button class="icon-control" aria-label="Next channel" tabindex={expanded ? 0 : -1} data-no-swipe on:click={() => dispatch('nextChannel')}>
+        <SkipForward size={18} />
+      </button>
+      <button
+        class="icon-control quality"
+        class:quality-high={isQualityHigh}
+        aria-label={qualityAriaLabel}
+        aria-pressed={isQualityHigh}
+        tabindex={expanded ? 0 : -1}
+        data-no-swipe
+        on:click={() => dispatch('toggleQuality')}
+      >
+        <SignalHigh size={18} />
+      </button>
+    </div>
+
+    <div class="selectors">
+      <label>
+        <span class="sr-only">Channel</span>
+        <select tabindex={expanded ? 0 : -1} value={runtime.channel} on:change={(event) => dispatch('setChannel', event.currentTarget.value)}>
+          {#each (runtime.channels?.length ? runtime.channels : ['all']) as channelName}
+            <option value={channelName}>{channelName}</option>
+          {/each}
+        </select>
+      </label>
+      <label class="volume-wrap">
+        <Volume2 size={14} />
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          tabindex={expanded ? 0 : -1}
+          value={runtime.volume}
+          aria-label="Music volume"
+          on:input={(event) => dispatch('setVolume', Number(event.currentTarget.value))}
+        />
+      </label>
+    </div>
+  </div>
+
+  <div class="mini-shell" aria-hidden={expanded}>
+    <div class="mini-art" style={backdropStyle}></div>
+  </div>
 </div>
 
 <style>
   .radio-strip {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    min-height: 82px;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    width: min(1100px, calc(100vw - 1.5rem));
+    height: 82px;
     z-index: 9800;
     overflow: hidden;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 -8px 36px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
     transition:
       width 0.24s ease,
       height 0.24s ease,
-      left 0.24s ease,
-      right 0.24s ease,
-      bottom 0.24s ease,
+      border-radius 0.24s ease,
       box-shadow 0.24s ease,
-      border-color 0.24s ease;
+      border-color 0.24s ease,
+      transform 0.24s ease;
     touch-action: pan-y;
+    border-radius: 0;
   }
 
   .radio-strip.collapsed {
-    left: 0.75rem;
-    right: auto;
-    bottom: 0.75rem;
     width: 56px;
     height: 56px;
-    min-height: 56px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 14px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-  }
-
-  .radio-strip.collapsed .bg-art,
-  .radio-strip.collapsed .bg-glow,
-  .radio-strip.collapsed .bg-dim {
-    display: none;
+    border-color: rgba(255, 255, 255, 0.25);
   }
 
   .bg-art,
@@ -382,6 +375,13 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .radio-strip.collapsed .bg-art,
+  .radio-strip.collapsed .bg-glow,
+  .radio-strip.collapsed .bg-dim {
+    opacity: 0;
   }
 
   .bg-art {
@@ -411,7 +411,16 @@
     grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
     gap: 0.75rem;
     align-items: center;
+    height: 100%;
     padding: 0.52rem 0.8rem 0.62rem;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+
+  .radio-strip.collapsed .content {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.96);
   }
 
   .meta {
@@ -436,6 +445,23 @@
     width: 56px;
     height: 56px;
     border: none;
+  }
+
+  .mini-shell {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.16s ease;
+  }
+
+  .radio-strip.collapsed .mini-shell {
+    opacity: 1;
+    visibility: visible;
   }
 
   .meta-copy {
@@ -490,7 +516,7 @@
   }
 
   .icon-control.quality {
-    color: rgba(214, 224, 243, 0.9);
+    color: rgba(214, 224, 243, 0.7);
   }
 
   .icon-control.quality.quality-high {
@@ -547,6 +573,11 @@
   }
 
   @media (max-width: 960px) {
+    .radio-strip {
+      width: calc(100vw - 1.5rem);
+      height: 94px;
+    }
+
     .content {
       grid-template-columns: 1fr;
       gap: 0.5rem;
@@ -566,7 +597,12 @@
 
   @media (prefers-reduced-motion: reduce) {
     .radio-strip,
-    .icon-control {
+    .content,
+    .mini-shell,
+    .icon-control,
+    .bg-art,
+    .bg-glow,
+    .bg-dim {
       transition: none;
     }
   }

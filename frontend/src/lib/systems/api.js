@@ -18,6 +18,28 @@ export async function getBackendHealth() {
   }
 }
 
+export async function getPreviousErrors() {
+  try {
+    return await httpGet('/api/previous-errors', { cache: 'no-store' }, true);
+  } catch (error) {
+    if (error?.status === 404) {
+      return httpGet('/previous-errors', { cache: 'no-store' }, true);
+    }
+    throw error;
+  }
+}
+
+export async function acknowledgePreviousErrors() {
+  try {
+    return await httpPost('/api/acknowledge-errors', {}, {}, true);
+  } catch (error) {
+    if (error?.status === 404) {
+      return httpPost('/acknowledge-errors', {}, {}, true);
+    }
+    throw error;
+  }
+}
+
 export async function getPlayers() {
   return httpGet('/players', { cache: 'no-store' });
 }

@@ -461,7 +461,7 @@ export function stopVoice() {
 export function stopGameMusic() {
   // Also advance session so any pending callbacks become no-ops
   playSession += 1;
-  _stopGameAudio(false, DEFAULT_FADE_OUT_MS, playSession);
+  return _stopGameAudio(false, DEFAULT_FADE_OUT_MS, playSession);
 }
 
 export function resumeGameMusic() {
