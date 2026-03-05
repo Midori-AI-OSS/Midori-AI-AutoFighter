@@ -1,0 +1,1339 @@
+$ vite dev --port 59001
+[backend] not ready yet (attempt 1), retrying in 750ms...
+[backend] not ready yet (attempt 2), retrying in 1000ms...
+[backend] not ready yet (attempt 3), retrying in 1250ms...
+[backend] not ready yet (attempt 4), retrying in 1500ms...
+[backend] not ready yet (attempt 5), retrying in 1750ms...
+[backend] not ready yet (attempt 6), retrying in 2000ms...
+[backend] not ready yet (attempt 7), retrying in 2000ms...
+[backend] not ready yet (attempt 8), retrying in 2000ms...
+[backend] discovered http://localhost:59002, proxying via /api
+6:14:28 AM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v7.1.1  ready in 12526 ms
+
+  ➜  Local:   http://localhost:59001/
+  ➜  Network: use --host to expose
+[vite-plugin-static-copy] Collected 1 items.
+$ vite dev --port 59001 --host "0.0.0.0"
+[backend] discovered http://localhost:59002, proxying via /api
+
+  VITE v7.1.1  ready in 215 ms
+
+  ➜  Local:   http://localhost:59001/
+  ➜  Network: http://172.17.0.4:59001/
+[vite-plugin-static-copy] Collected 1 items.
+6:15:37 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:648:8 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:37 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:443:2 Unused CSS selector ".overlay-inset"
+https://svelte.dev/e/css_unused_selector
+6:15:37 AM [vite-plugin-svelte] src/lib/components/RoomView.svelte:2:13 Component has unused export property 'result'. If it is for external reference only, please consider using `export const result`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:66:13 Component has unused export property 'radioChannel'. If it is for external reference only, please consider using `export const radioChannel`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:67:13 Component has unused export property 'radioQuality'. If it is for external reference only, please consider using `export const radioQuality`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:68:13 Component has unused export property 'radioVolume'. If it is for external reference only, please consider using `export const radioVolume`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:74:13 Component has unused export property 'onrewardSelect'. If it is for external reference only, please consider using `export const onrewardSelect`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:75:13 Component has unused export property 'onrewardAdvance'. If it is for external reference only, please consider using `export const onrewardAdvance`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:76:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:77:13 Component has unused export property 'onsaveParty'. If it is for external reference only, please consider using `export const onsaveParty`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:78:13 Component has unused export property 'oneditorChange'. If it is for external reference only, please consider using `export const oneditorChange`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:79:13 Component has unused export property 'onback'. If it is for external reference only, please consider using `export const onback`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:80:13 Component has unused export property 'onloadRun'. If it is for external reference only, please consider using `export const onloadRun`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:81:13 Component has unused export property 'onstartRun'. If it is for external reference only, please consider using `export const onstartRun`
+https://svelte.dev/e/export_let_unused
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:723:2 Unused CSS selector ".sticky-bottom"
+https://svelte.dev/e/css_unused_selector
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:734:2 Unused CSS selector ".party-actions"
+https://svelte.dev/e/css_unused_selector
+6:15:40 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:738:2 Unused CSS selector ".party-actions .icon-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:40 AM [vite-plugin-svelte] src/lib/components/PopupWindow.svelte:184:2 Unused CSS selector ".panel-body"
+https://svelte.dev/e/css_unused_selector
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:423:14 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:648:2 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:661:2 Unused CSS selector ".upgrade-toggle:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:665:2 Unused CSS selector ".upgrade-toggle:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:670:2 Unused CSS selector ".upgrade-mode .upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:803:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:807:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:840:2 Unused CSS selector ".upgrade-card"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:858:2 Unused CSS selector ".upgrade-feedback"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:865:2 Unused CSS selector ".upgrade-status"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:872:2 Unused CSS selector ".upgrade-status.success"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:873:2 Unused CSS selector ".upgrade-status.error"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:874:2 Unused CSS selector ".upgrade-status.pending"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:875:2 Unused CSS selector ".upgrade-status.hint"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:876:2 Unused CSS selector ".upgrade-summary"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:883:2 Unused CSS selector ".upgrade-note"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:889:2 Unused CSS selector ".stat-upgrade-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:893:2 Unused CSS selector ".stat-upgrade-row"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:903:2 Unused CSS selector ".stat-upgrade-label"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:908:2 Unused CSS selector ".stat-upgrade-total"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:909:2 Unused CSS selector ".stat-upgrade-cost"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:914:2 Unused CSS selector ".stat-upgrade-total::before"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:915:2 Unused CSS selector ".stat-upgrade-cost::before"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:923:2 Unused CSS selector ".conversion-section"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:930:2 Unused CSS selector ".conversion-header"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:936:2 Unused CSS selector ".conversion-form"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:942:2 Unused CSS selector ".conversion-field"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:949:2 Unused CSS selector ".conversion-field select"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:950:2 Unused CSS selector ".conversion-field input"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:958:2 Unused CSS selector ".conversion-field select:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:959:2 Unused CSS selector ".conversion-field select:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:960:2 Unused CSS selector ".conversion-field input:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:961:2 Unused CSS selector ".conversion-field input:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:966:2 Unused CSS selector ".conversion-field select:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:967:2 Unused CSS selector ".conversion-field input:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:971:2 Unused CSS selector ".convert-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:981:2 Unused CSS selector ".convert-btn:hover:enabled"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:985:2 Unused CSS selector ".convert-btn:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:990:2 Unused CSS selector ".conversion-note"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:997:2 Unused CSS selector ".conversion-warning"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1038:2 Unused CSS selector ".close"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1057:2 Unused CSS selector ".close:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1060:2 Unused CSS selector ".icon-row"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1065:2 Unused CSS selector ".element-chip"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1076:2 Unused CSS selector ".element-chip svg"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1080:2 Unused CSS selector ".stat-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1085:2 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1098:2 Unused CSS selector ".stat-button:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1103:2 Unused CSS selector ".stat-button.active"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1107:2 Unused CSS selector ".stat-button .label"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1111:2 Unused CSS selector ".stat-button .hint"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1120:2 Unused CSS selector ".stat-toolbar"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1166:4 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1167:4 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Elements with the 'dialog' interactive role must have a tabindex value
+https://svelte.dev/e/a11y_interactive_supports_focus
+6:15:41 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:332:2 Unused CSS selector ".type-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:359:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:525:2 Unused CSS selector ".char-fallback"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleReview.svelte:24:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:137:12 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:151:8 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:6:13 Component has unused export property 'hideFallback'. If it is for external reference only, please consider using `export const hideFallback`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Tooltip.svelte:6:0 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:1918:0 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:23:13 Component has unused export property 'partyStats'. If it is for external reference only, please consider using `export const partyStats`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:24:13 Component has unused export property 'ended'. If it is for external reference only, please consider using `export const ended`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:25:13 Component has unused export property 'nextRoom'. If it is for external reference only, please consider using `export const nextRoom`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:26:13 Component has unused export property 'fullIdleMode'. If it is for external reference only, please consider using `export const fullIdleMode`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:40:13 Component has unused export property 'onnext'. If it is for external reference only, please consider using `export const onnext`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:41:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/CharacterEditor.svelte:65:6 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:496:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:528:2 Unused CSS selector ".item-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:536:2 Unused CSS selector ".cards-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:545:2 Unused CSS selector ".card-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:552:2 Unused CSS selector ".card-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:553:2 Unused CSS selector ".qty-badge"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:567:2 Unused CSS selector ".relics-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:576:2 Unused CSS selector ".relic-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:586:2 Unused CSS selector ".relic-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:587:2 Unused CSS selector ".relic-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:589:2 Unused CSS selector ".grid-item"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:603:2 Unused CSS selector ".grid-item:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:608:2 Unused CSS selector ".grid-item.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:614:2 Unused CSS selector ".item-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:622:2 Unused CSS selector ".item-quantity"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:635:2 Unused CSS selector ".grid-item.material"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:640:2 Unused CSS selector ".item-icon.material"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:649:2 Unused CSS selector ".item-icon.material img"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:654:2 Unused CSS selector ".material-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:675:2 Unused CSS selector ".item-stars"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:779:2 Unused CSS selector ".no-selection-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:63:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:84:8 Self-closing HTML tags for non-void elements are ambiguous — use `<button ...></button>` rather than `<button ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:174:2 Unused CSS selector ".dot-selector button.mute.mute-as-icon svg"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:43 Unused CSS selector ".mechanics-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:81 Unused CSS selector ".ui-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1274:61 Redundant role 'region'
+https://svelte.dev/e/a11y_no_redundant_roles
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1283:24 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1395:2 Unused CSS selector ".run-wizard"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/RunTypeGrid.svelte:21:6 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:607:4 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 noninteractive element cannot have nonnegative tabIndex value
+https://svelte.dev/e/a11y_no_noninteractive_tabindex
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:626:12 `<div>` with a dblclick handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:690:14 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:697:50 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:698:52 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:699:53 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:41:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2804:2 Unused CSS selector ".ult-ready-glow"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2879:2 Unused CSS selector ".hp-bar-container.reduced .overheal-fill"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2927:2 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2935:2 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2950:2 Unused CSS selector ".status-icon.passive"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2954:2 Unused CSS selector ".status-icon.dot"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2958:2 Unused CSS selector ".status-icon.hot"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2962:2 Unused CSS selector ".status-text"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2969:2 Unused CSS selector ".status-count"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3133:4 Unused CSS selector ".ult-gauge"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3138:4 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3142:4 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:41 AM [vite-plugin-svelte] src/lib/components/InventoryPanel.svelte:196:2 Unused CSS selector ".grid"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/combat-viewer/HpStatus.svelte:8:2 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/battle/EnrageIndicator.svelte:95:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:42 AM [vite-plugin-svelte] src/lib/battle/ActionQueue.svelte:154:8 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:42 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:356:2 Unused CSS selector ".node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:361:2 Unused CSS selector ".targeting-overlay:not(.reduced) .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:365:2 Unused CSS selector ".targeting-overlay.reduced .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:374:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:383:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:387:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:392:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:398:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:404:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:410:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:416:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:422:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:431:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:435:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:443:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:447:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:451:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:456:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:465:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:22:13 Component has unused export property 'runId'. If it is for external reference only, please consider using `export const runId`
+https://svelte.dev/e/export_let_unused
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:588:2 Unused CSS selector ".roster-section"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:589:2 Unused CSS selector ".roster-title"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:596:2 Unused CSS selector ".character-section"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:600:2 Unused CSS selector ".character-section h4"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:607:2 Unused CSS selector ".char-row"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:628:2 Unused CSS selector ".char-row:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:632:2 Unused CSS selector ".char-row.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:637:2 Unused CSS selector ".char-row::before"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:661:2 Unused CSS selector ".char-row.selected::before"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:13 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:676:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:683:2 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:703:2 Unused CSS selector ".preview-container"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:708:2 Unused CSS selector ".character-portrait"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:725:2 Unused CSS selector ".portrait-image"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:736:2 Unused CSS selector ".character-name"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:743:2 Unused CSS selector ".character-type"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:796:2 Unused CSS selector ".placeholder"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/LoginRewardsPanel.svelte:665:2 Unused CSS selector ".chevron.placeholder"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/LoginRewardsPanel.svelte:948:2 Unused CSS selector ".reward-type"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:113:2 Unused CSS selector ".internal-divider"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:120:2 Unused CSS selector ".rewards-section"
+https://svelte.dev/e/css_unused_selector
+6:15:42 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:241:4 Unused CSS selector ".internal-divider"
+https://svelte.dev/e/css_unused_selector
+[music] playlist { session: 1, count: 10 }
+6:15:43 AM [vite-plugin-svelte] src/lib/components/InventoryPanel.svelte:196:2 Unused CSS selector ".grid"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/CharacterEditor.svelte:65:6 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RoomView.svelte:2:13 Component has unused export property 'result'. If it is for external reference only, please consider using `export const result`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/combat-viewer/HpStatus.svelte:8:2 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:607:4 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 noninteractive element cannot have nonnegative tabIndex value
+https://svelte.dev/e/a11y_no_noninteractive_tabindex
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:626:12 `<div>` with a dblclick handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:690:14 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:697:50 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:698:52 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:699:53 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:43 AM [vite-plugin-svelte] src/lib/components/PopupWindow.svelte:184:2 Unused CSS selector ".panel-body"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:1918:0 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:23:13 Component has unused export property 'partyStats'. If it is for external reference only, please consider using `export const partyStats`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:24:13 Component has unused export property 'ended'. If it is for external reference only, please consider using `export const ended`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:25:13 Component has unused export property 'nextRoom'. If it is for external reference only, please consider using `export const nextRoom`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:26:13 Component has unused export property 'fullIdleMode'. If it is for external reference only, please consider using `export const fullIdleMode`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:40:13 Component has unused export property 'onnext'. If it is for external reference only, please consider using `export const onnext`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:41:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:41:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2804:2 Unused CSS selector ".ult-ready-glow"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2879:2 Unused CSS selector ".hp-bar-container.reduced .overheal-fill"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2927:2 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2935:2 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2950:2 Unused CSS selector ".status-icon.passive"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2954:2 Unused CSS selector ".status-icon.dot"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2958:2 Unused CSS selector ".status-icon.hot"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2962:2 Unused CSS selector ".status-text"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2969:2 Unused CSS selector ".status-count"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3133:4 Unused CSS selector ".ult-gauge"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3138:4 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3142:4 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:66:13 Component has unused export property 'radioChannel'. If it is for external reference only, please consider using `export const radioChannel`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:67:13 Component has unused export property 'radioQuality'. If it is for external reference only, please consider using `export const radioQuality`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:68:13 Component has unused export property 'radioVolume'. If it is for external reference only, please consider using `export const radioVolume`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:74:13 Component has unused export property 'onrewardSelect'. If it is for external reference only, please consider using `export const onrewardSelect`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:75:13 Component has unused export property 'onrewardAdvance'. If it is for external reference only, please consider using `export const onrewardAdvance`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:76:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:77:13 Component has unused export property 'onsaveParty'. If it is for external reference only, please consider using `export const onsaveParty`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:78:13 Component has unused export property 'oneditorChange'. If it is for external reference only, please consider using `export const oneditorChange`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:79:13 Component has unused export property 'onback'. If it is for external reference only, please consider using `export const onback`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:80:13 Component has unused export property 'onloadRun'. If it is for external reference only, please consider using `export const onloadRun`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:81:13 Component has unused export property 'onstartRun'. If it is for external reference only, please consider using `export const onstartRun`
+https://svelte.dev/e/export_let_unused
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:723:2 Unused CSS selector ".sticky-bottom"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:734:2 Unused CSS selector ".party-actions"
+https://svelte.dev/e/css_unused_selector
+6:15:43 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:738:2 Unused CSS selector ".party-actions .icon-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:423:14 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:648:2 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:661:2 Unused CSS selector ".upgrade-toggle:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:665:2 Unused CSS selector ".upgrade-toggle:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:670:2 Unused CSS selector ".upgrade-mode .upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:803:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:807:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:840:2 Unused CSS selector ".upgrade-card"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:858:2 Unused CSS selector ".upgrade-feedback"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:865:2 Unused CSS selector ".upgrade-status"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:872:2 Unused CSS selector ".upgrade-status.success"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:873:2 Unused CSS selector ".upgrade-status.error"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:874:2 Unused CSS selector ".upgrade-status.pending"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:875:2 Unused CSS selector ".upgrade-status.hint"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:876:2 Unused CSS selector ".upgrade-summary"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:883:2 Unused CSS selector ".upgrade-note"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:889:2 Unused CSS selector ".stat-upgrade-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:893:2 Unused CSS selector ".stat-upgrade-row"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:903:2 Unused CSS selector ".stat-upgrade-label"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:908:2 Unused CSS selector ".stat-upgrade-total"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:909:2 Unused CSS selector ".stat-upgrade-cost"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:914:2 Unused CSS selector ".stat-upgrade-total::before"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:915:2 Unused CSS selector ".stat-upgrade-cost::before"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:923:2 Unused CSS selector ".conversion-section"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:930:2 Unused CSS selector ".conversion-header"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:936:2 Unused CSS selector ".conversion-form"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:942:2 Unused CSS selector ".conversion-field"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:949:2 Unused CSS selector ".conversion-field select"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:950:2 Unused CSS selector ".conversion-field input"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:958:2 Unused CSS selector ".conversion-field select:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:959:2 Unused CSS selector ".conversion-field select:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:960:2 Unused CSS selector ".conversion-field input:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:961:2 Unused CSS selector ".conversion-field input:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:966:2 Unused CSS selector ".conversion-field select:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:967:2 Unused CSS selector ".conversion-field input:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:971:2 Unused CSS selector ".convert-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:981:2 Unused CSS selector ".convert-btn:hover:enabled"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:985:2 Unused CSS selector ".convert-btn:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:990:2 Unused CSS selector ".conversion-note"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:997:2 Unused CSS selector ".conversion-warning"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1038:2 Unused CSS selector ".close"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1057:2 Unused CSS selector ".close:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1060:2 Unused CSS selector ".icon-row"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1065:2 Unused CSS selector ".element-chip"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1076:2 Unused CSS selector ".element-chip svg"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1080:2 Unused CSS selector ".stat-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1085:2 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1098:2 Unused CSS selector ".stat-button:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1103:2 Unused CSS selector ".stat-button.active"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1107:2 Unused CSS selector ".stat-button .label"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1111:2 Unused CSS selector ".stat-button .hint"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1120:2 Unused CSS selector ".stat-toolbar"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1166:4 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1167:4 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Elements with the 'dialog' interactive role must have a tabindex value
+https://svelte.dev/e/a11y_interactive_supports_focus
+6:15:44 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:332:2 Unused CSS selector ".type-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:137:12 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:151:8 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:6:13 Component has unused export property 'hideFallback'. If it is for external reference only, please consider using `export const hideFallback`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Tooltip.svelte:6:0 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:359:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:525:2 Unused CSS selector ".char-fallback"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleReview.svelte:24:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:496:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:528:2 Unused CSS selector ".item-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:536:2 Unused CSS selector ".cards-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:545:2 Unused CSS selector ".card-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:552:2 Unused CSS selector ".card-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:553:2 Unused CSS selector ".qty-badge"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:567:2 Unused CSS selector ".relics-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:576:2 Unused CSS selector ".relic-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:586:2 Unused CSS selector ".relic-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:587:2 Unused CSS selector ".relic-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:589:2 Unused CSS selector ".grid-item"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:603:2 Unused CSS selector ".grid-item:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:608:2 Unused CSS selector ".grid-item.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:614:2 Unused CSS selector ".item-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:622:2 Unused CSS selector ".item-quantity"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:635:2 Unused CSS selector ".grid-item.material"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:640:2 Unused CSS selector ".item-icon.material"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:649:2 Unused CSS selector ".item-icon.material img"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:654:2 Unused CSS selector ".material-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:675:2 Unused CSS selector ".item-stars"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:779:2 Unused CSS selector ".no-selection-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:43 Unused CSS selector ".mechanics-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:81 Unused CSS selector ".ui-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1274:61 Redundant role 'region'
+https://svelte.dev/e/a11y_no_redundant_roles
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1283:24 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1395:2 Unused CSS selector ".run-wizard"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:374:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:383:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:387:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:392:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:398:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:404:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:410:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:416:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:422:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:431:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:435:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:443:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:447:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:451:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:456:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:465:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:22:13 Component has unused export property 'runId'. If it is for external reference only, please consider using `export const runId`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:588:2 Unused CSS selector ".roster-section"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:589:2 Unused CSS selector ".roster-title"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:596:2 Unused CSS selector ".character-section"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:600:2 Unused CSS selector ".character-section h4"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:607:2 Unused CSS selector ".char-row"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:628:2 Unused CSS selector ".char-row:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:632:2 Unused CSS selector ".char-row.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:637:2 Unused CSS selector ".char-row::before"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:661:2 Unused CSS selector ".char-row.selected::before"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:13 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:676:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:683:2 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:703:2 Unused CSS selector ".preview-container"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:708:2 Unused CSS selector ".character-portrait"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:725:2 Unused CSS selector ".portrait-image"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:736:2 Unused CSS selector ".character-name"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:743:2 Unused CSS selector ".character-type"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:796:2 Unused CSS selector ".placeholder"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:63:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:84:8 Self-closing HTML tags for non-void elements are ambiguous — use `<button ...></button>` rather than `<button ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:174:2 Unused CSS selector ".dot-selector button.mute.mute-as-icon svg"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RunTypeGrid.svelte:21:6 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+6:15:44 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite] (client) ✨ new dependencies optimized: clsx
+6:15:44 AM [vite] (client) ✨ optimized dependencies changed. reloading
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/EnrageIndicator.svelte:95:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/ActionQueue.svelte:154:8 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:356:2 Unused CSS selector ".node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:361:2 Unused CSS selector ".targeting-overlay:not(.reduced) .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:365:2 Unused CSS selector ".targeting-overlay.reduced .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:607:4 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 noninteractive element cannot have nonnegative tabIndex value
+https://svelte.dev/e/a11y_no_noninteractive_tabindex
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:614:4 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:626:12 `<div>` with a dblclick handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:690:14 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:697:50 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:698:52 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/ShopMenu.svelte:699:53 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:41:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2804:2 Unused CSS selector ".ult-ready-glow"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2879:2 Unused CSS selector ".hp-bar-container.reduced .overheal-fill"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2927:2 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2935:2 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2950:2 Unused CSS selector ".status-icon.passive"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2954:2 Unused CSS selector ".status-icon.dot"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2958:2 Unused CSS selector ".status-icon.hot"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2962:2 Unused CSS selector ".status-text"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:2969:2 Unused CSS selector ".status-count"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3133:4 Unused CSS selector ".ult-gauge"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3138:4 Unused CSS selector ".status-bar"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleView.svelte:3142:4 Unused CSS selector ".status-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:1918:0 `<div>` with a keydown handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:23:13 Component has unused export property 'partyStats'. If it is for external reference only, please consider using `export const partyStats`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:24:13 Component has unused export property 'ended'. If it is for external reference only, please consider using `export const ended`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:25:13 Component has unused export property 'nextRoom'. If it is for external reference only, please consider using `export const nextRoom`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:26:13 Component has unused export property 'fullIdleMode'. If it is for external reference only, please consider using `export const fullIdleMode`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:40:13 Component has unused export property 'onnext'. If it is for external reference only, please consider using `export const onnext`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/RewardOverlay.svelte:41:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/PopupWindow.svelte:184:2 Unused CSS selector ".panel-body"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:66:13 Component has unused export property 'radioChannel'. If it is for external reference only, please consider using `export const radioChannel`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:67:13 Component has unused export property 'radioQuality'. If it is for external reference only, please consider using `export const radioQuality`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:68:13 Component has unused export property 'radioVolume'. If it is for external reference only, please consider using `export const radioVolume`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:74:13 Component has unused export property 'onrewardSelect'. If it is for external reference only, please consider using `export const onrewardSelect`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:75:13 Component has unused export property 'onrewardAdvance'. If it is for external reference only, please consider using `export const onrewardAdvance`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:76:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:77:13 Component has unused export property 'onsaveParty'. If it is for external reference only, please consider using `export const onsaveParty`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:78:13 Component has unused export property 'oneditorChange'. If it is for external reference only, please consider using `export const oneditorChange`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:79:13 Component has unused export property 'onback'. If it is for external reference only, please consider using `export const onback`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:80:13 Component has unused export property 'onloadRun'. If it is for external reference only, please consider using `export const onloadRun`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:81:13 Component has unused export property 'onstartRun'. If it is for external reference only, please consider using `export const onstartRun`
+https://svelte.dev/e/export_let_unused
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:723:2 Unused CSS selector ".sticky-bottom"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:734:2 Unused CSS selector ".party-actions"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:738:2 Unused CSS selector ".party-actions .icon-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/EnrageIndicator.svelte:95:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/BattleFighterCard.svelte:418:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/battle/ActionQueue.svelte:154:8 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:356:2 Unused CSS selector ".node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:361:2 Unused CSS selector ".targeting-overlay:not(.reduced) .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:44 AM [vite-plugin-svelte] src/lib/components/BattleTargetingOverlay.svelte:365:2 Unused CSS selector ".targeting-overlay.reduced .node.attacker"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:137:12 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:151:8 Self-closing HTML tags for non-void elements are ambiguous — use `<span ...></span>` rather than `<span ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CardArt.svelte:6:13 Component has unused export property 'hideFallback'. If it is for external reference only, please consider using `export const hideFallback`
+https://svelte.dev/e/export_let_unused
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Tooltip.svelte:6:0 `<div>` with a mouseenter or mouseleave handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+The glob option "as" has been deprecated in favour of "query". Please update `as: 'url'` to `query: '?url', import: 'default'`.
+6:15:45 AM [vite-plugin-svelte] src/lib/components/BattleReview.svelte:24:13 Component has unused export property 'roomTags'. If it is for external reference only, please consider using `export const roomTags`
+https://svelte.dev/e/export_let_unused
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:359:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PullsMenu.svelte:525:2 Unused CSS selector ".char-fallback"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CharacterEditor.svelte:65:6 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:496:2 Unused CSS selector ".tab-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:528:2 Unused CSS selector ".item-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:536:2 Unused CSS selector ".cards-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:545:2 Unused CSS selector ".card-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:552:2 Unused CSS selector ".card-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:553:2 Unused CSS selector ".qty-badge"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:567:2 Unused CSS selector ".relics-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:576:2 Unused CSS selector ".relic-cell"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:586:2 Unused CSS selector ".relic-cell.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:587:2 Unused CSS selector ".relic-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:589:2 Unused CSS selector ".grid-item"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:603:2 Unused CSS selector ".grid-item:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:608:2 Unused CSS selector ".grid-item.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:614:2 Unused CSS selector ".item-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:622:2 Unused CSS selector ".item-quantity"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:635:2 Unused CSS selector ".grid-item.material"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:640:2 Unused CSS selector ".item-icon.material"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:649:2 Unused CSS selector ".item-icon.material img"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:654:2 Unused CSS selector ".material-qty"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:675:2 Unused CSS selector ".item-stars"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Inventory.svelte:779:2 Unused CSS selector ".no-selection-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:273:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:43 Unused CSS selector ".mechanics-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/Guidebook.svelte:951:81 Unused CSS selector ".ui-panel h3"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1274:61 Redundant role 'region'
+https://svelte.dev/e/a11y_no_redundant_roles
+6:15:45 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1283:24 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+6:15:45 AM [vite-plugin-svelte] src/lib/components/RunChooser.svelte:1395:2 Unused CSS selector ".run-wizard"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:374:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:383:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:387:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:392:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:398:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:404:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:410:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:416:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:422:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:431:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:435:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:443:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:447:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:451:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:456:18 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:465:16 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:22:13 Component has unused export property 'runId'. If it is for external reference only, please consider using `export const runId`
+https://svelte.dev/e/export_let_unused
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:588:2 Unused CSS selector ".roster-section"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:589:2 Unused CSS selector ".roster-title"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:596:2 Unused CSS selector ".character-section"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:600:2 Unused CSS selector ".character-section h4"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:607:2 Unused CSS selector ".char-row"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:628:2 Unused CSS selector ".char-row:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:632:2 Unused CSS selector ".char-row.selected"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:637:2 Unused CSS selector ".char-row::before"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:661:2 Unused CSS selector ".char-row.selected::before"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:671:13 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:676:2 Unused CSS selector ".row-name"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:683:2 Unused CSS selector ".row-stats"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:703:2 Unused CSS selector ".preview-container"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:708:2 Unused CSS selector ".character-portrait"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:725:2 Unused CSS selector ".portrait-image"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:736:2 Unused CSS selector ".character-name"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:743:2 Unused CSS selector ".character-type"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/CombatViewer.svelte:796:2 Unused CSS selector ".placeholder"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/InventoryPanel.svelte:196:2 Unused CSS selector ".grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/RoomView.svelte:2:13 Component has unused export property 'result'. If it is for external reference only, please consider using `export const result`
+https://svelte.dev/e/export_let_unused
+6:15:45 AM [vite-plugin-svelte] src/lib/components/combat-viewer/HpStatus.svelte:8:2 A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control
+The file does not exist at "/home/midori-ai/workspace/frontend/node_modules/.vite/deps/chunk-I6GWL3TI.js?v=da026fe4" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:423:14 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:428:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:443:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:544:10 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:583:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:648:2 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:661:2 Unused CSS selector ".upgrade-toggle:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:665:2 Unused CSS selector ".upgrade-toggle:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:670:2 Unused CSS selector ".upgrade-mode .upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:803:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:807:2 Unused CSS selector ".upgrade-bottom .summary"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:840:2 Unused CSS selector ".upgrade-card"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:858:2 Unused CSS selector ".upgrade-feedback"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:865:2 Unused CSS selector ".upgrade-status"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:872:2 Unused CSS selector ".upgrade-status.success"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:873:2 Unused CSS selector ".upgrade-status.error"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:874:2 Unused CSS selector ".upgrade-status.pending"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:875:2 Unused CSS selector ".upgrade-status.hint"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:876:2 Unused CSS selector ".upgrade-summary"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:883:2 Unused CSS selector ".upgrade-note"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:889:2 Unused CSS selector ".stat-upgrade-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:893:2 Unused CSS selector ".stat-upgrade-row"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:903:2 Unused CSS selector ".stat-upgrade-label"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:908:2 Unused CSS selector ".stat-upgrade-total"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:909:2 Unused CSS selector ".stat-upgrade-cost"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:914:2 Unused CSS selector ".stat-upgrade-total::before"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:915:2 Unused CSS selector ".stat-upgrade-cost::before"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:923:2 Unused CSS selector ".conversion-section"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:930:2 Unused CSS selector ".conversion-header"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:936:2 Unused CSS selector ".conversion-form"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:942:2 Unused CSS selector ".conversion-field"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:949:2 Unused CSS selector ".conversion-field select"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:950:2 Unused CSS selector ".conversion-field input"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:958:2 Unused CSS selector ".conversion-field select:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:959:2 Unused CSS selector ".conversion-field select:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:960:2 Unused CSS selector ".conversion-field input:focus"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:961:2 Unused CSS selector ".conversion-field input:focus-visible"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:966:2 Unused CSS selector ".conversion-field select:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:967:2 Unused CSS selector ".conversion-field input:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:971:2 Unused CSS selector ".convert-btn"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:981:2 Unused CSS selector ".convert-btn:hover:enabled"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:985:2 Unused CSS selector ".convert-btn:disabled"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:990:2 Unused CSS selector ".conversion-note"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:997:2 Unused CSS selector ".conversion-warning"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1038:2 Unused CSS selector ".close"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1057:2 Unused CSS selector ".close:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1060:2 Unused CSS selector ".icon-row"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1065:2 Unused CSS selector ".element-chip"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1076:2 Unused CSS selector ".element-chip svg"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1080:2 Unused CSS selector ".stat-grid"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1085:2 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1098:2 Unused CSS selector ".stat-button:hover"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1103:2 Unused CSS selector ".stat-button.active"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1107:2 Unused CSS selector ".stat-button .label"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1111:2 Unused CSS selector ".stat-button .hint"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1120:2 Unused CSS selector ".stat-toolbar"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1166:4 Unused CSS selector ".upgrade-toggle"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/PlayerPreview.svelte:1167:4 Unused CSS selector ".stat-button"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:191:8 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Elements with the 'dialog' interactive role must have a tabindex value
+https://svelte.dev/e/a11y_interactive_supports_focus
+6:15:45 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:192:10 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/StatTabs.svelte:332:2 Unused CSS selector ".type-icon"
+https://svelte.dev/e/css_unused_selector
+6:15:45 AM [vite-plugin-svelte] src/lib/components/RunTypeGrid.svelte:21:6 `<button>` cannot have role 'listitem'
+https://svelte.dev/e/a11y_no_interactive_element_to_noninteractive_role
+6:15:45 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events
+6:15:45 AM [vite-plugin-svelte] src/lib/components/battle-review/TimelineRegion.svelte:477:12 `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions
+6:15:45 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:63:2 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:84:8 Self-closing HTML tags for non-void elements are ambiguous — use `<button ...></button>` rather than `<button ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:45 AM [vite-plugin-svelte] src/lib/components/DotSelector.svelte:174:2 Unused CSS selector ".dot-selector button.mute.mute-as-icon svg"
+https://svelte.dev/e/css_unused_selector
+[music] playlist { session: 3, count: 10 }
+6:15:55 AM [vite-plugin-svelte] src/routes/+error.svelte:37:12 Using `on:click` to listen to the click event is deprecated. Use the event attribute `onclick` instead
+https://svelte.dev/e/event_directive_deprecated
+6:15:55 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:648:8 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:15:55 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:443:2 Unused CSS selector ".overlay-inset"
+https://svelte.dev/e/css_unused_selector
+6:15:55 AM [vite-plugin-svelte] src/lib/components/LoginRewardsPanel.svelte:665:2 Unused CSS selector ".chevron.placeholder"
+https://svelte.dev/e/css_unused_selector
+6:15:55 AM [vite-plugin-svelte] src/lib/components/LoginRewardsPanel.svelte:948:2 Unused CSS selector ".reward-type"
+https://svelte.dev/e/css_unused_selector
+6:15:55 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:113:2 Unused CSS selector ".internal-divider"
+https://svelte.dev/e/css_unused_selector
+6:15:55 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:120:2 Unused CSS selector ".rewards-section"
+https://svelte.dev/e/css_unused_selector
+6:15:55 AM [vite-plugin-svelte] src/lib/components/AboutGamePanel.svelte:241:4 Unused CSS selector ".internal-divider"
+https://svelte.dev/e/css_unused_selector
+6:17:07 AM [vite] (client) hmr update /src/lib/components/RadioPlayerStrip.svelte?svelte&type=style&lang.css
+6:17:07 AM [vite] (ssr) page reload src/lib/components/RadioPlayerStrip.svelte
+6:34:02 AM [vite] (client) hmr update /src/lib/components/RadioPlayerStrip.svelte, /src/lib/components/RadioPlayerStrip.svelte?svelte&type=style&lang.css
+6:34:02 AM [vite] (ssr) page reload src/lib/components/RadioPlayerStrip.svelte
+6:34:09 AM [vite] (client) hmr update /src/lib/components/RadioSettings.svelte
+6:34:09 AM [vite] (ssr) page reload src/lib/components/RadioSettings.svelte
+6:34:16 AM [vite] (client) hmr update /src/lib/components/SettingsMenu.svelte
+6:34:16 AM [vite] (ssr) page reload src/lib/components/SettingsMenu.svelte
+6:34:19 AM [vite] (client) hmr update /src/lib/components/OverlayHost.svelte
+6:34:19 AM [vite] (ssr) page reload src/lib/components/OverlayHost.svelte
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:67:13 Component has unused export property 'radioChannel'. If it is for external reference only, please consider using `export const radioChannel`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:68:13 Component has unused export property 'radioQuality'. If it is for external reference only, please consider using `export const radioQuality`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:69:13 Component has unused export property 'radioVolume'. If it is for external reference only, please consider using `export const radioVolume`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:75:13 Component has unused export property 'onrewardSelect'. If it is for external reference only, please consider using `export const onrewardSelect`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:76:13 Component has unused export property 'onrewardAdvance'. If it is for external reference only, please consider using `export const onrewardAdvance`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:77:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:78:13 Component has unused export property 'onsaveParty'. If it is for external reference only, please consider using `export const onsaveParty`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:79:13 Component has unused export property 'oneditorChange'. If it is for external reference only, please consider using `export const oneditorChange`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:80:13 Component has unused export property 'onback'. If it is for external reference only, please consider using `export const onback`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:81:13 Component has unused export property 'onloadRun'. If it is for external reference only, please consider using `export const onloadRun`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:82:13 Component has unused export property 'onstartRun'. If it is for external reference only, please consider using `export const onstartRun`
+https://svelte.dev/e/export_let_unused
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:725:2 Unused CSS selector ".sticky-bottom"
+https://svelte.dev/e/css_unused_selector
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:736:2 Unused CSS selector ".party-actions"
+https://svelte.dev/e/css_unused_selector
+6:34:19 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:740:2 Unused CSS selector ".party-actions .icon-btn"
+https://svelte.dev/e/css_unused_selector
+6:34:27 AM [vite] (client) hmr update /src/lib/components/GameViewport.svelte
+6:34:27 AM [vite] (ssr) page reload src/lib/components/GameViewport.svelte
+6:34:27 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:654:8 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:34:27 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:447:2 Unused CSS selector ".overlay-inset"
+https://svelte.dev/e/css_unused_selector
+6:34:35 AM [vite] (client) page reload src/lib/systems/settingsStorage.js
+6:34:35 AM [vite] (ssr) page reload src/lib/systems/settingsStorage.js
+6:34:35 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:654:8 Self-closing HTML tags for non-void elements are ambiguous — use `<div ...></div>` rather than `<div ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag
+6:34:35 AM [vite-plugin-svelte] src/lib/components/GameViewport.svelte:447:2 Unused CSS selector ".overlay-inset"
+https://svelte.dev/e/css_unused_selector
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:67:13 Component has unused export property 'radioChannel'. If it is for external reference only, please consider using `export const radioChannel`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:68:13 Component has unused export property 'radioQuality'. If it is for external reference only, please consider using `export const radioQuality`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:69:13 Component has unused export property 'radioVolume'. If it is for external reference only, please consider using `export const radioVolume`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:75:13 Component has unused export property 'onrewardSelect'. If it is for external reference only, please consider using `export const onrewardSelect`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:76:13 Component has unused export property 'onrewardAdvance'. If it is for external reference only, please consider using `export const onrewardAdvance`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:77:13 Component has unused export property 'onlootAcknowledge'. If it is for external reference only, please consider using `export const onlootAcknowledge`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:78:13 Component has unused export property 'onsaveParty'. If it is for external reference only, please consider using `export const onsaveParty`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:79:13 Component has unused export property 'oneditorChange'. If it is for external reference only, please consider using `export const oneditorChange`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:80:13 Component has unused export property 'onback'. If it is for external reference only, please consider using `export const onback`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:81:13 Component has unused export property 'onloadRun'. If it is for external reference only, please consider using `export const onloadRun`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:82:13 Component has unused export property 'onstartRun'. If it is for external reference only, please consider using `export const onstartRun`
+https://svelte.dev/e/export_let_unused
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:725:2 Unused CSS selector ".sticky-bottom"
+https://svelte.dev/e/css_unused_selector
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:736:2 Unused CSS selector ".party-actions"
+https://svelte.dev/e/css_unused_selector
+6:34:35 AM [vite-plugin-svelte] src/lib/components/OverlayHost.svelte:740:2 Unused CSS selector ".party-actions .icon-btn"
+https://svelte.dev/e/css_unused_selector
+[music] playlist { session: 1, count: 10 }
+6:34:40 AM [vite] (client) page reload src/lib/systems/viewportState.js
+6:34:40 AM [vite] (ssr) page reload src/lib/systems/viewportState.js
+[music] playlist { session: 1, count: 10 }
+[music] playlist { session: 3, count: 10 }
+6:41:59 AM [vite] (client) hmr update /src/lib/components/RadioPlayerStrip.svelte?svelte&type=style&lang.css
+6:41:59 AM [vite] (ssr) page reload src/lib/components/RadioPlayerStrip.svelte
