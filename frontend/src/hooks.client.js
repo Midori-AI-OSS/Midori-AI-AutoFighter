@@ -21,6 +21,14 @@ export function handleError({ error, event }) {
 
 // As an additional safety net, capture window-level errors
 if (typeof window !== 'undefined') {
+  const isExpectedAudioAbort = (reason) => {
+    if (!reason) return false;
+    const name = String(reason?.name || '');
+    const message = String(reason?.message || reason || '');
+    if (name !== 'AbortError') return false;
+    return /play\(\) request was interrupted by a call to pause\(\)/i.test(message);
+  };
+
   window.addEventListener('error', (ev) => {
     let msg = ev?.error?.message || ev?.message || 'Unexpected error';
     msg = String(msg ?? '').trim();
@@ -33,6 +41,10 @@ if (typeof window !== 'undefined') {
   });
   window.addEventListener('unhandledrejection', (ev) => {
     const reason = ev?.reason;
+    if (isExpectedAudioAbort(reason)) {
+      try { ev.preventDefault?.(); } catch {}
+      return;
+    }
     let msg = reason?.message || String(reason || 'Unhandled rejection');
     if (/^\d+$/.test(String(msg || ''))) {
       msg = `Unhandled rejection (code ${msg})`;

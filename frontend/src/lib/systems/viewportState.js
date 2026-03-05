@@ -1,7 +1,7 @@
 // viewportState.js
 // Helper utilities for GameViewport including settings init,
 // room metadata helpers, and background music control.
-import { loadSettings } from './settingsStorage.js';
+import { loadSettings, normalizeMusicVolumeSetting } from './settingsStorage.js';
 import { getPlayers } from './api.js';
 import {
   getCharacterPlaylist,
@@ -113,8 +113,15 @@ export async function loadInitialState() {
   const saved = loadSettings();
   const settings = {
     sfxVolume: saved.sfxVolume ?? 5,
-    musicVolume: saved.musicVolume ?? 5,
+    musicVolume: normalizeMusicVolumeSetting(saved.musicVolume, { fallback: 70 }),
     voiceVolume: saved.voiceVolume ?? 5,
+    musicSource: saved.musicSource ?? 'game',
+    radioEnabled: saved.radioEnabled ?? false,
+    radioAutostart: saved.radioAutostart ?? false,
+    radioStayOpen: saved.radioStayOpen ?? false,
+    radioChannel: saved.radioChannel ?? 'all',
+    radioQuality: saved.radioQuality ?? 'medium',
+    radioVolume: normalizeMusicVolumeSetting(saved.radioVolume, { fallback: 70, allowLegacyScale: false }),
     framerate: saved.framerate !== undefined ? Number(saved.framerate) : 60,
     autocraft: true,
     reducedMotion: saved.reducedMotion ?? false,
@@ -455,7 +462,7 @@ export function stopVoice() {
 export function stopGameMusic() {
   // Also advance session so any pending callbacks become no-ops
   playSession += 1;
-  _stopGameAudio(false, DEFAULT_FADE_OUT_MS, playSession);
+  return _stopGameAudio(false, DEFAULT_FADE_OUT_MS, playSession);
 }
 
 export function resumeGameMusic() {

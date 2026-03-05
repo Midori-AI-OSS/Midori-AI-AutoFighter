@@ -47,7 +47,7 @@
   export let battleSnapshot = null;
   export let editorState = {};
   export let sfxVolume = 5;
-  export let musicVolume = 5;
+  export let musicVolume = 70;
   export let voiceVolume = 5;
   export let framerate = 60;
   export let reducedMotion = false; // Legacy prop for backward compatibility
@@ -60,6 +60,13 @@
   export let skipBattleReviewLocked = false;
   export let advanceBusy = false;
   export let animationSpeed = 1;
+  export let musicSource = 'game';
+  export let radioEnabled = false;
+  export let radioAutostart = false;
+  export let radioStayOpen = false;
+  export let radioChannel = 'all';
+  export let radioQuality = 'medium';
+  export let radioVolume = 70;
   export let selectedParty = [];
   export let battleActive = false;
 
@@ -480,6 +487,10 @@
       {skipBattleReview}
       {skipBattleReviewPreference}
       {skipBattleReviewLocked}
+      {musicSource}
+      {radioEnabled}
+      {radioAutostart}
+      {radioStayOpen}
       bind:animationSpeed
       {runId}
       on:save={(e) => dispatch('saveSettings', e.detail)}

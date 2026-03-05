@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { Volume2, Palette, Cog, Gamepad } from 'lucide-svelte';
+  import { Volume2, Palette, Cog, Gamepad, Radio } from 'lucide-svelte';
   import {
     endRun,
     endAllRuns,
@@ -12,6 +12,7 @@
     setTurnPacing
   } from '../systems/api.js';
   import AudioSettings from './AudioSettings.svelte';
+  import RadioSettings from './RadioSettings.svelte';
   import UISettings from './UISettings.svelte';
   import SystemSettings from './SystemSettings.svelte';
   import GameplaySettings from './GameplaySettings.svelte';
@@ -24,7 +25,7 @@
 
   const dispatch = createEventDispatcher();
   export let sfxVolume = 5;
-  export let musicVolume = 5;
+  export let musicVolume = 70;
   export let voiceVolume = 5;
   export let framerate = 60;
   export let reducedMotion = false;
@@ -36,6 +37,10 @@
   export let skipBattleReviewPreference = false;
   export let skipBattleReviewLocked = false;
   export let animationSpeed = 1;
+  export let musicSource = 'game';
+  export let radioEnabled = false;
+  export let radioAutostart = false;
+  export let radioStayOpen = false;
   export let runId = '';
 
   let saveStatus = '';
@@ -158,6 +163,10 @@
     lastFullIdleMode = Boolean(fullIdleMode);
   }
 
+  $: if (activeTab === 'radio' && musicSource !== 'midoriai_radio') {
+    activeTab = 'audio';
+  }
+
   async function save() {
     const sanitizedSpeed = sanitizeSpeed(animationSpeed);
     animationSpeed = sanitizedSpeed;
@@ -174,7 +183,11 @@
       flashEnrageCounter,
       skipBattleReview,
       skipBattleReviewPreference,
-      animationSpeed: sanitizedSpeed
+      animationSpeed: sanitizedSpeed,
+      musicSource,
+      radioEnabled,
+      radioAutostart,
+      radioStayOpen
     };
     saveSettings(payload);
     dispatch('save', payload);
@@ -248,10 +261,14 @@
       clearSettings();
       await clearAllClientData();
       sfxVolume = 5;
-      musicVolume = 5;
+      musicVolume = 70;
       voiceVolume = 5;
       framerate = 60;
       reducedMotion = false;
+      musicSource = 'game';
+      radioEnabled = false;
+      radioAutostart = false;
+      radioStayOpen = false;
       runId = '';
       wipeStatus = ok ? 'Save data wiped. Reloading…' : 'Backend wipe failed; cleared local data. Reloading…';
       setTimeout(() => {
@@ -283,6 +300,11 @@
     <button class:active={activeTab === 'audio'} on:click={() => (activeTab = 'audio')} title="Audio">
       <Volume2 />
     </button>
+    {#if musicSource === 'midoriai_radio'}
+      <button class:active={activeTab === 'radio'} on:click={() => (activeTab = 'radio')} title="Radio">
+        <Radio />
+      </button>
+    {/if}
     <button class:active={activeTab === 'ui'} on:click={() => (activeTab = 'ui')} title="UI">
       <Palette />
     </button>
@@ -299,6 +321,14 @@
       bind:sfxVolume
       bind:musicVolume
       bind:voiceVolume
+      bind:musicSource
+      {scheduleSave}
+    />
+  {:else if activeTab === 'radio'}
+    <RadioSettings
+      bind:radioEnabled
+      bind:radioAutostart
+      bind:radioStayOpen
       {scheduleSave}
     />
   {:else if activeTab === 'ui'}

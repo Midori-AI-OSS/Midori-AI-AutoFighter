@@ -117,8 +117,10 @@ describe('Skip Battle Review setting', () => {
     const gameviewportFile = join(import.meta.dir, '../src/lib/components/GameViewport.svelte');
     const content = readFileSync(gameviewportFile, 'utf8');
 
-    // Check that skipBattleReview is included in the saveSettings handler destructuring
-    expect(content).toContain('on:saveSettings={(e) => ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed } = e.detail)}');
+    // Check that save settings now uses a partial-safe handler
+    expect(content).toContain('function applySavedSettings(detail = {})');
+    expect(content).toContain('on:saveSettings={(e) => applySavedSettings(e.detail)}');
+    expect(content).toContain('skipBattleReview = next.skipBattleReview !== undefined ? Boolean(next.skipBattleReview) : skipBattleReview;');
 
     // Check that skipBattleReview is declared as a local variable
     expect(content).toContain('let skipBattleReview = false;');

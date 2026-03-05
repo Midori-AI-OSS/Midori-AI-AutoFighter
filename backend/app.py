@@ -20,6 +20,7 @@ from routes.guidebook import bp as guidebook_bp
 from routes.logs import bp as logs_bp
 from routes.performance import perf_bp as performance_bp
 from routes.players import bp as players_bp
+from routes.radio import bp as radio_bp
 from routes.rewards import bp as rewards_bp
 from routes.tracking import bp as tracking_bp
 from routes.ui import bp as ui_bp
@@ -63,6 +64,7 @@ app.register_blueprint(tracking_bp)
 app.register_blueprint(performance_bp, url_prefix='/performance')
 app.register_blueprint(guidebook_bp, url_prefix='/guidebook')
 app.register_blueprint(logs_bp)
+app.register_blueprint(radio_bp)
 
 BACKEND_FLAVOR = os.getenv("UV_EXTRA", "default")
 
@@ -190,6 +192,7 @@ async def check_previous_crash() -> None:
 
 
 @app.get("/api/previous-errors")
+@app.get("/previous-errors")
 async def api_get_previous_errors() -> Response:
     """Return errors from previous crash for display."""
     errors = get_previous_errors()
@@ -200,6 +203,7 @@ async def api_get_previous_errors() -> Response:
 
 
 @app.post("/api/acknowledge-errors")
+@app.post("/acknowledge-errors")
 async def api_acknowledge_errors() -> Response:
     """Clear persisted errors after user acknowledges."""
     clear_errors()

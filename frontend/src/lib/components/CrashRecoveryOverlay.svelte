@@ -12,6 +12,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import ErrorOverlay from './ErrorOverlay.svelte';
+  import { acknowledgePreviousErrors } from '../systems/api.js';
 
   export let errors = [];
   export let reducedMotion = false;
@@ -28,12 +29,7 @@
   async function handleClose() {
     acknowledgeFailed = false;
     try {
-      const response = await fetch('/api/acknowledge-errors', { method: 'POST' });
-      if (!response.ok) {
-        acknowledgeFailed = true;
-        console.warn('Failed to acknowledge errors: server returned', response.status);
-        // Still close - errors will show again on next load
-      }
+      await acknowledgePreviousErrors();
     } catch (e) {
       acknowledgeFailed = true;
       console.warn('Failed to acknowledge errors:', e);

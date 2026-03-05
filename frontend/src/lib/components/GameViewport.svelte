@@ -10,6 +10,7 @@
   import RoomView from './RoomView.svelte';
   import NavBar from './NavBar.svelte';
   import OverlayHost from './OverlayHost.svelte';
+  import RadioPlayerStrip from './RadioPlayerStrip.svelte';
   import { getHourlyBackground } from '../systems/assetLoader.js';
   import MainMenu from './MainMenu.svelte';
   import LoginRewardsPanel from './LoginRewardsPanel.svelte';
@@ -28,8 +29,22 @@
     stopGameMusic,
   } from '../systems/viewportState.js';
   import { rewardOpen as computeRewardOpen } from '../systems/viewportState.js';
-  import { themeStore, motionStore, THEMES } from '../systems/settingsStorage.js';
+  import { themeStore, motionStore, THEMES, saveSettings, normalizeMusicVolumeSetting } from '../systems/settingsStorage.js';
   import { overlayView } from '../systems/OverlayController.js';
+  import {
+    destroyRadioPlayer,
+    getRadioRuntimeSnapshot,
+    initializeRadioPlayer,
+    radioRuntimeStore,
+    resumeRadioPlayback,
+    setRadioChannel,
+    setRadioSourceActive,
+    setRadioVolume,
+    stepRadioChannel,
+    toggleRadioPlayback,
+    toggleRadioQualityHighMedium,
+    updateRadioSettings,
+  } from '../systems/radioPlayer.js';
 
   export let runId = '';
   export let roomData = null;
@@ -52,35 +67,156 @@
   let roster = [];
   let userState = { level: 1, exp: 0, next_level_exp: 100 };
   let sfxVolume = 5;
-  let musicVolume = 5;
-    let voiceVolume = 5;
-    let framerate = 60;
-    let reducedMotion = false;
-    let showActionValues = false;
-    let showTurnCounter = true;
-    let flashEnrageCounter = true;
-    let skipBattleReview = false;
-    let skipBattleReviewPreference = false;
-    let skipBattleReviewLocked = false;
+  let musicVolume = 70;
+  let voiceVolume = 5;
+  let framerate = 60;
+  let reducedMotion = false;
+  let showActionValues = false;
+  let showTurnCounter = true;
+  let flashEnrageCounter = true;
+  let skipBattleReview = false;
+  let skipBattleReviewPreference = false;
+  let skipBattleReviewLocked = false;
+  let musicSource = 'game';
+  let radioEnabled = false;
+  let radioAutostart = false;
+  let radioStayOpen = false;
+  let radioChannel = 'all';
+  let radioQuality = 'medium';
+  let radioVolume = 70;
+  let radioInitialized = false;
+  let previousMusicSource = null;
+  let sourceSwitchToken = 0;
   let selectedParty = [];
   let snapshotLoading = false;
 
   const dispatch = createEventDispatcher();
+
+  function persistRadioSettings(patch = {}) {
+    saveSettings({
+      musicVolume,
+      musicSource,
+      radioEnabled,
+      radioAutostart,
+      radioStayOpen,
+      radioChannel,
+      radioQuality,
+      radioVolume: musicVolume,
+      ...patch,
+    });
+  }
+
+  function toNumeric(value, fallback) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  }
+
+  function normalizeMusicSource(value) {
+    return value === 'midoriai_radio' ? 'midoriai_radio' : 'game';
+  }
+
+  async function applyMusicSourceSwitch(nextSource, token) {
+    const radioSourceActive = nextSource === 'midoriai_radio';
+    if (radioSourceActive) {
+      await stopGameMusic();
+      if (token !== sourceSwitchToken) return;
+      setRadioSourceActive(true);
+      return;
+    }
+
+    setRadioSourceActive(false);
+    if (token !== sourceSwitchToken) return;
+    lastMusicKey = '';
+    lastBattleId = '';
+    lastPlaylistSignature = '';
+  }
+
+  function applySavedSettings(detail = {}) {
+    const next = detail && typeof detail === 'object' ? detail : {};
+    sfxVolume = toNumeric(next.sfxVolume, sfxVolume);
+    musicVolume = normalizeMusicVolumeSetting(next.musicVolume, { fallback: musicVolume });
+    radioVolume = musicVolume;
+    voiceVolume = toNumeric(next.voiceVolume, voiceVolume);
+    framerate = toNumeric(next.framerate, framerate);
+    reducedMotion = next.reducedMotion !== undefined ? Boolean(next.reducedMotion) : reducedMotion;
+    showActionValues = next.showActionValues !== undefined ? Boolean(next.showActionValues) : showActionValues;
+    showTurnCounter = next.showTurnCounter !== undefined ? Boolean(next.showTurnCounter) : showTurnCounter;
+    flashEnrageCounter = next.flashEnrageCounter !== undefined ? Boolean(next.flashEnrageCounter) : flashEnrageCounter;
+    fullIdleMode = next.fullIdleMode !== undefined ? Boolean(next.fullIdleMode) : fullIdleMode;
+    skipBattleReview = next.skipBattleReview !== undefined ? Boolean(next.skipBattleReview) : skipBattleReview;
+    skipBattleReviewPreference =
+      next.skipBattleReviewPreference !== undefined
+        ? Boolean(next.skipBattleReviewPreference)
+        : skipBattleReviewPreference;
+    animationSpeed = toNumeric(next.animationSpeed, animationSpeed);
+    musicSource = normalizeMusicSource(next.musicSource ?? musicSource);
+    radioEnabled = next.radioEnabled !== undefined ? Boolean(next.radioEnabled) : radioEnabled;
+    radioAutostart = next.radioAutostart !== undefined ? Boolean(next.radioAutostart) : radioAutostart;
+    radioStayOpen = next.radioStayOpen !== undefined ? Boolean(next.radioStayOpen) : radioStayOpen;
+    if (next.radioChannel !== undefined) {
+      radioChannel = String(next.radioChannel || 'all');
+    }
+    if (next.radioQuality !== undefined) {
+      radioQuality = String(next.radioQuality || 'medium');
+    }
+  }
 
   onMount(async () => {
     if (!background) {
       randomBg = getHourlyBackground();
     }
     const init = await loadInitialState();
-      ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed } =
-        init.settings);
-    skipBattleReviewPreference = init.settings.skipBattleReviewPreference ?? skipBattleReview;
+    const initialSettings = init?.settings && typeof init.settings === 'object' ? init.settings : {};
+    sfxVolume = Number(initialSettings.sfxVolume ?? 5);
+    musicVolume = normalizeMusicVolumeSetting(initialSettings.musicVolume, { fallback: 70 });
+    voiceVolume = Number(initialSettings.voiceVolume ?? 5);
+    framerate = Number(initialSettings.framerate ?? 60);
+    reducedMotion = Boolean(initialSettings.reducedMotion ?? false);
+    showActionValues = Boolean(initialSettings.showActionValues ?? false);
+    showTurnCounter = Boolean(initialSettings.showTurnCounter ?? true);
+    flashEnrageCounter = Boolean(initialSettings.flashEnrageCounter ?? true);
+    fullIdleMode = Boolean(initialSettings.fullIdleMode ?? false);
+    skipBattleReview = Boolean(initialSettings.skipBattleReview ?? false);
+    skipBattleReviewPreference = Boolean(initialSettings.skipBattleReviewPreference ?? skipBattleReview);
+    animationSpeed = Number(initialSettings.animationSpeed ?? 1);
+    musicSource = initialSettings.musicSource === 'midoriai_radio' ? 'midoriai_radio' : 'game';
+    radioEnabled = Boolean(initialSettings.radioEnabled ?? false);
+    radioAutostart = Boolean(initialSettings.radioAutostart ?? false);
+    radioStayOpen = Boolean(initialSettings.radioStayOpen ?? false);
+    radioChannel = String(initialSettings.radioChannel ?? 'all');
+    radioQuality = String(initialSettings.radioQuality ?? 'medium');
+    radioVolume = musicVolume;
+
+    initializeRadioPlayer({
+      sourceActive: musicSource === 'midoriai_radio',
+      enabled: radioEnabled,
+      autostart: radioAutostart,
+      channel: radioChannel,
+      quality: radioQuality,
+      volume: musicVolume,
+    });
+    radioInitialized = true;
+    previousMusicSource = musicSource;
+
     roster = init.roster;
     userState = init.user;
     // Ensure music starts after first user gesture if autoplay was blocked
     try {
       const { resumeGameMusic } = await import('../systems/viewportState.js');
-      const resumeOnce = () => { resumeGameMusic(); cleanup(); };
+      const resumeOnce = async () => {
+        if (musicSource === 'midoriai_radio') {
+          if (radioEnabled && radioAutostart) {
+            resumeRadioPlayback();
+            const snapshot = getRadioRuntimeSnapshot();
+            if (!snapshot.isPlaying && !snapshot.playbackDesired) {
+              await toggleRadioPlayback();
+            }
+          }
+        } else {
+          resumeGameMusic();
+        }
+        cleanup();
+      };
       const cleanup = () => {
         try {
           window.removeEventListener('pointerdown', resumeOnce);
@@ -94,6 +230,7 @@
 
   onDestroy(() => {
     stopGameMusic();
+    destroyRadioPlayer();
   });
 
   $: selectedParty = mapSelectedParty(roster, selected);
@@ -106,6 +243,24 @@
   $: skipBattleReviewLocked = Boolean(fullIdleMode);
   $: if (!skipBattleReviewLocked) {
     skipBattleReviewPreference = skipBattleReview;
+  }
+  $: if (radioInitialized) {
+    updateRadioSettings({
+      enabled: radioEnabled,
+      autostart: radioAutostart,
+      channel: radioChannel,
+      quality: radioQuality,
+      volume: musicVolume,
+    });
+  }
+  $: if (radioVolume !== musicVolume) {
+    radioVolume = musicVolume;
+  }
+  $: if (radioInitialized && musicSource !== previousMusicSource) {
+    const nextSource = musicSource;
+    previousMusicSource = nextSource;
+    const token = ++sourceSwitchToken;
+    void applyMusicSourceSwitch(nextSource, token);
   }
 
   let lastMusicKey = '';
@@ -188,7 +343,7 @@
     return p;
   })();
   $: viewportStyle = `--bg: url(${backgroundFromTheme}); --accent: ${accentColor}; --level-progress: ${levelProgress}`;
-  $: {
+  $: if (musicSource === 'game') {
     // Change music per room type and battle index (new fights) and
     // rerun when party/foe combatants change to trigger character themes.
     const typeKey = String(currentRoomType || roomData?.current_room || '');
@@ -258,6 +413,9 @@
     overflow: hidden;
     position: relative;
   }
+  .viewport.radio-active {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+  }
   /* Progress outline driven by global user level EXP */
   .viewport::before {
     content: '';
@@ -297,6 +455,7 @@
   }
   @media (max-width: 599px) {
     .viewport { aspect-ratio: auto; min-height: 240px; }
+    .viewport.radio-active { padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
   }
   .top-center-header {
     position: absolute;
@@ -370,7 +529,7 @@
 </style>
 
 <div class="viewport-wrap">
-  <div class="viewport" style={viewportStyle}>
+  <div class="viewport" class:radio-active={musicSource === 'midoriai_radio'} style={viewportStyle}>
     <NavBar
       {battleActive}
       viewMode={$overlayView}
@@ -428,6 +587,13 @@
         {skipBattleReview}
         {skipBattleReviewPreference}
         {skipBattleReviewLocked}
+        {musicSource}
+        {radioEnabled}
+        {radioAutostart}
+        {radioStayOpen}
+        {radioChannel}
+        {radioQuality}
+        {radioVolume}
         {advanceBusy}
         bind:animationSpeed
         {selectedParty}
@@ -445,7 +611,7 @@
       on:editorChange={(e) => dispatch('editorChange', e.detail)}
       on:loadRun={(e) => dispatch('loadRun', e.detail)}
       on:startNewRun={() => dispatch('startNewRun')}
-      on:saveSettings={(e) => ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed } = e.detail)}
+      on:saveSettings={(e) => applySavedSettings(e.detail)}
       on:endRun={(e) => dispatch('endRun', e.detail)}
       on:shopBuy={(e) => dispatch('shopBuy', e.detail)}
       on:shopReroll={() => dispatch('shopReroll')}
@@ -453,14 +619,46 @@
         on:snapshot-start={() => (snapshotLoading = true)}
         on:snapshot-end={() => (snapshotLoading = false)}
       />
-    <div class="user-level-bar">
-      <div
-        class="fill"
-        style={`width: ${Math.min(
-          100,
-          100 * (userState.exp / userState.next_level_exp)
-        )}%`}
+    {#if musicSource === 'midoriai_radio'}
+      <RadioPlayerStrip
+        runtime={$radioRuntimeStore}
+        stayOpen={radioStayOpen}
+        on:previousChannel={() => {
+          radioChannel = stepRadioChannel(-1);
+          persistRadioSettings({ radioChannel });
+        }}
+        on:nextChannel={() => {
+          radioChannel = stepRadioChannel(1);
+          persistRadioSettings({ radioChannel });
+        }}
+        on:togglePlayback={() => {
+          toggleRadioPlayback();
+        }}
+        on:setChannel={(event) => {
+          radioChannel = setRadioChannel(event.detail);
+          persistRadioSettings({ radioChannel });
+        }}
+        on:toggleQuality={() => {
+          radioQuality = toggleRadioQualityHighMedium();
+          persistRadioSettings({ radioQuality });
+        }}
+        on:setVolume={(event) => {
+          const nextVolume = setRadioVolume(event.detail);
+          musicVolume = nextVolume;
+          radioVolume = nextVolume;
+          persistRadioSettings({ musicVolume: nextVolume, radioVolume: nextVolume });
+        }}
       />
-    </div>
+    {:else}
+      <div class="user-level-bar">
+        <div
+          class="fill"
+          style={`width: ${Math.min(
+            100,
+            100 * (userState.exp / userState.next_level_exp)
+          )}%`}
+        />
+      </div>
+    {/if}
   </div>
 </div>

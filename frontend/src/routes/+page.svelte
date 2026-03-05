@@ -43,7 +43,7 @@
   } from '$lib';
   import { rewardPhaseController } from '$lib/systems/overlayState.js';
   import { updateParty, acknowledgeLoot, resetRunConfigurationMetadataCache } from '$lib/systems/uiApi.js';
-  import { getPlayers } from '$lib/systems/api.js';
+  import { getPlayers, getPreviousErrors } from '$lib/systems/api.js';
   import { deriveSeedParty, sanitizePartyIds } from '$lib/systems/partySeed.js';
   import { buildRunMenu } from '$lib/components/RunButtons.svelte';
   import { registerAssetManifest } from '$lib/systems/assetLoader.js';
@@ -367,12 +367,9 @@
     // Check for previous crash errors from the backend
     async function checkPreviousCrash() {
       try {
-        const res = await fetch('/api/previous-errors');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.has_errors && Array.isArray(data.errors) && data.errors.length > 0) {
-            openOverlay('crash-recovery', { errors: data.errors });
-          }
+        const data = await getPreviousErrors();
+        if (data?.has_errors && Array.isArray(data?.errors) && data.errors.length > 0) {
+          openOverlay('crash-recovery', { errors: data.errors });
         }
       } catch (e) {
         // Backend not available yet, skip crash check
