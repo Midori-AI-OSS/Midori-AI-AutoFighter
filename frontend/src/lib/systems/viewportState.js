@@ -115,6 +115,16 @@ export async function loadInitialState() {
     sfxVolume: saved.sfxVolume ?? 5,
     musicVolume: saved.musicVolume ?? 5,
     voiceVolume: saved.voiceVolume ?? 5,
+    musicSource: saved.musicSource ?? 'game',
+    radioEnabled: saved.radioEnabled ?? false,
+    radioAutostart: saved.radioAutostart ?? false,
+    radioChannel: saved.radioChannel ?? 'all',
+    radioQuality: saved.radioQuality ?? 'medium',
+    radioVolume: (() => {
+      const raw = Number(saved.radioVolume);
+      if (!Number.isFinite(raw)) return 70;
+      return Math.max(0, Math.min(100, Math.round(raw)));
+    })(),
     framerate: saved.framerate !== undefined ? Number(saved.framerate) : 60,
     autocraft: true,
     reducedMotion: saved.reducedMotion ?? false,

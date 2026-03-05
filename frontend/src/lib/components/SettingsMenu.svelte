@@ -36,6 +36,12 @@
   export let skipBattleReviewPreference = false;
   export let skipBattleReviewLocked = false;
   export let animationSpeed = 1;
+  export let musicSource = 'game';
+  export let radioEnabled = false;
+  export let radioAutostart = false;
+  export let radioChannel = 'all';
+  export let radioQuality = 'medium';
+  export let radioVolume = 70;
   export let runId = '';
 
   let saveStatus = '';
@@ -174,7 +180,13 @@
       flashEnrageCounter,
       skipBattleReview,
       skipBattleReviewPreference,
-      animationSpeed: sanitizedSpeed
+      animationSpeed: sanitizedSpeed,
+      musicSource,
+      radioEnabled,
+      radioAutostart,
+      radioChannel,
+      radioQuality,
+      radioVolume
     };
     saveSettings(payload);
     dispatch('save', payload);
@@ -252,6 +264,12 @@
       voiceVolume = 5;
       framerate = 60;
       reducedMotion = false;
+      musicSource = 'game';
+      radioEnabled = false;
+      radioAutostart = false;
+      radioChannel = 'all';
+      radioQuality = 'medium';
+      radioVolume = 70;
       runId = '';
       wipeStatus = ok ? 'Save data wiped. Reloading…' : 'Backend wipe failed; cleared local data. Reloading…';
       setTimeout(() => {
@@ -299,6 +317,12 @@
       bind:sfxVolume
       bind:musicVolume
       bind:voiceVolume
+      bind:musicSource
+      bind:radioEnabled
+      bind:radioAutostart
+      bind:radioChannel
+      bind:radioQuality
+      bind:radioVolume
       {scheduleSave}
     />
   {:else if activeTab === 'ui'}

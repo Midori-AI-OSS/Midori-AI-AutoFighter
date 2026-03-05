@@ -1,12 +1,47 @@
 import { writable } from 'svelte/store';
 
 const SETTINGS_KEY = 'autofighter_settings';
-const SETTINGS_VERSION = 2;
+const SETTINGS_VERSION = 3;
+const RADIO_SOURCE_VALUES = new Set(['game', 'midoriai_radio']);
+const RADIO_QUALITY_VALUES = new Set(['low', 'medium', 'high']);
+const RADIO_CHANNEL_PATTERN = /^[a-z0-9-]{1,40}$/;
 
 // Create reactive stores for settings
 export const motionStore = writable(null);
 export const themeStore = writable(null);
 export const uiStore = writable(null);
+
+function normalizeMusicSource(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (RADIO_SOURCE_VALUES.has(raw)) {
+    return raw;
+  }
+  return 'game';
+}
+
+function normalizeRadioChannelSetting(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return 'all';
+  if (raw === 'all') return 'all';
+  if (!RADIO_CHANNEL_PATTERN.test(raw)) return 'all';
+  return raw;
+}
+
+function normalizeRadioQualitySetting(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (RADIO_QUALITY_VALUES.has(raw)) {
+    return raw;
+  }
+  return 'medium';
+}
+
+function clampRadioVolume(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return 70;
+  }
+  return Math.max(0, Math.min(100, Math.round(numeric)));
+}
 
 // Theme definitions
 export const THEMES = {
@@ -65,7 +100,13 @@ function getDefaultSettings() {
     fullIdleMode: false,
     skipBattleReview: false,
     skipBattleReviewPreference: false,
-    animationSpeed: 1.0
+    animationSpeed: 1.0,
+    musicSource: 'game',
+    radioEnabled: false,
+    radioAutostart: false,
+    radioChannel: 'all',
+    radioQuality: 'medium',
+    radioVolume: 70
   };
 }
 
@@ -156,6 +197,12 @@ export function loadSettings() {
         delete data.animationSpeed;
       }
     }
+    if (data.musicSource !== undefined) data.musicSource = normalizeMusicSource(data.musicSource);
+    if (data.radioEnabled !== undefined) data.radioEnabled = Boolean(data.radioEnabled);
+    if (data.radioAutostart !== undefined) data.radioAutostart = Boolean(data.radioAutostart);
+    if (data.radioChannel !== undefined) data.radioChannel = normalizeRadioChannelSetting(data.radioChannel);
+    if (data.radioQuality !== undefined) data.radioQuality = normalizeRadioQualitySetting(data.radioQuality);
+    if (data.radioVolume !== undefined) data.radioVolume = clampRadioVolume(data.radioVolume);
     
     // Ensure motion settings exist
     const defaults = getDefaultSettings();
@@ -184,6 +231,24 @@ export function loadSettings() {
     }
     if (data.skipBattleReviewPreference === undefined) {
       data.skipBattleReviewPreference = data.skipBattleReview ?? defaults.skipBattleReviewPreference;
+    }
+    if (data.musicSource === undefined) {
+      data.musicSource = defaults.musicSource;
+    }
+    if (data.radioEnabled === undefined) {
+      data.radioEnabled = defaults.radioEnabled;
+    }
+    if (data.radioAutostart === undefined) {
+      data.radioAutostart = defaults.radioAutostart;
+    }
+    if (data.radioChannel === undefined) {
+      data.radioChannel = defaults.radioChannel;
+    }
+    if (data.radioQuality === undefined) {
+      data.radioQuality = defaults.radioQuality;
+    }
+    if (data.radioVolume === undefined) {
+      data.radioVolume = defaults.radioVolume;
     }
     
     // Update stores
@@ -246,6 +311,12 @@ export function saveSettings(settings) {
         delete merged.animationSpeed;
       }
     }
+    merged.musicSource = normalizeMusicSource(merged.musicSource);
+    merged.radioEnabled = Boolean(merged.radioEnabled);
+    merged.radioAutostart = Boolean(merged.radioAutostart);
+    merged.radioChannel = normalizeRadioChannelSetting(merged.radioChannel);
+    merged.radioQuality = normalizeRadioQualitySetting(merged.radioQuality);
+    merged.radioVolume = clampRadioVolume(merged.radioVolume);
     
     // Validate theme settings
     if (merged.theme) {

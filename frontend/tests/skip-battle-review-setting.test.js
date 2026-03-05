@@ -118,7 +118,7 @@ describe('Skip Battle Review setting', () => {
     const content = readFileSync(gameviewportFile, 'utf8');
 
     // Check that skipBattleReview is included in the saveSettings handler destructuring
-    expect(content).toContain('on:saveSettings={(e) => ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed } = e.detail)}');
+    expect(content).toContain('on:saveSettings={(e) => ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed, musicSource, radioEnabled, radioAutostart, radioChannel, radioQuality, radioVolume } = e.detail)}');
 
     // Check that skipBattleReview is declared as a local variable
     expect(content).toContain('let skipBattleReview = false;');

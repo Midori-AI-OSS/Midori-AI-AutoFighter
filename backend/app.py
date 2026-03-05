@@ -20,6 +20,7 @@ from routes.guidebook import bp as guidebook_bp
 from routes.logs import bp as logs_bp
 from routes.performance import perf_bp as performance_bp
 from routes.players import bp as players_bp
+from routes.radio import bp as radio_bp
 from routes.rewards import bp as rewards_bp
 from routes.tracking import bp as tracking_bp
 from routes.ui import bp as ui_bp
@@ -63,6 +64,7 @@ app.register_blueprint(tracking_bp)
 app.register_blueprint(performance_bp, url_prefix='/performance')
 app.register_blueprint(guidebook_bp, url_prefix='/guidebook')
 app.register_blueprint(logs_bp)
+app.register_blueprint(radio_bp)
 
 BACKEND_FLAVOR = os.getenv("UV_EXTRA", "default")
 

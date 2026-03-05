@@ -60,6 +60,12 @@
   export let skipBattleReviewLocked = false;
   export let advanceBusy = false;
   export let animationSpeed = 1;
+  export let musicSource = 'game';
+  export let radioEnabled = false;
+  export let radioAutostart = false;
+  export let radioChannel = 'all';
+  export let radioQuality = 'medium';
+  export let radioVolume = 70;
   export let selectedParty = [];
   export let battleActive = false;
 
@@ -480,6 +486,12 @@
       {skipBattleReview}
       {skipBattleReviewPreference}
       {skipBattleReviewLocked}
+      {musicSource}
+      {radioEnabled}
+      {radioAutostart}
+      {radioChannel}
+      {radioQuality}
+      {radioVolume}
       bind:animationSpeed
       {runId}
       on:save={(e) => dispatch('saveSettings', e.detail)}
