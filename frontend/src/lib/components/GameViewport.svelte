@@ -29,7 +29,7 @@
     stopGameMusic,
   } from '../systems/viewportState.js';
   import { rewardOpen as computeRewardOpen } from '../systems/viewportState.js';
-  import { themeStore, motionStore, THEMES, saveSettings } from '../systems/settingsStorage.js';
+  import { themeStore, motionStore, THEMES, saveSettings, normalizeMusicVolumeSetting } from '../systems/settingsStorage.js';
   import { overlayView } from '../systems/OverlayController.js';
   import {
     destroyRadioPlayer,
@@ -67,7 +67,7 @@
   let roster = [];
   let userState = { level: 1, exp: 0, next_level_exp: 100 };
   let sfxVolume = 5;
-  let musicVolume = 5;
+  let musicVolume = 70;
   let voiceVolume = 5;
   let framerate = 60;
   let reducedMotion = false;
@@ -92,14 +92,53 @@
 
   function persistRadioSettings(patch = {}) {
     saveSettings({
+      musicVolume,
       musicSource,
       radioEnabled,
       radioAutostart,
       radioChannel,
       radioQuality,
-      radioVolume,
+      radioVolume: musicVolume,
       ...patch,
     });
+  }
+
+  function toNumeric(value, fallback) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  }
+
+  function normalizeMusicSource(value) {
+    return value === 'midoriai_radio' ? 'midoriai_radio' : 'game';
+  }
+
+  function applySavedSettings(detail = {}) {
+    const next = detail && typeof detail === 'object' ? detail : {};
+    sfxVolume = toNumeric(next.sfxVolume, sfxVolume);
+    musicVolume = normalizeMusicVolumeSetting(next.musicVolume, { fallback: musicVolume });
+    radioVolume = musicVolume;
+    voiceVolume = toNumeric(next.voiceVolume, voiceVolume);
+    framerate = toNumeric(next.framerate, framerate);
+    reducedMotion = next.reducedMotion !== undefined ? Boolean(next.reducedMotion) : reducedMotion;
+    showActionValues = next.showActionValues !== undefined ? Boolean(next.showActionValues) : showActionValues;
+    showTurnCounter = next.showTurnCounter !== undefined ? Boolean(next.showTurnCounter) : showTurnCounter;
+    flashEnrageCounter = next.flashEnrageCounter !== undefined ? Boolean(next.flashEnrageCounter) : flashEnrageCounter;
+    fullIdleMode = next.fullIdleMode !== undefined ? Boolean(next.fullIdleMode) : fullIdleMode;
+    skipBattleReview = next.skipBattleReview !== undefined ? Boolean(next.skipBattleReview) : skipBattleReview;
+    skipBattleReviewPreference =
+      next.skipBattleReviewPreference !== undefined
+        ? Boolean(next.skipBattleReviewPreference)
+        : skipBattleReviewPreference;
+    animationSpeed = toNumeric(next.animationSpeed, animationSpeed);
+    musicSource = normalizeMusicSource(next.musicSource ?? musicSource);
+    radioEnabled = next.radioEnabled !== undefined ? Boolean(next.radioEnabled) : radioEnabled;
+    radioAutostart = next.radioAutostart !== undefined ? Boolean(next.radioAutostart) : radioAutostart;
+    if (next.radioChannel !== undefined) {
+      radioChannel = String(next.radioChannel || 'all');
+    }
+    if (next.radioQuality !== undefined) {
+      radioQuality = String(next.radioQuality || 'medium');
+    }
   }
 
   onMount(async () => {
@@ -109,7 +148,7 @@
     const init = await loadInitialState();
     const initialSettings = init?.settings && typeof init.settings === 'object' ? init.settings : {};
     sfxVolume = Number(initialSettings.sfxVolume ?? 5);
-    musicVolume = Number(initialSettings.musicVolume ?? 5);
+    musicVolume = normalizeMusicVolumeSetting(initialSettings.musicVolume, { fallback: 70 });
     voiceVolume = Number(initialSettings.voiceVolume ?? 5);
     framerate = Number(initialSettings.framerate ?? 60);
     reducedMotion = Boolean(initialSettings.reducedMotion ?? false);
@@ -125,12 +164,7 @@
     radioAutostart = Boolean(initialSettings.radioAutostart ?? false);
     radioChannel = String(initialSettings.radioChannel ?? 'all');
     radioQuality = String(initialSettings.radioQuality ?? 'medium');
-    {
-      const parsedRadioVolume = Number(initialSettings.radioVolume ?? 70);
-      radioVolume = Number.isFinite(parsedRadioVolume)
-        ? Math.max(0, Math.min(100, Math.round(parsedRadioVolume)))
-        : 70;
-    }
+    radioVolume = musicVolume;
 
     initializeRadioPlayer({
       sourceActive: musicSource === 'midoriai_radio',
@@ -138,7 +172,7 @@
       autostart: radioAutostart,
       channel: radioChannel,
       quality: radioQuality,
-      volume: radioVolume,
+      volume: musicVolume,
     });
     radioInitialized = true;
     previousMusicSource = musicSource;
@@ -195,8 +229,11 @@
       autostart: radioAutostart,
       channel: radioChannel,
       quality: radioQuality,
-      volume: radioVolume,
+      volume: musicVolume,
     });
+  }
+  $: if (radioVolume !== musicVolume) {
+    radioVolume = musicVolume;
   }
   $: if (radioInitialized && musicSource !== previousMusicSource) {
     const radioSourceActive = musicSource === 'midoriai_radio';
@@ -554,7 +591,7 @@
       on:editorChange={(e) => dispatch('editorChange', e.detail)}
       on:loadRun={(e) => dispatch('loadRun', e.detail)}
       on:startNewRun={() => dispatch('startNewRun')}
-      on:saveSettings={(e) => ({ sfxVolume, musicVolume, voiceVolume, framerate, reducedMotion, showActionValues, showTurnCounter, flashEnrageCounter, fullIdleMode, skipBattleReview, skipBattleReviewPreference, animationSpeed, musicSource, radioEnabled, radioAutostart, radioChannel, radioQuality, radioVolume } = e.detail)}
+      on:saveSettings={(e) => applySavedSettings(e.detail)}
       on:endRun={(e) => dispatch('endRun', e.detail)}
       on:shopBuy={(e) => dispatch('shopBuy', e.detail)}
       on:shopReroll={() => dispatch('shopReroll')}
@@ -585,8 +622,10 @@
           persistRadioSettings({ radioQuality });
         }}
         on:setVolume={(event) => {
-          radioVolume = setRadioVolume(event.detail);
-          persistRadioSettings({ radioVolume });
+          const nextVolume = setRadioVolume(event.detail);
+          musicVolume = nextVolume;
+          radioVolume = nextVolume;
+          persistRadioSettings({ musicVolume: nextVolume, radioVolume: nextVolume });
         }}
       />
     {:else}

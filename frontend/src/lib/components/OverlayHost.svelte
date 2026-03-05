@@ -47,7 +47,7 @@
   export let battleSnapshot = null;
   export let editorState = {};
   export let sfxVolume = 5;
-  export let musicVolume = 5;
+  export let musicVolume = 70;
   export let voiceVolume = 5;
   export let framerate = 60;
   export let reducedMotion = false; // Legacy prop for backward compatibility
@@ -489,9 +489,6 @@
       {musicSource}
       {radioEnabled}
       {radioAutostart}
-      {radioChannel}
-      {radioQuality}
-      {radioVolume}
       bind:animationSpeed
       {runId}
       on:save={(e) => dispatch('saveSettings', e.detail)}

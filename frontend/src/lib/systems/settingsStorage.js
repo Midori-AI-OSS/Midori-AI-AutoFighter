@@ -43,6 +43,17 @@ function clampRadioVolume(value) {
   return Math.max(0, Math.min(100, Math.round(numeric)));
 }
 
+export function normalizeMusicVolumeSetting(value, options = {}) {
+  const fallback = Number.isFinite(Number(options.fallback)) ? Number(options.fallback) : 70;
+  const allowLegacyScale = options.allowLegacyScale !== false;
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return Math.max(0, Math.min(100, Math.round(fallback)));
+  }
+  const scaled = allowLegacyScale && numeric >= 0 && numeric <= 10 ? numeric * 10 : numeric;
+  return Math.max(0, Math.min(100, Math.round(scaled)));
+}
+
 // Theme definitions
 export const THEMES = {
   default: {
@@ -92,6 +103,7 @@ function getDefaultSettings() {
       conciseDescriptions: false
     },
     // Legacy settings for backward compatibility
+    musicVolume: 70,
     framerate: 60,
     reducedMotion: prefersReducedMotion,
     showActionValues: false,
@@ -197,6 +209,9 @@ export function loadSettings() {
         delete data.animationSpeed;
       }
     }
+    if (data.musicVolume !== undefined) {
+      data.musicVolume = normalizeMusicVolumeSetting(data.musicVolume);
+    }
     if (data.musicSource !== undefined) data.musicSource = normalizeMusicSource(data.musicSource);
     if (data.radioEnabled !== undefined) data.radioEnabled = Boolean(data.radioEnabled);
     if (data.radioAutostart !== undefined) data.radioAutostart = Boolean(data.radioAutostart);
@@ -235,6 +250,9 @@ export function loadSettings() {
     if (data.musicSource === undefined) {
       data.musicSource = defaults.musicSource;
     }
+    if (data.musicVolume === undefined) {
+      data.musicVolume = defaults.musicVolume;
+    }
     if (data.radioEnabled === undefined) {
       data.radioEnabled = defaults.radioEnabled;
     }
@@ -271,6 +289,8 @@ export function saveSettings(settings) {
     const safeSettings = settings ?? {};
     const skipProvided = Object.prototype.hasOwnProperty.call(safeSettings, 'skipBattleReview');
     const preferenceProvided = Object.prototype.hasOwnProperty.call(safeSettings, 'skipBattleReviewPreference');
+    const musicVolumeProvided = Object.prototype.hasOwnProperty.call(safeSettings, 'musicVolume');
+    const radioVolumeProvided = Object.prototype.hasOwnProperty.call(safeSettings, 'radioVolume');
     const current = loadSettings();
     const merged = { ...current, ...safeSettings };
     
@@ -311,12 +331,20 @@ export function saveSettings(settings) {
         delete merged.animationSpeed;
       }
     }
+    merged.musicVolume = normalizeMusicVolumeSetting(merged.musicVolume);
+    if (!musicVolumeProvided && radioVolumeProvided) {
+      merged.musicVolume = normalizeMusicVolumeSetting(merged.radioVolume, { allowLegacyScale: false });
+    }
     merged.musicSource = normalizeMusicSource(merged.musicSource);
     merged.radioEnabled = Boolean(merged.radioEnabled);
     merged.radioAutostart = Boolean(merged.radioAutostart);
     merged.radioChannel = normalizeRadioChannelSetting(merged.radioChannel);
     merged.radioQuality = normalizeRadioQualitySetting(merged.radioQuality);
-    merged.radioVolume = clampRadioVolume(merged.radioVolume);
+    if (!radioVolumeProvided || musicVolumeProvided) {
+      merged.radioVolume = clampRadioVolume(merged.musicVolume);
+    } else {
+      merged.radioVolume = clampRadioVolume(merged.radioVolume);
+    }
     
     // Validate theme settings
     if (merged.theme) {
